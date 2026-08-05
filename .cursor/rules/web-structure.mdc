@@ -12,6 +12,7 @@ Mirror the API: features live in `domains/<domain>/`, everything else is shared 
   - `api.ts` — typed calls for this domain (wraps `@/lib/api`); the only place that builds this domain's endpoints
   - `<name>-provider.tsx` — domain context/state when needed (e.g. auth, tenant)
   - `pages/XxxPage.tsx` — route-level screens (PascalCase, one per file)
+  - `routes.tsx` — the domain's `<Route>` group; `app/App.tsx` just composes them
   - domain-specific components live here too (kebab-case)
   - A domain may import another domain's `api`/provider, but keep it minimal
   - Public marketing screens (landing, pricing…) live in `domains/marketing/`
