@@ -36,6 +36,7 @@ Sem `RESEND_API_KEY`, os e-mails (verificação, reset de senha, convites) são 
 - **Convites**: por e-mail, com aceite por conta existente ou criação de conta na hora
 - **Site público**: landing com CTAs + telas de auth, separado da área logada
 - **Recurso de exemplo**: `notes` — CRUD por tenant, ponta a ponta (schema → rota → página)
+- **Agente + MCP**: botão flutuante no app abre um chat com um assistente (OpenAI) que executa as tools do MCP no contexto do tenant. As mesmas tools ficam disponíveis para o Cursor via stdio (`npm run mcp`, já registrado em `.cursor/mcp.json`)
 - **Flag `SELF_SIGNUP_ENABLED`**: desligue para operar só por convite
 
 ## Estrutura
@@ -51,6 +52,7 @@ Pontos de entrada úteis:
 - `apps/api/src/db/schema.ts` — schema do banco
 - `apps/api/src/routes/notes.ts` + `apps/web/src/pages/app/NotesPage.tsx` — padrão CRUD para copiar
 - `apps/api/src/middleware/tenant.ts` — isolamento por tenant
+- `apps/api/src/agent/mcp-server.ts` — tools do agente/MCP (registre aqui as do seu domínio)
 - `apps/web/src/App.tsx` — mapa de rotas
 
 ## Derivando um produto novo
@@ -71,6 +73,8 @@ Copie `.env.example` para `.env` na raiz (em produção o Render injeta tudo):
 | `APP_URL`             | URL pública usada nos links de e-mail (no Render cai no `RENDER_EXTERNAL_URL`) |
 | `RESEND_API_KEY`      | Opcional — sem ela, e-mails são logados no console                             |
 | `MAIL_FROM`           | Remetente, ex.: `Meu App <no-reply@meuapp.com>`                                |
+| `OPENAI_API_KEY`      | Opcional — sem ela o agente fica desabilitado                                  |
+| `ASSISTANT_MODEL`     | Modelo do agente (default `gpt-4o-mini`)                                       |
 | `SELF_SIGNUP_ENABLED` | `false` para desligar o cadastro público                                       |
 
 ## Scripts

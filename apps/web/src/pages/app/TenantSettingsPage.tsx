@@ -82,11 +82,14 @@ function GeneralSection() {
             Somente administradores podem renomear o tenant.
           </p>
         )}
-        <div className="border-t pt-4">
-          <Button variant="outline" onClick={() => void handleLeave()}>
-            Sair deste tenant
-          </Button>
-        </div>
+        {/* Owner não sai do próprio tenant — a opção só existe para convidados */}
+        {tenant.role !== "owner" && (
+          <div className="border-t pt-4">
+            <Button variant="outline" onClick={() => void handleLeave()}>
+              Sair deste tenant
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

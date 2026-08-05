@@ -3,9 +3,11 @@ import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
 import { logger } from "hono/logger";
+import { hasOpenAiKey } from "./agent/openai";
 import { env } from "./lib/env";
 import { errorHandler } from "./lib/errors";
 import { accountRoutes } from "./routes/account";
+import { agentRoutes } from "./routes/agent";
 import { authRoutes } from "./routes/auth";
 import { inviteRoutes } from "./routes/invites";
 import { noteRoutes } from "./routes/notes";
@@ -17,12 +19,15 @@ app.onError(errorHandler);
 if (!env.isProduction) app.use(logger());
 
 app.get("/api/health", (c) => c.json({ ok: true }));
-app.get("/api/config", (c) => c.json({ selfSignupEnabled: env.selfSignupEnabled }));
+app.get("/api/config", (c) =>
+  c.json({ selfSignupEnabled: env.selfSignupEnabled, aiEnabled: hasOpenAiKey() }),
+);
 
 app.route("/api/auth", authRoutes);
 app.route("/api/account", accountRoutes);
 app.route("/api/tenants", tenantRoutes);
 app.route("/api/tenants/:tenantId/notes", noteRoutes);
+app.route("/api/tenants/:tenantId/agent", agentRoutes);
 app.route("/api/invites", inviteRoutes);
 
 // Em produção a API serve o SPA buildado (uma origem só → cookies simples).

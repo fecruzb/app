@@ -3,6 +3,7 @@ import { api } from "./api";
 
 type AppConfig = {
   selfSignupEnabled: boolean;
+  aiEnabled: boolean;
 };
 
 export function useAppConfig() {
@@ -11,5 +12,5 @@ export function useAppConfig() {
     queryFn: () => api.get<AppConfig>("/config"),
     staleTime: Infinity,
   });
-  return data ?? { selfSignupEnabled: true };
+  return data ?? { selfSignupEnabled: true, aiEnabled: false };
 }

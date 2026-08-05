@@ -133,6 +133,9 @@ tenantRoutes.delete("/:tenantId/members/:userId", requireAuth, requireTenant, as
     .where(and(eq(tenantMembers.tenantId, tenant.id), eq(tenantMembers.userId, targetUserId)));
   if (!target) throw new HttpError(404, "Membro não encontrado");
 
+  if (isSelf && target.role === "owner") {
+    throw new HttpError(400, "O owner não pode sair do próprio tenant");
+  }
   if (!isSelf && target.role === "owner" && actor.role !== "owner") {
     throw new HttpError(403, "Apenas owners podem remover um owner");
   }

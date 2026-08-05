@@ -12,6 +12,7 @@ import {
   UserIcon,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AgentFab } from "@/components/agent-fab";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { api, ApiError } from "@/lib/api";
+import { useAppConfig } from "@/lib/config";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth";
 import { TenantProvider, useTenant } from "@/providers/tenant";
@@ -145,6 +147,7 @@ function navItems(slug: string) {
 
 function Shell() {
   const { tenant } = useTenant();
+  const { aiEnabled } = useAppConfig();
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
@@ -183,6 +186,9 @@ function Shell() {
           <Outlet />
         </main>
       </div>
+
+      {/* key reinicia a conversa ao trocar de tenant */}
+      {aiEnabled && <AgentFab key={tenant.id} />}
     </div>
   );
 }
