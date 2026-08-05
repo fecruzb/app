@@ -2,7 +2,7 @@
 # Docs: https://render.com/docs/blueprint-spec
 services:
   - type: web
-    name: app-base
+    name: app
     runtime: node
     plan: starter
     buildCommand: npm ci --include=dev && npm run build
@@ -15,12 +15,11 @@ services:
         value: production
       - key: DATABASE_URL
         fromDatabase:
-          name: app-base-db
+          name: app-db
           property: connectionString
-      # Without APP_URL set, the API uses RENDER_EXTERNAL_URL in email links.
-      # Set it when using a custom domain:
-      # - key: APP_URL
-      #   value: https://yourdomain.com
+      # Public URL used in email links (must match the custom domain).
+      - key: APP_URL
+        value: https://app.fecruzb.com
       - key: RESEND_API_KEY
         sync: false
       - key: MAIL_FROM
@@ -33,6 +32,6 @@ services:
         value: "true"
 
 databases:
-  - name: app-base-db
+  - name: app-db
     plan: basic-256mb
     postgresMajorVersion: "16"
