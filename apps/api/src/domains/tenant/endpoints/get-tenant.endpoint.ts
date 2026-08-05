@@ -1,4 +1,4 @@
-import type { AppContext } from "@/lib/http";
+import type { AppContext } from "@/context";
 import { toTenantSummary } from "../service";
 
 export async function getTenant(c: AppContext) {

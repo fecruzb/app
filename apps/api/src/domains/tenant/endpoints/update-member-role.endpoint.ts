@@ -1,6 +1,6 @@
 import { updateMemberSchema } from "@app/shared";
 import { HttpError, parseBody, uuidParam } from "@/lib/errors";
-import type { AppContext } from "@/lib/http";
+import type { AppContext } from "@/context";
 import { tenantRepository } from "../repository";
 
 export async function updateMemberRole(c: AppContext) {

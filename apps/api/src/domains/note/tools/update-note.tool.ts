@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { defineTool, toolError, toolJson } from "@/agent/tool";
+import { defineTool } from "@/agent/tool";
 import { noteRepository } from "../repository";
 
 export const updateNoteTool = defineTool({
@@ -14,7 +14,7 @@ export const updateNoteTool = defineTool({
   summarize: (args) => `Nota atualizada: ${args.title}`,
   execute: async (ctx, { id, title, content }) => {
     const note = await noteRepository.update(ctx.tenantId, id, { title, content });
-    if (!note) return toolError("Nota não encontrada — confira o id com list_notes");
-    return toolJson({ id: note.id, title: note.title });
+    if (!note) throw new Error("Nota não encontrada — confira o id com list_notes");
+    return { id: note.id, title: note.title };
   },
 });

@@ -1,5 +1,5 @@
 import type { InviteDto } from "@app/shared";
-import type { AppContext } from "@/lib/http";
+import type { AppContext } from "@/context";
 import { tenantRepository } from "../repository";
 
 export async function listInvites(c: AppContext) {

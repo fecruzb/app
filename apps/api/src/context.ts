@@ -1,3 +1,5 @@
+// Contexto tipado da aplicação: o que as middlewares de auth/tenant injetam
+// no request. Vive fora de lib/ porque depende dos schemas de domínio.
 import type { Context } from "hono";
 import type { User } from "@/domains/auth/schema";
 import type { Tenant, TenantMember } from "@/domains/tenant/schema";

@@ -1,0 +1,76 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "overrides": [
+    {
+      "files": ["apps/api/src/lib/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "@/domains/**",
+                  "@/agent/**",
+                  "@/integrations/**",
+                  "@/db/**",
+                  "@/app",
+                  "@/context",
+                  "@/server"
+                ],
+                "message": "lib/ é utilidade pura — não pode depender de domínios, integrações, db ou do app."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["apps/api/src/domains/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/agent/**", "!@/agent/tool"],
+                "message": "Domínios só conhecem o contrato do agente (@/agent/tool) — nunca seus internals."
+              },
+              {
+                "group": ["@/app", "@/server"],
+                "message": "Domínios não importam o bootstrap da aplicação."
+              },
+              {
+                "group": ["@modelcontextprotocol/**", "openai", "openai/**"],
+                "message": "Domínios são neutros de transporte — MCP/OpenAI vivem em agent/ e integrations/."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["apps/api/src/integrations/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "@/domains/**",
+                  "@/agent/**",
+                  "@/db/**",
+                  "@/app",
+                  "@/context",
+                  "@/server"
+                ],
+                "message": "integrations/ só embrulha serviços externos — pode usar lib/, nada do restante do app."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

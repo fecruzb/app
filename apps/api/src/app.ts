@@ -8,11 +8,11 @@ import { logger as honoLogger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
 import { env } from "@/lib/env";
 import { errorHandler } from "@/lib/errors";
+import { hasOpenAiKey } from "@/integrations/openai";
 import { agentRoutes } from "@/agent/routes";
 import { accountRoutes } from "@/domains/account/routes";
 import { authRoutes } from "@/domains/auth/routes";
 import { noteRoutes } from "@/domains/note/routes";
-import { systemRoutes } from "@/domains/system/routes";
 import { inviteRoutes, tenantRoutes } from "@/domains/tenant/routes";
 
 export const app = new Hono();
@@ -21,7 +21,12 @@ app.onError(errorHandler);
 app.use(secureHeaders());
 if (!env.isProduction) app.use(honoLogger());
 
-app.route("/api", systemRoutes);
+// Utilitários sem auth: health check e a config pública que o frontend lê no boot.
+app.get("/api/health", (c) => c.json({ ok: true }));
+app.get("/api/config", (c) =>
+  c.json({ selfSignupEnabled: env.selfSignupEnabled, aiEnabled: hasOpenAiKey() }),
+);
+
 app.route("/api/auth", authRoutes);
 app.route("/api/account", accountRoutes);
 app.route("/api/tenants", tenantRoutes);

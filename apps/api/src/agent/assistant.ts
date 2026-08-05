@@ -34,9 +34,9 @@ export async function runAssistant(
     inputSchema: tool.inputSchema,
     run: async (rawArgs) => {
       const args = z.object(tool.inputSchema).parse(rawArgs);
-      const result = await tool.execute(ctx, args);
-      const text = result.content.map((p) => ("text" in p ? p.text : "")).join("\n");
-      return { text, isError: Boolean(result.isError) };
+      // Erros lançados pela tool são capturados pelo runToolLoop e viram isError.
+      const data = await tool.execute(ctx, args);
+      return { text: JSON.stringify(data ?? null), isError: false };
     },
   }));
 

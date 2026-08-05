@@ -1,5 +1,5 @@
 import { HttpError, uuidParam } from "@/lib/errors";
-import type { AppContext } from "@/lib/http";
+import type { AppContext } from "@/context";
 import { toNoteDto } from "../dto";
 import { noteRepository } from "../repository";
 

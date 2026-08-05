@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { api, ApiError } from "@/lib/api";
+import { api, ApiError } from "@/api";
 import { useTenant } from "@/providers/tenant";
 
 // Página de exemplo com o padrão completo: query + mutations + dialog de

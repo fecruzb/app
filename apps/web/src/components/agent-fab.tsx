@@ -4,7 +4,7 @@ import { Loader2Icon, SendIcon, SparklesIcon, XIcon } from "lucide-react";
 import type { AgentAction, AgentMessage, AgentResult } from "@app/shared";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { api, ApiError } from "@/lib/api";
+import { api, ApiError } from "@/api";
 import { cn } from "@/lib/utils";
 import { useTenant } from "@/providers/tenant";
 

@@ -1,5 +1,5 @@
 import { HttpError } from "@/lib/errors";
-import type { AppContext } from "@/lib/http";
+import type { AppContext } from "@/context";
 import { sendVerificationEmail } from "../service";
 
 export async function resendVerification(c: AppContext) {

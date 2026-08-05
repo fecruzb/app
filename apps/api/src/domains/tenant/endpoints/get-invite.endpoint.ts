@@ -2,7 +2,7 @@
 import type { PublicInviteDto } from "@app/shared";
 import { hashToken } from "@/lib/crypto";
 import { HttpError } from "@/lib/errors";
-import type { AppContext } from "@/lib/http";
+import type { AppContext } from "@/context";
 import { authRepository } from "@/domains/auth/repository";
 import { tenantRepository } from "../repository";
 

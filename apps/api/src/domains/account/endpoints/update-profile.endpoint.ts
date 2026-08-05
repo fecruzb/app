@@ -1,6 +1,6 @@
 import { updateAccountSchema } from "@app/shared";
 import { parseBody } from "@/lib/errors";
-import type { AppContext } from "@/lib/http";
+import type { AppContext } from "@/context";
 import { toUserDto } from "@/domains/auth/dto";
 import { authRepository } from "@/domains/auth/repository";
 

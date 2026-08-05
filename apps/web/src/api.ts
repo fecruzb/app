@@ -1,3 +1,4 @@
+// Client da API do app — a única borda de rede do frontend.
 export class ApiError extends Error {
   constructor(
     public status: number,

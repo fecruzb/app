@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { defineTool, toolJson } from "@/agent/tool";
+import { defineTool } from "@/agent/tool";
 import { noteRepository } from "../repository";
 
 export const listNotesTool = defineTool({
@@ -9,13 +9,11 @@ export const listNotesTool = defineTool({
   inputSchema: { search: z.string().optional() },
   execute: async (ctx, { search }) => {
     const rows = await noteRepository.list(ctx.tenantId, search);
-    return toolJson(
-      rows.map((r) => ({
-        id: r.note.id,
-        title: r.note.title,
-        authorName: r.authorName,
-        updatedAt: r.note.updatedAt.toISOString(),
-      })),
-    );
+    return rows.map((r) => ({
+      id: r.note.id,
+      title: r.note.title,
+      authorName: r.authorName,
+      updatedAt: r.note.updatedAt.toISOString(),
+    }));
   },
 });

@@ -1,7 +1,8 @@
-// Servidor MCP genérico: registra as tools do registry amarradas a um
-// contexto (tenant + usuário). Usado em memória pelo assistente do app e
-// via stdio por clientes externos (Cursor, Claude etc.).
+// Adaptador MCP: expõe as tools do registry no protocolo MCP, amarradas a um
+// contexto (tenant + usuário). É a única parte que conhece o formato do MCP —
+// as tools retornam dados neutros e este adaptador embrulha/traduz erros.
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { allTools } from "./registry";
 import type { AgentContext } from "./tool";
 
@@ -11,7 +12,15 @@ export function createMcpServer(ctx: AgentContext): McpServer {
     server.registerTool(
       tool.name,
       { description: tool.description, inputSchema: tool.inputSchema },
-      (args) => tool.execute(ctx, args as Record<string, unknown>),
+      async (args): Promise<CallToolResult> => {
+        try {
+          const data = await tool.execute(ctx, args as Record<string, unknown>);
+          return { content: [{ type: "text", text: JSON.stringify(data ?? null) }] };
+        } catch (err) {
+          const message = err instanceof Error ? err.message : String(err);
+          return { content: [{ type: "text", text: message }], isError: true };
+        }
+      },
     );
   }
   return server;

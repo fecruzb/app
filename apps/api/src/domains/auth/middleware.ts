@@ -1,7 +1,7 @@
 import { createMiddleware } from "hono/factory";
 import { deleteCookie, getCookie } from "hono/cookie";
 import { HttpError } from "@/lib/errors";
-import type { AppEnv } from "@/lib/http";
+import type { AppEnv } from "@/context";
 import { getSessionUser, SESSION_COOKIE } from "./service";
 
 export const requireAuth = createMiddleware<AppEnv>(async (c, next) => {

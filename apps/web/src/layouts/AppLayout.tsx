@@ -23,8 +23,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { api, ApiError } from "@/lib/api";
-import { useAppConfig } from "@/lib/config";
+import { api, ApiError } from "@/api";
+import { useAppConfig } from "@/providers/config";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth";
 import { TenantProvider, useTenant } from "@/providers/tenant";

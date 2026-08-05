@@ -1,7 +1,7 @@
 // Mapa de rotas do domínio note (montado em /api/tenants/:tenantId/notes).
 // Copie este domínio como base para os recursos do seu produto.
 import { Hono } from "hono";
-import type { AppEnv } from "@/lib/http";
+import type { AppEnv } from "@/context";
 import { requireAuth } from "@/domains/auth/middleware";
 import { requireTenant } from "@/domains/tenant/middleware";
 import { createNote } from "./endpoints/create-note.endpoint";

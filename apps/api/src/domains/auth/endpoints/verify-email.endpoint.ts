@@ -1,6 +1,6 @@
 import { verifyEmailSchema } from "@app/shared";
 import { HttpError, parseBody } from "@/lib/errors";
-import type { AppContext } from "@/lib/http";
+import type { AppContext } from "@/context";
 import { authRepository } from "../repository";
 import { consumeActionToken } from "../service";
 

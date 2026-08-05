@@ -1,6 +1,6 @@
 import { agentChatSchema } from "@app/shared";
 import { HttpError, parseBody } from "@/lib/errors";
-import type { AppContext } from "@/lib/http";
+import type { AppContext } from "@/context";
 import { hasOpenAiKey } from "@/integrations/openai";
 import { runAssistant } from "../assistant";
 

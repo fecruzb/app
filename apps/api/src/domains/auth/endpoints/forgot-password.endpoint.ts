@@ -2,7 +2,7 @@ import { forgotPasswordSchema } from "@app/shared";
 import { sendEmail } from "@/integrations/resend";
 import { env } from "@/lib/env";
 import { parseBody } from "@/lib/errors";
-import type { AppContext } from "@/lib/http";
+import type { AppContext } from "@/context";
 import { resetPasswordTemplate } from "../emails";
 import { authRepository } from "../repository";
 import { createActionToken } from "../service";

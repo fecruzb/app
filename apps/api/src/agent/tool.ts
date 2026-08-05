@@ -1,8 +1,10 @@
-// Contrato das tools do agente/MCP. Cada domínio define as suas em
+// Contrato das tools do agente. Cada domínio define as suas em
 // domains/<dominio>/tools/*, uma por arquivo, e o registry (registry.ts)
-// junta tudo. A tool se auto-descreve: se tiver `summarize`, é uma ação de
-// escrita e vira chip na UI do chat; sem `summarize`, é leitura.
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+// junta tudo. O contrato é neutro de transporte: a tool retorna dados
+// JSON-serializáveis e lança Error para falhas esperadas — quem adapta para
+// MCP (mcp-server) ou para o loop da OpenAI (assistant) são as bordas.
+// A tool se auto-descreve: se tiver `summarize`, é uma ação de escrita e
+// vira chip na UI do chat; sem `summarize`, é leitura.
 import type { z, ZodRawShape } from "zod";
 import type { TenantRole } from "@app/shared";
 
@@ -22,7 +24,8 @@ export type AgentTool = {
   inputSchema: ZodRawShape;
   /** Rótulo da ação para a UI; presente apenas em tools de escrita. */
   summarize?: (args: Record<string, unknown>) => string;
-  execute: (ctx: AgentContext, args: Record<string, unknown>) => Promise<CallToolResult>;
+  /** Retorna dados JSON-serializáveis; lance Error para falha esperada. */
+  execute: (ctx: AgentContext, args: Record<string, unknown>) => Promise<unknown>;
 };
 
 /** Helper de definição com args tipados a partir do inputSchema. */
@@ -31,15 +34,7 @@ export function defineTool<Shape extends ZodRawShape>(tool: {
   description: string;
   inputSchema: Shape;
   summarize?: (args: z.output<z.ZodObject<Shape>>) => string;
-  execute: (ctx: AgentContext, args: z.output<z.ZodObject<Shape>>) => Promise<CallToolResult>;
+  execute: (ctx: AgentContext, args: z.output<z.ZodObject<Shape>>) => Promise<unknown>;
 }): AgentTool {
   return tool as unknown as AgentTool;
-}
-
-export function toolJson(data: unknown): CallToolResult {
-  return { content: [{ type: "text", text: JSON.stringify(data) }] };
-}
-
-export function toolError(message: string): CallToolResult {
-  return { content: [{ type: "text", text: message }], isError: true };
 }

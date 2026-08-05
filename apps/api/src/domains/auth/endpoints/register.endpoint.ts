@@ -1,7 +1,7 @@
 import { registerSchema } from "@app/shared";
 import { env } from "@/lib/env";
 import { HttpError, parseBody } from "@/lib/errors";
-import type { AppContext } from "@/lib/http";
+import type { AppContext } from "@/context";
 import { createTenantWithOwner } from "@/domains/tenant/service";
 import { buildMe } from "../dto";
 import { authRepository } from "../repository";

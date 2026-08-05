@@ -1,6 +1,6 @@
 // Conta do usuário logado (perfil e senha) — independe de tenant.
 import { Hono } from "hono";
-import type { AppEnv } from "@/lib/http";
+import type { AppEnv } from "@/context";
 import { requireAuth } from "@/domains/auth/middleware";
 import { changePassword } from "./endpoints/change-password.endpoint";
 import { updateProfile } from "./endpoints/update-profile.endpoint";

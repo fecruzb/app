@@ -1,6 +1,6 @@
 import { changePasswordSchema } from "@app/shared";
 import { HttpError, parseBody } from "@/lib/errors";
-import type { AppContext } from "@/lib/http";
+import type { AppContext } from "@/context";
 import { authRepository } from "@/domains/auth/repository";
 import { deleteUserSessions, hashPassword, verifyPassword } from "@/domains/auth/service";
 

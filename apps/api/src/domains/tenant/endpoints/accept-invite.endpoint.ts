@@ -5,7 +5,7 @@ import { getCookie } from "hono/cookie";
 import { acceptInviteNewAccountSchema } from "@app/shared";
 import { hashPassword, hashToken } from "@/lib/crypto";
 import { HttpError, parseBody } from "@/lib/errors";
-import type { AppContext } from "@/lib/http";
+import type { AppContext } from "@/context";
 import { authRepository } from "@/domains/auth/repository";
 import {
   createSession,

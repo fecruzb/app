@@ -1,6 +1,6 @@
 import { updateTenantSchema } from "@app/shared";
 import { parseBody } from "@/lib/errors";
-import type { AppContext } from "@/lib/http";
+import type { AppContext } from "@/context";
 import { tenantRepository } from "../repository";
 import { toTenantSummary } from "../service";
 

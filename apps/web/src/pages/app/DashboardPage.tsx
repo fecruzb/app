@@ -4,7 +4,7 @@ import { ArrowRightIcon, StickyNoteIcon, UsersIcon } from "lucide-react";
 import type { MemberDto, NoteDto } from "@app/shared";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { api } from "@/lib/api";
+import { api } from "@/api";
 import { useAuth } from "@/providers/auth";
 import { useTenant } from "@/providers/tenant";
 

@@ -1,6 +1,6 @@
 import { resetPasswordSchema } from "@app/shared";
 import { HttpError, parseBody } from "@/lib/errors";
-import type { AppContext } from "@/lib/http";
+import type { AppContext } from "@/context";
 import { buildMe } from "../dto";
 import { authRepository } from "../repository";
 import {

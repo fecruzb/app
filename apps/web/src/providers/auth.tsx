@@ -1,7 +1,7 @@
 import { createContext, useContext, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { MeDto } from "@app/shared";
-import { api, ApiError } from "@/lib/api";
+import { api, ApiError } from "@/api";
 
 type AuthContextValue = {
   /** null = deslogado; undefined nunca chega aos consumidores (gate no provider). */
