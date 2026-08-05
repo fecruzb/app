@@ -1,7 +1,7 @@
 // Mapa de rotas do domínio tenant — cada handler vive em endpoints/*.
 import { Hono } from "hono";
-import type { AppEnv } from "../../lib/http";
-import { requireAuth } from "../auth/middleware";
+import type { AppEnv } from "@/lib/http";
+import { requireAuth } from "@/domains/auth/middleware";
 import { acceptInvite } from "./endpoints/accept-invite.endpoint";
 import { createInvite } from "./endpoints/create-invite.endpoint";
 import { getInvite } from "./endpoints/get-invite.endpoint";

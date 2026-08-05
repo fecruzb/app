@@ -1,4 +1,4 @@
-import type { AppContext } from "../../../lib/http";
+import type { AppContext } from "@/lib/http";
 import { toNoteDto } from "../dto";
 import { noteRepository } from "../repository";
 

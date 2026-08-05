@@ -1,8 +1,8 @@
 // Recurso de exemplo — troque pelo domínio do seu produto.
 import { index, pgTable, text, uuid } from "drizzle-orm/pg-core";
-import { timestamps } from "../../lib/columns";
-import { users } from "../auth/schema";
-import { tenants } from "../tenant/schema";
+import { timestamps } from "@/db/columns";
+import { users } from "@/domains/auth/schema";
+import { tenants } from "@/domains/tenant/schema";
 
 export const notes = pgTable(
   "notes",

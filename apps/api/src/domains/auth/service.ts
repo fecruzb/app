@@ -2,14 +2,14 @@
 // ação enviados por e-mail. As primitivas de crypto vivem em lib/crypto.
 import type { Context } from "hono";
 import { setCookie } from "hono/cookie";
-import { generateToken, hashToken } from "../../lib/crypto";
-import { sendEmail } from "../../lib/email";
-import { env } from "../../lib/env";
+import { generateToken, hashToken } from "@/lib/crypto";
+import { sendEmail } from "@/integrations/resend";
+import { env } from "@/lib/env";
 import { verifyEmailTemplate } from "./emails";
 import { authRepository } from "./repository";
 import type { ActionTokenPurpose, User } from "./schema";
 
-export { hashPassword, verifyPassword } from "../../lib/crypto";
+export { hashPassword, verifyPassword } from "@/lib/crypto";
 
 export const SESSION_COOKIE = "app_session";
 export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 dias

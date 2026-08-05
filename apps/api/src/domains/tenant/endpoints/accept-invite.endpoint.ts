@@ -3,16 +3,16 @@
 // por ele).
 import { getCookie } from "hono/cookie";
 import { acceptInviteNewAccountSchema } from "@app/shared";
-import { hashPassword, hashToken } from "../../../lib/crypto";
-import { HttpError, parseBody } from "../../../lib/errors";
-import type { AppContext } from "../../../lib/http";
-import { authRepository } from "../../auth/repository";
+import { hashPassword, hashToken } from "@/lib/crypto";
+import { HttpError, parseBody } from "@/lib/errors";
+import type { AppContext } from "@/lib/http";
+import { authRepository } from "@/domains/auth/repository";
 import {
   createSession,
   getSessionUser,
   SESSION_COOKIE,
   setSessionCookie,
-} from "../../auth/service";
+} from "@/domains/auth/service";
 import { tenantRepository } from "../repository";
 
 export async function acceptInvite(c: AppContext) {

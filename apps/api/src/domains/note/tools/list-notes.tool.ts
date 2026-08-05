@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { defineTool, toolJson } from "../../agent/tool";
+import { defineTool, toolJson } from "@/domains/agent/tool";
 import { noteRepository } from "../repository";
 
 export const listNotesTool = defineTool({

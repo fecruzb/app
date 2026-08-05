@@ -1,7 +1,7 @@
 import { agentChatSchema } from "@app/shared";
-import { HttpError, parseBody } from "../../../lib/errors";
-import type { AppContext } from "../../../lib/http";
-import { hasOpenAiKey } from "../../../lib/openai";
+import { HttpError, parseBody } from "@/lib/errors";
+import type { AppContext } from "@/lib/http";
+import { hasOpenAiKey } from "@/integrations/openai";
 import { runAssistant } from "../assistant";
 
 export async function chat(c: AppContext) {

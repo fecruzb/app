@@ -1,7 +1,7 @@
 // Todo acesso a dados do domínio auth passa por aqui — os endpoints e o
 // service não escrevem SQL.
 import { and, eq, gt, ne } from "drizzle-orm";
-import { db } from "../../lib/db";
+import { db } from "@/db/client";
 import { actionTokens, sessions, users, type ActionTokenPurpose, type User } from "./schema";
 
 export const authRepository = {

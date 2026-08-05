@@ -1,4 +1,4 @@
-import type { AppContext } from "../../../lib/http";
+import type { AppContext } from "@/lib/http";
 import { buildMe } from "../dto";
 
 export async function me(c: AppContext) {

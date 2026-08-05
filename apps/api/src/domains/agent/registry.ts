@@ -1,7 +1,7 @@
 // Registry central: junta as tools declaradas em cada domínio.
 // Ao criar um domínio novo, adicione o array dele aqui.
-import { noteTools } from "../note/tools";
-import { tenantTools } from "../tenant/tools";
+import { noteTools } from "@/domains/note/tools";
+import { tenantTools } from "@/domains/tenant/tools";
 import type { AgentTool } from "./tool";
 
 export const allTools: AgentTool[] = [...tenantTools, ...noteTools];

@@ -6,7 +6,7 @@
 // o tenant vem de MCP_TENANT_SLUG (default: o mais antigo do banco) e o autor
 // das escritas é o primeiro owner desse tenant.
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { tenantRepository } from "../tenant/repository";
+import { tenantRepository } from "@/domains/tenant/repository";
 import { createMcpServer } from "./mcp-server";
 
 const slug = process.env.MCP_TENANT_SLUG;

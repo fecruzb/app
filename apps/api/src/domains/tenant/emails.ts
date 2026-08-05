@@ -1,4 +1,4 @@
-import { emailLayout } from "../../lib/email";
+import { emailLayout } from "@/lib/email";
 
 export function inviteTemplate(tenantName: string, inviterName: string | null, url: string) {
   const who = inviterName ? `${inviterName} convidou você` : "Você foi convidado(a)";

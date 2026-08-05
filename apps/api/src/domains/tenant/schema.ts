@@ -1,7 +1,7 @@
 import { pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { tenantRoles } from "@app/shared";
-import { timestamps } from "../../lib/columns";
-import { users } from "../auth/schema";
+import { timestamps } from "@/db/columns";
+import { users } from "@/domains/auth/schema";
 
 export const tenants = pgTable("tenants", {
   id: uuid("id").primaryKey().defaultRandom(),

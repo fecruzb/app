@@ -1,8 +1,8 @@
-import { hashPassword } from "../lib/crypto";
-import { db, sql } from "../lib/db";
-import { authRepository } from "../domains/auth/repository";
-import { notes } from "../domains/note/schema";
-import { createTenantWithOwner } from "../domains/tenant/service";
+import { hashPassword } from "@/lib/crypto";
+import { db, sql } from "./client";
+import { authRepository } from "@/domains/auth/repository";
+import { notes } from "@/domains/note/schema";
+import { createTenantWithOwner } from "@/domains/tenant/service";
 
 // Seed idempotente com um usuário demo para desenvolvimento.
 // Login: demo@example.com / demo1234

@@ -1,8 +1,8 @@
 // Todo acesso a dados de notas passa por aqui. Repare que toda query filtra
 // por tenantId — é assim que o isolamento multi-tenant se mantém.
 import { and, desc, eq, ilike } from "drizzle-orm";
-import { db } from "../../lib/db";
-import { users } from "../auth/schema";
+import { db } from "@/db/client";
+import { users } from "@/domains/auth/schema";
 import { notes, type Note } from "./schema";
 
 export type NoteWithAuthor = { note: Note; authorName: string | null };

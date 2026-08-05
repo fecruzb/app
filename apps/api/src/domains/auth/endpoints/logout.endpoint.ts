@@ -1,5 +1,5 @@
 import { deleteCookie, getCookie } from "hono/cookie";
-import type { AppContext } from "../../../lib/http";
+import type { AppContext } from "@/lib/http";
 import { deleteSession, SESSION_COOKIE } from "../service";
 
 export async function logout(c: AppContext) {

@@ -4,15 +4,15 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
 import { logger as honoLogger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
-import { env } from "./lib/env";
-import { errorHandler } from "./lib/errors";
-import { logger } from "./lib/logger";
-import { accountRoutes } from "./domains/account/routes";
-import { agentRoutes } from "./domains/agent/routes";
-import { authRoutes } from "./domains/auth/routes";
-import { noteRoutes } from "./domains/note/routes";
-import { systemRoutes } from "./domains/system/routes";
-import { inviteRoutes, tenantRoutes } from "./domains/tenant/routes";
+import { env } from "@/lib/env";
+import { errorHandler } from "@/lib/errors";
+import { logger } from "@/lib/logger";
+import { accountRoutes } from "@/domains/account/routes";
+import { agentRoutes } from "@/domains/agent/routes";
+import { authRoutes } from "@/domains/auth/routes";
+import { noteRoutes } from "@/domains/note/routes";
+import { systemRoutes } from "@/domains/system/routes";
+import { inviteRoutes, tenantRoutes } from "@/domains/tenant/routes";
 
 const app = new Hono();
 

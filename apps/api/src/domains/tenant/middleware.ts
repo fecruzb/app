@@ -1,7 +1,7 @@
 import { createMiddleware } from "hono/factory";
 import { managerRoles } from "@app/shared";
-import { HttpError } from "../../lib/errors";
-import type { AppEnv } from "../../lib/http";
+import { HttpError } from "@/lib/errors";
+import type { AppEnv } from "@/lib/http";
 import { tenantRepository } from "./repository";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

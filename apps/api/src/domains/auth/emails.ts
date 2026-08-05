@@ -1,4 +1,4 @@
-import { emailLayout } from "../../lib/email";
+import { emailLayout } from "@/lib/email";
 
 export function verifyEmailTemplate(name: string, url: string) {
   return {

@@ -45,8 +45,9 @@ A API é organizada por **domínio**: cada domínio agrupa seu schema de banco, 
 
 ```
 apps/api/src/
-├── lib/                  # infra e wrappers: env (validado no boot), db, crypto, email (Resend),
-│                         # openai, agent-loop, logger, erros, tipos http
+├── lib/                  # utilidades puras (sem dependência externa): env (validado no boot),
+│                         # crypto, logger, erros, layout de email, tipos http
+├── integrations/         # wrappers de serviços externos: openai (cliente + loop de tools), resend
 ├── domains/
 │   ├── system/           # health + config pública (sem auth)
 │   ├── auth/             # schema, repository, service, dto, emails, middleware, endpoints/, routes
@@ -55,7 +56,7 @@ apps/api/src/
 │   │                     # emails, middleware, endpoints/, tools/, routes
 │   ├── note/             # recurso de exemplo: schema, repository, dto, endpoints/, tools/, routes
 │   └── agent/            # assistant (policy), mcp-server, registry de tools, stdio, endpoints/, routes
-├── db/                   # schema.ts (barrel p/ drizzle-kit) + seed
+├── db/                   # client, schema.ts (barrel p/ drizzle-kit), columns (auditoria), seed
 └── index.ts              # monta as rotas e sobe o servidor
 
 apps/web                  # React SPA (páginas públicas + área logada)
@@ -71,7 +72,8 @@ Convenções:
 - **Isolamento por tenant é seguro por padrão** — o `routes.ts` de cada domínio sob tenant aplica `requireAuth`/`requireTenant` uma vez (via `.use`), então toda rota nova já nasce isolada.
 - **Tabela nova?** Exporte o schema do domínio em `db/schema.ts` (barrel que o drizzle-kit lê) e rode `db:generate`.
 - **Env é validado no boot** (`lib/env.ts`, Zod): variável obrigatória faltando derruba o processo com mensagem clara em vez de quebrar numa query. Adicione novas vars nesse schema.
-- **O agente** tem duas camadas: a *policy* (`domains/agent/assistant.ts` — quem é o agente e como age) e a *mecânica* (`lib/agent-loop.ts` — o loop de tool-calling da OpenAI). As tools do registry são chamadas direto no request; o `mcp-server.ts` só entra no modo stdio (Cursor).
+- **Imports com alias `@/`** (→ `apps/api/src/`): tudo que cruza fronteira usa alias — `@/lib/*`, `@/integrations/*`, `@/db/*`, `@/domains/<outro>/*`. Só imports dentro do próprio domínio ficam relativos (`./repository`, `../service`). Assim mover arquivos não quebra imports e o `../../../` some.
+- **O agente** tem duas camadas: a *policy* (`domains/agent/assistant.ts` — quem é o agente e como age) e a *mecânica* (`integrations/openai.ts` — cliente da OpenAI + o loop de tool-calling). As tools do registry são chamadas direto no request; o `mcp-server.ts` só entra no modo stdio (Cursor).
 
 Pontos de entrada úteis:
 

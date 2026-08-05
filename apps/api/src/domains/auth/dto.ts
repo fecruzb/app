@@ -1,5 +1,5 @@
 import type { MeDto, UserDto } from "@app/shared";
-import { tenantRepository } from "../tenant/repository";
+import { tenantRepository } from "@/domains/tenant/repository";
 import type { User } from "./schema";
 
 export function toUserDto(user: User): UserDto {

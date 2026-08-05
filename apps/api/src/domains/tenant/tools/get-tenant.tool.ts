@@ -1,4 +1,4 @@
-import { defineTool, toolJson } from "../../agent/tool";
+import { defineTool, toolJson } from "@/domains/agent/tool";
 import { tenantRepository } from "../repository";
 
 export const getTenantTool = defineTool({

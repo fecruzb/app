@@ -1,9 +1,9 @@
 import { createInviteSchema, type InviteDto } from "@app/shared";
-import { generateToken, hashToken } from "../../../lib/crypto";
-import { sendEmail } from "../../../lib/email";
-import { env } from "../../../lib/env";
-import { HttpError, parseBody } from "../../../lib/errors";
-import type { AppContext } from "../../../lib/http";
+import { generateToken, hashToken } from "@/lib/crypto";
+import { sendEmail } from "@/integrations/resend";
+import { env } from "@/lib/env";
+import { HttpError, parseBody } from "@/lib/errors";
+import type { AppContext } from "@/lib/http";
 import { inviteTemplate } from "../emails";
 import { tenantRepository } from "../repository";
 

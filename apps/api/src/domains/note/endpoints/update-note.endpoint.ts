@@ -1,6 +1,6 @@
 import { noteInputSchema } from "@app/shared";
-import { HttpError, parseBody, uuidParam } from "../../../lib/errors";
-import type { AppContext } from "../../../lib/http";
+import { HttpError, parseBody, uuidParam } from "@/lib/errors";
+import type { AppContext } from "@/lib/http";
 import { toNoteDto } from "../dto";
 import { noteRepository } from "../repository";
 

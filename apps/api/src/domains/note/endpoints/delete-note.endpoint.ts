@@ -1,5 +1,5 @@
-import { uuidParam } from "../../../lib/errors";
-import type { AppContext } from "../../../lib/http";
+import { uuidParam } from "@/lib/errors";
+import type { AppContext } from "@/lib/http";
 import { noteRepository } from "../repository";
 
 export async function deleteNote(c: AppContext) {

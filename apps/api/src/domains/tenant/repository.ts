@@ -2,8 +2,8 @@
 // passa por aqui.
 import { and, asc, desc, eq, gt } from "drizzle-orm";
 import type { MemberDto, TenantSummaryDto } from "@app/shared";
-import { db } from "../../lib/db";
-import { users, type User } from "../auth/schema";
+import { db } from "@/db/client";
+import { users, type User } from "@/domains/auth/schema";
 import {
   tenantInvites,
   tenantMembers,

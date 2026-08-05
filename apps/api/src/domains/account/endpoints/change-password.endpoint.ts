@@ -1,8 +1,8 @@
 import { changePasswordSchema } from "@app/shared";
-import { HttpError, parseBody } from "../../../lib/errors";
-import type { AppContext } from "../../../lib/http";
-import { authRepository } from "../../auth/repository";
-import { deleteUserSessions, hashPassword, verifyPassword } from "../../auth/service";
+import { HttpError, parseBody } from "@/lib/errors";
+import type { AppContext } from "@/lib/http";
+import { authRepository } from "@/domains/auth/repository";
+import { deleteUserSessions, hashPassword, verifyPassword } from "@/domains/auth/service";
 
 export async function changePassword(c: AppContext) {
   const data = await parseBody(c, changePasswordSchema);

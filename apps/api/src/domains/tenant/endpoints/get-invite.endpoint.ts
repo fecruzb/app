@@ -1,9 +1,9 @@
 // Endpoint público: dados do convite para a tela de aceite.
 import type { PublicInviteDto } from "@app/shared";
-import { hashToken } from "../../../lib/crypto";
-import { HttpError } from "../../../lib/errors";
-import type { AppContext } from "../../../lib/http";
-import { authRepository } from "../../auth/repository";
+import { hashToken } from "@/lib/crypto";
+import { HttpError } from "@/lib/errors";
+import type { AppContext } from "@/lib/http";
+import { authRepository } from "@/domains/auth/repository";
 import { tenantRepository } from "../repository";
 
 export async function getInvite(c: AppContext) {

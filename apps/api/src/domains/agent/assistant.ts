@@ -1,11 +1,11 @@
 // Assistente do app: recebe a conversa do botão flutuante e responde usando as
 // tools do registry (as mesmas expostas ao Cursor via MCP). Aqui é a "policy"
-// do produto — quem é o agente e como age; a mecânica do loop vive em
-// lib/agent-loop.
+// do produto — quem é o agente e como age; a mecânica do loop de tool-calling
+// vive em integrations/openai.
 import { z } from "zod";
 import type { AgentMessage, AgentResult } from "@app/shared";
-import { runToolLoop, type LoopTool } from "../../lib/agent-loop";
-import { env } from "../../lib/env";
+import { runToolLoop, type LoopTool } from "@/integrations/openai";
+import { env } from "@/lib/env";
 import { allTools, getTool } from "./registry";
 import type { AgentContext } from "./tool";
 

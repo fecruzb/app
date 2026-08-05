@@ -1,8 +1,8 @@
 import { updateAccountSchema } from "@app/shared";
-import { parseBody } from "../../../lib/errors";
-import type { AppContext } from "../../../lib/http";
-import { toUserDto } from "../../auth/dto";
-import { authRepository } from "../../auth/repository";
+import { parseBody } from "@/lib/errors";
+import type { AppContext } from "@/lib/http";
+import { toUserDto } from "@/domains/auth/dto";
+import { authRepository } from "@/domains/auth/repository";
 
 export async function updateProfile(c: AppContext) {
   const data = await parseBody(c, updateAccountSchema);
