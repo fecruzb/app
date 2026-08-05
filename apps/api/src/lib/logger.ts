@@ -1,5 +1,4 @@
-// Ponto único de log. Hoje envelopa o console; troque por pino/estruturado
-// aqui sem tocar no resto do código.
+// Single logging entry point. Wraps the console for now; swap for a structured logger here.
 export const logger = {
   info: (message: string, ...rest: unknown[]) => console.log(message, ...rest),
   warn: (message: string, ...rest: unknown[]) => console.warn(message, ...rest),

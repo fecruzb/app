@@ -1,4 +1,4 @@
-// Recurso de exemplo — troque pelo domínio do seu produto.
+// Example resource — replace with your product's domain.
 import { z } from "zod";
 
 export const noteInputSchema = z.object({

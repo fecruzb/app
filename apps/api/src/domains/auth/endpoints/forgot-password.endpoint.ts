@@ -19,6 +19,6 @@ export async function forgotPassword(c: AppContext) {
     );
     void sendEmail({ to: user.email, subject, html });
   }
-  // Sempre 200 para não revelar se o e-mail existe
+  // Always 200 to avoid revealing whether the email exists
   return c.json({ ok: true });
 }

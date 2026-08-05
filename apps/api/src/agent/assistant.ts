@@ -1,7 +1,7 @@
-// Assistente do app: recebe a conversa do botão flutuante e responde usando as
-// tools do registry (as mesmas expostas ao Cursor via MCP). Aqui é a "policy"
-// do produto — quem é o agente e como age; a mecânica do loop de tool-calling
-// vive em integrations/openai.
+// In-app assistant: takes the floating-button conversation and answers using
+// the registry tools (the same ones exposed via MCP). This is the product
+// "policy" — who the agent is and how it acts; the tool-calling loop lives in
+// integrations/openai.
 import { z } from "zod";
 import type { AgentMessage, AgentResult } from "@app/shared";
 import { runToolLoop, type LoopTool } from "@/integrations/openai";
@@ -10,18 +10,18 @@ import { allTools, getTool } from "./registry";
 import type { AgentContext } from "./tool";
 
 function systemPrompt(ctx: AgentContext): string {
-  return `Você é o assistente do App Base dentro do tenant "${ctx.tenantName}". Está falando com ${ctx.userName} (role: ${ctx.role}).
+  return `You are the App Base assistant inside the tenant "${ctx.tenantName}". You are talking to ${ctx.userName} (role: ${ctx.role}).
 
-Você lê e gerencia o conteúdo do tenant pelas tools disponíveis (informações do tenant, membros e notas).
+You read and manage the tenant's content through the available tools (tenant info, members and notes).
 
-Como agir:
-- Interprete a intenção e execute — não peça confirmação para ações simples e reversíveis (criar ou editar nota).
-- Descubra ids reais antes de escrever: use list_notes. Nunca invente ids.
-- Ao editar uma nota, leia antes com get_note e reenvie o conteúdo completo já alterado.
-- Só apague algo (delete_note) se o pedido for explícito.
-- Se o pedido for ambíguo demais para agir com segurança, diga o que falta em uma frase.
+How to act:
+- Interpret the intent and act — don't ask for confirmation on simple, reversible actions (create or edit a note).
+- Find real ids before writing: use list_notes. Never make up ids.
+- When editing a note, read it first with get_note and resend the full updated content.
+- Only delete something (delete_note) when explicitly asked.
+- If a request is too ambiguous to act safely, say what's missing in one sentence.
 
-Resposta final: curta e direta, em pt-BR, sem repetir ids técnicos.`;
+Final answer: short and direct, without repeating technical ids.`;
 }
 
 export async function runAssistant(
@@ -34,7 +34,7 @@ export async function runAssistant(
     inputSchema: tool.inputSchema,
     run: async (rawArgs) => {
       const args = z.object(tool.inputSchema).parse(rawArgs);
-      // Erros lançados pela tool são capturados pelo runToolLoop e viram isError.
+      // Errors thrown by the tool are caught by runToolLoop and become isError.
       const data = await tool.execute(ctx, args);
       return { text: JSON.stringify(data ?? null), isError: false };
     },
@@ -47,7 +47,7 @@ export async function runAssistant(
     tools,
   });
 
-  // Tools de escrita (que declaram `summarize`) e erros viram chips na UI.
+  // Write tools (those with `summarize`) and errors become chips in the UI.
   const actions = calls.flatMap(({ name, args, text, isError }) => {
     const summarize = getTool(name)?.summarize;
     if (!isError && !summarize) return [];

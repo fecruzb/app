@@ -1,6 +1,6 @@
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 
-// -- senhas: scrypt nativo, formato "salt$hash" (hex) ------------------------
+// -- passwords: native scrypt, "salt$hash" (hex) format -----------------------
 
 export function hashPassword(password: string): string {
   const salt = randomBytes(16).toString("hex");
@@ -15,7 +15,7 @@ export function verifyPassword(stored: string, password: string): boolean {
   return timingSafeEqual(Buffer.from(hash, "hex"), candidate);
 }
 
-// -- tokens opacos: o valor cru vai no cookie/e-mail; só o hash fica no banco --
+// -- opaque tokens: raw value goes in the cookie/email; only the hash is stored --
 
 export function generateToken(): string {
   return randomBytes(32).toString("base64url");

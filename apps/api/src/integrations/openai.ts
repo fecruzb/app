@@ -1,6 +1,6 @@
-// Integração com a OpenAI: cliente, checagem de chave e o loop de tool-calling
-// (modelo → tool calls → resultados → modelo). É a única parte que conhece a
-// API da OpenAI; troque o provedor de LLM aqui sem tocar no domínio do agente.
+// OpenAI integration: client, key check and the tool-calling loop
+// (model → tool calls → results → model). The only place that knows the
+// OpenAI API; swap the LLM provider here without touching the agent.
 import OpenAI from "openai";
 import { z, type ZodRawShape } from "zod";
 import { env } from "@/lib/env";
@@ -10,11 +10,11 @@ export function hasOpenAiKey(): boolean {
 }
 
 export function getOpenAI(): OpenAI {
-  if (!env.openaiApiKey) throw new Error("OPENAI_API_KEY não configurada (esperada em .env)");
+  if (!env.openaiApiKey) throw new Error("OPENAI_API_KEY not set (expected in .env)");
   return new OpenAI({ apiKey: env.openaiApiKey });
 }
 
-// -- tool-calling loop --------------------------------------------------------
+// -- tool-calling loop ---------------------------------------------------------
 
 export type LoopTool = {
   name: string;
@@ -35,9 +35,8 @@ export type LoopResult = { reply: string; calls: ToolCallRecord[] };
 type Message = OpenAI.Chat.Completions.ChatCompletionMessageParam;
 
 /**
- * Dado um conjunto de tools e a conversa, roda o loop até o modelo responder
- * sem chamar tools. Não sabe nada do produto — a "policy" (system prompt,
- * quais tools) vive na superfície do agente (agent/).
+ * Runs the loop until the model answers without calling tools. Knows nothing
+ * about the product — the "policy" (system prompt, which tools) lives in agent/.
  */
 export async function runToolLoop(opts: {
   model: string;
@@ -93,5 +92,5 @@ export async function runToolLoop(opts: {
     }
   }
 
-  return { reply: "Não consegui concluir dentro do limite de passos.", calls };
+  return { reply: "I couldn't finish within the step limit.", calls };
 }

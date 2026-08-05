@@ -1,4 +1,4 @@
-// Recurso de exemplo — troque pelo domínio do seu produto.
+// Example resource — replace with your product's domain.
 import { index, pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { timestamps } from "@/db/columns";
 import { users } from "@/domains/auth/schema";

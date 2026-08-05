@@ -25,10 +25,10 @@ export function RegisterPage() {
     try {
       const me = await api.post<MeDto>("/auth/register", { name, email, password });
       setMe(me);
-      toast.success("Conta criada! Enviamos um e-mail de confirmação.");
+      toast.success("Account created! We sent a confirmation email.");
       navigate("/app", { replace: true });
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Erro ao criar conta");
+      toast.error(err instanceof ApiError ? err.message : "Failed to create account");
     } finally {
       setSubmitting(false);
     }
@@ -37,16 +37,16 @@ export function RegisterPage() {
   if (!selfSignupEnabled) {
     return (
       <AuthLayout
-        title="Cadastro por convite"
-        description="O cadastro público está desativado. Peça um convite a um administrador."
+        title="Invite-only sign-up"
+        description="Public sign-up is disabled. Ask an administrator for an invite."
         footer={
           <Link to="/login" className="font-medium text-foreground hover:underline">
-            Voltar para o login
+            Back to sign in
           </Link>
         }
       >
         <p className="text-sm text-muted-foreground">
-          Se você recebeu um convite por e-mail, abra o link para criar sua conta.
+          If you received an invite by email, open the link to create your account.
         </p>
       </AuthLayout>
     );
@@ -54,20 +54,20 @@ export function RegisterPage() {
 
   return (
     <AuthLayout
-      title="Criar conta"
-      description="Comece grátis em segundos"
+      title="Create account"
+      description="Get started free in seconds"
       footer={
         <span>
-          Já tem conta?{" "}
+          Already have an account?{" "}
           <Link to="/login" className="font-medium text-foreground hover:underline">
-            Entrar
+            Sign in
           </Link>
         </span>
       }
     >
       <form onSubmit={handleSubmit} className="grid gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="name">Nome</Label>
+          <Label htmlFor="name">Name</Label>
           <Input
             id="name"
             autoComplete="name"
@@ -78,7 +78,7 @@ export function RegisterPage() {
           />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="email">E-mail</Label>
+          <Label htmlFor="email">Email</Label>
           <Input
             id="email"
             type="email"
@@ -89,7 +89,7 @@ export function RegisterPage() {
           />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="password">Senha</Label>
+          <Label htmlFor="password">Password</Label>
           <Input
             id="password"
             type="password"
@@ -99,10 +99,10 @@ export function RegisterPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <p className="text-xs text-muted-foreground">Mínimo de 8 caracteres</p>
+          <p className="text-xs text-muted-foreground">Minimum of 8 characters</p>
         </div>
         <Button type="submit" disabled={submitting}>
-          {submitting ? "Criando..." : "Criar conta"}
+          {submitting ? "Creating..." : "Create account"}
         </Button>
       </form>
     </AuthLayout>

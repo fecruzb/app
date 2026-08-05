@@ -19,8 +19,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { api, ApiError } from "@/api";
 import { useTenant } from "@/providers/tenant";
 
-// Página de exemplo com o padrão completo: query + mutations + dialog de
-// criar/editar. Copie como base para os recursos do seu produto.
+// Example page with the full pattern: query + mutations + create/edit dialog.
+// Copy as the base for your product's resources.
 
 export function NotesPage() {
   const { tenant } = useTenant();
@@ -45,15 +45,15 @@ export function NotesPage() {
     onSuccess: () => {
       void invalidate();
       setDialogOpen(false);
-      toast.success(editing ? "Nota atualizada" : "Nota criada");
+      toast.success(editing ? "Note updated" : "Note created");
     },
-    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Erro ao salvar"),
+    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Failed to save"),
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.delete(`/tenants/${tenant.id}/notes/${id}`),
     onSuccess: () => void invalidate(),
-    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Erro ao excluir"),
+    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Failed to delete"),
   });
 
   function openCreate() {
@@ -79,11 +79,11 @@ export function NotesPage() {
     <div className="grid gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Notas</h1>
-          <p className="text-muted-foreground">Recurso de exemplo com CRUD por tenant</p>
+          <h1 className="text-2xl font-semibold">Notes</h1>
+          <p className="text-muted-foreground">Example resource with per-tenant CRUD</p>
         </div>
         <Button onClick={openCreate}>
-          <PlusIcon /> Nova nota
+          <PlusIcon /> New note
         </Button>
       </div>
 
@@ -101,24 +101,24 @@ export function NotesPage() {
                   <div className="flex shrink-0 gap-1">
                     <Button variant="ghost" size="icon" onClick={() => openEdit(note)}>
                       <PencilIcon />
-                      <span className="sr-only">Editar</span>
+                      <span className="sr-only">Edit</span>
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={() => {
-                        if (window.confirm(`Excluir a nota "${note.title}"?`)) {
+                        if (window.confirm(`Delete the note "${note.title}"?`)) {
                           deleteMutation.mutate(note.id);
                         }
                       }}
                     >
                       <Trash2Icon />
-                      <span className="sr-only">Excluir</span>
+                      <span className="sr-only">Delete</span>
                     </Button>
                   </div>
                 </div>
                 <CardDescription>
-                  {note.authorName ?? "—"} · {new Date(note.updatedAt).toLocaleDateString("pt-BR")}
+                  {note.authorName ?? "—"} · {new Date(note.updatedAt).toLocaleDateString("en-US")}
                 </CardDescription>
               </CardHeader>
               {note.content && (
@@ -134,7 +134,7 @@ export function NotesPage() {
       ) : (
         <Card>
           <CardContent className="p-10 text-center text-muted-foreground">
-            Nenhuma nota ainda. Crie a primeira!
+            No notes yet. Create the first one!
           </CardContent>
         </Card>
       )}
@@ -142,14 +142,14 @@ export function NotesPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editing ? "Editar nota" : "Nova nota"}</DialogTitle>
+            <DialogTitle>{editing ? "Edit note" : "New note"}</DialogTitle>
             <DialogDescription>
-              {editing ? "Atualize o conteúdo da nota." : "Adicione uma nota ao tenant."}
+              {editing ? "Update the note's content." : "Add a note to the tenant."}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="note-title">Título</Label>
+              <Label htmlFor="note-title">Title</Label>
               <Input
                 id="note-title"
                 required
@@ -159,7 +159,7 @@ export function NotesPage() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="note-content">Conteúdo</Label>
+              <Label htmlFor="note-content">Content</Label>
               <Textarea
                 id="note-content"
                 value={content}
@@ -168,7 +168,7 @@ export function NotesPage() {
             </div>
             <DialogFooter>
               <Button type="submit" disabled={saveMutation.isPending}>
-                {saveMutation.isPending ? "Salvando..." : "Salvar"}
+                {saveMutation.isPending ? "Saving..." : "Save"}
               </Button>
             </DialogFooter>
           </form>

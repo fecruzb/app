@@ -1,5 +1,5 @@
-// Regras de negócio de auth: sessões opacas em cookie httpOnly e tokens de
-// ação enviados por e-mail. As primitivas de crypto vivem em lib/crypto.
+// Auth business rules: opaque sessions in an httpOnly cookie and action
+// tokens sent by email. Crypto primitives live in lib/crypto.
 import type { Context } from "hono";
 import { setCookie } from "hono/cookie";
 import { generateToken, hashToken } from "@/lib/crypto";
@@ -12,14 +12,14 @@ import type { ActionTokenPurpose, User } from "./schema";
 export { hashPassword, verifyPassword } from "@/lib/crypto";
 
 export const SESSION_COOKIE = "app_session";
-export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 dias
+export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 const TOKEN_TTL: Record<ActionTokenPurpose, number> = {
   verify_email: 24 * 60 * 60 * 1000,
   reset_password: 60 * 60 * 1000,
 };
 
-// -- sessões ------------------------------------------------------------------
+// -- sessions -----------------------------------------------------------------
 
 export async function createSession(userId: string): Promise<string> {
   const token = generateToken();
@@ -53,7 +53,7 @@ export function setSessionCookie(c: Context, token: string): void {
   });
 }
 
-// -- action tokens (verificação de e-mail / reset de senha) --------------------
+// -- action tokens (email verification / password reset) -----------------------
 
 export async function createActionToken(
   userId: string,

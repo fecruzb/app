@@ -21,29 +21,29 @@ export function VerifyEmailPage() {
   });
 
   return (
-    <AuthLayout title="Verificação de e-mail">
+    <AuthLayout title="Email verification">
       {isLoading ? (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Loader2Icon className="size-4 animate-spin" /> Verificando...
+          <Loader2Icon className="size-4 animate-spin" /> Verifying...
         </div>
       ) : error ? (
         <div className="grid gap-4">
           <div className="flex items-start gap-2 text-sm">
             <XCircleIcon className="mt-0.5 size-4 shrink-0 text-destructive" />
-            <span>{error instanceof ApiError ? error.message : "Erro ao verificar o e-mail"}</span>
+            <span>{error instanceof ApiError ? error.message : "Failed to verify email"}</span>
           </div>
           <Button variant="outline" asChild>
-            <Link to="/app">Ir para o app</Link>
+            <Link to="/app">Go to app</Link>
           </Button>
         </div>
       ) : (
         <div className="grid gap-4">
           <div className="flex items-start gap-2 text-sm">
             <CheckCircle2Icon className="mt-0.5 size-4 shrink-0 text-green-600" />
-            <span>E-mail verificado com sucesso!</span>
+            <span>Email verified successfully!</span>
           </div>
           <Button asChild>
-            <Link to="/app">Ir para o app</Link>
+            <Link to="/app">Go to app</Link>
           </Button>
         </div>
       )}

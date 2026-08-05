@@ -1,5 +1,4 @@
-// Todo acesso a dados do domínio auth passa por aqui — os endpoints e o
-// service não escrevem SQL.
+// All auth data access goes through here — endpoints and service never write SQL.
 import { and, eq, gt, ne } from "drizzle-orm";
 import { db } from "@/db/client";
 import { actionTokens, sessions, users, type ActionTokenPurpose, type User } from "./schema";
@@ -58,7 +57,7 @@ export const authRepository = {
     await db.delete(sessions).where(eq(sessions.tokenHash, tokenHash));
   },
 
-  /** Apaga as sessões do usuário; com exceptTokenHash, preserva a atual. */
+  /** Deletes the user's sessions; exceptTokenHash keeps the current one. */
   async deleteUserSessions(userId: string, exceptTokenHash?: string) {
     const where = exceptTokenHash
       ? and(eq(sessions.userId, userId), ne(sessions.tokenHash, exceptTokenHash))
@@ -66,7 +65,7 @@ export const authRepository = {
     await db.delete(sessions).where(where);
   },
 
-  // -- action tokens (verificação de e-mail / reset de senha) ---------------
+  // -- action tokens (email verification / password reset) ------------------
 
   async replaceActionToken(values: {
     userId: string;
@@ -74,14 +73,14 @@ export const authRepository = {
     tokenHash: string;
     expiresAt: Date;
   }) {
-    // Um token válido por vez por usuário/propósito
+    // One valid token per user/purpose at a time
     await db
       .delete(actionTokens)
       .where(and(eq(actionTokens.userId, values.userId), eq(actionTokens.purpose, values.purpose)));
     await db.insert(actionTokens).values(values);
   },
 
-  /** Valida e consome (deleta) o token; retorna o userId ou null. */
+  /** Validates and consumes (deletes) the token; returns the userId or null. */
   async consumeActionToken(tokenHash: string, purpose: ActionTokenPurpose): Promise<string | null> {
     const [row] = await db
       .select()

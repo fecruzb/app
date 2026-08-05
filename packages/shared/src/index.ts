@@ -1,10 +1,10 @@
-// Contratos compartilhados entre API e web, organizados por domínio.
+// Contracts shared between API and web, organized by domain.
 export * from "./auth";
 export * from "./tenant";
 export * from "./note";
 export * from "./agent";
 
-/** Formato padrão de erro da API. */
+/** Standard API error shape. */
 export type ApiError = {
   error: string;
 };

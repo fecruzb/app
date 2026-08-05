@@ -22,10 +22,10 @@ export function ResetPasswordPage() {
     try {
       const me = await api.post<MeDto>("/auth/reset-password", { token, password });
       setMe(me);
-      toast.success("Senha redefinida!");
+      toast.success("Password reset!");
       navigate("/app", { replace: true });
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Erro ao redefinir a senha");
+      toast.error(err instanceof ApiError ? err.message : "Failed to reset password");
     } finally {
       setSubmitting(false);
     }
@@ -33,17 +33,17 @@ export function ResetPasswordPage() {
 
   return (
     <AuthLayout
-      title="Nova senha"
-      description="Escolha uma nova senha para a sua conta"
+      title="New password"
+      description="Choose a new password for your account"
       footer={
         <Link to="/forgot-password" className="font-medium text-foreground hover:underline">
-          Pedir um novo link
+          Request a new link
         </Link>
       }
     >
       <form onSubmit={handleSubmit} className="grid gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="password">Nova senha</Label>
+          <Label htmlFor="password">New password</Label>
           <Input
             id="password"
             type="password"
@@ -53,10 +53,10 @@ export function ResetPasswordPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <p className="text-xs text-muted-foreground">Mínimo de 8 caracteres</p>
+          <p className="text-xs text-muted-foreground">Minimum of 8 characters</p>
         </div>
         <Button type="submit" disabled={submitting}>
-          {submitting ? "Salvando..." : "Redefinir senha"}
+          {submitting ? "Saving..." : "Reset password"}
         </Button>
       </form>
     </AuthLayout>

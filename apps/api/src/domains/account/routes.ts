@@ -1,4 +1,4 @@
-// Conta do usuário logado (perfil e senha) — independe de tenant.
+// Logged-in user's account (profile and password) — tenant-independent.
 import { Hono } from "hono";
 import type { AppEnv } from "@/context";
 import { requireAuth } from "@/domains/auth/middleware";

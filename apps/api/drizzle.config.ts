@@ -1,10 +1,10 @@
 import { defineConfig } from "drizzle-kit";
 
-// Em dev o .env fica na raiz do monorepo; em produção o Render injeta as vars.
+// In dev the .env lives at the monorepo root; in production Render injects the vars.
 try {
   process.loadEnvFile(new URL("../../.env", import.meta.url).pathname);
 } catch {
-  // sem .env — usa defaults/vars do ambiente
+  // no .env — use environment vars/defaults
 }
 
 export default defineConfig({

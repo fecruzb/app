@@ -35,8 +35,8 @@ function initials(name: string): string {
 }
 
 /**
- * Só vira um seletor quando o usuário participa de 2+ tenants (foi convidado
- * para outros). Com um tenant só, nada aparece — o ambiente é implícito.
+ * Only becomes a selector when the user belongs to 2+ tenants (was invited to
+ * others). With a single tenant nothing is shown — the environment is implicit.
  */
 function TenantSwitcher() {
   const { me } = useAuth();
@@ -55,7 +55,7 @@ function TenantSwitcher() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="start">
-        <DropdownMenuLabel>Seus tenants</DropdownMenuLabel>
+        <DropdownMenuLabel>Your tenants</DropdownMenuLabel>
         {tenants.map((t) => (
           <DropdownMenuItem key={t.id} onSelect={() => navigate(`/app/${t.slug}`)}>
             <span className="flex-1 truncate">{t.name}</span>
@@ -89,7 +89,7 @@ function UserMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="start" side="top">
         <DropdownMenuItem onSelect={() => navigate(`/app/${tenant.slug}/account`)}>
-          <UserIcon /> Minha conta
+          <UserIcon /> My account
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -97,7 +97,7 @@ function UserMenu() {
             void logout().then(() => navigate("/"));
           }}
         >
-          <LogOutIcon /> Sair
+          <LogOutIcon /> Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -116,9 +116,9 @@ function VerifyEmailBanner() {
     try {
       await api.post("/auth/resend-verification");
       setSent(true);
-      toast.success("E-mail de verificação reenviado");
+      toast.success("Verification email resent");
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Erro ao reenviar");
+      toast.error(err instanceof ApiError ? err.message : "Failed to resend");
     } finally {
       setSending(false);
     }
@@ -127,10 +127,10 @@ function VerifyEmailBanner() {
   return (
     <div className="flex flex-wrap items-center gap-2 border-b bg-amber-50 px-4 py-2 text-sm text-amber-900">
       <MailWarningIcon className="size-4 shrink-0" />
-      <span className="flex-1">Confirme seu e-mail para proteger sua conta.</span>
+      <span className="flex-1">Confirm your email to secure your account.</span>
       {!sent && (
         <Button size="sm" variant="outline" onClick={() => void resend()} disabled={sending}>
-          {sending ? "Enviando..." : "Reenviar e-mail"}
+          {sending ? "Sending..." : "Resend email"}
         </Button>
       )}
     </div>
@@ -139,9 +139,9 @@ function VerifyEmailBanner() {
 
 function navItems(slug: string) {
   return [
-    { to: `/app/${slug}`, end: true, icon: HomeIcon, label: "Início" },
-    { to: `/app/${slug}/notes`, end: false, icon: StickyNoteIcon, label: "Notas" },
-    { to: `/app/${slug}/settings`, end: false, icon: SettingsIcon, label: "Configurações" },
+    { to: `/app/${slug}`, end: true, icon: HomeIcon, label: "Home" },
+    { to: `/app/${slug}/notes`, end: false, icon: StickyNoteIcon, label: "Notes" },
+    { to: `/app/${slug}/settings`, end: false, icon: SettingsIcon, label: "Settings" },
   ];
 }
 
@@ -187,7 +187,7 @@ function Shell() {
         </main>
       </div>
 
-      {/* key reinicia a conversa ao trocar de tenant */}
+      {/* key resets the conversation when switching tenants */}
       {aiEnabled && <AgentFab key={tenant.id} />}
     </div>
   );

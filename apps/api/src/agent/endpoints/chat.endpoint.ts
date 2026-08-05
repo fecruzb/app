@@ -6,7 +6,7 @@ import { runAssistant } from "../assistant";
 
 export async function chat(c: AppContext) {
   if (!hasOpenAiKey()) {
-    throw new HttpError(503, "Agente indisponível — configure OPENAI_API_KEY");
+    throw new HttpError(503, "Agent unavailable — set OPENAI_API_KEY");
   }
   const { messages } = await parseBody(c, agentChatSchema);
   const tenant = c.get("tenant");

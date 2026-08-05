@@ -9,12 +9,12 @@ import { createSession, hashPassword, sendVerificationEmail, setSessionCookie } 
 
 export async function register(c: AppContext) {
   if (!env.selfSignupEnabled) {
-    throw new HttpError(403, "Cadastro desativado — peça um convite a um administrador");
+    throw new HttpError(403, "Sign-up is disabled — ask an administrator for an invite");
   }
   const data = await parseBody(c, registerSchema);
 
   if (await authRepository.findUserByEmail(data.email)) {
-    throw new HttpError(409, "Já existe uma conta com este e-mail");
+    throw new HttpError(409, "An account with this email already exists");
   }
 
   const user = await authRepository.insertUser({
@@ -23,9 +23,9 @@ export async function register(c: AppContext) {
     passwordHash: hashPassword(data.password),
   });
 
-  // Todo usuário nasce com um tenant pessoal onde é owner
+  // Every user gets a personal tenant where they are the owner
   const firstName = data.name.split(" ")[0];
-  await createTenantWithOwner(`Espaço de ${firstName}`, user.id);
+  await createTenantWithOwner(`${firstName}'s Workspace`, user.id);
 
   await sendVerificationEmail(user);
   setSessionCookie(c, await createSession(user.id));

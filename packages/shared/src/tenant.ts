@@ -21,7 +21,7 @@ export const updateMemberSchema = z.object({
   role: z.enum(tenantRoles),
 });
 
-/** Aceite de convite criando conta nova (usuário deslogado). */
+/** Invite acceptance that creates a new account (logged-out user). */
 export const acceptInviteNewAccountSchema = z.object({
   name: z.string().trim().min(2).max(100),
   password: z.string().min(8).max(200),
@@ -53,7 +53,7 @@ export type InviteDto = {
   expiresAt: string;
 };
 
-/** Dados públicos de um convite, exibidos na tela de aceite. */
+/** Public invite data, shown on the accept screen. */
 export type PublicInviteDto = {
   tenantName: string;
   email: string;

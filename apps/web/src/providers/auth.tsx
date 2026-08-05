@@ -7,7 +7,7 @@ type AuthContextValue = {
   /** null = deslogado; undefined nunca chega aos consumidores (gate no provider). */
   me: MeDto | null;
   isLoading: boolean;
-  /** Atualiza o cache após login/register/mudanças de conta. */
+  /** Updates the cache after login/register/account changes. */
   setMe: (me: MeDto | null) => void;
   refresh: () => Promise<void>;
   logout: () => Promise<void>;

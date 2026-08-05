@@ -20,9 +20,9 @@ function ProfileSection() {
     try {
       await api.patch<UserDto>("/account", { name });
       await refresh();
-      toast.success("Perfil atualizado");
+      toast.success("Profile updated");
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Erro ao salvar");
+      toast.error(err instanceof ApiError ? err.message : "Failed to save");
     } finally {
       setSaving(false);
     }
@@ -31,20 +31,20 @@ function ProfileSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Perfil</CardTitle>
+        <CardTitle>Profile</CardTitle>
         <CardDescription className="flex items-center gap-2">
           {me?.user.email}
           {me?.user.emailVerified ? (
-            <Badge variant="secondary">verificado</Badge>
+            <Badge variant="secondary">verified</Badge>
           ) : (
-            <Badge variant="outline">não verificado</Badge>
+            <Badge variant="outline">unverified</Badge>
           )}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="flex items-end gap-2">
           <div className="grid flex-1 gap-2">
-            <Label htmlFor="account-name">Nome</Label>
+            <Label htmlFor="account-name">Name</Label>
             <Input
               id="account-name"
               required
@@ -54,7 +54,7 @@ function ProfileSection() {
             />
           </div>
           <Button type="submit" disabled={saving || name === me?.user.name}>
-            {saving ? "Salvando..." : "Salvar"}
+            {saving ? "Saving..." : "Save"}
           </Button>
         </form>
       </CardContent>
@@ -74,9 +74,9 @@ function PasswordSection() {
       await api.patch("/account/password", { currentPassword, newPassword });
       setCurrentPassword("");
       setNewPassword("");
-      toast.success("Senha alterada — as outras sessões foram encerradas");
+      toast.success("Password changed — other sessions were ended");
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Erro ao alterar a senha");
+      toast.error(err instanceof ApiError ? err.message : "Failed to change password");
     } finally {
       setSaving(false);
     }
@@ -85,13 +85,13 @@ function PasswordSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Senha</CardTitle>
-        <CardDescription>Alterar a senha encerra as outras sessões ativas</CardDescription>
+        <CardTitle>Password</CardTitle>
+        <CardDescription>Changing your password ends other active sessions</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="current-password">Senha atual</Label>
+            <Label htmlFor="current-password">Current password</Label>
             <Input
               id="current-password"
               type="password"
@@ -102,7 +102,7 @@ function PasswordSection() {
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="new-password">Nova senha</Label>
+            <Label htmlFor="new-password">New password</Label>
             <Input
               id="new-password"
               type="password"
@@ -112,11 +112,11 @@ function PasswordSection() {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
-            <p className="text-xs text-muted-foreground">Mínimo de 8 caracteres</p>
+            <p className="text-xs text-muted-foreground">Minimum of 8 characters</p>
           </div>
           <div>
             <Button type="submit" disabled={saving}>
-              {saving ? "Salvando..." : "Alterar senha"}
+              {saving ? "Saving..." : "Change password"}
             </Button>
           </div>
         </form>
@@ -129,8 +129,8 @@ export function AccountPage() {
   return (
     <div className="grid gap-6">
       <div>
-        <h1 className="text-2xl font-semibold">Minha conta</h1>
-        <p className="text-muted-foreground">Perfil e segurança</p>
+        <h1 className="text-2xl font-semibold">My account</h1>
+        <p className="text-muted-foreground">Profile and security</p>
       </div>
       <ProfileSection />
       <PasswordSection />

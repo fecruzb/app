@@ -1,10 +1,9 @@
-// Contrato das tools do agente. Cada domínio define as suas em
-// domains/<dominio>/tools/*, uma por arquivo, e o registry (registry.ts)
-// junta tudo. O contrato é neutro de transporte: a tool retorna dados
-// JSON-serializáveis e lança Error para falhas esperadas — quem adapta para
-// MCP (mcp-server) ou para o loop da OpenAI (assistant) são as bordas.
-// A tool se auto-descreve: se tiver `summarize`, é uma ação de escrita e
-// vira chip na UI do chat; sem `summarize`, é leitura.
+// Agent tool contract. Each domain defines its tools in
+// domains/<domain>/tools/* (one per file) and the registry joins them all.
+// The contract is transport-neutral: tools return JSON-serializable data and
+// throw Error for expected failures — mcp-server (MCP) and assistant (OpenAI
+// loop) adapt at the edges. A tool with `summarize` is a write action (shown
+// as a chip in the chat UI); without it, a read.
 import type { z, ZodRawShape } from "zod";
 import type { TenantRole } from "@app/shared";
 
@@ -12,7 +11,7 @@ export type AgentContext = {
   tenantId: string;
   tenantName: string;
   tenantSlug: string;
-  /** null quando rodando via stdio sem usuário (ex.: Cursor em dev). */
+  /** null when running via stdio without a user (e.g. Cursor in dev). */
   userId: string | null;
   userName: string;
   role: TenantRole;
@@ -22,13 +21,13 @@ export type AgentTool = {
   name: string;
   description: string;
   inputSchema: ZodRawShape;
-  /** Rótulo da ação para a UI; presente apenas em tools de escrita. */
+  /** Action label for the UI; only present on write tools. */
   summarize?: (args: Record<string, unknown>) => string;
-  /** Retorna dados JSON-serializáveis; lance Error para falha esperada. */
+  /** Returns JSON-serializable data; throw Error for expected failures. */
   execute: (ctx: AgentContext, args: Record<string, unknown>) => Promise<unknown>;
 };
 
-/** Helper de definição com args tipados a partir do inputSchema. */
+/** Definition helper with args typed from the inputSchema. */
 export function defineTool<Shape extends ZodRawShape>(tool: {
   name: string;
   description: string;

@@ -15,10 +15,10 @@ export async function createInvite(c: AppContext) {
   const user = c.get("user");
 
   if (await tenantRepository.findMemberByEmail(tenant.id, data.email)) {
-    throw new HttpError(409, "Esta pessoa já é membro do tenant");
+    throw new HttpError(409, "This person is already a member of the tenant");
   }
 
-  // Substitui convite pendente para o mesmo e-mail
+  // Replaces any pending invite for the same email
   await tenantRepository.deleteInvitesByEmail(tenant.id, data.email);
 
   const token = generateToken();

@@ -1,13 +1,13 @@
 import { emailLayout } from "@/lib/email";
 
 export function inviteTemplate(tenantName: string, inviterName: string | null, url: string) {
-  const who = inviterName ? `${inviterName} convidou você` : "Você foi convidado(a)";
+  const who = inviterName ? `${inviterName} invited you` : "You've been invited";
   return {
-    subject: `Convite para ${tenantName}`,
+    subject: `Invitation to ${tenantName}`,
     html: emailLayout(
-      `Convite para ${tenantName}`,
-      `<p>${who} para participar de <strong>${tenantName}</strong>. O convite expira em 7 dias.</p>`,
-      "Aceitar convite",
+      `Invitation to ${tenantName}`,
+      `<p>${who} to join <strong>${tenantName}</strong>. This invite expires in 7 days.</p>`,
+      "Accept invite",
       url,
     ),
   };

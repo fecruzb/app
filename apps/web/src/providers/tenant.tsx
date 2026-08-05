@@ -8,7 +8,7 @@ const LAST_TENANT_KEY = "app:lastTenant";
 
 type TenantContextValue = {
   tenant: TenantSummaryDto;
-  /** true para owner/admin — controla exibição de ações de gestão. */
+  /** true for owner/admin — controls visibility of management actions. */
   isManager: boolean;
 };
 
@@ -19,8 +19,8 @@ export function getLastTenantSlug(): string | null {
 }
 
 /**
- * Resolve o tenant do param `:tenantSlug` contra a lista de tenants do
- * usuário logado. Slug desconhecido → volta para /app.
+ * Resolves the `:tenantSlug` param against the logged-in user's tenants.
+ * Unknown slug → back to /app.
  */
 export function TenantProvider({ children }: { children: ReactNode }) {
   const { me } = useAuth();

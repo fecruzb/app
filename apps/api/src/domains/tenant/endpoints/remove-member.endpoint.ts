@@ -13,10 +13,10 @@ export async function removeMember(c: AppContext) {
   }
 
   const target = await tenantRepository.findMember(tenant.id, targetUserId);
-  if (!target) throw new HttpError(404, "Membro não encontrado");
+  if (!target) throw new HttpError(404, "Member not found");
 
   if (isSelf && target.role === "owner") {
-    throw new HttpError(400, "O owner não pode sair do próprio tenant");
+    throw new HttpError(400, "The owner can't leave their own tenant");
   }
   if (!isSelf && target.role === "owner" && actor.role !== "owner") {
     throw new HttpError(403, "Apenas owners podem remover um owner");

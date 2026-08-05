@@ -1,5 +1,5 @@
-// Todo acesso a dados de notas passa por aqui. Repare que toda query filtra
-// por tenantId — é assim que o isolamento multi-tenant se mantém.
+// All note data access goes through here. Every query filters by tenantId —
+// that's how multi-tenant isolation holds.
 import { and, desc, eq, ilike } from "drizzle-orm";
 import { db } from "@/db/client";
 import { users } from "@/domains/auth/schema";

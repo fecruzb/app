@@ -1,4 +1,4 @@
-// Mapa de rotas do domínio tenant — cada handler vive em endpoints/*.
+// Tenant domain route map — each handler lives in endpoints/*.
 import { Hono } from "hono";
 import type { AppEnv } from "@/context";
 import { requireAuth } from "@/domains/auth/middleware";
@@ -14,9 +14,8 @@ import { updateMemberRole } from "./endpoints/update-member-role.endpoint";
 import { updateTenant } from "./endpoints/update-tenant.endpoint";
 import { requireManager, requireTenant } from "./middleware";
 
-// Tudo aqui exige sessão + membership no tenant do path — aplicado uma vez,
-// então toda rota nova nasce isolada por tenant. `requireManager` (owner/admin)
-// entra por rota onde há gestão.
+// Everything here requires session + membership in the path tenant, applied
+// once — every new route is tenant-isolated by default.
 export const tenantRoutes = new Hono<AppEnv>()
   .use("/:tenantId/*", requireAuth, requireTenant)
   .use("/:tenantId", requireAuth, requireTenant)
@@ -29,7 +28,7 @@ export const tenantRoutes = new Hono<AppEnv>()
   .post("/:tenantId/invites", requireManager, createInvite)
   .delete("/:tenantId/invites/:inviteId", requireManager, revokeInvite);
 
-/** Rotas públicas de convite (o token é a credencial). */
+/** Public invite routes (the token is the credential). */
 export const inviteRoutes = new Hono<AppEnv>()
   .get("/:token", getInvite)
   .post("/:token/accept", acceptInvite);

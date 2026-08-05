@@ -1,6 +1,5 @@
-// Barrel dos schemas de domínio. O drizzle-kit lê este arquivo
-// (drizzle.config.ts) — ao criar um domínio novo com tabelas, exporte o
-// schema dele aqui para entrar nas migrations.
+// Domain schema barrel, read by drizzle-kit (drizzle.config.ts).
+// Export new domain schemas here so they enter the migrations.
 export * from "@/domains/auth/schema";
 export * from "@/domains/tenant/schema";
 export * from "@/domains/note/schema";

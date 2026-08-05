@@ -1,10 +1,10 @@
-// Entry stdio do servidor MCP — para Cursor, Claude e outros clientes MCP.
+// MCP server stdio entry — for Cursor, Claude and other MCP clients.
 //
-// Uso: npm run mcp   (registrado em .cursor/mcp.json)
+// Usage: npm run mcp   (registered in .cursor/mcp.json)
 //
-// Sem sessão HTTP não há usuário logado, então o contexto é resolvido aqui:
-// o tenant vem de MCP_TENANT_SLUG (default: o mais antigo do banco) e o autor
-// das escritas é o primeiro owner desse tenant.
+// There is no HTTP session here, so context is resolved locally: the tenant
+// comes from MCP_TENANT_SLUG (default: oldest in the database) and writes are
+// authored by that tenant's first owner.
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { tenantRepository } from "@/domains/tenant/repository";
 import { createMcpServer } from "./mcp-server";
@@ -14,7 +14,7 @@ const tenant = slug ? await tenantRepository.findBySlug(slug) : await tenantRepo
 
 if (!tenant) {
   console.error(
-    slug ? `app-base-mcp: tenant "${slug}" não existe` : "app-base-mcp: banco sem tenants",
+    slug ? `app-base-mcp: tenant "${slug}" does not exist` : "app-base-mcp: no tenants in database",
   );
   process.exit(1);
 }
@@ -31,4 +31,4 @@ const server = createMcpServer({
 });
 
 await server.connect(new StdioServerTransport());
-console.error(`app-base-mcp: pronto (stdio, tenant "${tenant.slug}")`);
+console.error(`app-base-mcp: ready (stdio, tenant "${tenant.slug}")`);

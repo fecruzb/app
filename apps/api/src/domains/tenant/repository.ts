@@ -1,5 +1,4 @@
-// Todo acesso a dados do domínio tenant (tenants, membros e convites)
-// passa por aqui.
+// All tenant data access (tenants, members, invites) goes through here.
 import { and, asc, desc, eq, gt } from "drizzle-orm";
 import type { MemberDto, TenantSummaryDto } from "@app/shared";
 import { db } from "@/db/client";
@@ -58,7 +57,7 @@ export const tenantRepository = {
     }));
   },
 
-  /** Tenant + vínculo do usuário, num só round-trip (usado pela middleware). */
+  /** Tenant + user membership in a single round-trip (used by the middleware). */
   async findTenantWithMembership(
     tenantId: string,
     userId: string,

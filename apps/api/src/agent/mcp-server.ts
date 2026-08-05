@@ -1,6 +1,5 @@
-// Adaptador MCP: expõe as tools do registry no protocolo MCP, amarradas a um
-// contexto (tenant + usuário). É a única parte que conhece o formato do MCP —
-// as tools retornam dados neutros e este adaptador embrulha/traduz erros.
+// MCP adapter: exposes the registry tools over the MCP protocol, bound to a
+// context (tenant + user). The only place that knows the MCP format.
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { allTools } from "./registry";

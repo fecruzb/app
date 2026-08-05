@@ -1,4 +1,4 @@
-// Rota do chat do agente (montada em /api/tenants/:tenantId/agent).
+// Agent chat route (mounted at /api/tenants/:tenantId/agent).
 import { Hono } from "hono";
 import type { AppEnv } from "@/context";
 import { requireAuth } from "@/domains/auth/middleware";

@@ -1,0 +1,10 @@
+---
+description: Project language — everything written in the repo is English
+alwaysApply: true
+---
+
+# Language
+
+The whole project is in English: code, comments, identifiers, docs, rules, commits, logs, UI copy, emails, API messages and agent text. Chat with the user may be in any language, but anything written to the repo is English.
+
+Keep comments minimal and direct — explain non-obvious intent, not what the code already says.

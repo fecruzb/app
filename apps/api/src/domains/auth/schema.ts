@@ -20,7 +20,7 @@ export const sessions = pgTable("sessions", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-/** Tokens de uso único enviados por e-mail (verificação e reset de senha). */
+/** Single-use tokens sent by email (verification and password reset). */
 export const actionTokens = pgTable("action_tokens", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id")

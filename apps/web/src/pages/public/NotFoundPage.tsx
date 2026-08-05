@@ -5,9 +5,9 @@ export function NotFoundPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-4 text-center">
       <p className="text-6xl font-bold text-muted-foreground">404</p>
-      <h1 className="text-xl font-semibold">Página não encontrada</h1>
+      <h1 className="text-xl font-semibold">Page not found</h1>
       <Button variant="outline" asChild>
-        <Link to="/">Voltar para o início</Link>
+        <Link to="/">Back to home</Link>
       </Button>
     </div>
   );

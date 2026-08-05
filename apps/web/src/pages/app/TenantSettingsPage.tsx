@@ -35,36 +35,36 @@ function GeneralSection() {
     try {
       await api.patch(`/tenants/${tenant.id}`, { name });
       await refresh();
-      toast.success("Tenant renomeado");
+      toast.success("Tenant renamed");
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Erro ao salvar");
+      toast.error(err instanceof ApiError ? err.message : "Failed to save");
     } finally {
       setSaving(false);
     }
   }
 
   async function handleLeave() {
-    if (!me || !window.confirm(`Sair de "${tenant.name}"?`)) return;
+    if (!me || !window.confirm(`Leave "${tenant.name}"?`)) return;
     try {
       await api.delete(`/tenants/${tenant.id}/members/${me.user.id}`);
       await refresh();
       navigate("/app");
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Erro ao sair do tenant");
+      toast.error(err instanceof ApiError ? err.message : "Failed to leave tenant");
     }
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Geral</CardTitle>
-        <CardDescription>Nome e identificação do tenant (slug: {tenant.slug})</CardDescription>
+        <CardTitle>General</CardTitle>
+        <CardDescription>Tenant name and identification (slug: {tenant.slug})</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
         {isManager ? (
           <form onSubmit={handleSubmit} className="flex items-end gap-2">
             <div className="grid flex-1 gap-2">
-              <Label htmlFor="tenant-name">Nome</Label>
+              <Label htmlFor="tenant-name">Name</Label>
               <Input
                 id="tenant-name"
                 required
@@ -74,19 +74,19 @@ function GeneralSection() {
               />
             </div>
             <Button type="submit" disabled={saving || name === tenant.name}>
-              {saving ? "Salvando..." : "Salvar"}
+              {saving ? "Saving..." : "Save"}
             </Button>
           </form>
         ) : (
           <p className="text-sm text-muted-foreground">
-            Somente administradores podem renomear o tenant.
+            Only administrators can rename the tenant.
           </p>
         )}
-        {/* Owner não sai do próprio tenant — a opção só existe para convidados */}
+        {/* Owners can't leave their own tenant — the option only exists for guests */}
         {tenant.role !== "owner" && (
           <div className="border-t pt-4">
             <Button variant="outline" onClick={() => void handleLeave()}>
-              Sair deste tenant
+              Leave this tenant
             </Button>
           </div>
         )}
@@ -112,11 +112,11 @@ function MembersSection() {
       api.patch(`/tenants/${tenant.id}/members/${userId}`, { role }),
     onSuccess: () => {
       void invalidate();
-      toast.success("Role atualizada");
+      toast.success("Role updated");
     },
     onError: (err) => {
       void invalidate();
-      toast.error(err instanceof ApiError ? err.message : "Erro ao atualizar role");
+      toast.error(err instanceof ApiError ? err.message : "Failed to update role");
     },
   });
 
@@ -124,16 +124,16 @@ function MembersSection() {
     mutationFn: (userId: string) => api.delete(`/tenants/${tenant.id}/members/${userId}`),
     onSuccess: () => {
       void invalidate();
-      toast.success("Membro removido");
+      toast.success("Member removed");
     },
-    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Erro ao remover"),
+    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Failed to remove"),
   });
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Membros</CardTitle>
-        <CardDescription>Quem tem acesso a este tenant</CardDescription>
+        <CardTitle>Members</CardTitle>
+        <CardDescription>Who has access to this tenant</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-3">
         {members?.map((member) => {
@@ -146,7 +146,7 @@ function MembersSection() {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">
                   {member.name}
-                  {isSelf && <span className="text-muted-foreground"> (você)</span>}
+                  {isSelf && <span className="text-muted-foreground"> (you)</span>}
                 </p>
                 <p className="truncate text-xs text-muted-foreground">{member.email}</p>
               </div>
@@ -170,13 +170,13 @@ function MembersSection() {
                     variant="ghost"
                     size="icon"
                     onClick={() => {
-                      if (window.confirm(`Remover ${member.name} do tenant?`)) {
+                      if (window.confirm(`Remove ${member.name} from the tenant?`)) {
                         removeMutation.mutate(member.userId);
                       }
                     }}
                   >
                     <Trash2Icon />
-                    <span className="sr-only">Remover</span>
+                    <span className="sr-only">Remove</span>
                   </Button>
                 </>
               ) : (
@@ -208,25 +208,25 @@ function InvitesSection() {
     onSuccess: () => {
       void invalidate();
       setEmail("");
-      toast.success("Convite enviado por e-mail");
+      toast.success("Invite sent by email");
     },
-    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Erro ao convidar"),
+    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Failed to invite"),
   });
 
   const revokeMutation = useMutation({
     mutationFn: (inviteId: string) => api.delete(`/tenants/${tenant.id}/invites/${inviteId}`),
     onSuccess: () => {
       void invalidate();
-      toast.success("Convite revogado");
+      toast.success("Invite revoked");
     },
-    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Erro ao revogar"),
+    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Failed to revoke"),
   });
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Convites</CardTitle>
-        <CardDescription>Convide pessoas por e-mail para este tenant</CardDescription>
+        <CardTitle>Invites</CardTitle>
+        <CardDescription>Invite people to this tenant by email</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
         <form
@@ -237,7 +237,7 @@ function InvitesSection() {
           className="flex flex-wrap items-end gap-2"
         >
           <div className="grid min-w-48 flex-1 gap-2">
-            <Label htmlFor="invite-email">E-mail</Label>
+            <Label htmlFor="invite-email">Email</Label>
             <Input
               id="invite-email"
               type="email"
@@ -255,7 +255,7 @@ function InvitesSection() {
             <option value="admin">admin</option>
           </select>
           <Button type="submit" disabled={createMutation.isPending}>
-            {createMutation.isPending ? "Enviando..." : "Convidar"}
+            {createMutation.isPending ? "Sending..." : "Invite"}
           </Button>
         </form>
 
@@ -266,7 +266,7 @@ function InvitesSection() {
                 <span className="min-w-0 flex-1 truncate">{invite.email}</span>
                 <Badge variant="outline">{invite.role}</Badge>
                 <span className="text-xs text-muted-foreground">
-                  expira {new Date(invite.expiresAt).toLocaleDateString("pt-BR")}
+                  expires {new Date(invite.expiresAt).toLocaleDateString("en-US")}
                 </span>
                 <Button
                   variant="ghost"
@@ -274,7 +274,7 @@ function InvitesSection() {
                   onClick={() => revokeMutation.mutate(invite.id)}
                 >
                   <Trash2Icon />
-                  <span className="sr-only">Revogar</span>
+                  <span className="sr-only">Revoke</span>
                 </Button>
               </div>
             ))}
@@ -291,8 +291,8 @@ export function TenantSettingsPage() {
   return (
     <div className="grid gap-6">
       <div>
-        <h1 className="text-2xl font-semibold">Configurações</h1>
-        <p className="text-muted-foreground">Gerencie o tenant, membros e convites</p>
+        <h1 className="text-2xl font-semibold">Settings</h1>
+        <p className="text-muted-foreground">Manage the tenant, members and invites</p>
       </div>
       <GeneralSection />
       <MembersSection />

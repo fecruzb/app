@@ -28,7 +28,7 @@ export function LoginPage() {
       const from = (location.state as { from?: string } | null)?.from;
       navigate(from ?? "/app", { replace: true });
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Erro ao entrar");
+      toast.error(err instanceof ApiError ? err.message : "Failed to sign in");
     } finally {
       setSubmitting(false);
     }
@@ -36,14 +36,14 @@ export function LoginPage() {
 
   return (
     <AuthLayout
-      title="Entrar"
-      description="Acesse sua conta com e-mail e senha"
+      title="Sign in"
+      description="Access your account with email and password"
       footer={
         selfSignupEnabled && (
           <span>
-            Não tem conta?{" "}
+            Don't have an account?{" "}
             <Link to="/register" className="font-medium text-foreground hover:underline">
-              Criar conta
+              Create account
             </Link>
           </span>
         )
@@ -51,7 +51,7 @@ export function LoginPage() {
     >
       <form onSubmit={handleSubmit} className="grid gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="email">E-mail</Label>
+          <Label htmlFor="email">Email</Label>
           <Input
             id="email"
             type="email"
@@ -63,9 +63,9 @@ export function LoginPage() {
         </div>
         <div className="grid gap-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Senha</Label>
+            <Label htmlFor="password">Password</Label>
             <Link to="/forgot-password" className="text-xs text-muted-foreground hover:underline">
-              Esqueceu a senha?
+              Forgot password?
             </Link>
           </div>
           <Input
@@ -78,7 +78,7 @@ export function LoginPage() {
           />
         </div>
         <Button type="submit" disabled={submitting}>
-          {submitting ? "Entrando..." : "Entrar"}
+          {submitting ? "Signing in..." : "Sign in"}
         </Button>
       </form>
     </AuthLayout>

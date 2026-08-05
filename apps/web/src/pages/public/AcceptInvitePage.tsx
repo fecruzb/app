@@ -34,10 +34,10 @@ export function AcceptInvitePage() {
     try {
       const result = await api.post<{ tenantSlug: string }>(`/invites/${token}/accept`, body);
       await refresh();
-      toast.success(`Bem-vindo(a) a ${invite?.tenantName}!`);
+      toast.success(`Welcome to ${invite?.tenantName}!`);
       navigate(`/app/${result.tenantSlug}`, { replace: true });
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Erro ao aceitar o convite");
+      toast.error(err instanceof ApiError ? err.message : "Failed to accept invite");
     } finally {
       setSubmitting(false);
     }
@@ -50,9 +50,9 @@ export function AcceptInvitePage() {
 
   if (isLoading || authLoading) {
     return (
-      <AuthLayout title="Convite">
+      <AuthLayout title="Invite">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Loader2Icon className="size-4 animate-spin" /> Carregando convite...
+          <Loader2Icon className="size-4 animate-spin" /> Loading invite...
         </div>
       </AuthLayout>
     );
@@ -60,60 +60,60 @@ export function AcceptInvitePage() {
 
   if (error || !invite) {
     return (
-      <AuthLayout title="Convite inválido" description="Este convite não existe ou já expirou.">
+      <AuthLayout title="Invalid invite" description="This invite doesn't exist or has expired.">
         <Button variant="outline" asChild>
-          <Link to="/">Ir para o início</Link>
+          <Link to="/">Go to home</Link>
         </Button>
       </AuthLayout>
     );
   }
 
-  // Logado: basta confirmar (a API valida se o e-mail bate)
+  // Logged in: just confirm (the API checks the email matches)
   if (me) {
     return (
       <AuthLayout
-        title={`Convite para ${invite.tenantName}`}
-        description={`Você foi convidado(a) como ${invite.role === "admin" ? "administrador(a)" : "membro"}.`}
+        title={`Invitation to ${invite.tenantName}`}
+        description={`You've been invited as ${invite.role === "admin" ? "an administrator" : "a member"}.`}
       >
         {me.user.email === invite.email ? (
           <Button className="w-full" disabled={submitting} onClick={() => void accept()}>
-            {submitting ? "Entrando..." : `Entrar em ${invite.tenantName}`}
+            {submitting ? "Joining..." : `Join ${invite.tenantName}`}
           </Button>
         ) : (
           <p className="text-sm text-muted-foreground">
-            Este convite é para <strong>{invite.email}</strong>, mas você está logado(a) como{" "}
-            <strong>{me.user.email}</strong>. Saia da conta atual para aceitar.
+            This invite is for <strong>{invite.email}</strong>, but you're signed in as{" "}
+            <strong>{me.user.email}</strong>. Sign out of the current account to accept.
           </p>
         )}
       </AuthLayout>
     );
   }
 
-  // Deslogado com conta existente: precisa logar antes
+  // Logged out with an existing account: sign in first
   if (invite.userExists) {
     return (
       <AuthLayout
-        title={`Convite para ${invite.tenantName}`}
-        description={`Entre com a conta ${invite.email} para aceitar o convite.`}
+        title={`Invitation to ${invite.tenantName}`}
+        description={`Sign in with the account ${invite.email} to accept the invite.`}
       >
         <Button className="w-full" asChild>
           <Link to="/login" state={{ from: `/invite/${token}` }}>
-            Fazer login
+            Sign in
           </Link>
         </Button>
       </AuthLayout>
     );
   }
 
-  // Deslogado sem conta: cria a conta na hora
+  // Logged out without an account: create one on the spot
   return (
     <AuthLayout
-      title={`Convite para ${invite.tenantName}`}
-      description={`Crie sua conta com o e-mail ${invite.email} para entrar.`}
+      title={`Invitation to ${invite.tenantName}`}
+      description={`Create your account with the email ${invite.email} to join.`}
     >
       <form onSubmit={handleNewAccount} className="grid gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="name">Nome</Label>
+          <Label htmlFor="name">Name</Label>
           <Input
             id="name"
             autoComplete="name"
@@ -124,7 +124,7 @@ export function AcceptInvitePage() {
           />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="password">Senha</Label>
+          <Label htmlFor="password">Password</Label>
           <Input
             id="password"
             type="password"
@@ -134,10 +134,10 @@ export function AcceptInvitePage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <p className="text-xs text-muted-foreground">Mínimo de 8 caracteres</p>
+          <p className="text-xs text-muted-foreground">Minimum of 8 characters</p>
         </div>
         <Button type="submit" disabled={submitting}>
-          {submitting ? "Criando..." : "Criar conta e entrar"}
+          {submitting ? "Creating..." : "Create account and join"}
         </Button>
       </form>
     </AuthLayout>

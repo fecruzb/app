@@ -9,7 +9,7 @@ export async function updateNote(c: AppContext) {
   const tenantId = c.get("tenant").id;
 
   const note = await noteRepository.update(tenantId, uuidParam(c, "noteId"), data);
-  if (!note) throw new HttpError(404, "Nota não encontrada");
+  if (!note) throw new HttpError(404, "Note not found");
 
   const row = await noteRepository.find(tenantId, note.id);
   return c.json(toNoteDto(row!));

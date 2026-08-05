@@ -19,7 +19,7 @@ export function ForgotPasswordPage() {
       await api.post("/auth/forgot-password", { email });
       setSent(true);
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Erro ao enviar");
+      toast.error(err instanceof ApiError ? err.message : "Failed to send");
     } finally {
       setSubmitting(false);
     }
@@ -27,23 +27,23 @@ export function ForgotPasswordPage() {
 
   return (
     <AuthLayout
-      title="Recuperar senha"
-      description="Enviaremos um link de redefinição para o seu e-mail"
+      title="Recover password"
+      description="We'll send a reset link to your email"
       footer={
         <Link to="/login" className="font-medium text-foreground hover:underline">
-          Voltar para o login
+          Back to sign in
         </Link>
       }
     >
       {sent ? (
         <p className="text-sm text-muted-foreground">
-          Se existir uma conta com <strong>{email}</strong>, você receberá um e-mail com o link de
-          redefinição em instantes. O link expira em 1 hora.
+          If an account exists for <strong>{email}</strong>, you'll receive an email with the reset
+          link shortly. The link expires in 1 hour.
         </p>
       ) : (
         <form onSubmit={handleSubmit} className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="email">E-mail</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
@@ -54,7 +54,7 @@ export function ForgotPasswordPage() {
             />
           </div>
           <Button type="submit" disabled={submitting}>
-            {submitting ? "Enviando..." : "Enviar link"}
+            {submitting ? "Sending..." : "Send link"}
           </Button>
         </form>
       )}

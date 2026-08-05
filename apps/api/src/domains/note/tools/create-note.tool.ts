@@ -4,12 +4,12 @@ import { noteRepository } from "../repository";
 
 export const createNoteTool = defineTool({
   name: "create_note",
-  description: "Cria uma nota no tenant.",
+  description: "Creates a note in the tenant.",
   inputSchema: {
     title: z.string().trim().min(1).max(200),
     content: z.string().max(20000).default(""),
   },
-  summarize: (args) => `Nota criada: ${args.title}`,
+  summarize: (args) => `Note created: ${args.title}`,
   execute: async (ctx, { title, content }) => {
     const note = await noteRepository.insert({
       tenantId: ctx.tenantId,

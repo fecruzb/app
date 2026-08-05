@@ -11,7 +11,7 @@ export const agentChatSchema = z.object({
 
 export type AgentMessage = z.infer<typeof agentMessageSchema>;
 
-/** Ação de escrita executada pelo agente, exibida como chip na UI. */
+/** Write action executed by the agent, shown as a chip in the UI. */
 export type AgentAction = {
   tool: string;
   summary: string;

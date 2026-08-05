@@ -24,9 +24,9 @@ export function DashboardPage() {
   return (
     <div className="grid gap-6">
       <div>
-        <h1 className="text-2xl font-semibold">Olá, {me?.user.name.split(" ")[0]}</h1>
+        <h1 className="text-2xl font-semibold">Hi, {me?.user.name.split(" ")[0]}</h1>
         <p className="mt-1 flex items-center gap-2 text-muted-foreground">
-          Você está em <strong className="text-foreground">{tenant.name}</strong>
+          You're in <strong className="text-foreground">{tenant.name}</strong>
           <Badge variant="secondary">{tenant.role}</Badge>
         </p>
       </div>
@@ -35,30 +35,30 @@ export function DashboardPage() {
         <Card>
           <CardHeader>
             <UsersIcon className="mb-2 size-5 text-muted-foreground" />
-            <CardTitle>{members ? members.length : "—"} membro(s)</CardTitle>
-            <CardDescription>Pessoas com acesso a este tenant</CardDescription>
+            <CardTitle>{members ? members.length : "—"} member(s)</CardTitle>
+            <CardDescription>People with access to this tenant</CardDescription>
           </CardHeader>
           <CardContent>
             <Link
               to={`/app/${tenant.slug}/settings`}
               className="inline-flex items-center gap-1 text-sm font-medium hover:underline"
             >
-              Gerenciar membros <ArrowRightIcon className="size-3.5" />
+              Manage members <ArrowRightIcon className="size-3.5" />
             </Link>
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
             <StickyNoteIcon className="mb-2 size-5 text-muted-foreground" />
-            <CardTitle>{notes ? notes.length : "—"} nota(s)</CardTitle>
-            <CardDescription>Recurso de exemplo — troque pelo seu domínio</CardDescription>
+            <CardTitle>{notes ? notes.length : "—"} note(s)</CardTitle>
+            <CardDescription>Example resource — replace with your domain</CardDescription>
           </CardHeader>
           <CardContent>
             <Link
               to={`/app/${tenant.slug}/notes`}
               className="inline-flex items-center gap-1 text-sm font-medium hover:underline"
             >
-              Ver notas <ArrowRightIcon className="size-3.5" />
+              View notes <ArrowRightIcon className="size-3.5" />
             </Link>
           </CardContent>
         </Card>

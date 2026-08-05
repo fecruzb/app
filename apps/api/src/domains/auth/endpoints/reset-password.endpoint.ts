@@ -15,7 +15,7 @@ export async function resetPassword(c: AppContext) {
   const data = await parseBody(c, resetPasswordSchema);
 
   const userId = await consumeActionToken(data.token, "reset_password");
-  if (!userId) throw new HttpError(400, "Link inválido ou expirado — peça um novo");
+  if (!userId) throw new HttpError(400, "Invalid or expired link — request a new one");
 
   const user = await authRepository.updateUser(userId, {
     passwordHash: hashPassword(data.password),

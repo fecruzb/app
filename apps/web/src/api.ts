@@ -1,4 +1,4 @@
-// Client da API do app — a única borda de rede do frontend.
+// App API client — the frontend's only network boundary.
 export class ApiError extends Error {
   constructor(
     public status: number,

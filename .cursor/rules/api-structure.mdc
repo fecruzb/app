@@ -1,32 +1,32 @@
 ---
-description: Estrutura da API — camadas, fronteiras, nomes de arquivo e onde criar cada coisa
+description: API structure — layers, boundaries, file names and where to add things
 globs: apps/api/**
 alwaysApply: false
 ---
 
-# Estrutura da API (`apps/api/src/`)
+# API structure (`apps/api/src/`)
 
-Camadas (fronteiras garantidas por lint em `.oxlintrc.json` — nunca viole):
+Layers (boundaries enforced by lint in `.oxlintrc.json` — never violate):
 
-- `lib/` — utilidade pura; não importa NADA do app
-- `integrations/` — wrapper de serviço externo (openai, resend); só usa `lib/`
+- `lib/` — pure utility; imports NOTHING from the app
+- `integrations/` — external service wrapper (openai, resend); only uses `lib/`
 - `db/` — client, `schema.ts` (barrel), columns, seed
-- `domains/<d>/` — negócio: `schema.ts`, `repository.ts`, `service.ts`, `dto.ts`, `emails.ts`, `middleware.ts`, `endpoints/`, `tools/`, `routes.ts`
-- `agent/` — superfície do agente (não é domínio); domínios só importam `@/agent/tool`
-- `app.ts` monta rotas; `server.ts` sobe o servidor; `context.ts` = tipos do request
+- `domains/<d>/` — business: `schema.ts`, `repository.ts`, `service.ts`, `dto.ts`, `emails.ts`, `middleware.ts`, `endpoints/`, `tools/`, `routes.ts`
+- `agent/` — agent surface (not a domain); domains only import `@/agent/tool`
+- `app.ts` builds routes; `server.ts` starts the server; `context.ts` = request types
 
-Imports: alias `@/` para tudo que cruza fronteira; relativo (`./`, `../`) só dentro do próprio domínio.
+Imports: `@/` alias for anything crossing a boundary; relative (`./`, `../`) only within the same domain.
 
-Onde criar:
+Where to add:
 
-- Endpoint: `domains/<d>/endpoints/<acao>.endpoint.ts` → registrar no `routes.ts` do domínio
-- Tool: `domains/<d>/tools/<acao>.tool.ts` → registrar em `tools/index.ts` (e domínio novo em `agent/registry.ts`)
-- Tabela: schema no domínio → exportar em `db/schema.ts` → `db:generate`
-- Env var: schema Zod de `lib/env.ts` + `.env.example` + `render.yaml`
-- Schema/DTO compartilhado com o web: `packages/shared/src/<dominio>.ts`
+- Endpoint: `domains/<d>/endpoints/<action>.endpoint.ts` → register in the domain's `routes.ts`
+- Tool: `domains/<d>/tools/<action>.tool.ts` → register in `tools/index.ts` (and a new domain in `agent/registry.ts`)
+- Table: schema in the domain → export in `db/schema.ts` → `db:generate`
+- Env var: Zod schema in `lib/env.ts` + `.env.example` + `render.yaml`
+- Schema/DTO shared with web: `packages/shared/src/<domain>.ts`
 
-Regras:
+Rules:
 
-- Todo SQL vive no `repository.ts`; toda query de recurso filtra por `tenantId`
-- `service.ts` só quando há regra de negócio real; CRUD puro chama o repository direto do endpoint/tool
-- Rotas sob tenant: o `routes.ts` aplica `requireAuth`/`requireTenant` uma vez via `.use`
+- All SQL lives in `repository.ts`; every resource query filters by `tenantId`
+- `service.ts` only when there's real business logic; plain CRUD calls the repository straight from the endpoint/tool
+- Tenant routes: `routes.ts` applies `requireAuth`/`requireTenant` once via `.use`

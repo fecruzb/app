@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { TenantSummaryDto } from "./tenant";
 
-// -- schemas (validados na API e reusados nos formulários do web) -------------
+// -- schemas (validated in the API and reused in web forms) -------------------
 
 export const registerSchema = z.object({
   name: z.string().trim().min(2).max(100),

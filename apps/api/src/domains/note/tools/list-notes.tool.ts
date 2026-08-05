@@ -5,7 +5,7 @@ import { noteRepository } from "../repository";
 export const listNotesTool = defineTool({
   name: "list_notes",
   description:
-    "Lista as notas do tenant (id, título, autor, atualização). Use search para filtrar por trecho do título.",
+    "Lists the tenant's notes (id, title, author, updated at). Use search to filter by a title substring.",
   inputSchema: { search: z.string().optional() },
   execute: async (ctx, { search }) => {
     const rows = await noteRepository.list(ctx.tenantId, search);

@@ -14,7 +14,7 @@ export async function changePassword(c: AppContext) {
 
   await authRepository.updateUser(user.id, { passwordHash: hashPassword(data.newPassword) });
 
-  // Invalida as outras sessões, mantendo a atual
+  // Invalidate other sessions, keeping the current one
   await deleteUserSessions(user.id, c.get("sessionToken"));
   return c.json({ ok: true });
 }

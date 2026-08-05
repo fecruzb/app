@@ -1,4 +1,4 @@
-// Mapa de rotas do domínio auth — cada handler vive em endpoints/*.
+// Auth domain route map — each handler lives in endpoints/*.
 import { Hono } from "hono";
 import type { AppEnv } from "@/context";
 import { forgotPassword } from "./endpoints/forgot-password.endpoint";

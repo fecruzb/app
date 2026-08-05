@@ -1,10 +1,10 @@
-// Contexto tipado da aplicação: o que as middlewares de auth/tenant injetam
-// no request. Vive fora de lib/ porque depende dos schemas de domínio.
+// Typed request context: what the auth/tenant middlewares inject.
+// Lives outside lib/ because it depends on domain schemas.
 import type { Context } from "hono";
 import type { User } from "@/domains/auth/schema";
 import type { Tenant, TenantMember } from "@/domains/tenant/schema";
 
-/** Variáveis injetadas no context pelas middlewares de auth/tenant. */
+/** Variables injected into the context by the auth/tenant middlewares. */
 export type AppEnv = {
   Variables: {
     user: User;
@@ -14,5 +14,5 @@ export type AppEnv = {
   };
 };
 
-/** Assinatura dos handlers de endpoint (um por arquivo na pasta endpoints de cada domínio). */
+/** Endpoint handler signature (one per file in each domain's endpoints folder). */
 export type AppContext = Context<AppEnv>;

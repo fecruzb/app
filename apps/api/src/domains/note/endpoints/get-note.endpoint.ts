@@ -5,6 +5,6 @@ import { noteRepository } from "../repository";
 
 export async function getNote(c: AppContext) {
   const row = await noteRepository.find(c.get("tenant").id, uuidParam(c, "noteId"));
-  if (!row) throw new HttpError(404, "Nota não encontrada");
+  if (!row) throw new HttpError(404, "Note not found");
   return c.json(toNoteDto(row));
 }

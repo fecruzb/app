@@ -1,6 +1,6 @@
-// Integração com o Resend para envio de e-mail. Sem RESEND_API_KEY, loga o
-// conteúdo no console (útil em dev). Troque o provedor de e-mail aqui sem
-// tocar nos domínios — eles só chamam sendEmail.
+// Resend integration for sending email. Without RESEND_API_KEY, logs the
+// content to the console (useful in dev). Swap the email provider here —
+// domains only call sendEmail.
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 
@@ -10,10 +10,10 @@ type EmailPayload = {
   html: string;
 };
 
-/** Fire-and-forget: use `void sendEmail(...)` para não bloquear a resposta HTTP. */
+/** Fire-and-forget: use `void sendEmail(...)` to avoid blocking the HTTP response. */
 export async function sendEmail({ to, subject, html }: EmailPayload): Promise<void> {
   if (!env.resendApiKey) {
-    logger.info(`\n[email] (dev, não enviado) para: ${to}\n[email] assunto: ${subject}\n${html}\n`);
+    logger.info(`\n[email] (dev, not sent) to: ${to}\n[email] subject: ${subject}\n${html}\n`);
     return;
   }
   try {
@@ -26,12 +26,12 @@ export async function sendEmail({ to, subject, html }: EmailPayload): Promise<vo
       body: JSON.stringify({ from: env.mailFrom, to, subject, html }),
     });
     if (!res.ok) {
-      logger.error(`[email] falha ao enviar para ${to}:`, res.status, await res.text());
+      logger.error(`[email] failed to send to ${to}:`, res.status, await res.text());
       return;
     }
     const { id } = (await res.json()) as { id: string };
-    logger.info(`[email] enviado para ${to} (resend id: ${id})`);
+    logger.info(`[email] sent to ${to} (resend id: ${id})`);
   } catch (err) {
-    logger.error(`[email] erro ao enviar para ${to}:`, err);
+    logger.error(`[email] error sending to ${to}:`, err);
   }
 }

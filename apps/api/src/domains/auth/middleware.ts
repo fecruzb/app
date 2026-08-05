@@ -6,12 +6,12 @@ import { getSessionUser, SESSION_COOKIE } from "./service";
 
 export const requireAuth = createMiddleware<AppEnv>(async (c, next) => {
   const token = getCookie(c, SESSION_COOKIE);
-  if (!token) throw new HttpError(401, "Não autenticado");
+  if (!token) throw new HttpError(401, "Not authenticated");
 
   const user = await getSessionUser(token);
   if (!user) {
     deleteCookie(c, SESSION_COOKIE, { path: "/" });
-    throw new HttpError(401, "Sessão expirada");
+    throw new HttpError(401, "Session expired");
   }
 
   c.set("user", user);

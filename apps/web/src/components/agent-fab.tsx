@@ -9,18 +9,17 @@ import { cn } from "@/lib/utils";
 import { useTenant } from "@/providers/tenant";
 
 const SUGGESTIONS = [
-  "quem participa deste tenant?",
-  "cria uma nota com as pautas da reunião de amanhã",
-  "resume as notas que temos",
+  "who belongs to this tenant?",
+  "create a note with tomorrow's meeting agenda",
+  "summarize the notes we have",
 ];
 
 type ChatMessage = AgentMessage & { actions?: AgentAction[] };
 
 /**
- * Botão flutuante do agente (padrão Zyron/Symulous/Cookbook): fixo no canto,
- * abre um chat que conversa com /api/tenants/:id/agent — o assistente executa
- * as tools do MCP no contexto do tenant e devolve a resposta + ações.
- * Após ações de escrita, as queries do app são invalidadas para a UI refletir.
+ * Floating agent button: fixed in the corner, opens a chat backed by
+ * /api/tenants/:id/agent — the assistant runs tools in the tenant context and
+ * returns the reply + actions. Write actions invalidate the app queries.
  */
 export function AgentFab() {
   const { tenant } = useTenant();
@@ -50,12 +49,12 @@ export function AgentFab() {
         ...history,
         { role: "assistant", content: result.reply, actions: result.actions },
       ]);
-      // Ações de escrita mudam dados do tenant — recarrega o que estiver na tela
+      // Write actions change tenant data — refresh whatever is on screen
       if (result.actions.some((a) => !a.isError)) {
         void queryClient.invalidateQueries();
       }
     } catch (err) {
-      const message = err instanceof ApiError ? err.message : "Erro ao falar com o agente";
+      const message = err instanceof ApiError ? err.message : "Failed to reach the agent";
       setMessages([...history, { role: "assistant", content: `⚠ ${message}` }]);
       setText(content);
     } finally {
@@ -76,7 +75,7 @@ export function AgentFab() {
         onClick={() => setOpen(true)}
       >
         <SparklesIcon className="size-5" />
-        <span className="sr-only">Abrir assistente</span>
+        <span className="sr-only">Open assistant</span>
       </Button>
     );
   }
@@ -85,15 +84,15 @@ export function AgentFab() {
     <div className="fixed inset-x-4 bottom-5 z-50 flex h-[28rem] max-h-[calc(100dvh-5rem)] flex-col overflow-hidden rounded-xl border bg-background shadow-xl md:inset-x-auto md:right-5 md:w-96">
       <header className="flex items-center gap-2 border-b px-4 py-3">
         <SparklesIcon className="size-4" />
-        <span className="flex-1 text-sm font-semibold">Assistente</span>
+        <span className="flex-1 text-sm font-semibold">Assistant</span>
         {messages.length > 0 && (
           <Button variant="ghost" size="sm" onClick={() => setMessages([])} disabled={busy}>
-            Limpar
+            Clear
           </Button>
         )}
         <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
           <XIcon />
-          <span className="sr-only">Fechar</span>
+          <span className="sr-only">Close</span>
         </Button>
       </header>
 
@@ -101,7 +100,7 @@ export function AgentFab() {
         {messages.length === 0 && (
           <div className="grid gap-2">
             <p className="text-sm text-muted-foreground">
-              Pergunte ou peça algo sobre <strong>{tenant.name}</strong>. Exemplos:
+              Ask or request something about <strong>{tenant.name}</strong>. Examples:
             </p>
             {SUGGESTIONS.map((s) => (
               <button
@@ -148,7 +147,7 @@ export function AgentFab() {
 
         {busy && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2Icon className="size-4 animate-spin" /> Pensando...
+            <Loader2Icon className="size-4 animate-spin" /> Thinking...
           </div>
         )}
       </div>
@@ -163,14 +162,14 @@ export function AgentFab() {
               void send(text);
             }
           }}
-          placeholder="Fale com o assistente..."
+          placeholder="Talk to the assistant..."
           rows={1}
           className="min-h-9 resize-none"
           disabled={busy}
         />
         <Button type="submit" size="icon" disabled={busy || !text.trim()}>
           <SendIcon />
-          <span className="sr-only">Enviar</span>
+          <span className="sr-only">Send</span>
         </Button>
       </form>
     </div>

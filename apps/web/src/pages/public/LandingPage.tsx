@@ -15,27 +15,27 @@ import { useAuth } from "@/providers/auth";
 const features = [
   {
     icon: KeyRoundIcon,
-    title: "Autenticação completa",
+    title: "Complete authentication",
     description:
-      "Login, cadastro, recuperação de senha e verificação de e-mail — sessões seguras em cookie httpOnly.",
+      "Login, sign-up, password recovery and email verification — secure sessions in an httpOnly cookie.",
   },
   {
     icon: UsersIcon,
     title: "Multi-tenant",
     description:
-      "Cada usuário tem seus ambientes. Membros, roles (owner, admin, member) e isolamento de dados por tenant.",
+      "Every user gets their own environments. Members, roles (owner, admin, member) and per-tenant data isolation.",
   },
   {
     icon: MailIcon,
-    title: "Convites por e-mail",
+    title: "Email invites",
     description:
-      "Convide pessoas para o seu tenant. Elas aceitam com a conta existente ou criam uma na hora.",
+      "Invite people to your tenant. They accept with an existing account or create one on the spot.",
   },
   {
     icon: RocketIcon,
-    title: "Pronto para produção",
+    title: "Production-ready",
     description:
-      "Deploy no Render em um serviço só, migrations automáticas no pre-deploy e health check configurado.",
+      "Deploy to Render as a single service, automatic migrations on pre-deploy and a configured health check.",
   },
 ];
 
@@ -55,17 +55,17 @@ export function LandingPage() {
             {me ? (
               <Button asChild>
                 <Link to="/app">
-                  Ir para o app <ArrowRightIcon />
+                  Go to app <ArrowRightIcon />
                 </Link>
               </Button>
             ) : (
               <>
                 <Button variant="ghost" asChild>
-                  <Link to="/login">Entrar</Link>
+                  <Link to="/login">Sign in</Link>
                 </Button>
                 {selfSignupEnabled && (
                   <Button asChild>
-                    <Link to="/register">Criar conta</Link>
+                    <Link to="/register">Create account</Link>
                   </Button>
                 )}
               </>
@@ -77,25 +77,25 @@ export function LandingPage() {
       <main className="flex-1">
         <section className="mx-auto w-full max-w-5xl px-4 py-24 text-center">
           <p className="mb-4 text-sm font-medium text-muted-foreground">
-            Template SaaS · React + Hono + Postgres
+            SaaS template · React + Hono + Postgres
           </p>
           <h1 className="mx-auto max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
-            Comece o seu próximo produto com a base pronta
+            Start your next product with the groundwork done
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
-            Usuários, autenticação, tenants, convites e e-mails já funcionando. Troque esta landing
-            pelo seu produto e foque no que importa.
+            Users, authentication, tenants, invites and emails already working. Swap this landing
+            for your product and focus on what matters.
           </p>
           <div className="mt-8 flex justify-center gap-3">
             {selfSignupEnabled && !me && (
               <Button size="lg" asChild>
                 <Link to="/register">
-                  Criar conta grátis <ArrowRightIcon />
+                  Create free account <ArrowRightIcon />
                 </Link>
               </Button>
             )}
             <Button size="lg" variant="outline" asChild>
-              <Link to={me ? "/app" : "/login"}>{me ? "Ir para o app" : "Entrar"}</Link>
+              <Link to={me ? "/app" : "/login"}>{me ? "Go to app" : "Sign in"}</Link>
             </Button>
           </div>
         </section>
@@ -117,13 +117,13 @@ export function LandingPage() {
         <section className="mx-auto w-full max-w-5xl px-4 py-20 text-center">
           <Card className="mx-auto max-w-2xl">
             <CardContent className="p-10">
-              <h2 className="text-2xl font-semibold">Pronto para começar?</h2>
+              <h2 className="text-2xl font-semibold">Ready to get started?</h2>
               <p className="mt-2 text-muted-foreground">
-                Crie sua conta e tenha um ambiente completo em segundos.
+                Create your account and get a full environment in seconds.
               </p>
               <Button size="lg" className="mt-6" asChild>
                 <Link to={selfSignupEnabled ? "/register" : "/login"}>
-                  Começar agora <ArrowRightIcon />
+                  Get started <ArrowRightIcon />
                 </Link>
               </Button>
             </CardContent>
@@ -134,7 +134,7 @@ export function LandingPage() {
       <footer className="border-t">
         <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-4 text-sm text-muted-foreground">
           <span>© {new Date().getFullYear()} App Base</span>
-          <span>Feito com React, Hono e Postgres</span>
+          <span>Built with React, Hono and Postgres</span>
         </div>
       </footer>
     </div>

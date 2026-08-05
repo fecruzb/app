@@ -1,5 +1,5 @@
-// Regras de negócio de tenants. Não existe criação manual: cada usuário
-// nasce com um tenant pessoal no cadastro e entra em outros por convite.
+// Tenant business rules. There is no manual creation: every user gets a
+// personal tenant on signup and joins others by invite.
 import type { TenantRole, TenantSummaryDto } from "@app/shared";
 import { tenantRepository } from "./repository";
 import type { Tenant } from "./schema";

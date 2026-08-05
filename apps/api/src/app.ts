@@ -1,6 +1,6 @@
-// Monta a aplicação HTTP: middlewares, rotas da API e, em produção, o SPA.
-// É a "API" declarada — sem abrir socket (isso é o server.ts). Assim dá para
-// importar `app` em testes sem subir o servidor.
+// Builds the HTTP application: middlewares, API routes and, in production,
+// the SPA. No socket here (that's server.ts), so `app` can be imported in
+// tests without starting a server.
 import path from "node:path";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
@@ -21,7 +21,7 @@ app.onError(errorHandler);
 app.use(secureHeaders());
 if (!env.isProduction) app.use(honoLogger());
 
-// Utilitários sem auth: health check e a config pública que o frontend lê no boot.
+// Unauthenticated utilities: health check and the public config the frontend reads on boot.
 app.get("/api/health", (c) => c.json({ ok: true }));
 app.get("/api/config", (c) =>
   c.json({ selfSignupEnabled: env.selfSignupEnabled, aiEnabled: hasOpenAiKey() }),
@@ -34,8 +34,8 @@ app.route("/api/tenants/:tenantId/notes", noteRoutes);
 app.route("/api/tenants/:tenantId/agent", agentRoutes);
 app.route("/api/invites", inviteRoutes);
 
-// Em produção a API serve o SPA buildado (uma origem só → cookies simples).
-// Em dev o Vite roda à parte e proxeia /api para cá.
+// In production the API serves the built SPA (single origin → simple cookies).
+// In dev, Vite runs separately and proxies /api here.
 if (env.isProduction) {
   const webDist = path.resolve(import.meta.dirname, "../../web/dist");
   const root = path.relative(process.cwd(), webDist);

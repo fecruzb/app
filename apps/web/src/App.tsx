@@ -18,7 +18,7 @@ import { VerifyEmailPage } from "@/pages/public/VerifyEmailPage";
 export function App() {
   return (
     <Routes>
-      {/* Site público */}
+      {/* Public site */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />

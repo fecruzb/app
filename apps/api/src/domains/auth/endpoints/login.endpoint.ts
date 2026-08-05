@@ -9,9 +9,9 @@ export async function login(c: AppContext) {
   const data = await parseBody(c, loginSchema);
 
   const user = await authRepository.findUserByEmail(data.email);
-  // Mensagem genérica para não revelar se o e-mail existe
+  // Generic message to avoid revealing whether the email exists
   if (!user || !verifyPassword(user.passwordHash, data.password)) {
-    throw new HttpError(401, "E-mail ou senha inválidos");
+    throw new HttpError(401, "Invalid email or password");
   }
 
   setSessionCookie(c, await createSession(user.id));

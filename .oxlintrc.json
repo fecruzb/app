@@ -18,7 +18,7 @@
                   "@/context",
                   "@/server"
                 ],
-                "message": "lib/ é utilidade pura — não pode depender de domínios, integrações, db ou do app."
+                "message": "lib/ is pure utility — it can't depend on domains, integrations, db or the app."
               }
             ]
           }
@@ -34,15 +34,15 @@
             "patterns": [
               {
                 "group": ["@/agent/**", "!@/agent/tool"],
-                "message": "Domínios só conhecem o contrato do agente (@/agent/tool) — nunca seus internals."
+                "message": "Domains only know the agent contract (@/agent/tool) — never its internals."
               },
               {
                 "group": ["@/app", "@/server"],
-                "message": "Domínios não importam o bootstrap da aplicação."
+                "message": "Domains don't import the application bootstrap."
               },
               {
                 "group": ["@modelcontextprotocol/**", "openai", "openai/**"],
-                "message": "Domínios são neutros de transporte — MCP/OpenAI vivem em agent/ e integrations/."
+                "message": "Domains are transport-neutral — MCP/OpenAI live in agent/ and integrations/."
               }
             ]
           }
@@ -65,7 +65,7 @@
                   "@/context",
                   "@/server"
                 ],
-                "message": "integrations/ só embrulha serviços externos — pode usar lib/, nada do restante do app."
+                "message": "integrations/ only wraps external services — it can use lib/, nothing else in the app."
               }
             ]
           }

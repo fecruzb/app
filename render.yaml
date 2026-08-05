@@ -1,4 +1,4 @@
-# Blueprint do Render: um web service (API + SPA no mesmo processo) + Postgres.
+# Render blueprint: one web service (API + SPA in the same process) + Postgres.
 # Docs: https://render.com/docs/blueprint-spec
 services:
   - type: web
@@ -17,10 +17,10 @@ services:
         fromDatabase:
           name: app-base-db
           property: connectionString
-      # Sem APP_URL definido, a API usa RENDER_EXTERNAL_URL nos links de e-mail.
-      # Defina ao usar domínio próprio:
+      # Without APP_URL set, the API uses RENDER_EXTERNAL_URL in email links.
+      # Set it when using a custom domain:
       # - key: APP_URL
-      #   value: https://seudominio.com
+      #   value: https://yourdomain.com
       - key: RESEND_API_KEY
         sync: false
       - key: MAIL_FROM

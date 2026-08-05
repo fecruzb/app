@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/providers/auth";
 import { getLastTenantSlug } from "@/providers/tenant";
 
-/** /app → redireciona para o último tenant usado (ou o primeiro). */
+/** /app → redirects to the last used tenant (or the first). */
 export function AppIndexRedirect() {
   const { me, logout } = useAuth();
   const navigate = useNavigate();
@@ -17,15 +17,15 @@ export function AppIndexRedirect() {
     return <Navigate to={`/app/${target.slug}`} replace />;
   }
 
-  // Caso raro: usuário saiu de todos os tenants (não há criação manual).
+  // Edge case: user left all tenants (there is no manual creation).
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Nenhum ambiente disponível</CardTitle>
+          <CardTitle>No environment available</CardTitle>
           <CardDescription>
-            Você não participa de nenhum tenant. Peça um convite a um administrador para voltar a
-            acessar o app.
+            You don't belong to any tenant. Ask an administrator for an invite to access the app
+            again.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -35,7 +35,7 @@ export function AppIndexRedirect() {
               void logout().then(() => navigate("/"));
             }}
           >
-            Sair
+            Sign out
           </Button>
         </CardContent>
       </Card>

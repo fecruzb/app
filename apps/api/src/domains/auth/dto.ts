@@ -12,7 +12,7 @@ export function toUserDto(user: User): UserDto {
   };
 }
 
-/** Resposta padrão de sessão: usuário + tenants dos quais participa. */
+/** Standard session response: user + tenants they belong to. */
 export async function buildMe(user: User): Promise<MeDto> {
   return { user: toUserDto(user), tenants: await tenantRepository.getUserTenants(user.id) };
 }
