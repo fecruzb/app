@@ -1,20 +1,21 @@
+// Monta a aplicação HTTP: middlewares, rotas da API e, em produção, o SPA.
+// É a "API" declarada — sem abrir socket (isso é o server.ts). Assim dá para
+// importar `app` em testes sem subir o servidor.
 import path from "node:path";
-import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
 import { logger as honoLogger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
 import { env } from "@/lib/env";
 import { errorHandler } from "@/lib/errors";
-import { logger } from "@/lib/logger";
+import { agentRoutes } from "@/agent/routes";
 import { accountRoutes } from "@/domains/account/routes";
-import { agentRoutes } from "@/domains/agent/routes";
 import { authRoutes } from "@/domains/auth/routes";
 import { noteRoutes } from "@/domains/note/routes";
 import { systemRoutes } from "@/domains/system/routes";
 import { inviteRoutes, tenantRoutes } from "@/domains/tenant/routes";
 
-const app = new Hono();
+export const app = new Hono();
 
 app.onError(errorHandler);
 app.use(secureHeaders());
@@ -36,11 +37,3 @@ if (env.isProduction) {
   app.use("*", serveStatic({ root }));
   app.get("*", serveStatic({ root, path: "index.html" }));
 }
-
-// Produção (Render) exige 0.0.0.0; em dev usamos 127.0.0.1 para não conflitar
-// com o AirPlay Receiver do macOS, que ocupa a porta 5000 em outras interfaces.
-const hostname = env.isProduction ? "0.0.0.0" : "127.0.0.1";
-
-serve({ fetch: app.fetch, port: env.port, hostname }, (info) => {
-  logger.info(`[api] rodando em http://localhost:${info.port}`);
-});

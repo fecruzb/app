@@ -45,6 +45,10 @@ A API é organizada por **domínio**: cada domínio agrupa seu schema de banco, 
 
 ```
 apps/api/src/
+├── app.ts                # monta o Hono (middlewares + rotas + SPA) — "a API"
+├── server.ts             # entrypoint HTTP: sobe o servidor
+├── agent/                # superfície do agente (não é domínio): assistant (policy), registry,
+│                         # mcp-server, tool (contrato), mcp (entry stdio), endpoints/, routes
 ├── lib/                  # utilidades puras (sem dependência externa): env (validado no boot),
 │                         # crypto, logger, erros, layout de email, tipos http
 ├── integrations/         # wrappers de serviços externos: openai (cliente + loop de tools), resend
@@ -54,10 +58,8 @@ apps/api/src/
 │   ├── account/          # endpoints/ (perfil, senha), routes
 │   ├── tenant/           # tenants + membros + convites: schema, repository, service,
 │   │                     # emails, middleware, endpoints/, tools/, routes
-│   ├── note/             # recurso de exemplo: schema, repository, dto, endpoints/, tools/, routes
-│   └── agent/            # assistant (policy), mcp-server, registry de tools, stdio, endpoints/, routes
-├── db/                   # client, schema.ts (barrel p/ drizzle-kit), columns (auditoria), seed
-└── index.ts              # monta as rotas e sobe o servidor
+│   └── note/             # recurso de exemplo: schema, repository, dto, endpoints/, tools/, routes
+└── db/                   # client, schema.ts (barrel p/ drizzle-kit), columns (auditoria), seed
 
 apps/web                  # React SPA (páginas públicas + área logada)
 packages/shared           # schemas Zod e DTOs por domínio (auth, tenant, note, agent)
@@ -66,20 +68,21 @@ packages/shared           # schemas Zod e DTOs por domínio (auth, tenant, note,
 Convenções:
 
 - **Um endpoint por arquivo** em `domains/<dominio>/endpoints/`, nomeado `<acao>.endpoint.ts` (ex.: `create-note.endpoint.ts`); o `routes.ts` do domínio é só o mapa método + path + middlewares.
-- **Uma tool MCP por arquivo** em `domains/<dominio>/tools/`, nomeada `<acao>.tool.ts` (ex.: `create-note.tool.ts`); a tool se auto-descreve (`summarize` marca escrita e vira chip na UI do chat). Registre o array do domínio em `domains/agent/registry.ts`.
+- **Uma tool MCP por arquivo** em `domains/<dominio>/tools/`, nomeada `<acao>.tool.ts` (ex.: `create-note.tool.ts`); a tool se auto-descreve (`summarize` marca escrita e vira chip na UI do chat). Registre o array do domínio em `agent/registry.ts`.
 - **Sufixo no nome = papel do arquivo.** Arquivos de papel único do domínio mantêm o nome do papel (`repository.ts`, `service.ts`, `schema.ts`, `routes.ts`); os de ação (vários por domínio) levam o sufixo `.endpoint.ts` / `.tool.ts`.
 - **Repositório concentra o SQL** — endpoints e services não escrevem queries. Toda query de recurso filtra por `tenantId`.
 - **Isolamento por tenant é seguro por padrão** — o `routes.ts` de cada domínio sob tenant aplica `requireAuth`/`requireTenant` uma vez (via `.use`), então toda rota nova já nasce isolada.
 - **Tabela nova?** Exporte o schema do domínio em `db/schema.ts` (barrel que o drizzle-kit lê) e rode `db:generate`.
 - **Env é validado no boot** (`lib/env.ts`, Zod): variável obrigatória faltando derruba o processo com mensagem clara em vez de quebrar numa query. Adicione novas vars nesse schema.
 - **Imports com alias `@/`** (→ `apps/api/src/`): tudo que cruza fronteira usa alias — `@/lib/*`, `@/integrations/*`, `@/db/*`, `@/domains/<outro>/*`. Só imports dentro do próprio domínio ficam relativos (`./repository`, `../service`). Assim mover arquivos não quebra imports e o `../../../` some.
-- **O agente** tem duas camadas: a *policy* (`domains/agent/assistant.ts` — quem é o agente e como age) e a *mecânica* (`integrations/openai.ts` — cliente da OpenAI + o loop de tool-calling). As tools do registry são chamadas direto no request; o `mcp-server.ts` só entra no modo stdio (Cursor).
+- **O agente é uma superfície própria** (`agent/`), não um domínio: ele *consome* os domínios via `registry.ts` (que junta as `tools/` de cada domínio). Tem duas camadas: a *policy* (`agent/assistant.ts` — quem é o agente e como age) e a *mecânica* (`integrations/openai.ts` — cliente da OpenAI + o loop de tool-calling). As tools do registry são chamadas direto no request; o `agent/mcp-server.ts` + `agent/mcp.ts` só entram no modo stdio (Cursor).
 
 Pontos de entrada úteis:
 
+- `apps/api/src/app.ts` — todas as rotas montadas num lugar só
 - `apps/api/src/domains/note/` + `apps/web/src/pages/app/NotesPage.tsx` — domínio completo para copiar
 - `apps/api/src/domains/tenant/middleware.ts` — isolamento por tenant
-- `apps/api/src/domains/agent/registry.ts` — tools disponíveis para o agente e o MCP
+- `apps/api/src/agent/registry.ts` — tools disponíveis para o agente e o MCP
 - `apps/web/src/App.tsx` — mapa de rotas do SPA
 
 ## Derivando um produto novo

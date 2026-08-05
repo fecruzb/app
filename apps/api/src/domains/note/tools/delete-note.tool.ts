@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { defineTool, toolError, toolJson } from "@/domains/agent/tool";
+import { defineTool, toolError, toolJson } from "@/agent/tool";
 import { noteRepository } from "../repository";
 
 export const deleteNoteTool = defineTool({

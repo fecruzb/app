@@ -37,7 +37,7 @@ type Message = OpenAI.Chat.Completions.ChatCompletionMessageParam;
 /**
  * Dado um conjunto de tools e a conversa, roda o loop até o modelo responder
  * sem chamar tools. Não sabe nada do produto — a "policy" (system prompt,
- * quais tools) vive no domínio (domains/agent).
+ * quais tools) vive na superfície do agente (agent/).
  */
 export async function runToolLoop(opts: {
   model: string;
