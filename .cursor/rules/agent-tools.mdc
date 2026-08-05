@@ -1,0 +1,13 @@
+---
+description: Contrato das tools do agente — neutras de transporte
+globs: apps/api/src/**/*.tool.ts,apps/api/src/agent/**
+alwaysApply: false
+---
+
+# Tools do agente
+
+- Uma tool por arquivo (`<acao>.tool.ts`), criada com `defineTool` de `@/agent/tool`; nome snake_case (`create_note`)
+- Retorne dados JSON-serializáveis; lance `Error` para falha esperada — nunca formate resposta de protocolo
+- `summarize` só em tools de escrita (vira chip na UI do chat); leitura não tem
+- Tools e domínios NUNCA importam MCP/OpenAI: o SDK do MCP só existe em `agent/mcp-server.ts`; o da OpenAI só em `integrations/openai.ts`
+- Exemplo canônico: `apps/api/src/domains/note/tools/get-note.tool.ts`

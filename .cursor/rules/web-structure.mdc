@@ -1,0 +1,15 @@
+---
+description: Estrutura do frontend — pastas, imports e borda de rede
+globs: apps/web/**
+alwaysApply: false
+---
+
+# Estrutura do web (`apps/web/src/`)
+
+- `api.ts` — único client HTTP; toda chamada de rede passa por ele (`api.get/post/patch/delete` + `ApiError`)
+- `providers/` — estado global (auth, tenant, config)
+- `pages/public/` = fora do login; `pages/app/` = área logada (uma página por arquivo, PascalCase `XxxPage.tsx`)
+- `layouts/` — AppLayout, AuthLayout, RequireAuth
+- `components/ui/` — shadcn (não reescrever à mão); `components/` — componentes do app em kebab-case
+- `lib/` — só utilidade pura (ex.: `cn`); nada de rede ou estado
+- Imports sempre com alias `@/` (→ `src/`)
