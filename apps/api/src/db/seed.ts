@@ -1,8 +1,8 @@
-import { eq } from "drizzle-orm";
-import { db, sql } from "./client";
-import { notes, users } from "./schema";
-import { hashPassword } from "../services/auth";
-import { createTenantWithOwner } from "../services/tenants";
+import { hashPassword } from "../lib/crypto";
+import { db, sql } from "../lib/db";
+import { authRepository } from "../domains/auth/repository";
+import { notes } from "../domains/note/schema";
+import { createTenantWithOwner } from "../domains/tenant/service";
 
 // Seed idempotente com um usuário demo para desenvolvimento.
 // Login: demo@example.com / demo1234
@@ -10,21 +10,17 @@ import { createTenantWithOwner } from "../services/tenants";
 const DEMO_EMAIL = "demo@example.com";
 
 async function seed() {
-  const [existing] = await db.select().from(users).where(eq(users.email, DEMO_EMAIL));
-  if (existing) {
+  if (await authRepository.findUserByEmail(DEMO_EMAIL)) {
     console.log("[seed] usuário demo já existe, nada a fazer");
     return;
   }
 
-  const [user] = await db
-    .insert(users)
-    .values({
-      name: "Usuária Demo",
-      email: DEMO_EMAIL,
-      passwordHash: hashPassword("demo1234"),
-      emailVerifiedAt: new Date(),
-    })
-    .returning();
+  const user = await authRepository.insertUser({
+    name: "Usuária Demo",
+    email: DEMO_EMAIL,
+    passwordHash: hashPassword("demo1234"),
+    emailVerifiedAt: new Date(),
+  });
 
   const tenant = await createTenantWithOwner("Empresa Demo", user.id);
 

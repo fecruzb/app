@@ -10,7 +10,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "tsx src/db/seed.ts",
-    "mcp": "tsx src/agent/mcp.ts"
+    "mcp": "tsx src/domains/agent/mcp.ts"
   },
   "dependencies": {
     "@app/shared": "*",

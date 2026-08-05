@@ -2,27 +2,25 @@ import path from "node:path";
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
-import { logger } from "hono/logger";
-import { hasOpenAiKey } from "./agent/openai";
+import { logger as honoLogger } from "hono/logger";
+import { secureHeaders } from "hono/secure-headers";
 import { env } from "./lib/env";
 import { errorHandler } from "./lib/errors";
-import { accountRoutes } from "./routes/account";
-import { agentRoutes } from "./routes/agent";
-import { authRoutes } from "./routes/auth";
-import { inviteRoutes } from "./routes/invites";
-import { noteRoutes } from "./routes/notes";
-import { tenantRoutes } from "./routes/tenants";
+import { logger } from "./lib/logger";
+import { accountRoutes } from "./domains/account/routes";
+import { agentRoutes } from "./domains/agent/routes";
+import { authRoutes } from "./domains/auth/routes";
+import { noteRoutes } from "./domains/note/routes";
+import { systemRoutes } from "./domains/system/routes";
+import { inviteRoutes, tenantRoutes } from "./domains/tenant/routes";
 
 const app = new Hono();
 
 app.onError(errorHandler);
-if (!env.isProduction) app.use(logger());
+app.use(secureHeaders());
+if (!env.isProduction) app.use(honoLogger());
 
-app.get("/api/health", (c) => c.json({ ok: true }));
-app.get("/api/config", (c) =>
-  c.json({ selfSignupEnabled: env.selfSignupEnabled, aiEnabled: hasOpenAiKey() }),
-);
-
+app.route("/api", systemRoutes);
 app.route("/api/auth", authRoutes);
 app.route("/api/account", accountRoutes);
 app.route("/api/tenants", tenantRoutes);
@@ -44,5 +42,5 @@ if (env.isProduction) {
 const hostname = env.isProduction ? "0.0.0.0" : "127.0.0.1";
 
 serve({ fetch: app.fetch, port: env.port, hostname }, (info) => {
-  console.log(`[api] rodando em http://localhost:${info.port}`);
+  logger.info(`[api] rodando em http://localhost:${info.port}`);
 });

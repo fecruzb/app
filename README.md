@@ -41,24 +41,49 @@ Sem `RESEND_API_KEY`, os e-mails (verificação, reset de senha, convites) são 
 
 ## Estrutura
 
+A API é organizada por **domínio**: cada domínio agrupa seu schema de banco, repositório (todo o SQL), regras de negócio, um arquivo por endpoint e as tools do agente.
+
 ```
-apps/api        Hono + Drizzle (rotas finas, services, middlewares de auth/tenant)
-apps/web        React SPA (páginas públicas + área logada)
-packages/shared Tipos e schemas Zod compartilhados entre web e api
+apps/api/src/
+├── lib/                  # infra e wrappers: env (validado no boot), db, crypto, email (Resend),
+│                         # openai, agent-loop, logger, erros, tipos http
+├── domains/
+│   ├── system/           # health + config pública (sem auth)
+│   ├── auth/             # schema, repository, service, dto, emails, middleware, endpoints/, routes
+│   ├── account/          # endpoints/ (perfil, senha), routes
+│   ├── tenant/           # tenants + membros + convites: schema, repository, service,
+│   │                     # emails, middleware, endpoints/, tools/, routes
+│   ├── note/             # recurso de exemplo: schema, repository, dto, endpoints/, tools/, routes
+│   └── agent/            # assistant (policy), mcp-server, registry de tools, stdio, endpoints/, routes
+├── db/                   # schema.ts (barrel p/ drizzle-kit) + seed
+└── index.ts              # monta as rotas e sobe o servidor
+
+apps/web                  # React SPA (páginas públicas + área logada)
+packages/shared           # schemas Zod e DTOs por domínio (auth, tenant, note, agent)
 ```
+
+Convenções:
+
+- **Um endpoint por arquivo** em `domains/<dominio>/endpoints/`, nomeado `<acao>.endpoint.ts` (ex.: `create-note.endpoint.ts`); o `routes.ts` do domínio é só o mapa método + path + middlewares.
+- **Uma tool MCP por arquivo** em `domains/<dominio>/tools/`, nomeada `<acao>.tool.ts` (ex.: `create-note.tool.ts`); a tool se auto-descreve (`summarize` marca escrita e vira chip na UI do chat). Registre o array do domínio em `domains/agent/registry.ts`.
+- **Sufixo no nome = papel do arquivo.** Arquivos de papel único do domínio mantêm o nome do papel (`repository.ts`, `service.ts`, `schema.ts`, `routes.ts`); os de ação (vários por domínio) levam o sufixo `.endpoint.ts` / `.tool.ts`.
+- **Repositório concentra o SQL** — endpoints e services não escrevem queries. Toda query de recurso filtra por `tenantId`.
+- **Isolamento por tenant é seguro por padrão** — o `routes.ts` de cada domínio sob tenant aplica `requireAuth`/`requireTenant` uma vez (via `.use`), então toda rota nova já nasce isolada.
+- **Tabela nova?** Exporte o schema do domínio em `db/schema.ts` (barrel que o drizzle-kit lê) e rode `db:generate`.
+- **Env é validado no boot** (`lib/env.ts`, Zod): variável obrigatória faltando derruba o processo com mensagem clara em vez de quebrar numa query. Adicione novas vars nesse schema.
+- **O agente** tem duas camadas: a *policy* (`domains/agent/assistant.ts` — quem é o agente e como age) e a *mecânica* (`lib/agent-loop.ts` — o loop de tool-calling da OpenAI). As tools do registry são chamadas direto no request; o `mcp-server.ts` só entra no modo stdio (Cursor).
 
 Pontos de entrada úteis:
 
-- `apps/api/src/db/schema.ts` — schema do banco
-- `apps/api/src/routes/notes.ts` + `apps/web/src/pages/app/NotesPage.tsx` — padrão CRUD para copiar
-- `apps/api/src/middleware/tenant.ts` — isolamento por tenant
-- `apps/api/src/agent/mcp-server.ts` — tools do agente/MCP (registre aqui as do seu domínio)
-- `apps/web/src/App.tsx` — mapa de rotas
+- `apps/api/src/domains/note/` + `apps/web/src/pages/app/NotesPage.tsx` — domínio completo para copiar
+- `apps/api/src/domains/tenant/middleware.ts` — isolamento por tenant
+- `apps/api/src/domains/agent/registry.ts` — tools disponíveis para o agente e o MCP
+- `apps/web/src/App.tsx` — mapa de rotas do SPA
 
 ## Derivando um produto novo
 
 1. Clone/copie este repo e renomeie (`package.json`, `index.html`, textos "App Base", `render.yaml`)
-2. Substitua o recurso `notes` pelo seu domínio: duplique o padrão (schema → `db:generate` → rota → schemas em `packages/shared` → página)
+2. Substitua o recurso `notes` pelo seu domínio: copie `apps/api/src/domains/note/` (schema → repository → endpoints → tools), exporte o schema em `db/schema.ts`, rode `db:generate`, adicione os schemas em `packages/shared` e a página no web
 3. Ajuste a landing (`apps/web/src/pages/public/LandingPage.tsx`)
 4. Configure `RESEND_API_KEY` e `MAIL_FROM` para e-mails reais
 5. Faça deploy: suba o repo no GitHub e crie um Blueprint no Render apontando para o `render.yaml`

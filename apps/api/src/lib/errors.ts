@@ -1,6 +1,7 @@
 import type { Context } from "hono";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { ZodError, type ZodType } from "zod";
+import { logger } from "./logger";
 
 export class HttpError extends Error {
   constructor(
@@ -11,8 +12,13 @@ export class HttpError extends Error {
   }
 }
 
+const MAX_BODY_BYTES = 1_000_000; // 1 MB — evita payloads absurdos
+
 /** Valida o body JSON com Zod e devolve os dados tipados (400 se inválido). */
 export async function parseBody<T extends ZodType>(c: Context, schema: T): Promise<T["_output"]> {
+  const length = Number(c.req.header("content-length") ?? 0);
+  if (length > MAX_BODY_BYTES) throw new HttpError(413, "Payload muito grande");
+
   const body = await c.req.json().catch(() => {
     throw new HttpError(400, "Body JSON inválido");
   });
@@ -40,6 +46,6 @@ export function errorHandler(err: Error, c: Context) {
       400,
     );
   }
-  console.error("[api] erro não tratado:", err);
+  logger.error("[api] erro não tratado:", err);
   return c.json({ error: "Erro interno do servidor" }, 500);
 }
