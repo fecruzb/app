@@ -3,16 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
-import type { InviteDto, MemberDto, TenantRole } from "@app/shared";
+import type { TenantRole } from "@app/shared";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { api, ApiError } from "@/api";
-import { useAuth } from "@/providers/auth";
-import { useTenant } from "@/providers/tenant";
+import { ApiError } from "@/lib/api";
+import { useAuth } from "@/domains/auth/auth-provider";
+import { tenantApi } from "../api";
+import { useTenant } from "../tenant-provider";
 
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -33,7 +34,7 @@ function GeneralSection() {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.patch(`/tenants/${tenant.id}`, { name });
+      await tenantApi.rename(tenant.id, name);
       await refresh();
       toast.success("Tenant renamed");
     } catch (err) {
@@ -46,7 +47,7 @@ function GeneralSection() {
   async function handleLeave() {
     if (!me || !window.confirm(`Leave "${tenant.name}"?`)) return;
     try {
-      await api.delete(`/tenants/${tenant.id}/members/${me.user.id}`);
+      await tenantApi.removeMember(tenant.id, me.user.id);
       await refresh();
       navigate("/app");
     } catch (err) {
@@ -102,14 +103,14 @@ function MembersSection() {
 
   const { data: members } = useQuery({
     queryKey: ["members", tenant.id],
-    queryFn: () => api.get<MemberDto[]>(`/tenants/${tenant.id}/members`),
+    queryFn: () => tenantApi.members(tenant.id),
   });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["members", tenant.id] });
 
   const roleMutation = useMutation({
     mutationFn: ({ userId, role }: { userId: string; role: TenantRole }) =>
-      api.patch(`/tenants/${tenant.id}/members/${userId}`, { role }),
+      tenantApi.setMemberRole(tenant.id, userId, role),
     onSuccess: () => {
       void invalidate();
       toast.success("Role updated");
@@ -121,7 +122,7 @@ function MembersSection() {
   });
 
   const removeMutation = useMutation({
-    mutationFn: (userId: string) => api.delete(`/tenants/${tenant.id}/members/${userId}`),
+    mutationFn: (userId: string) => tenantApi.removeMember(tenant.id, userId),
     onSuccess: () => {
       void invalidate();
       toast.success("Member removed");
@@ -198,13 +199,13 @@ function InvitesSection() {
 
   const { data: invites } = useQuery({
     queryKey: ["invites", tenant.id],
-    queryFn: () => api.get<InviteDto[]>(`/tenants/${tenant.id}/invites`),
+    queryFn: () => tenantApi.invites(tenant.id),
   });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["invites", tenant.id] });
 
   const createMutation = useMutation({
-    mutationFn: () => api.post<InviteDto>(`/tenants/${tenant.id}/invites`, { email, role }),
+    mutationFn: () => tenantApi.createInvite(tenant.id, { email, role }),
     onSuccess: () => {
       void invalidate();
       setEmail("");
@@ -214,7 +215,7 @@ function InvitesSection() {
   });
 
   const revokeMutation = useMutation({
-    mutationFn: (inviteId: string) => api.delete(`/tenants/${tenant.id}/invites/${inviteId}`),
+    mutationFn: (inviteId: string) => tenantApi.revokeInvite(tenant.id, inviteId),
     onSuccess: () => {
       void invalidate();
       toast.success("Invite revoked");

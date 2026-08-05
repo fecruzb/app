@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader2Icon, SendIcon, SparklesIcon, XIcon } from "lucide-react";
-import type { AgentAction, AgentMessage, AgentResult } from "@app/shared";
+import type { AgentAction, AgentMessage } from "@app/shared";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { api, ApiError } from "@/api";
+import { ApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { useTenant } from "@/providers/tenant";
+import { tenantApi } from "./api";
+import { useTenant } from "./tenant-provider";
 
 const SUGGESTIONS = [
   "who belongs to this tenant?",
@@ -42,9 +43,10 @@ export function AgentFab() {
     setMessages(history);
     setBusy(true);
     try {
-      const result = await api.post<AgentResult>(`/tenants/${tenant.id}/agent`, {
-        messages: history.map(({ role, content }) => ({ role, content })),
-      });
+      const result = await tenantApi.agentChat(
+        tenant.id,
+        history.map(({ role, content }) => ({ role, content })),
+      );
       setMessages([
         ...history,
         { role: "assistant", content: result.reply, actions: result.actions },

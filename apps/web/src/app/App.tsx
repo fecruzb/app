@@ -1,19 +1,19 @@
 import { Route, Routes } from "react-router-dom";
 import { AppLayout } from "@/layouts/AppLayout";
 import { RequireAuth } from "@/layouts/RequireAuth";
-import { AccountPage } from "@/pages/app/AccountPage";
-import { AppIndexRedirect } from "@/pages/app/AppIndexRedirect";
-import { DashboardPage } from "@/pages/app/DashboardPage";
-import { NotesPage } from "@/pages/app/NotesPage";
-import { TenantSettingsPage } from "@/pages/app/TenantSettingsPage";
-import { AcceptInvitePage } from "@/pages/public/AcceptInvitePage";
-import { ForgotPasswordPage } from "@/pages/public/ForgotPasswordPage";
+import { ForgotPasswordPage } from "@/domains/auth/pages/ForgotPasswordPage";
+import { LoginPage } from "@/domains/auth/pages/LoginPage";
+import { RegisterPage } from "@/domains/auth/pages/RegisterPage";
+import { ResetPasswordPage } from "@/domains/auth/pages/ResetPasswordPage";
+import { VerifyEmailPage } from "@/domains/auth/pages/VerifyEmailPage";
+import { AccountPage } from "@/domains/account/pages/AccountPage";
+import { NotesPage } from "@/domains/note/pages/NotesPage";
+import { AcceptInvitePage } from "@/domains/tenant/pages/AcceptInvitePage";
+import { AppIndexRedirect } from "@/domains/tenant/pages/AppIndexRedirect";
+import { DashboardPage } from "@/domains/tenant/pages/DashboardPage";
+import { TenantSettingsPage } from "@/domains/tenant/pages/TenantSettingsPage";
 import { LandingPage } from "@/pages/public/LandingPage";
-import { LoginPage } from "@/pages/public/LoginPage";
 import { NotFoundPage } from "@/pages/public/NotFoundPage";
-import { RegisterPage } from "@/pages/public/RegisterPage";
-import { ResetPasswordPage } from "@/pages/public/ResetPasswordPage";
-import { VerifyEmailPage } from "@/pages/public/VerifyEmailPage";
 
 export function App() {
   return (
@@ -27,7 +27,7 @@ export function App() {
       <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
       <Route path="/invite/:token" element={<AcceptInvitePage />} />
 
-      {/* Área logada */}
+      {/* Authenticated area */}
       <Route path="/app" element={<RequireAuth />}>
         <Route index element={<AppIndexRedirect />} />
         <Route path=":tenantSlug" element={<AppLayout />}>

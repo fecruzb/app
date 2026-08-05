@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, type ReactNode } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import type { TenantSummaryDto } from "@app/shared";
 import { managerRoles } from "@app/shared";
-import { useAuth } from "./auth";
+import { useAuth } from "@/domains/auth/auth-provider";
 
 const LAST_TENANT_KEY = "app:lastTenant";
 
@@ -43,6 +43,6 @@ export function TenantProvider({ children }: { children: ReactNode }) {
 
 export function useTenant(): TenantContextValue {
   const ctx = useContext(TenantContext);
-  if (!ctx) throw new Error("useTenant precisa estar dentro de <TenantProvider>");
+  if (!ctx) throw new Error("useTenant must be used within <TenantProvider>");
   return ctx;
 }

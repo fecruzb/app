@@ -71,6 +71,22 @@
           }
         ]
       }
+    },
+    {
+      "files": ["apps/web/src/lib/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/domains/**", "@/app/**", "@/layouts/**", "@/pages/**"],
+                "message": "lib/ is pure infra — it can't depend on domains, app, layouts or pages."
+              }
+            ]
+          }
+        ]
+      }
     }
   ]
 }

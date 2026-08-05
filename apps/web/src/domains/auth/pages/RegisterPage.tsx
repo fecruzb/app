@@ -1,14 +1,14 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import type { MeDto } from "@app/shared";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthLayout } from "@/layouts/AuthLayout";
-import { api, ApiError } from "@/api";
-import { useAppConfig } from "@/providers/config";
-import { useAuth } from "@/providers/auth";
+import { ApiError } from "@/lib/api";
+import { useAppConfig } from "@/app/config";
+import { authApi } from "../api";
+import { useAuth } from "../auth-provider";
 
 export function RegisterPage() {
   const { setMe } = useAuth();
@@ -23,7 +23,7 @@ export function RegisterPage() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const me = await api.post<MeDto>("/auth/register", { name, email, password });
+      const me = await authApi.register({ name, email, password });
       setMe(me);
       toast.success("Account created! We sent a confirmation email.");
       navigate("/app", { replace: true });

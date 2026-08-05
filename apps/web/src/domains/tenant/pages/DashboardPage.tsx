@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRightIcon, StickyNoteIcon, UsersIcon } from "lucide-react";
-import type { MemberDto, NoteDto } from "@app/shared";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { api } from "@/api";
-import { useAuth } from "@/providers/auth";
-import { useTenant } from "@/providers/tenant";
+import { useAuth } from "@/domains/auth/auth-provider";
+import { noteApi } from "@/domains/note/api";
+import { tenantApi } from "../api";
+import { useTenant } from "../tenant-provider";
 
 export function DashboardPage() {
   const { me } = useAuth();
@@ -14,11 +14,11 @@ export function DashboardPage() {
 
   const { data: members } = useQuery({
     queryKey: ["members", tenant.id],
-    queryFn: () => api.get<MemberDto[]>(`/tenants/${tenant.id}/members`),
+    queryFn: () => tenantApi.members(tenant.id),
   });
   const { data: notes } = useQuery({
     queryKey: ["notes", tenant.id],
-    queryFn: () => api.get<NoteDto[]>(`/tenants/${tenant.id}/notes`),
+    queryFn: () => noteApi.list(tenant.id),
   });
 
   return (

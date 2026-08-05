@@ -3,13 +3,13 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
-import type { PublicInviteDto } from "@app/shared";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthLayout } from "@/layouts/AuthLayout";
-import { api, ApiError } from "@/api";
-import { useAuth } from "@/providers/auth";
+import { ApiError } from "@/lib/api";
+import { useAuth } from "@/domains/auth/auth-provider";
+import { tenantApi } from "../api";
 
 export function AcceptInvitePage() {
   const { token } = useParams();
@@ -25,14 +25,15 @@ export function AcceptInvitePage() {
     error,
   } = useQuery({
     queryKey: ["invite", token],
-    queryFn: () => api.get<PublicInviteDto>(`/invites/${token}`),
+    queryFn: () => tenantApi.getInvite(token!),
+    enabled: !!token,
     retry: false,
   });
 
   async function accept(body?: { name: string; password: string }) {
     setSubmitting(true);
     try {
-      const result = await api.post<{ tenantSlug: string }>(`/invites/${token}/accept`, body);
+      const result = await tenantApi.acceptInvite(token!, body);
       await refresh();
       toast.success(`Welcome to ${invite?.tenantName}!`);
       navigate(`/app/${result.tenantSlug}`, { replace: true });

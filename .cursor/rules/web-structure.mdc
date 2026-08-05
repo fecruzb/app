@@ -6,10 +6,18 @@ alwaysApply: false
 
 # Web structure (`apps/web/src/`)
 
-- `api.ts` — the only HTTP client; every network call goes through it (`api.get/post/patch/delete` + `ApiError`)
-- `providers/` — global state (auth, tenant, config)
-- `pages/public/` = outside login; `pages/app/` = logged-in area (one page per file, PascalCase `XxxPage.tsx`)
+Mirror the API: features live in `domains/<domain>/`, everything else is shared shell.
+
+- `domains/<domain>/` — one folder per feature (auth, tenant, account, note):
+  - `api.ts` — typed calls for this domain (wraps `@/lib/api`); the only place that builds this domain's endpoints
+  - `<name>-provider.tsx` — domain context/state when needed (e.g. auth, tenant)
+  - `pages/XxxPage.tsx` — route-level screens (PascalCase, one per file)
+  - domain-specific components live here too (kebab-case)
+  - A domain may import another domain's `api`/provider, but keep it minimal
+- `app/` — application shell: `App.tsx` (route map) and `config.ts` (app-level config)
+- `pages/public/` — public screens that aren't a domain (landing, 404)
 - `layouts/` — AppLayout, AuthLayout, RequireAuth
-- `components/ui/` — shadcn (don't hand-rewrite); `components/` — app components in kebab-case
-- `lib/` — pure utility only (e.g. `cn`); no network or state
+- `components/ui/` — shadcn (don't hand-rewrite); `components/` — shared app components
+- `lib/` — pure infra: `api.ts` (the only raw HTTP client, `api.*` + `ApiError`) and `utils.ts` (`cn`); no domain knowledge
+- Network calls go through a domain `api.ts`, never `fetch`/`@/lib/api` directly from a page
 - Always import with the `@/` alias (→ `src/`)

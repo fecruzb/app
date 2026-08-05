@@ -12,7 +12,7 @@ import {
   UserIcon,
 } from "lucide-react";
 import { toast } from "sonner";
-import { AgentFab } from "@/components/agent-fab";
+import { AgentFab } from "@/domains/tenant/agent-fab";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,11 +23,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { api, ApiError } from "@/api";
-import { useAppConfig } from "@/providers/config";
+import { ApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/providers/auth";
-import { TenantProvider, useTenant } from "@/providers/tenant";
+import { useAppConfig } from "@/app/config";
+import { authApi } from "@/domains/auth/api";
+import { useAuth } from "@/domains/auth/auth-provider";
+import { TenantProvider, useTenant } from "@/domains/tenant/tenant-provider";
 
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -114,7 +115,7 @@ function VerifyEmailBanner() {
   async function resend() {
     setSending(true);
     try {
-      await api.post("/auth/resend-verification");
+      await authApi.resendVerification();
       setSent(true);
       toast.success("Verification email resent");
     } catch (err) {

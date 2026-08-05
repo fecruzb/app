@@ -1,13 +1,13 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import type { MeDto } from "@app/shared";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthLayout } from "@/layouts/AuthLayout";
-import { api, ApiError } from "@/api";
-import { useAuth } from "@/providers/auth";
+import { ApiError } from "@/lib/api";
+import { authApi } from "../api";
+import { useAuth } from "../auth-provider";
 
 export function ResetPasswordPage() {
   const { token } = useParams();
@@ -20,7 +20,7 @@ export function ResetPasswordPage() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const me = await api.post<MeDto>("/auth/reset-password", { token, password });
+      const me = await authApi.resetPassword({ token, password });
       setMe(me);
       toast.success("Password reset!");
       navigate("/app", { replace: true });

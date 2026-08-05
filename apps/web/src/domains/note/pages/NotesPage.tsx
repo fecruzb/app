@@ -16,8 +16,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { api, ApiError } from "@/api";
-import { useTenant } from "@/providers/tenant";
+import { ApiError } from "@/lib/api";
+import { useTenant } from "@/domains/tenant/tenant-provider";
+import { noteApi } from "../api";
 
 // Example page with the full pattern: query + mutations + create/edit dialog.
 // Copy as the base for your product's resources.
@@ -32,16 +33,14 @@ export function NotesPage() {
 
   const { data: notes, isLoading } = useQuery({
     queryKey: ["notes", tenant.id],
-    queryFn: () => api.get<NoteDto[]>(`/tenants/${tenant.id}/notes`),
+    queryFn: () => noteApi.list(tenant.id),
   });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["notes", tenant.id] });
 
   const saveMutation = useMutation({
     mutationFn: (input: { title: string; content: string }) =>
-      editing
-        ? api.patch<NoteDto>(`/tenants/${tenant.id}/notes/${editing.id}`, input)
-        : api.post<NoteDto>(`/tenants/${tenant.id}/notes`, input),
+      editing ? noteApi.update(tenant.id, editing.id, input) : noteApi.create(tenant.id, input),
     onSuccess: () => {
       void invalidate();
       setDialogOpen(false);
@@ -51,7 +50,7 @@ export function NotesPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => api.delete(`/tenants/${tenant.id}/notes/${id}`),
+    mutationFn: (id: string) => noteApi.remove(tenant.id, id),
     onSuccess: () => void invalidate(),
     onError: (err) => toast.error(err instanceof ApiError ? err.message : "Failed to delete"),
   });

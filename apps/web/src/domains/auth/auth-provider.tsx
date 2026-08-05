@@ -1,10 +1,11 @@
 import { createContext, useContext, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { MeDto } from "@app/shared";
-import { api, ApiError } from "@/api";
+import { ApiError } from "@/lib/api";
+import { authApi } from "./api";
 
 type AuthContextValue = {
-  /** null = deslogado; undefined nunca chega aos consumidores (gate no provider). */
+  /** null = logged out; undefined never reaches consumers (gated in the provider). */
   me: MeDto | null;
   isLoading: boolean;
   /** Updates the cache after login/register/account changes. */
@@ -22,7 +23,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["me"],
     queryFn: async (): Promise<MeDto | null> => {
       try {
-        return await api.get<MeDto>("/auth/me");
+        return await authApi.me();
       } catch (err) {
         if (err instanceof ApiError && err.status === 401) return null;
         throw err;
@@ -39,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    await api.post("/auth/logout");
+    await authApi.logout();
     queryClient.clear();
     setMe(null);
   };
@@ -53,6 +54,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth precisa estar dentro de <AuthProvider>");
+  if (!ctx) throw new Error("useAuth must be used within <AuthProvider>");
   return ctx;
 }

@@ -1,13 +1,13 @@
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import type { UserDto } from "@app/shared";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { api, ApiError } from "@/api";
-import { useAuth } from "@/providers/auth";
+import { ApiError } from "@/lib/api";
+import { useAuth } from "@/domains/auth/auth-provider";
+import { accountApi } from "../api";
 
 function ProfileSection() {
   const { me, refresh } = useAuth();
@@ -18,7 +18,7 @@ function ProfileSection() {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.patch<UserDto>("/account", { name });
+      await accountApi.updateProfile({ name });
       await refresh();
       toast.success("Profile updated");
     } catch (err) {
@@ -71,7 +71,7 @@ function PasswordSection() {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.patch("/account/password", { currentPassword, newPassword });
+      await accountApi.changePassword({ currentPassword, newPassword });
       setCurrentPassword("");
       setNewPassword("");
       toast.success("Password changed — other sessions were ended");

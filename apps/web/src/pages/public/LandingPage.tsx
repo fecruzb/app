@@ -9,8 +9,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAppConfig } from "@/providers/config";
-import { useAuth } from "@/providers/auth";
+import { useAppConfig } from "@/app/config";
+import { useAuth } from "@/domains/auth/auth-provider";
 
 const features = [
   {

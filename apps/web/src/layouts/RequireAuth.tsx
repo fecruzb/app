@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { Loader2Icon } from "lucide-react";
-import { useAuth } from "@/providers/auth";
+import { useAuth } from "@/domains/auth/auth-provider";
 
 export function RequireAuth() {
   const { me, isLoading } = useAuth();

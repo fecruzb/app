@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthLayout } from "@/layouts/AuthLayout";
-import { api, ApiError } from "@/api";
+import { ApiError } from "@/lib/api";
+import { authApi } from "../api";
 
 export function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -16,7 +17,7 @@ export function ForgotPasswordPage() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await api.post("/auth/forgot-password", { email });
+      await authApi.forgotPassword({ email });
       setSent(true);
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : "Failed to send");

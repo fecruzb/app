@@ -3,8 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2Icon, Loader2Icon, XCircleIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AuthLayout } from "@/layouts/AuthLayout";
-import { api, ApiError } from "@/api";
-import { useAuth } from "@/providers/auth";
+import { ApiError } from "@/lib/api";
+import { authApi } from "../api";
+import { useAuth } from "../auth-provider";
 
 export function VerifyEmailPage() {
   const { token } = useParams();
@@ -13,7 +14,7 @@ export function VerifyEmailPage() {
   const { isLoading, error } = useQuery({
     queryKey: ["verify-email", token],
     queryFn: async () => {
-      const result = await api.post<{ ok: boolean }>("/auth/verify-email", { token });
+      const result = await authApi.verifyEmail({ token });
       await refresh();
       return result;
     },
