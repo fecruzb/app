@@ -12,8 +12,8 @@ import { AcceptInvitePage } from "@/domains/tenant/pages/AcceptInvitePage";
 import { AppIndexRedirect } from "@/domains/tenant/pages/AppIndexRedirect";
 import { DashboardPage } from "@/domains/tenant/pages/DashboardPage";
 import { TenantSettingsPage } from "@/domains/tenant/pages/TenantSettingsPage";
-import { LandingPage } from "@/pages/public/LandingPage";
-import { NotFoundPage } from "@/pages/public/NotFoundPage";
+import { LandingPage } from "@/domains/marketing/pages/LandingPage";
+import { NotFoundPage } from "@/app/NotFoundPage";
 
 export function App() {
   return (
