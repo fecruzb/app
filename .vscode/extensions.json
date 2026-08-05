@@ -1,0 +1,19 @@
+{
+  "recommendations": [
+    // --- Baseline (shared by cookbook / app-base / zyron / symulous) ---
+    "esbenp.prettier-vscode",
+    "pkief.material-icon-theme",
+    "johnpapa.vscode-peacock",
+    "usernamehw.errorlens",
+    "mikestead.dotenv",
+    "redhat.vscode-yaml",
+    "ms-azuretools.vscode-docker",
+    "eamodio.gitlens",
+    "christian-kohler.path-intellisense",
+    "christian-kohler.npm-intellisense",
+
+    // --- Stack: oxlint + Tailwind CSS ---
+    "oxc.oxc-vscode",
+    "bradlc.vscode-tailwindcss"
+  ]
+}
