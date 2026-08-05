@@ -1,0 +1,34 @@
+# Blueprint do Render: um web service (API + SPA no mesmo processo) + Postgres.
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: app-base
+    runtime: node
+    plan: starter
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    preDeployCommand: npm run db:migrate
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: app-base-db
+          property: connectionString
+      # Sem APP_URL definido, a API usa RENDER_EXTERNAL_URL nos links de e-mail.
+      # Defina ao usar domínio próprio:
+      # - key: APP_URL
+      #   value: https://seudominio.com
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: SELF_SIGNUP_ENABLED
+        value: "true"
+
+databases:
+  - name: app-base-db
+    plan: basic-256mb
+    postgresMajorVersion: "16"

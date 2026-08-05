@@ -1,0 +1,38 @@
+{
+  "name": "app-base",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Template de app SaaS multi-tenant: React + Hono + Drizzle + Postgres",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "npm -w @app/api run start",
+    "lint": "oxlint .",
+    "format": "prettier --write .",
+    "typecheck": "turbo run typecheck",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:generate": "npm -w @app/api run db:generate",
+    "db:migrate": "npm -w @app/api run db:migrate",
+    "db:seed": "npm -w @app/api run db:seed",
+    "setup": "npm run db:up && sleep 2 && npm run db:migrate && npm run db:seed"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "npm@11.12.1",
+  "volta": {
+    "node": "25.8.2"
+  },
+  "devDependencies": {
+    "oxlint": "^1.77.0",
+    "prettier": "^3.9.6",
+    "turbo": "^2.10.8",
+    "typescript": "^7.0.2"
+  }
+}

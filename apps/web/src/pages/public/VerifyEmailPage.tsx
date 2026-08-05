@@ -1,0 +1,52 @@
+import { Link, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { CheckCircle2Icon, Loader2Icon, XCircleIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { AuthLayout } from "@/layouts/AuthLayout";
+import { api, ApiError } from "@/lib/api";
+import { useAuth } from "@/providers/auth";
+
+export function VerifyEmailPage() {
+  const { token } = useParams();
+  const { refresh } = useAuth();
+
+  const { isLoading, error } = useQuery({
+    queryKey: ["verify-email", token],
+    queryFn: async () => {
+      const result = await api.post<{ ok: boolean }>("/auth/verify-email", { token });
+      await refresh();
+      return result;
+    },
+    retry: false,
+  });
+
+  return (
+    <AuthLayout title="Verificação de e-mail">
+      {isLoading ? (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2Icon className="size-4 animate-spin" /> Verificando...
+        </div>
+      ) : error ? (
+        <div className="grid gap-4">
+          <div className="flex items-start gap-2 text-sm">
+            <XCircleIcon className="mt-0.5 size-4 shrink-0 text-destructive" />
+            <span>{error instanceof ApiError ? error.message : "Erro ao verificar o e-mail"}</span>
+          </div>
+          <Button variant="outline" asChild>
+            <Link to="/app">Ir para o app</Link>
+          </Button>
+        </div>
+      ) : (
+        <div className="grid gap-4">
+          <div className="flex items-start gap-2 text-sm">
+            <CheckCircle2Icon className="mt-0.5 size-4 shrink-0 text-green-600" />
+            <span>E-mail verificado com sucesso!</span>
+          </div>
+          <Button asChild>
+            <Link to="/app">Ir para o app</Link>
+          </Button>
+        </div>
+      )}
+    </AuthLayout>
+  );
+}
