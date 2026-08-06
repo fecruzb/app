@@ -10,49 +10,53 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ApiError } from "@/lib/api";
+import { useConfirm } from "@/components/confirm-dialog";
+import { PageHeader } from "@/components/page-header";
+import { RoleSelect } from "@/components/role-select";
+import { showApiError } from "@/lib/api";
+import { initials } from "@/lib/utils";
 import { useAuth } from "@/domains/auth/auth-provider";
 import { tenantApi } from "../api";
 import { useTenant } from "../tenant-provider";
-
-function initials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase() || "?";
-}
-
-const roleSelectClass =
-  "h-8 rounded-md border border-input bg-transparent px-2 text-sm focus-visible:outline-2";
 
 function GeneralSection() {
   const { me, refresh } = useAuth();
   const { tenant, isManager } = useTenant();
   const navigate = useNavigate();
+  const confirm = useConfirm();
   const [name, setName] = useState(tenant.name);
-  const [saving, setSaving] = useState(false);
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setSaving(true);
-    try {
-      await tenantApi.rename(tenant.id, name);
+  const renameMutation = useMutation({
+    mutationFn: () => tenantApi.rename(tenant.id, name),
+    onSuccess: async () => {
       await refresh();
       toast.success("Tenant renamed");
-    } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Failed to save");
-    } finally {
-      setSaving(false);
-    }
+    },
+    onError: (err) => showApiError(err, "Failed to save"),
+  });
+
+  const leaveMutation = useMutation({
+    mutationFn: () => tenantApi.removeMember(tenant.id, me!.user.id),
+    onSuccess: async () => {
+      await refresh();
+      navigate("/app");
+    },
+    onError: (err) => showApiError(err, "Failed to leave tenant"),
+  });
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    renameMutation.mutate();
   }
 
   async function handleLeave() {
-    if (!me || !window.confirm(`Leave "${tenant.name}"?`)) return;
-    try {
-      await tenantApi.removeMember(tenant.id, me.user.id);
-      await refresh();
-      navigate("/app");
-    } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Failed to leave tenant");
-    }
+    const ok = await confirm({
+      title: "Leave tenant",
+      description: `Leave "${tenant.name}"?`,
+      confirmLabel: "Leave",
+      destructive: true,
+    });
+    if (ok) leaveMutation.mutate();
   }
 
   return (
@@ -74,8 +78,8 @@ function GeneralSection() {
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
-            <Button type="submit" disabled={saving || name === tenant.name}>
-              {saving ? "Saving..." : "Save"}
+            <Button type="submit" disabled={renameMutation.isPending || name === tenant.name}>
+              {renameMutation.isPending ? "Saving..." : "Save"}
             </Button>
           </form>
         ) : (
@@ -83,7 +87,7 @@ function GeneralSection() {
             Only administrators can rename the tenant.
           </p>
         )}
-        {/* Owners can't leave their own tenant — the option only exists for guests */}
+        {/* Owners can't leave their own tenant — the option only exists for guests. */}
         {tenant.role !== "owner" && (
           <div className="border-t pt-4">
             <Button variant="outline" onClick={() => void handleLeave()}>
@@ -100,8 +104,9 @@ function MembersSection() {
   const { me } = useAuth();
   const { tenant, isManager } = useTenant();
   const queryClient = useQueryClient();
+  const confirm = useConfirm();
 
-  const { data: members } = useQuery({
+  const { data: members, isLoading } = useQuery({
     queryKey: ["members", tenant.id],
     queryFn: () => tenantApi.members(tenant.id),
   });
@@ -117,7 +122,7 @@ function MembersSection() {
     },
     onError: (err) => {
       void invalidate();
-      toast.error(err instanceof ApiError ? err.message : "Failed to update role");
+      showApiError(err, "Failed to update role");
     },
   });
 
@@ -127,8 +132,18 @@ function MembersSection() {
       void invalidate();
       toast.success("Member removed");
     },
-    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Failed to remove"),
+    onError: (err) => showApiError(err, "Failed to remove member"),
   });
+
+  async function handleRemove(userId: string, name: string) {
+    const ok = await confirm({
+      title: "Remove member",
+      description: `Remove ${name} from the tenant?`,
+      confirmLabel: "Remove",
+      destructive: true,
+    });
+    if (ok) removeMutation.mutate(userId);
+  }
 
   return (
     <Card>
@@ -137,6 +152,7 @@ function MembersSection() {
         <CardDescription>Who has access to this tenant</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-3">
+        {isLoading && <p className="text-sm text-muted-foreground">Loading members...</p>}
         {members?.map((member) => {
           const isSelf = member.userId === me?.user.id;
           return (
@@ -153,28 +169,16 @@ function MembersSection() {
               </div>
               {isManager && !isSelf ? (
                 <>
-                  <select
-                    className={roleSelectClass}
+                  <RoleSelect
+                    className="h-8"
+                    includeOwner={member.role === "owner"}
                     value={member.role}
-                    onChange={(e) =>
-                      roleMutation.mutate({
-                        userId: member.userId,
-                        role: e.target.value as TenantRole,
-                      })
-                    }
-                  >
-                    <option value="owner">owner</option>
-                    <option value="admin">admin</option>
-                    <option value="member">member</option>
-                  </select>
+                    onChange={(role) => roleMutation.mutate({ userId: member.userId, role })}
+                  />
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => {
-                      if (window.confirm(`Remove ${member.name} from the tenant?`)) {
-                        removeMutation.mutate(member.userId);
-                      }
-                    }}
+                    onClick={() => void handleRemove(member.userId, member.name)}
                   >
                     <Trash2Icon />
                     <span className="sr-only">Remove</span>
@@ -195,7 +199,7 @@ function InvitesSection() {
   const { tenant } = useTenant();
   const queryClient = useQueryClient();
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<"admin" | "member">("member");
+  const [role, setRole] = useState<TenantRole>("member");
 
   const { data: invites } = useQuery({
     queryKey: ["invites", tenant.id],
@@ -205,13 +209,13 @@ function InvitesSection() {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["invites", tenant.id] });
 
   const createMutation = useMutation({
-    mutationFn: () => tenantApi.createInvite(tenant.id, { email, role }),
+    mutationFn: () => tenantApi.createInvite(tenant.id, { email, role: role as "admin" | "member" }),
     onSuccess: () => {
       void invalidate();
       setEmail("");
       toast.success("Invite sent by email");
     },
-    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Failed to invite"),
+    onError: (err) => showApiError(err, "Failed to invite"),
   });
 
   const revokeMutation = useMutation({
@@ -220,7 +224,7 @@ function InvitesSection() {
       void invalidate();
       toast.success("Invite revoked");
     },
-    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Failed to revoke"),
+    onError: (err) => showApiError(err, "Failed to revoke invite"),
   });
 
   return (
@@ -247,14 +251,7 @@ function InvitesSection() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <select
-            className={roleSelectClass}
-            value={role}
-            onChange={(e) => setRole(e.target.value as "admin" | "member")}
-          >
-            <option value="member">member</option>
-            <option value="admin">admin</option>
-          </select>
+          <RoleSelect value={role} onChange={setRole} />
           <Button type="submit" disabled={createMutation.isPending}>
             {createMutation.isPending ? "Sending..." : "Invite"}
           </Button>
@@ -269,11 +266,7 @@ function InvitesSection() {
                 <span className="text-xs text-muted-foreground">
                   expires {new Date(invite.expiresAt).toLocaleDateString("en-US")}
                 </span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => revokeMutation.mutate(invite.id)}
-                >
+                <Button variant="ghost" size="icon" onClick={() => revokeMutation.mutate(invite.id)}>
                   <Trash2Icon />
                   <span className="sr-only">Revoke</span>
                 </Button>
@@ -291,10 +284,7 @@ export function TenantSettingsPage() {
 
   return (
     <div className="grid gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Settings</h1>
-        <p className="text-muted-foreground">Manage the tenant, members and invites</p>
-      </div>
+      <PageHeader title="Settings" description="Manage the tenant, members and invites" />
       <GeneralSection />
       <MembersSection />
       {isManager && <InvitesSection />}

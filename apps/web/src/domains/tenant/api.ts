@@ -1,11 +1,4 @@
-import type {
-  AgentMessage,
-  AgentResult,
-  InviteDto,
-  MemberDto,
-  PublicInviteDto,
-  TenantRole,
-} from "@app/shared";
+import type { InviteDto, MemberDto, PublicInviteDto, TenantRole } from "@app/shared";
 import { api } from "@/lib/api";
 
 export const tenantApi = {
@@ -23,6 +16,4 @@ export const tenantApi = {
   getInvite: (token: string) => api.get<PublicInviteDto>(`/invites/${token}`),
   acceptInvite: (token: string, body?: { name: string; password: string }) =>
     api.post<{ tenantSlug: string }>(`/invites/${token}/accept`, body),
-  agentChat: (tenantId: string, messages: AgentMessage[]) =>
-    api.post<AgentResult>(`/tenants/${tenantId}/agent`, { messages }),
 };

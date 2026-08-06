@@ -1,22 +1,26 @@
 import { useState, type FormEvent } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckIcon, Loader2Icon, PlusIcon, Trash2Icon } from "lucide-react";
-import { toast } from "sonner";
+import { CheckIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import type { TaskDto } from "@app/shared";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ApiError } from "@/lib/api";
+import { useConfirm } from "@/components/confirm-dialog";
+import { EmptyState } from "@/components/empty-state";
+import { PageHeader } from "@/components/page-header";
+import { PageLoading } from "@/components/page-loading";
+import { showApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { useTenant } from "@/domains/tenant/tenant-provider";
 import { taskApi } from "../api";
 
-// Example page with the full pattern: query + mutations for a to-do list.
-// Copy as the base for your product's resources.
+// Canonical internal page: a query for reads, mutations for writes, and the
+// shared PageHeader / PageLoading / EmptyState / useConfirm. Copy this shape.
 
 export function TasksPage() {
   const { tenant } = useTenant();
   const queryClient = useQueryClient();
+  const confirm = useConfirm();
   const [title, setTitle] = useState("");
 
   const { data: tasks, isLoading } = useQuery({
@@ -32,20 +36,20 @@ export function TasksPage() {
       void invalidate();
       setTitle("");
     },
-    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Failed to add task"),
+    onError: (err) => showApiError(err, "Failed to add task"),
   });
 
   const toggleMutation = useMutation({
     mutationFn: (task: TaskDto) =>
       taskApi.update(tenant.id, task.id, { title: task.title, completed: !task.completed }),
     onSuccess: () => void invalidate(),
-    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Failed to update"),
+    onError: (err) => showApiError(err, "Failed to update task"),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => taskApi.remove(tenant.id, id),
+    mutationFn: (id: string) => taskApi.delete(tenant.id, id),
     onSuccess: () => void invalidate(),
-    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Failed to delete"),
+    onError: (err) => showApiError(err, "Failed to delete task"),
   });
 
   function handleSubmit(e: FormEvent) {
@@ -54,17 +58,26 @@ export function TasksPage() {
     if (value) createMutation.mutate(value);
   }
 
+  async function handleDelete(task: TaskDto) {
+    const ok = await confirm({
+      title: "Delete task",
+      description: `Delete "${task.title}"?`,
+      confirmLabel: "Delete",
+      destructive: true,
+    });
+    if (ok) deleteMutation.mutate(task.id);
+  }
+
   const remaining = tasks?.filter((t) => !t.completed).length ?? 0;
 
   return (
     <div className="grid gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Tasks</h1>
-        <p className="text-muted-foreground">
-          Example resource with per-tenant CRUD
-          {tasks && tasks.length > 0 && ` · ${remaining} of ${tasks.length} left`}
-        </p>
-      </div>
+      <PageHeader
+        title="Tasks"
+        description={`Example resource with per-tenant CRUD${
+          tasks && tasks.length > 0 ? ` · ${remaining} of ${tasks.length} left` : ""
+        }`}
+      />
 
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Input
@@ -79,9 +92,7 @@ export function TasksPage() {
       </form>
 
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <Loader2Icon className="size-6 animate-spin text-muted-foreground" />
-        </div>
+        <PageLoading />
       ) : tasks && tasks.length > 0 ? (
         <Card>
           <CardContent className="divide-y p-0">
@@ -111,15 +122,7 @@ export function TasksPage() {
                 >
                   {task.title}
                 </span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => {
-                    if (window.confirm(`Delete the task "${task.title}"?`)) {
-                      deleteMutation.mutate(task.id);
-                    }
-                  }}
-                >
+                <Button variant="ghost" size="icon" onClick={() => void handleDelete(task)}>
                   <Trash2Icon />
                   <span className="sr-only">Delete</span>
                 </Button>
@@ -128,11 +131,7 @@ export function TasksPage() {
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardContent className="p-10 text-center text-muted-foreground">
-            No tasks yet. Add the first one!
-          </CardContent>
-        </Card>
+        <EmptyState>No tasks yet. Add the first one!</EmptyState>
       )}
     </div>
   );

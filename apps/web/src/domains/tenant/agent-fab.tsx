@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { tenantApi } from "./api";
+import { agentApi } from "./agent-api";
 import { useTenant } from "./tenant-provider";
 
 const SUGGESTIONS = [
@@ -43,7 +43,7 @@ export function AgentFab() {
     setMessages(history);
     setBusy(true);
     try {
-      const result = await tenantApi.agentChat(
+      const result = await agentApi.chat(
         tenant.id,
         history.map(({ role, content }) => ({ role, content })),
       );

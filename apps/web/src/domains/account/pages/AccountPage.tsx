@@ -8,28 +8,27 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ApiError } from "@/lib/api";
+import { useConfirm } from "@/components/confirm-dialog";
+import { PageHeader } from "@/components/page-header";
+import { showApiError } from "@/lib/api";
 import { useAuth } from "@/domains/auth/auth-provider";
 import { accountApi } from "../api";
+
+const selectClass =
+  "h-9 rounded-md border border-input bg-transparent px-2 text-sm focus-visible:outline-2";
 
 function ProfileSection() {
   const { me, refresh } = useAuth();
   const [name, setName] = useState(me?.user.name ?? "");
-  const [saving, setSaving] = useState(false);
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setSaving(true);
-    try {
-      await accountApi.updateProfile({ name });
+  const mutation = useMutation({
+    mutationFn: () => accountApi.updateProfile({ name }),
+    onSuccess: async () => {
       await refresh();
       toast.success("Profile updated");
-    } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Failed to save");
-    } finally {
-      setSaving(false);
-    }
-  }
+    },
+    onError: (err) => showApiError(err, "Failed to save"),
+  });
 
   return (
     <Card>
@@ -45,7 +44,13 @@ function ProfileSection() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="flex items-end gap-2">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            mutation.mutate();
+          }}
+          className="flex items-end gap-2"
+        >
           <div className="grid flex-1 gap-2">
             <Label htmlFor="account-name">Name</Label>
             <Input
@@ -56,8 +61,8 @@ function ProfileSection() {
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-          <Button type="submit" disabled={saving || name === me?.user.name}>
-            {saving ? "Saving..." : "Save"}
+          <Button type="submit" disabled={mutation.isPending || name === me?.user.name}>
+            {mutation.isPending ? "Saving..." : "Save"}
           </Button>
         </form>
       </CardContent>
@@ -68,21 +73,20 @@ function ProfileSection() {
 function PasswordSection() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [saving, setSaving] = useState(false);
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setSaving(true);
-    try {
-      await accountApi.changePassword({ currentPassword, newPassword });
+  const mutation = useMutation({
+    mutationFn: () => accountApi.changePassword({ currentPassword, newPassword }),
+    onSuccess: () => {
       setCurrentPassword("");
       setNewPassword("");
       toast.success("Password changed — other sessions were ended");
-    } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Failed to change password");
-    } finally {
-      setSaving(false);
-    }
+    },
+    onError: (err) => showApiError(err, "Failed to change password"),
+  });
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    mutation.mutate();
   }
 
   return (
@@ -118,8 +122,8 @@ function PasswordSection() {
             <p className="text-xs text-muted-foreground">Minimum of 8 characters</p>
           </div>
           <div>
-            <Button type="submit" disabled={saving}>
-              {saving ? "Saving..." : "Change password"}
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending ? "Saving..." : "Change password"}
             </Button>
           </div>
         </form>
@@ -127,9 +131,6 @@ function PasswordSection() {
     </Card>
   );
 }
-
-const roleSelectClass =
-  "h-9 rounded-md border border-input bg-transparent px-2 text-sm focus-visible:outline-2";
 
 async function copyToClipboard(text: string) {
   try {
@@ -190,6 +191,7 @@ function CreatedKeyPanel({ created }: { created: CreatedApiKeyDto }) {
 function ApiKeysSection() {
   const { me } = useAuth();
   const queryClient = useQueryClient();
+  const confirm = useConfirm();
   const tenants = me?.tenants ?? [];
   const [name, setName] = useState("");
   const [tenantId, setTenantId] = useState(tenants[0]?.id ?? "");
@@ -209,7 +211,7 @@ function ApiKeysSection() {
       setName("");
       void invalidate();
     },
-    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Failed to create key"),
+    onError: (err) => showApiError(err, "Failed to create key"),
   });
 
   const revokeMutation = useMutation({
@@ -218,12 +220,22 @@ function ApiKeysSection() {
       void invalidate();
       toast.success("Key revoked");
     },
-    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Failed to revoke"),
+    onError: (err) => showApiError(err, "Failed to revoke key"),
   });
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (name.trim() && tenantId) createMutation.mutate();
+  }
+
+  async function handleRevoke(id: string, keyName: string) {
+    const ok = await confirm({
+      title: "Revoke API key",
+      description: `Revoke "${keyName}"? Clients using it will stop working.`,
+      confirmLabel: "Revoke",
+      destructive: true,
+    });
+    if (ok) revokeMutation.mutate(id);
   }
 
   return (
@@ -252,7 +264,7 @@ function ApiKeysSection() {
             <Label htmlFor="key-tenant">Tenant</Label>
             <select
               id="key-tenant"
-              className={roleSelectClass}
+              className={selectClass}
               value={tenantId}
               onChange={(e) => setTenantId(e.target.value)}
             >
@@ -286,11 +298,7 @@ function ApiKeysSection() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => {
-                    if (window.confirm(`Revoke the key "${key.name}"?`)) {
-                      revokeMutation.mutate(key.id);
-                    }
-                  }}
+                  onClick={() => void handleRevoke(key.id, key.name)}
                 >
                   <Trash2Icon />
                   <span className="sr-only">Revoke</span>
@@ -307,10 +315,7 @@ function ApiKeysSection() {
 export function AccountPage() {
   return (
     <div className="grid gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">My account</h1>
-        <p className="text-muted-foreground">Profile and security</p>
-      </div>
+      <PageHeader title="My account" description="Profile and security" />
       <ProfileSection />
       <PasswordSection />
       <ApiKeysSection />

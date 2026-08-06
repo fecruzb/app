@@ -7,5 +7,5 @@ export const taskApi = {
     api.post<TaskDto>(`/tenants/${tenantId}/tasks`, body),
   update: (tenantId: string, id: string, body: { title: string; completed?: boolean }) =>
     api.patch<TaskDto>(`/tenants/${tenantId}/tasks/${id}`, body),
-  remove: (tenantId: string, id: string) => api.delete(`/tenants/${tenantId}/tasks/${id}`),
+  delete: (tenantId: string, id: string) => api.delete(`/tenants/${tenantId}/tasks/${id}`),
 };

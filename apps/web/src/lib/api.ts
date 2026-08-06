@@ -1,3 +1,5 @@
+import { toast } from "sonner";
+
 // App API client — the frontend's only network boundary.
 export class ApiError extends Error {
   constructor(
@@ -6,6 +8,11 @@ export class ApiError extends Error {
   ) {
     super(message);
   }
+}
+
+/** Toast the server's message when available, else a fallback. Use in every mutation onError. */
+export function showApiError(err: unknown, fallback: string): void {
+  toast.error(err instanceof ApiError ? err.message : fallback);
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {

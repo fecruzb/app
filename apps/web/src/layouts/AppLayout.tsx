@@ -24,16 +24,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ApiError } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { cn, initials } from "@/lib/utils";
 import { useAppConfig } from "@/app/config";
 import { authApi } from "@/domains/auth/api";
 import { useAuth } from "@/domains/auth/auth-provider";
 import { TenantProvider, useTenant } from "@/domains/tenant/tenant-provider";
-
-function initials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase() || "?";
-}
 
 /**
  * Only becomes a selector when the user belongs to 2+ tenants (was invited to
