@@ -373,6 +373,41 @@ const stack = [
   { label: "Tooling", value: "TypeScript · Turborepo · oxlint · Prettier" },
 ];
 
+// The canonical path for shipping a full feature end to end. Each step names the
+// file you touch and the one convention that keeps it consistent.
+const featureSteps = [
+  {
+    layer: "Shared",
+    file: "packages/shared/src/<feature>.ts",
+    detail: "A Zod schema and DTO type both the API and the SPA import.",
+  },
+  {
+    layer: "Database",
+    file: "apps/api/src/domains/<feature>/schema.ts",
+    detail: "The Drizzle table. Export it in db/schema.ts and run db:generate.",
+  },
+  {
+    layer: "Data access",
+    file: "domains/<feature>/repository.ts",
+    detail: "All SQL, as list / find / insert / update / delete — every query scoped by tenantId.",
+  },
+  {
+    layer: "HTTP",
+    file: "domains/<feature>/endpoints/<action>.endpoint.ts",
+    detail: "Thin handler: parseBody → repository → DTO. Register it in routes.ts.",
+  },
+  {
+    layer: "Agent",
+    file: "domains/<feature>/tools/<action>.tool.ts",
+    detail: "A defineTool that reuses the repository — the chat and remote MCP get it for free.",
+  },
+  {
+    layer: "Frontend",
+    file: "apps/web/src/domains/<feature>/",
+    detail: "api.ts + a page on the Query template + routes.tsx composed into the shell.",
+  },
+];
+
 export function LandingPage() {
   const { me } = useAuth();
   const { selfSignupEnabled } = useAppConfig();
@@ -496,6 +531,36 @@ export function LandingPage() {
         {showcases.map((showcase, i) => (
           <ShowcaseSection key={showcase.id} showcase={showcase} flip={i % 2 === 1} />
         ))}
+
+        <section className="border-t px-4 py-20">
+          <div className="mx-auto max-w-3xl">
+            <div className="mb-10 text-center">
+              <h2 className="text-2xl font-semibold tracking-tight">Add a feature</h2>
+              <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
+                Every feature travels the same path down the stack. Follow it and a new resource
+                lands exactly where the last one did.
+              </p>
+            </div>
+            <ol className="relative grid gap-6 border-l pl-8">
+              {featureSteps.map((step, i) => (
+                <li key={step.layer} className="reveal relative">
+                  <span className="absolute -left-10.25 flex size-6 items-center justify-center rounded-full border bg-background text-xs font-medium">
+                    {i + 1}
+                  </span>
+                  <p className="text-sm font-semibold">{step.layer}</p>
+                  <code className="mt-0.5 block font-mono text-xs text-muted-foreground">
+                    {step.file}
+                  </code>
+                  <p className="mt-1 text-sm text-muted-foreground">{step.detail}</p>
+                </li>
+              ))}
+            </ol>
+            <p className="mx-auto mt-8 max-w-xl text-center text-sm text-muted-foreground">
+              The same conventions are written as Cursor rules, so the assistant follows this path
+              too — ask it to "add a &lt;feature&gt; resource" and it fills in every step.
+            </p>
+          </div>
+        </section>
 
         <section className="border-t bg-muted/40 px-4 py-20">
           <div className="mx-auto max-w-5xl">
