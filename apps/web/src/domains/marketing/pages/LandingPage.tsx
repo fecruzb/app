@@ -6,6 +6,7 @@ import {
   CheckIcon,
   DatabaseIcon,
   EraserIcon,
+  FolderTreeIcon,
   MoonIcon,
   PaletteIcon,
   PenLineIcon,
@@ -47,295 +48,260 @@ type Included = {
   description: string;
 };
 
-type Step = {
-  id: string;
-  title: string;
-  /** A single short paragraph — keep it tight. */
-  body: string;
-  /** Concrete technical points shown below the copy. */
-  points: string[];
-  filename: string;
-  code: string;
-  lang?: "ts" | "json" | "text";
-};
-
-type Phase = {
+// A single resource, walked top to bottom using the repo's real task domain:
+// its folder, the SQL + endpoint, the agent tool, and the screen it powers.
+type Slice = {
   id: string;
   eyebrow: string;
   title: string;
-  description: string;
-  steps: Step[];
+  body: string;
+  points: string[];
+  /** The evidence for this step — a code panel, a mock, or both. */
+  visual: ReactNode;
 };
 
-// The whole code story as one chronology: run it, add a feature end to end,
-// ship it. The "notes" feature in phase two follows the repo's real patterns.
-const journey: Phase[] = [
-  {
-    id: "start",
-    eyebrow: "Phase 1",
-    title: "Day zero — get it running, learn the map",
-    description:
-      "Before writing any code, get the app on your screen and learn the lay of the land. Fifteen minutes, and you'll know where everything lives.",
-    steps: [
-      {
-        id: "run",
-        title: "Clone and run",
-        body: "Start here. One command boots Postgres in Docker, applies the migrations and seeds a demo workspace; the next starts both dev servers. There's nothing to configure first — the .env ships with working local defaults, validated by Zod at boot, and optional keys degrade gracefully: no Resend key logs emails to the console, no OpenAI key just hides the agent.",
-        points: [
-          "Env validated once at boot — a bad var fails fast",
-          "Optional keys degrade: email → console, agent → hidden",
-          "Code reads a typed env, never raw process.env",
-        ],
-        filename: "terminal",
-        lang: "text",
-        code: `git clone <your-fork>/app-base && cd app-base
-npm install
+const repositoryFile = `// domains/task/repository.ts — all SQL, scoped by tenantId
+export const taskRepository = {
+  list(tenantId: string): Promise<TaskWithAuthor[]> {
+    return baseQuery()
+      .where(eq(tasks.tenantId, tenantId))
+      .orderBy(desc(tasks.createdAt));
+  },
 
-npm run setup    # Postgres via Docker + migrate + seed
-npm run dev      # API on :5000 · SPA on :3000`,
-      },
-      {
-        id: "workspace",
-        title: "Meet the workspace",
-        body: "Now take a minute to walk the tree. It's one typed monorepo wired with npm workspaces and Turborepo: the Hono API, the React SPA, and a shared package of Zod schemas both sides import. That shared package is the trick — change a request shape there and whichever side you forgot stops compiling.",
-        points: [
-          "packages/shared: one source of truth for types",
-          "API serves the built SPA in prod — one origin, no CORS",
-          "TypeScript everywhere, end to end",
-        ],
-        filename: "repo",
-        lang: "text",
-        code: `app-base/
-├── apps/
-│   ├── api/          Hono + Drizzle + Postgres
-│   └── web/          React + Vite SPA
-├── packages/
-│   └── shared/       Zod schemas + DTOs (both sides)
-├── .cursor/rules/    conventions the AI follows
-├── render.yaml       one-service deploy
-└── turbo.json        task graph`,
-      },
-      {
-        id: "domain",
-        title: "A feature is a folder",
-        body: "Last stop on the tour: open apps/api/src/domains/task/ — this is the folder you'll copy for everything you build. A domain owns its slice top to bottom (schema, repository, DTO, endpoints, agent tools), and the frontend mirrors the same shape. Import directions are enforced by lint, so the structure can't quietly rot as the app grows.",
-        points: [
-          "Repository = all SQL; every query filtered by tenantId",
-          "service.ts only when there's real logic — CRUD skips it",
-          "Boundaries fail the lint, not just code review",
-        ],
-        filename: "apps/api/src/domains/task/",
-        lang: "text",
-        code: `domains/task/
+  async insert(values: {
+    tenantId: string;
+    authorId: string | null;
+    title: string;
+    completed: boolean;
+  }): Promise<Task> {
+    const [task] = await db.insert(tasks).values(values).returning();
+    return task;
+  },
+};`;
+
+const endpointFile = `// domains/task/endpoints/create-task.endpoint.ts
+export async function createTask(c: AppContext) {
+  const data = await parseBody(c, taskInputSchema);
+  const task = await taskRepository.insert({
+    tenantId: c.get("tenant").id,
+    authorId: c.get("user").id,
+    title: data.title,
+    completed: data.completed ?? false,
+  });
+  return c.json(toTaskDto({ task, authorName: c.get("user").name }), 201);
+}
+
+// routes.ts — auth + tenant middleware applied once for the group
+export const taskRoutes = new Hono<AppEnv>()
+  .use("*", requireAuth, requireTenant)
+  .get("/", listTasks)
+  .post("/", createTask);`;
+
+const toolFile = `// domains/task/tools/create-task.tool.ts
+export const createTaskTool = defineTool({
+  name: "create_task",
+  description: "Creates a task in the tenant.",
+  inputSchema: {
+    title: z.string().trim().min(1).max(200),
+    completed: z.boolean().default(false),
+  },
+  summarize: (args) => \`Task created: \${args.title}\`,
+  execute: (ctx, { title, completed }) =>
+    taskRepository.insert({
+      tenantId: ctx.tenantId,
+      authorId: ctx.userId,
+      title,
+      completed,
+    }),
+});`;
+
+const webApiFile = `// apps/web/src/domains/task/api.ts — the only network boundary
+import { api } from "@/lib/api"; // raw HTTP client — never called from a page
+
+export const taskApi = {
+  list: (tenantId: string) => api.get<TaskDto[]>(\`/tenants/\${tenantId}/tasks\`),
+  create: (tenantId: string, body: { title: string }) =>
+    api.post<TaskDto>(\`/tenants/\${tenantId}/tasks\`, body),
+  update: (tenantId: string, id: string, body: { completed: boolean }) =>
+    api.patch<TaskDto>(\`/tenants/\${tenantId}/tasks/\${id}\`, body),
+  delete: (tenantId: string, id: string) => api.delete(\`/tenants/\${tenantId}/tasks/\${id}\`),
+};`;
+
+const pageFile = `// pages/TasksPage.tsx — the canonical page template (copy this shape)
+export function TasksPage() {
+  const { tenant } = useTenant();
+  const queryClient = useQueryClient();
+
+  // Reads are queries, keyed by the tenant.
+  const { data: tasks, isLoading } = useQuery({
+    queryKey: ["tasks", tenant.id],
+    queryFn: () => taskApi.list(tenant.id),
+  });
+
+  // Writes are mutations that invalidate on success — no manual loading flags.
+  const create = useMutation({
+    mutationFn: (title: string) => taskApi.create(tenant.id, { title }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks", tenant.id] }),
+    onError: (err) => showApiError(err, "Failed to add task"),
+  });
+
+  if (isLoading) return <PageLoading />;
+  return <PageHeader title="Tasks" description="Example resource" />;
+  // …list, EmptyState when empty, useConfirm() for destructive actions
+}`;
+
+const apiTreeFile = `// A feature is a folder — the same shape every API domain follows.
+apps/api/src/domains/task/
 ├── schema.ts        Drizzle table
 ├── repository.ts    all SQL (scoped by tenantId)
 ├── dto.ts           row → API shape
 ├── routes.ts        wires endpoints + middleware
-├── endpoints/       create-task.endpoint.ts …
-└── tools/           create-task.tool.ts … (agent)
+├── endpoints/       one file per action (create-task.endpoint.ts …)
+└── tools/           one file per agent tool (create-task.tool.ts …)
 
-// apps/web mirrors it: domains/task/
-//   api.ts · pages/TasksPage.tsx · routes.tsx`,
-      },
+// service.ts is added only when a domain grows real business logic.`;
+
+const webTreeFile = `// The frontend mirrors the API, one domain at a time.
+apps/web/src/
+├── domains/task/
+│   ├── api.ts            typed calls — the only network boundary
+│   ├── pages/            route screens: TasksPage.tsx (PascalCase)
+│   ├── routes.tsx        the domain's <Route> element
+│   └── task-card.tsx     domain components (kebab-case)
+├── app/                  App.tsx (route map), config.ts
+├── layouts/              AppLayout, AuthLayout, RequireAuth
+├── components/           app components with product copy (role-select)
+└── lib/                  api.ts (HTTP client), utils.ts — no domain knowledge
+
+// @app/ui (packages/ui) — the tenant-agnostic base UI:
+//   Button, Card, Input, Dialog · PageHeader · EmptyState · useConfirm`;
+
+// One visual per step so nothing stacks: the folder convention first, then the
+// files — table, queries, endpoint, tool, screen — the repo's real task domain.
+const resourceSlices: Slice[] = [
+  {
+    id: "convention",
+    eyebrow: "The convention",
+    title: "A feature is a folder",
+    body: "Before the files, the shape. On the API, every feature is a domain — a single folder that owns its slice top to bottom, and each file has one fixed role, so you always know where a thing lives (and where to add the next one). Import directions are enforced by lint, so the structure can't quietly rot as the app grows.",
+    points: [
+      "One folder per feature — schema, repository, dto, endpoints, tools",
+      "Fixed roles, never a grab-bag file; service.ts only when there's real logic",
+      "The repository owns the SQL; every query filters by tenantId",
+      "Boundaries fail the lint, not just code review",
     ],
+    visual: <CodeBlock filename="apps/api/src/domains/task/" code={apiTreeFile} lang="text" />,
   },
   {
-    id: "feature",
-    eyebrow: "Phase 2",
-    title: "The loop — build a feature with us, end to end",
-    description:
-      "Time to build. Say your product needs notes: create domains/note/ and walk the same path every feature takes — six small files, each landing exactly where the last one predicted. This is the loop you'll repeat for the rest of the product's life.",
-    steps: [
-      {
-        id: "contract",
-        title: "Declare the contract",
-        body: "Always start with the shape. Create note.ts in the shared package and declare two things: the input schema the API will validate with, and the DTO the frontend will consume. One definition, imported by both sides — there is no second version to keep in sync.",
-        points: [
-          "One schema validates the request and types the client",
-          "Both sides import it — drift is a compile error",
-        ],
-        filename: "packages/shared/src/note.ts",
-        code: `export const noteInputSchema = z.object({
-  title: z.string().trim().min(1).max(200),
-});
-
-export type NoteDto = {
-  id: string;
-  title: string;
-  createdAt: string;
-};`,
-      },
-      {
-        id: "table",
-        title: "Add the table",
-        body: "Next, storage. Define the table in TypeScript with Drizzle, inside the domain — note the tenant_id foreign key that ties every note to its workspace. Export it from db/schema.ts, then run npm run db:generate: the SQL migration is derived from your code, so the schema stays the source of truth.",
-        points: [
-          "Migrations are generated, not hand-written",
-          "tenant_id foreign key cascades on delete",
-          "Reused id + timestamp columns from a helper",
-        ],
-        filename: "domains/note/schema.ts",
-        code: `export const notes = pgTable(
-  "notes",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    tenantId: uuid("tenant_id")
-      .notNull()
-      .references(() => tenants.id, { onDelete: "cascade" }),
-    title: text("title").notNull(),
-    ...timestamps, // created_at / updated_at helper
-  },
-  (t) => [index("notes_tenant_idx").on(t.tenantId)],
-);
-
-// npm run db:generate  → SQL migration from the schema`,
-      },
-      {
-        id: "repository",
-        title: "Write the queries",
-        body: "Now the data access. All SQL for the domain lives in one repository object, and every method takes tenantId and filters by it — isolation isn't a code-review reminder here, it's the only way the data can be reached at all. Stick to the naming (list / find / insert / update / delete) and the rest of the stack knows what to expect.",
-        points: [
-          "CRUD methods named list / find / insert / update / delete",
-          "No query exists without a tenant filter",
-        ],
-        filename: "domains/note/repository.ts",
-        code: `export const noteRepository = {
-  async list(tenantId: string): Promise<Note[]> {
-    return db
-      .select()
-      .from(notes)
-      .where(eq(notes.tenantId, tenantId))
-      .orderBy(desc(notes.createdAt));
-  },
-
-  async insert(values: { tenantId: string; title: string }): Promise<Note> {
-    const [note] = await db.insert(notes).values(values).returning();
-    return note;
-  },
-};`,
-      },
-      {
-        id: "endpoint",
-        title: "Expose the endpoint",
-        body: "Wire it to HTTP. The handler stays three lines of intent — parse the body with the shared schema, call the repository, map through the DTO — then gets one line in routes.ts. Auth and tenant middleware already run for the whole group, so the handler never checks a session or resolves a tenant itself.",
-        points: [
-          "Handler stays thin: validate → repository → DTO",
-          "Tenant comes from context — one tenant can't touch another",
-        ],
-        filename: "domains/note/endpoints/create-note.endpoint.ts",
-        code: `export async function createNote(c: AppContext) {
-  const data = await parseBody(c, noteInputSchema);
-  const note = await noteRepository.insert({
-    tenantId: c.get("tenant").id,
-    title: data.title,
-  });
-  return c.json(toNoteDto(note), 201);
-}
-
-// routes.ts — middleware applied once for the group
-export const noteRoutes = new Hono<AppEnv>()
-  .use("*", requireAuth, requireTenant)
-  .get("/", listNotes)
-  .post("/", createNote); // ← the new endpoint`,
-      },
-      {
-        id: "tool",
-        title: "Teach the agent",
-        body: "One more file and the AI catches up with you. A tool is a single defineTool — name, Zod input, execute — that reuses the repository you just wrote. That one definition drives the in-app chat, local Cursor over stdio and the remote MCP server, with zero extra glue.",
-        points: [
-          "Same definition drives the chat, stdio and remote MCP",
-          "summarize marks writes — it becomes a chip in the chat",
-          "Tools never import MCP or OpenAI — the lint blocks it",
-        ],
-        filename: "domains/note/tools/create-note.tool.ts",
-        code: `export const createNoteTool = defineTool({
-  name: "create_note",
-  description: "Creates a note in the tenant.",
-  inputSchema: {
-    title: z.string().trim().min(1).max(200),
-  },
-  summarize: (args) => \`Note created: \${args.title}\`,
-  execute: (ctx, { title }) =>
-    noteRepository.insert({ tenantId: ctx.tenantId, title }),
-});`,
-      },
-      {
-        id: "frontend",
-        title: "Build the screen",
-        body: "Finally, the UI. Mirror the domain on the frontend: an api.ts with the typed calls — the only file that touches the network — and a page built on the TanStack Query template. Reads are queries, writes are mutations that invalidate on success; you never hand-manage a loading flag.",
-        points: [
-          "Network only through the domain api.ts — never raw fetch",
-          "Reads are queries, writes invalidate — no manual loading state",
-        ],
-        filename: "apps/web/src/domains/note/",
-        code: `// api.ts — typed calls, the only network boundary
-export const noteApi = {
-  list: (tenantId: string) =>
-    api.get<NoteDto[]>(\`/tenants/\${tenantId}/notes\`),
-  create: (tenantId: string, body: { title: string }) =>
-    api.post<NoteDto>(\`/tenants/\${tenantId}/notes\`, body),
-};
-
-// pages/NotesPage.tsx — server state via TanStack Query
-const notes = useQuery({
-  queryKey: ["notes", tenant.id],
-  queryFn: () => noteApi.list(tenant.id),
-});`,
-      },
+    id: "schema",
+    eyebrow: "The table",
+    title: "A table is a pgTable in its domain",
+    body: "The tasks table shows the exact shape every table you add will follow: a uuid primary key, a tenant_id foreign key that scopes it to a workspace, the timestamps helper, and an index on the tenant. Run db:generate and the SQL migration is derived from this file — the schema stays the source of truth.",
+    points: [
+      "tenant_id ties every row to a workspace and cascades on delete",
+      "author_id references the user but is nullable — set null on delete",
+      "Migrations are generated from the schema, never hand-written",
     ],
+    visual: <TaskTable />,
   },
   {
-    id: "ship",
-    eyebrow: "Phase 3",
-    title: "Ship it — and shortcut the next one",
-    description:
-      "The feature is done; getting it to production is a push. And because the path you just walked is written down as rules, the next feature can be a prompt instead of six files.",
-    steps: [
-      {
-        id: "deploy",
-        title: "Push to deploy",
-        body: "No deploy scripts to write — render.yaml already describes production: one Render web service running the API and serving the SPA, plus Postgres. Commit your feature and push. Migrations run on pre-deploy (your notes table included) and a health check gates go-live.",
-        points: [
-          "Single web service — API and SPA on one origin",
-          "Migrations run on pre-deploy, not by hand",
-          "Secrets stay out of the repo with sync: false",
-        ],
-        filename: "render.yaml",
-        lang: "text",
-        code: `services:
-  - type: web
-    name: app
-    runtime: node
-    buildCommand: npm ci --include=dev && npm run build
-    startCommand: npm start
-    preDeployCommand: npm run db:migrate
-    healthCheckPath: /api/health
-
-databases:
-  - name: app-db
-    plan: basic-256mb
-    postgresMajorVersion: "16"`,
-      },
-      {
-        id: "rules",
-        title: "Next time, just ask",
-        body: "Here's the payoff of all that convention: every step you just did by hand is written down as a Cursor rule, scoped by glob to the files it governs. The agent reads the same playbook you just learned — so it can walk phase two for you, same files, same names, same conventions.",
-        points: [
-          "api-structure — layers, boundaries, where things go",
-          "web-structure — folders, imports, the network boundary",
-          "agent-tools — the transport-neutral tool contract",
-        ],
-        filename: ".cursor/rules/",
-        lang: "text",
-        code: `.cursor/rules/
-├── api-structure.mdc   globs: apps/api/**
-├── web-structure.mdc   globs: apps/web/**
-├── agent-tools.mdc     globs: **/*.tool.ts
-└── language.mdc        alwaysApply
-
-# each rule scoped by glob → loads for the file you edit`,
-      },
+    id: "repository",
+    eyebrow: "The queries",
+    title: "All SQL lives in one repository",
+    body: "Every method takes a tenantId and filters by it — isolation isn't a reminder here, it's the only way the data can be reached at all. Stick to the naming — list / find / insert / update / delete — and the rest of the stack knows exactly what to expect.",
+    points: [
+      "No query exists without a tenant filter",
+      "CRUD is named list / find / insert / update / delete",
+      "The repository owns the SQL — endpoints and tools never write queries",
     ],
+    visual: <CodeBlock filename="domains/task/repository.ts" code={repositoryFile} lang="ts" />,
+  },
+  {
+    id: "endpoint",
+    eyebrow: "The endpoint",
+    title: "A thin handler, wired in one line",
+    body: "The handler stays three lines of intent: validate the body with the shared schema, call the repository, map through the DTO. It gets one line in routes.ts, where auth and tenant middleware already run for the whole group — so the handler never checks a session or resolves a tenant itself.",
+    points: [
+      "Handler is validate → repository → DTO, nothing more",
+      "The tenant comes from context, never a request param",
+      "Middleware is applied once via .use — new routes are isolated by default",
+    ],
+    visual: (
+      <CodeBlock
+        filename="domains/task/endpoints/create-task.endpoint.ts"
+        code={endpointFile}
+        lang="ts"
+      />
+    ),
+  },
+  {
+    id: "tool",
+    eyebrow: "The agent",
+    title: "One file teaches the assistant",
+    body: "The same resource becomes an agent tool with a single defineTool — a name, a Zod input and an execute that reuses the repository you already wrote. That one definition drives the in-app chat, local Cursor over stdio and the remote MCP server, with zero extra glue.",
+    points: [
+      "Same definition drives the chat, stdio and the remote MCP server",
+      "summarize marks a write — it shows up as a chip in the chat",
+      "Tools never import MCP or OpenAI — the lint blocks it",
+    ],
+    visual: (
+      <CodeBlock filename="domains/task/tools/create-task.tool.ts" code={toolFile} lang="ts" />
+    ),
+  },
+  {
+    id: "web-convention",
+    eyebrow: "The frontend",
+    title: "React, organized by the same domains",
+    body: "The web app mirrors the API: one folder per feature under domains/, and everything else is shared shell. A domain holds its typed api.ts, its route-level pages/, its routes.tsx and any domain-specific components. Generic, tenant-agnostic UI lives in the @app/ui package; app shell and layouts sit outside the domains.",
+    points: [
+      "domains/<feature>/ mirrors the API — api.ts, pages/, routes.tsx, components",
+      "app/ holds App.tsx + config; layouts/ holds AppLayout, AuthLayout, RequireAuth",
+      "Base UI (Button, Card, PageHeader, EmptyState…) is imported from @app/ui",
+      "Imports use the @/ alias; @app/ui never reaches back into a domain",
+    ],
+    visual: <CodeBlock filename="apps/web/src/" code={webTreeFile} lang="text" />,
+  },
+  {
+    id: "api",
+    eyebrow: "The network boundary",
+    title: "One api.ts wraps every call",
+    body: "The only file that touches the network is the domain's api.ts — a thin object over the shared HTTP client, returning the same DTO the API sends. Pages never call fetch or the raw client directly, so every request for a resource has exactly one place to change.",
+    points: [
+      "Network only through the domain api.ts — never a raw fetch in a page",
+      "Returns the shared DTO type — the client is typed end to end",
+      "The tenant id is part of the path, mirroring the API's routes",
+    ],
+    visual: <CodeBlock filename="apps/web/src/domains/task/api.ts" code={webApiFile} lang="ts" />,
+  },
+  {
+    id: "page",
+    eyebrow: "The page",
+    title: "Reads are queries, writes invalidate",
+    body: "Every page follows the same TanStack Query template: reads are a useQuery keyed by the tenant, writes are a useMutation that invalidates on success — so you never hand-manage a loading flag or a refresh. Shared pieces from @app/ui — PageHeader, PageLoading, EmptyState and useConfirm — cover the states so pages stay about the feature.",
+    points: [
+      "useQuery for reads, useMutation + invalidate for writes",
+      "PageLoading while loading, EmptyState when a list is empty",
+      "Destructive actions go through useConfirm(); errors through showApiError()",
+    ],
+    visual: (
+      <CodeBlock
+        filename="apps/web/src/domains/task/pages/TasksPage.tsx"
+        code={pageFile}
+        lang="ts"
+      />
+    ),
+  },
+  {
+    id: "screen",
+    eyebrow: "The screen",
+    title: "The result: a full CRUD feature",
+    body: "That's the whole slice, top to bottom — and this is the screen it powers. Per-tenant create, list, toggle and delete, wired end to end. Copy the folder, rename it, and your own resource lands exactly here.",
+    points: [
+      "Per-tenant create, list, toggle and delete out of the box",
+      "The exact shape you'll clone for your product's resources",
+      "Delete the example and drop yours in — nothing else breaks",
+    ],
+    visual: <TasksMock />,
   },
 ];
 
@@ -388,12 +354,6 @@ const chapters: Chapter[] = [
     mock: ShellMock,
   },
   {
-    eyebrow: "Example resource",
-    title: "A full CRUD feature to copy",
-    body: "Tasks is the placeholder feature — per-tenant create, list, toggle and delete, wired end to end. It's the exact shape you'll clone for your own resources, then delete.",
-    mock: TasksMock,
-  },
-  {
     eyebrow: "The AI agent",
     title: "A chat that gets things done",
     body: "A floating assistant in every tenant: ask or command, it runs the right tools, shows what changed as a chip, and refreshes the data on its own.",
@@ -418,23 +378,6 @@ const chapters: Chapter[] = [
     mock: McpKeysMock,
   },
 ];
-
-const schemaFile = `// domains/task/schema.ts — the shape every table follows
-export const tasks = pgTable(
-  "tasks",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    tenantId: uuid("tenant_id")
-      .notNull()
-      .references(() => tenants.id, { onDelete: "cascade" }),
-    title: text("title").notNull(),
-    completed: boolean("completed").notNull().default(false),
-    ...timestamps, // created_at / updated_at helper
-  },
-  (t) => [index("tasks_tenant_idx").on(t.tenantId)],
-);
-
-// npm run db:generate → SQL migration derived from this file`;
 
 // The database, explained one domain at a time: each group gets its own copy
 // and just its tables, so the models read as a story instead of a wall of cards.
@@ -469,23 +412,32 @@ const dbGroups: DbGroup[] = [
     ],
     visual: <TenantTables />,
   },
-  {
-    eyebrow: "Your resources",
-    title: "The example table you'll copy",
-    body: "tasks is the one placeholder resource, and it shows the exact shape every table you add will follow: a uuid primary key, a tenant_id foreign key that scopes it to a workspace, the timestamps helper, and an index on the tenant. Copy it, rename it, delete it — your domains slot in the same way.",
-    points: [
-      "tenant_id ties every row to a workspace and cascades on delete",
-      "author_id references the user but is nullable — set null on delete",
-      "Shared timestamps + a tenant index come from reusable helpers",
-    ],
-    visual: (
-      <div className="space-y-4">
-        <TaskTable />
-        <CodeBlock filename="domains/task/schema.ts" code={schemaFile} lang="ts" />
-      </div>
-    ),
-  },
 ];
+
+const repoTreeFile = `app-base/
+├── apps/
+│   ├── api/          Hono + Drizzle + Postgres
+│   └── web/          React + Vite SPA
+├── packages/
+│   └── shared/       Zod schemas + DTOs (both sides)
+├── .cursor/rules/    conventions the AI follows
+├── render.yaml       one-service deploy
+└── turbo.json        task graph`;
+
+// The outermost structural pillar: how the repo is laid out, before we drill
+// into the data model and a single resource.
+const monorepoPillar: Foundation = {
+  icon: FolderTreeIcon,
+  eyebrow: "The layout",
+  title: "One typed monorepo, wired end to end",
+  body: "Everything lives in one repo run by npm workspaces and Turborepo: the Hono API, the React SPA, and a shared package of Zod schemas both sides import. That shared package is the trick — change a request shape there and whichever side you forgot stops compiling.",
+  points: [
+    "packages/shared is one source of truth for types across API and web",
+    "In production the API serves the built SPA — one origin, no CORS",
+    "TypeScript everywhere, end to end — a domain is a folder on both sides",
+  ],
+  visual: <CodeBlock filename="app-base" code={repoTreeFile} lang="text" />,
+};
 
 // The foundations that follow the data model: configuration, then running it.
 const foundations: Foundation[] = [
@@ -550,7 +502,7 @@ const ownership: Included[] = [
     icon: PenLineIcon,
     title: "Rewrite the rules",
     description:
-      "The conventions are markdown files in .cursor/rules/. Disagree with one? Edit it, and the agent starts following you instead.",
+      "The conventions are markdown in .cursor/rules/, each scoped by glob to the files it governs — so the agent reads the same playbook. Disagree with one? Edit it, and it follows you instead.",
   },
 ];
 
@@ -630,10 +582,10 @@ export function LandingPage() {
             Stop rebuilding auth, tenants, email and an AI agent for every project. This is the
             groundwork — a typed monorepo, organized by domain, ready to become your product.
           </p>
-          <div className="mx-auto mt-8 flex max-w-md items-center gap-2 rounded-lg border bg-muted/50 px-4 py-3 font-mono text-sm">
+          <div className="mx-auto mt-8 flex w-fit max-w-full items-center gap-2 overflow-x-auto rounded-lg border bg-muted/50 px-4 py-3 font-mono text-sm">
             <TerminalIcon className="size-4 shrink-0 text-muted-foreground" />
             <span className="text-muted-foreground">$</span>
-            <span>git clone app-base && npm install</span>
+            <span className="whitespace-nowrap">git clone https://github.com/fecruzb/app</span>
           </div>
           <div className="mt-8 flex justify-center gap-3">
             <Button size="lg" asChild>
@@ -683,14 +635,16 @@ export function LandingPage() {
               The foundations, already wired
             </h2>
             <p className="mx-auto mt-3 text-pretty text-muted-foreground">
-              Before any of your product exists, these pieces are in place and connected: where the
-              data lives, how it's configured, and how the whole stack runs on your machine.
+              Before any of your product exists, these pieces are in place and connected: how the
+              code is laid out, where the data lives, and one real resource walked top to bottom.
             </p>
           </div>
         </section>
 
         <div className="bg-muted/40">
+          <FoundationSection pillar={monorepoPillar} flip={false} />
           <DatabaseFoundation />
+          <ResourceSlice />
           {foundations.map((pillar, i) => (
             <FoundationSection key={pillar.title} pillar={pillar} flip={i % 2 === 1} />
           ))}
@@ -712,25 +666,6 @@ export function LandingPage() {
 
         {chapters.map((chapter, i) => (
           <ChapterSection key={chapter.title} chapter={chapter} flip={i % 2 === 1} />
-        ))}
-
-        <section id="build" className="scroll-mt-16 border-t px-4 pt-20 pb-8">
-          <div className="mx-auto max-w-5xl text-center">
-            <h2 className="text-2xl font-semibold tracking-tight">From clone to production</h2>
-            <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
-              A guided build, start to finish: run the project, add a real feature — notes — layer
-              by layer, then push it live. Each step shows the exact file you'd write and ends with
-              something you can check.
-            </p>
-          </div>
-        </section>
-
-        {journey.map((phase, phaseIndex) => (
-          <PhaseSection
-            key={phase.id}
-            phase={phase}
-            startAt={journey.slice(0, phaseIndex).reduce((n, p) => n + p.steps.length, 0)}
-          />
         ))}
 
         <FoundationSection pillar={renderPillar} flip={false} />
@@ -961,6 +896,48 @@ function DbGroupSection({ group, flip }: { group: DbGroup; flip: boolean }) {
   );
 }
 
+/**
+ * The example resource walked end to end: the table opened it in the database
+ * section, and this closes the loop — repository + endpoint, the agent tool,
+ * and the screen — all from the repo's real task domain, alternating sides.
+ */
+function ResourceSlice() {
+  return (
+    <>
+      <section className="border-t px-4 pt-16 pb-4 sm:pt-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="flex items-center justify-center gap-2 text-sm font-medium text-primary">
+            <FolderTreeIcon className="size-4" /> Example resource
+          </p>
+          <h3 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+            One resource, top to bottom
+          </h3>
+          <p className="mx-auto mt-3 text-pretty text-muted-foreground">
+            <code className="font-mono text-xs">tasks</code> is the one placeholder resource. First
+            the convention — a feature is a folder — then the whole slice: the table, the queries,
+            the endpoint and the agent tool on the API, then the React domain, its api.ts and page,
+            and the screen. This is the exact shape you'd copy for your own.
+          </p>
+        </div>
+      </section>
+
+      {resourceSlices.map((slice, i) => (
+        <DbGroupSection
+          key={slice.id}
+          group={{
+            eyebrow: slice.eyebrow,
+            title: slice.title,
+            body: slice.body,
+            points: slice.points,
+            visual: slice.visual,
+          }}
+          flip={i % 2 === 1}
+        />
+      ))}
+    </>
+  );
+}
+
 /** One product-tour chapter: copy on one side, its mock (plus any email) on the other. */
 function ChapterSection({ chapter, flip }: { chapter: Chapter; flip: boolean }) {
   return (
@@ -1037,54 +1014,6 @@ function MockCarousel({ chapter }: { chapter: Chapter }) {
         ))}
       </div>
     </div>
-  );
-}
-
-/** One phase of the chronology: a heading plus its numbered steps on a timeline. */
-function PhaseSection({ phase, startAt }: { phase: Phase; startAt: number }) {
-  return (
-    <section className="px-4 py-10 sm:py-12">
-      <div className="mx-auto max-w-5xl">
-        <div className="reveal mb-10 max-w-2xl">
-          <p className="text-sm font-medium text-primary">{phase.eyebrow}</p>
-          <h3 className="mt-1 text-xl font-semibold tracking-tight sm:text-2xl">{phase.title}</h3>
-          <p className="mt-2 text-pretty text-muted-foreground">{phase.description}</p>
-        </div>
-        <ol className="relative space-y-14 border-l pl-8 sm:pl-10">
-          {phase.steps.map((step, i) => (
-            <StepItem key={step.id} step={step} number={startAt + i + 1} />
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
-}
-
-/** One step: the number on the timeline, the reasoning, and the file it produces. */
-function StepItem({ step, number }: { step: Step; number: number }) {
-  return (
-    <li className="relative">
-      <span className="absolute top-0.5 -left-11 flex size-6 items-center justify-center rounded-full border bg-background text-xs font-medium sm:-left-13">
-        {number}
-      </span>
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,4fr)_minmax(0,5fr)] lg:gap-12">
-        <div className="reveal min-w-0">
-          <h4 className="text-lg font-semibold tracking-tight text-balance">{step.title}</h4>
-          <p className="mt-2.5 text-sm text-pretty text-muted-foreground">{step.body}</p>
-          <ul className="mt-4 space-y-2 text-sm">
-            {step.points.map((point) => (
-              <li key={point} className="flex gap-2.5">
-                <CheckIcon className="mt-0.5 size-4 shrink-0 text-primary" />
-                <span>{point}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="reveal reveal-delay min-w-0">
-          <CodeBlock filename={step.filename} code={step.code} lang={step.lang} />
-        </div>
-      </div>
-    </li>
   );
 }
 

@@ -20,6 +20,7 @@ In production the API serves the built SPA — **one origin, a single service**,
 Prerequisites: Node ≥ 22, Docker.
 
 ```bash
+git clone https://github.com/fecruzb/app && cd app
 npm install
 npm run setup   # starts Postgres (Docker), runs migrations and seed
 npm run dev     # API on :5000 + web on :3000 (proxies /api)
@@ -94,7 +95,7 @@ Useful entry points:
 
 1. Clone/copy this repo and rename it (`package.json`, `index.html`, "App Base" text, `render.yaml`)
 2. Replace the `tasks` resource with your domain: copy `apps/api/src/domains/task/` (schema → repository → endpoints → tools), export the schema in `db/schema.ts`, run `db:generate`, add the schemas to `packages/shared` and the page in web
-3. Adjust the landing (`apps/web/src/pages/public/LandingPage.tsx`)
+3. Adjust the landing (`apps/web/src/domains/marketing/pages/LandingPage.tsx`)
 4. Set `RESEND_API_KEY` and `MAIL_FROM` for real emails
 5. Deploy: push the repo to GitHub and create a Blueprint on Render pointing to `render.yaml`
 
