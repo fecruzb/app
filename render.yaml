@@ -37,6 +37,10 @@ services:
       # Comma-separated emails always treated as platform admins once verified
       - key: PLATFORM_ADMIN_EMAILS
         sync: false
+      # Tauri shells (desktop/mobile). Comma-separated Origins, e.g.
+      # tauri://localhost,https://tauri.localhost
+      - key: CORS_ORIGIN
+        sync: false
       # Image storage (Cloudflare R2) — set in the dashboard (not committed).
       - key: CLOUDFLARE_ACCESS_KEY_ID
         sync: false

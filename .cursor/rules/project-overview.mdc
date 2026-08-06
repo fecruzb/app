@@ -11,6 +11,7 @@ Monorepo (npm workspaces + Turborepo):
 
 - `apps/api` — Hono + Zod + Drizzle/Postgres, organized by domain
 - `apps/web` — React 19 + Vite SPA; mirrors the API's domains
+- `apps/desktop` / `apps/mobile` — thin Tauri packaging shells around `apps/web` (remote API via `VITE_API_URL` + `VITE_ROUTER=hash`); not product domains — keep UI in `apps/web`
 - `packages/shared` (`@app/shared`) — Zod input schemas + DTO types imported by both sides
 - `packages/ui` (`@app/ui`) — app-neutral base UI (shadcn), imported per subpath
 

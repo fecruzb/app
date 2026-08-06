@@ -13,8 +13,8 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      "/api": "http://127.0.0.1:5000",
-      "/media": "http://127.0.0.1:5000",
+      "/api": "http://127.0.0.1:5050",
+      "/media": "http://127.0.0.1:5050",
     },
   },
 });

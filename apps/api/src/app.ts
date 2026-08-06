@@ -4,6 +4,7 @@
 import path from "node:path";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { logger as honoLogger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
 import { env } from "@/lib/env";
@@ -25,6 +26,17 @@ export const app = new Hono();
 app.onError(errorHandler);
 app.use(secureHeaders());
 if (!env.isProduction) app.use(honoLogger());
+
+// Credentialed CORS for Tauri shells (and local Vite). Off when CORS_ORIGIN is empty.
+if (env.corsOrigins.size > 0) {
+  app.use(
+    "/api/*",
+    cors({
+      origin: (origin) => (origin && env.corsOrigins.has(origin) ? origin : null),
+      credentials: true,
+    }),
+  );
+}
 
 // Unauthenticated utilities: health check and the public config the frontend reads on boot.
 app.get("/api/health", (c) => c.json({ ok: true }));

@@ -70,7 +70,9 @@ apps/api/src/
 │   └── images/           # example uploads: schema, repository, dto, routes/, tools/, media.ts
 └── db/                   # client, schema.ts (barrel for drizzle-kit), columns (audit), seed
 
-apps/web                  # React SPA (public pages + logged-in area)
+apps/web                  # React SPA (public pages + logged-in area) — single UI source
+apps/desktop              # Tauri desktop shell (packages apps/web; remote API)
+apps/mobile               # Tauri iOS shell (same; local Xcode, no App Store CI in v1)
 packages/shared           # Zod schemas and DTOs per domain (auth, account, tenant, billing, task, …)
 packages/ui               # app-neutral base UI (shadcn), imported per subpath
 ```
@@ -131,8 +133,16 @@ Copy `.env.example` to `.env` at the root (in production Render injects everythi
 | `CLOUDFLARE_MEDIA_BUCKET`      | R2 bucket name (default `app`)                                                 |
 | `R2_PUBLIC_BASE_URL`           | Public base URL for R2 objects                                                 |
 | `MEDIA_DIR`                    | Optional local filesystem root for media when R2 is unset                      |
+| `CORS_ORIGIN`                  | Optional comma-separated origins for credentialed CORS (Tauri / shell Vite)    |
 
 AI spend limits come from the tenant's plan in the billing catalog — there is no separate `AI_MONTHLY_BUDGET_USD` env var.
+
+Web / shell Vite vars (see `apps/web/.env.example`, `apps/desktop/.env.*`, `apps/mobile/.env.*`):
+
+| Var            | Description                                                                           |
+| -------------- | ------------------------------------------------------------------------------------- |
+| `VITE_API_URL` | Optional API origin for Tauri shells; omit in the browser deploy (same-origin `/api`) |
+| `VITE_ROUTER`  | Set to `hash` for Tauri; omit / other → `BrowserRouter`                               |
 
 ## Connect an MCP client (remote)
 
@@ -151,16 +161,43 @@ The API exposes a remote MCP server at `POST /api/mcp`, authenticated by a perso
 
 The client gets the same tools as the in-app agent, acting on that key's tenant. Revoke a key from the same screen to cut access.
 
+## Desktop & mobile (Tauri shells)
+
+`apps/desktop` and `apps/mobile` package the same `apps/web` UI and call a **remote** API (`VITE_API_URL` + cookie sessions). Enable `CORS_ORIGIN` on the API (see `.env.example`) so cross-origin cookies work (`SameSite=None` for allow-listed Origins).
+
+```bash
+# Desktop (Vite :1420) — API must already be running
+npm run tauri -w @app/desktop dev
+# or: npm run dev -w @app/desktop
+
+# iOS (Vite :1422) — see apps/mobile/README.md for Xcode / device notes
+npm run ios:init -w @app/mobile   # once
+npm run ios:dev -w @app/mobile
+```
+
+### Desktop releases → R2
+
+Installers and updater artifacts use the **same** R2 bucket and credentials as media (`CLOUDFLARE_*` / `R2_PUBLIC_BASE_URL`), under the `desktop-releases/` prefix. Canonical path: bump `apps/desktop` version → push tag `vX.Y.Z` → GitHub Actions
+(`.github/workflows/release-desktop-{macos,windows,linux}.yml`) build, sign, and publish.
+Details and secret list: [`.cursor/skills/desktop-release/SKILL.md`](.cursor/skills/desktop-release/SKILL.md).
+
+Repo secrets: `VITE_API_URL`, `TAURI_SIGNING_PRIVATE_KEY`, `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`, plus the same `CLOUDFLARE_S3_API`, `CLOUDFLARE_ACCESS_KEY_ID`, `CLOUDFLARE_SECRET_ACCESS_KEY`, `CLOUDFLARE_MEDIA_BUCKET`, `R2_PUBLIC_BASE_URL` as Render media.
+
+Commit the updater **public** key in `apps/desktop/src-tauri/tauri.conf.json` (replace the placeholder) and point `plugins.updater.endpoints` at `${R2_PUBLIC_BASE_URL}/desktop-releases/latest/latest.json`.
+
 ## Scripts
 
-| Command                                 | Does                                 |
-| --------------------------------------- | ------------------------------------ |
-| `npm run setup`                         | Postgres up + migrate + seed         |
-| `npm run dev`                           | API + web in watch                   |
-| `npm run build`                         | Production build (web)               |
-| `npm start`                             | API in production (serves SPA)       |
-| `npm run db:up` / `db:down`             | Start / stop local Postgres (Docker) |
-| `npm run db:generate`                   | Generate migration from schema       |
-| `npm run db:migrate`                    | Apply migrations                     |
-| `npm run db:seed`                       | Demo user + tenant + sample tasks    |
-| `npm run lint` / `format` / `typecheck` | Quality                              |
+| Command                                 | Does                                  |
+| --------------------------------------- | ------------------------------------- |
+| `npm run setup`                         | Postgres up + migrate + seed          |
+| `npm run dev`                           | API + web in watch                    |
+| `npm run build`                         | Production build (web)                |
+| `npm start`                             | API in production (serves SPA)        |
+| `npm run db:up` / `db:down`             | Start / stop local Postgres (Docker)  |
+| `npm run db:generate`                   | Generate migration from schema        |
+| `npm run db:migrate`                    | Apply migrations                      |
+| `npm run db:seed`                       | Demo user + tenant + sample tasks     |
+| `npm run lint` / `format` / `typecheck` | Quality                               |
+| `npm run release:mac:publish`           | Build universal macOS + publish to R2 |
+| `npm run release:win:publish`           | Build Windows NSIS + publish to R2    |
+| `npm run release:linux:publish`         | Build AppImage + publish to R2        |

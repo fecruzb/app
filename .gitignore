@@ -11,3 +11,11 @@ dist/
 
 # Local media fallback (only used when R2 isn't configured) — dev-only, never committed.
 /apps/web/public/
+
+# Tauri / Cargo build artifacts (keep Cargo.lock committed)
+**/src-tauri/target/
+**/src-tauri/gen/schemas/
+apps/desktop/dist/
+apps/mobile/dist/
+apps/desktop/.env.production
+apps/mobile/.env.production

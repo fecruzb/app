@@ -7,6 +7,7 @@ import {
   createSession,
   deleteUserSessions,
   hashPassword,
+  meWithShellToken,
   setSessionCookie,
 } from "../service";
 import { authRepository } from "../repository";
@@ -39,5 +40,5 @@ export async function resetPassword(c: AppContext) {
 
   // -- Output ----------------------------------------------------------------
   setSessionCookie(c, sessionToken);
-  return c.json(await buildMe(user));
+  return c.json(meWithShellToken(c, await buildMe(user), sessionToken));
 }

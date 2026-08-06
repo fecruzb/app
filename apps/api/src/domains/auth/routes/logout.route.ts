@@ -1,6 +1,6 @@
-import { deleteCookie, getCookie } from "hono/cookie";
+import { getCookie } from "hono/cookie";
 import type { AppContext } from "@/context";
-import { deleteSession, SESSION_COOKIE } from "../service";
+import { clearSessionCookie, deleteSession, SESSION_COOKIE } from "../service";
 
 /**
  * Log out
@@ -20,6 +20,6 @@ export async function logout(c: AppContext) {
   if (token) await deleteSession(token);
 
   // -- Output ----------------------------------------------------------------
-  deleteCookie(c, SESSION_COOKIE, { path: "/" });
+  clearSessionCookie(c);
   return c.json({ ok: true });
 }

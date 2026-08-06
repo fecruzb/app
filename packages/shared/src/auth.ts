@@ -42,3 +42,13 @@ export type MeDto = {
   user: UserDto;
   tenants: TenantSummaryDto[];
 };
+
+/**
+ * Login/register payload for cross-origin shells (Tauri). Includes the raw
+ * session token once so the client can send `Authorization: Bearer` — WKWebView
+ * does not persist `SameSite=None; Secure` cookies against an HTTP API.
+ * Browser same-origin deploys omit `sessionToken` and keep the httpOnly cookie.
+ */
+export type AuthSessionDto = MeDto & {
+  sessionToken?: string;
+};

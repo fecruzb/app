@@ -54,6 +54,11 @@ const schema = z.object({
    * password and prints it once. Local-only — never set on Render.
    */
   SEED_DEMO_PASSWORD: z.string().optional(),
+  /**
+   * Comma-separated Origins allowed for credentialed CORS (Tauri shells +
+   * local Vite ports). Empty = CORS middleware off (browser same-origin only).
+   */
+  CORS_ORIGIN: z.string().optional(),
 });
 
 const parsed = schema.safeParse(process.env);
@@ -99,4 +104,11 @@ export const env = {
   mediaDir: raw.MEDIA_DIR ? resolve(raw.MEDIA_DIR) : resolve(moduleDir, "../../../web/public"),
   /** Demo password for seed; null means seed generates and prints one. */
   seedDemoPassword: raw.SEED_DEMO_PASSWORD?.trim() || null,
+  /** Allowed CORS origins (empty set = middleware off). */
+  corsOrigins: new Set(
+    (raw.CORS_ORIGIN ?? "")
+      .split(",")
+      .map((o) => o.trim())
+      .filter(Boolean),
+  ),
 };

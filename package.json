@@ -20,7 +20,16 @@
     "db:generate": "npm -w @app/api run db:generate",
     "db:migrate": "npm -w @app/api run db:migrate",
     "db:seed": "npm -w @app/api run db:seed",
-    "setup": "npm run db:up && sleep 2 && npm run db:migrate && npm run db:seed"
+    "setup": "npm run db:up && sleep 2 && npm run db:migrate && npm run db:seed",
+    "release:mac": "npm run release:mac -w @app/desktop",
+    "release:mac:universal": "npm run release:mac:universal -w @app/desktop",
+    "release:mac:publish": "node scripts/publish-desktop-release.mjs --build",
+    "release:publish": "node scripts/publish-desktop-release.mjs",
+    "release:win:publish": "node scripts/publish-desktop-release-windows.mjs --build",
+    "release:win:publish:only": "node scripts/publish-desktop-release-windows.mjs",
+    "release:linux:publish": "node scripts/publish-desktop-release-linux.mjs --build",
+    "release:linux:publish:only": "node scripts/publish-desktop-release-linux.mjs",
+    "release:open": "npm run release:open -w @app/desktop"
   },
   "engines": {
     "node": ">=22"
@@ -30,6 +39,7 @@
     "node": "25.8.2"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.1054.0",
     "oxlint": "^1.77.0",
     "prettier": "^3.9.6",
     "turbo": "^2.10.8",

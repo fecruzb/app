@@ -5,8 +5,8 @@
  * tokens, and programmatic API keys. Crypto primitives live in `lib/crypto`.
  */
 import type { Context } from "hono";
-import { setCookie } from "hono/cookie";
-import type { MeDto } from "@app/shared";
+import { deleteCookie, setCookie } from "hono/cookie";
+import type { AuthSessionDto, MeDto } from "@app/shared";
 import { generateApiKey, generateToken, hashToken } from "@/lib/crypto";
 import { sendEmail } from "@/integrations/resend";
 import { env } from "@/lib/env";
@@ -25,6 +25,42 @@ export const SESSION_COOKIE = "app_session";
 
 /** Session lifetime in milliseconds (30 days). */
 export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+/** True when Origin is CORS-allow-listed and not the browser APP_URL (Tauri shells). */
+export function isCrossOriginShell(c: Context): boolean {
+  const origin = c.req.header("origin");
+  return (
+    !!origin && env.corsOrigins.has(origin) && !origin.startsWith(env.appUrl.replace(/\/+$/, ""))
+  );
+}
+
+/**
+ * Cookie attributes for the session. Cross-origin Tauri (and other CORS
+ * allow-list) clients need SameSite=None + Secure; the browser same-origin
+ * deploy keeps Lax. (WKWebView often ignores Secure cookies on HTTP — shells
+ * also get `sessionToken` in the JSON body; see `meWithShellToken`.)
+ */
+function sessionCookieOptions(c: Context): {
+  path: string;
+  httpOnly: boolean;
+  sameSite: "Lax" | "None";
+  secure: boolean;
+  maxAge: number;
+} {
+  const crossOrigin = isCrossOriginShell(c);
+  return {
+    path: "/",
+    httpOnly: true,
+    sameSite: crossOrigin ? "None" : "Lax",
+    secure: crossOrigin || env.isProduction,
+    maxAge: SESSION_TTL_MS / 1000,
+  };
+}
+
+/** Attach raw session token for Tauri/shell clients only (never for same-origin browser). */
+export function meWithShellToken(c: Context, me: MeDto, sessionToken: string): AuthSessionDto {
+  return isCrossOriginShell(c) ? { ...me, sessionToken } : me;
+}
 
 const TOKEN_TTL: Record<ActionTokenPurpose, number> = {
   verify_email: 24 * 60 * 60 * 1000,
@@ -111,13 +147,19 @@ export async function deleteUserSessions(userId: string, exceptToken?: string): 
  * @param token - Raw session token
  */
 export function setSessionCookie(c: Context, token: string): void {
-  setCookie(c, SESSION_COOKIE, token, {
-    path: "/",
-    httpOnly: true,
-    sameSite: "Lax",
-    secure: env.isProduction,
-    maxAge: SESSION_TTL_MS / 1000,
-  });
+  setCookie(c, SESSION_COOKIE, token, sessionCookieOptions(c));
+}
+
+/**
+ * Clear the session cookie
+ *
+ * Uses the same SameSite/Secure attributes as set, so browsers actually drop it.
+ *
+ * @param c - Hono context
+ */
+export function clearSessionCookie(c: Context): void {
+  const { path, sameSite, secure } = sessionCookieOptions(c);
+  deleteCookie(c, SESSION_COOKIE, { path, sameSite, secure });
 }
 
 /**

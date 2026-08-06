@@ -1,7 +1,7 @@
 import { acceptPlatformInviteSchema } from "@app/shared";
 import { parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
-import { setSessionCookie } from "@/domains/auth/service";
+import { meWithShellToken, setSessionCookie } from "@/domains/auth/service";
 import { acceptPlatformInviteForToken } from "../service";
 
 /**
@@ -29,5 +29,5 @@ export async function acceptPlatformInvite(c: AppContext) {
 
   // -- Output ----------------------------------------------------------------
   setSessionCookie(c, sessionToken);
-  return c.json(me, 201);
+  return c.json(meWithShellToken(c, me, sessionToken), 201);
 }

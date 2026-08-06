@@ -1,17 +1,29 @@
 import { createMiddleware } from "hono/factory";
-import { deleteCookie, getCookie } from "hono/cookie";
+import { getCookie } from "hono/cookie";
 import { HttpError } from "@/lib/errors";
 import type { AppEnv } from "@/context";
 import { isEffectivePlatformAdmin, syncPlatformAdminFromEnv } from "./platform-admin";
-import { getSessionUser, SESSION_COOKIE } from "./service";
+import { clearSessionCookie, getSessionUser, SESSION_COOKIE } from "./service";
+
+function bearerSessionToken(c: {
+  req: { header: (name: string) => string | undefined };
+}): string | null {
+  const header = c.req.header("authorization");
+  if (!header?.startsWith("Bearer ")) return null;
+  const token = header.slice("Bearer ".length).trim();
+  // Personal API keys use the `abk_` prefix — those authenticate MCP, not cookie routes.
+  if (!token || token.startsWith("abk_")) return null;
+  return token;
+}
 
 export const requireAuth = createMiddleware<AppEnv>(async (c, next) => {
-  const token = getCookie(c, SESSION_COOKIE);
+  // Cookie for browser same-origin; Bearer for Tauri shells (WKWebView drops Secure cookies on HTTP).
+  const token = getCookie(c, SESSION_COOKIE) ?? bearerSessionToken(c);
   if (!token) throw new HttpError(401, "Not authenticated");
 
   const sessionUser = await getSessionUser(token);
   if (!sessionUser) {
-    deleteCookie(c, SESSION_COOKIE, { path: "/" });
+    clearSessionCookie(c);
     throw new HttpError(401, "Session expired");
   }
 

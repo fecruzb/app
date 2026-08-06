@@ -1,6 +1,6 @@
-import { StrictMode } from "react";
+import { StrictMode, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, HashRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import "@/i18n";
@@ -22,15 +22,22 @@ function ThemedToaster() {
   return <Toaster richColors position="top-center" theme={mode} />;
 }
 
+/** HashRouter for Tauri custom-protocol; BrowserRouter for the web deploy. */
+function AppRouter({ children }: { children: ReactNode }) {
+  const useHash = import.meta.env.VITE_ROUTER === "hash";
+  const Router = useHash ? HashRouter : BrowserRouter;
+  return <Router>{children}</Router>;
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <ConfirmProvider>
           <AuthProvider>
-            <BrowserRouter>
+            <AppRouter>
               <App />
-            </BrowserRouter>
+            </AppRouter>
           </AuthProvider>
         </ConfirmProvider>
       </QueryClientProvider>

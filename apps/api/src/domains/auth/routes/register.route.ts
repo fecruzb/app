@@ -7,6 +7,7 @@ import {
   buildMe,
   createSession,
   hashPassword,
+  meWithShellToken,
   sendVerificationEmail,
   setSessionCookie,
 } from "../service";
@@ -49,5 +50,5 @@ export async function register(c: AppContext) {
 
   // -- Output ----------------------------------------------------------------
   setSessionCookie(c, sessionToken);
-  return c.json(await buildMe(user), 201);
+  return c.json(meWithShellToken(c, await buildMe(user), sessionToken), 201);
 }
