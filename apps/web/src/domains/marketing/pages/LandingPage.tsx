@@ -10,6 +10,7 @@ import {
   DatabaseIcon,
   EraserIcon,
   FolderTreeIcon,
+  LanguagesIcon,
   MoonIcon,
   PaletteIcon,
   PenLineIcon,
@@ -23,7 +24,8 @@ import { Button } from "@app/ui/button";
 import { Card, CardContent } from "@app/ui/card";
 import { useAppConfig } from "@/app/config";
 import { useAuth } from "@/domains/auth/auth-provider";
-import { points } from "@/i18n";
+import { LOCALES, points, type Locale } from "@/i18n";
+import { setLocale } from "@/i18n/locale-controls";
 import { ThemeControls } from "@/theme/theme-controls";
 import { useTheme } from "@/theme/theme-provider";
 import { BrandIcon } from "../brand-icon";
@@ -323,10 +325,7 @@ function sliceCopy(localeKey: SliceLocaleKey, t: TFunction) {
   };
 }
 
-function pillarCopy(
-  key: "monorepo" | "config" | "storage" | "localRun" | "render",
-  t: TFunction,
-) {
+function pillarCopy(key: "monorepo" | "config" | "storage" | "localRun" | "render", t: TFunction) {
   return {
     eyebrow: t(`landing.${key}.eyebrow`),
     title: t(`landing.${key}.title`),
@@ -509,14 +508,16 @@ function buildOwnership(t: TFunction): Included[] {
   ];
 }
 
-const stackItems: { labelKey: "frontend" | "backend" | "database" | "ai" | "tooling"; items: string[] }[] =
-  [
-    { labelKey: "frontend", items: ["React 19", "Vite", "Tailwind", "shadcn/ui", "TanStack Query"] },
-    { labelKey: "backend", items: ["Hono", "Zod", "Node"] },
-    { labelKey: "database", items: ["PostgreSQL", "Drizzle ORM"] },
-    { labelKey: "ai", items: ["OpenAI", "Model Context Protocol (MCP)"] },
-    { labelKey: "tooling", items: ["TypeScript", "Turborepo", "oxlint", "Prettier"] },
-  ];
+const stackItems: {
+  labelKey: "frontend" | "backend" | "database" | "ai" | "tooling";
+  items: string[];
+}[] = [
+  { labelKey: "frontend", items: ["React 19", "Vite", "Tailwind", "shadcn/ui", "TanStack Query"] },
+  { labelKey: "backend", items: ["Hono", "Zod", "Node"] },
+  { labelKey: "database", items: ["PostgreSQL", "Drizzle ORM"] },
+  { labelKey: "ai", items: ["OpenAI", "Model Context Protocol (MCP)"] },
+  { labelKey: "tooling", items: ["TypeScript", "Turborepo", "oxlint", "Prettier"] },
+];
 
 export function LandingPage() {
   const { t, i18n } = useTranslation();
@@ -565,7 +566,9 @@ export function LandingPage() {
 
       <main className="flex-1">
         <section className="mx-auto w-full max-w-5xl px-4 py-24 text-center sm:py-32">
-          <p className="mb-4 text-sm font-medium text-muted-foreground">{t("landing.hero.eyebrow")}</p>
+          <p className="mb-4 text-sm font-medium text-muted-foreground">
+            {t("landing.hero.eyebrow")}
+          </p>
           <h1 className="mx-auto max-w-2xl text-4xl font-bold tracking-tight text-balance sm:text-5xl">
             {t("landing.hero.title")}
           </h1>
@@ -589,7 +592,9 @@ export function LandingPage() {
         <section className="border-t bg-muted/40 px-4 py-16">
           <div className="mx-auto max-w-5xl">
             <div className="text-center">
-              <h2 className="text-2xl font-semibold tracking-tight">{t("landing.stackSection.title")}</h2>
+              <h2 className="text-2xl font-semibold tracking-tight">
+                {t("landing.stackSection.title")}
+              </h2>
               <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
                 {t("landing.stackSection.body")}
               </p>
@@ -622,7 +627,9 @@ export function LandingPage() {
 
         <section className="border-t bg-muted/40 px-4 pt-20 pb-4">
           <div className="mx-auto max-w-2xl text-center">
-            <p className="text-sm font-medium text-primary">{t("landing.foundationsIntro.eyebrow")}</p>
+            <p className="text-sm font-medium text-primary">
+              {t("landing.foundationsIntro.eyebrow")}
+            </p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
               {t("landing.foundationsIntro.title")}
             </h2>
@@ -640,6 +647,7 @@ export function LandingPage() {
             <FoundationSection key={pillar.id} pillar={pillar} flip={i % 2 === 1} />
           ))}
           <ThemingSection />
+          <I18nSection />
         </div>
 
         <section className="border-t px-4 pt-20 pb-4">
@@ -696,6 +704,85 @@ export function LandingPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+const i18nFile = `// locales/en.json  ·  locales/pt.json — same keys
+{
+  "tasks": { "title": "Tasks" }    // EN
+  "tasks": { "title": "Tarefas" }  // PT
+}
+
+// Any component — no wiring beyond useTranslation
+const { t } = useTranslation();
+return <PageHeader title={t("tasks.title")} />;`;
+
+/**
+ * Live i18n demo — the language buttons drive the real i18n instance, so the
+ * whole landing (and this section) switch language in place.
+ */
+function I18nSection() {
+  const { t, i18n } = useTranslation();
+  const current = (
+    LOCALES.includes(i18n.language as Locale)
+      ? i18n.language
+      : i18n.language.startsWith("pt")
+        ? "pt"
+        : "en"
+  ) as Locale;
+  const bullets = points(t, "landing.i18n.points");
+
+  return (
+    <section className="border-t px-4 py-20">
+      <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
+        <div className="reveal reveal-delay min-w-0 lg:order-1">
+          <CodeBlock filename="apps/web/src/i18n/" code={i18nFile} lang="ts" />
+        </div>
+
+        <div className="reveal lg:order-2">
+          <p className="flex items-center gap-2 text-sm font-medium text-primary">
+            <LanguagesIcon className="size-4" /> {t("landing.i18n.eyebrow")}
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+            {t("landing.i18n.title")}
+          </h2>
+          <p className="mt-4 text-pretty text-muted-foreground">{t("landing.i18n.body")}</p>
+          <ul className="mt-6 space-y-3 text-sm">
+            {bullets.map((point) => (
+              <li key={point} className="flex gap-2.5">
+                <CheckIcon className="mt-0.5 size-4 shrink-0 text-primary" />
+                <span className="text-muted-foreground">{point}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-6 space-y-4">
+            <div>
+              <p className="mb-2 text-xs font-medium text-muted-foreground">
+                {t("landing.i18n.language")}
+              </p>
+              <div className="inline-flex rounded-lg border p-1">
+                {LOCALES.map((locale) => (
+                  <button
+                    key={locale}
+                    type="button"
+                    onClick={() => setLocale(locale)}
+                    className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
+                      locale === current
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    {t(`languages.${locale}`)}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground">{t("landing.i18n.tryIt")}</p>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 

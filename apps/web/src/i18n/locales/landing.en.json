@@ -50,6 +50,19 @@
     "dark": "Dark",
     "tryIt": "Try it — this page changes as you click. Your choice is saved and shared with the app."
   },
+  "i18n": {
+    "eyebrow": "Internationalization",
+    "title": "Two JSON files, one t() call",
+    "body": "UI copy lives in locale files — English is the source of truth, Portuguese ships beside it. Components never hardcode strings: they call t(\"…\"), and the language picker (or the browser) does the rest. Add a key to both files and every screen that uses it updates.",
+    "points": [
+      "en.json + pt.json under apps/web/src/i18n/locales/ — same keys, two languages",
+      "useTranslation() and t(\"tasks.title\") — no providers to wire per page",
+      "Preference sticks in localStorage; first visit follows the browser language",
+      "This landing page is translated the same way as the app shell"
+    ],
+    "language": "Language",
+    "tryIt": "Try it — switch language here and the whole page follows, including this section."
+  },
   "database": {
     "eyebrow": "The database",
     "title": "Postgres, modeled in plain TypeScript",
@@ -371,12 +384,7 @@
       "description": "Example resource",
       "placeholder": "Add a task...",
       "add": "Add",
-      "items": [
-        "Design the schema",
-        "Wire the repository",
-        "Expose the route",
-        "Build the screen"
-      ],
+      "items": ["Design the schema", "Wire the repository", "Expose the route", "Build the screen"],
       "left": "Example resource with per-tenant CRUD · 2 of 4 left"
     },
     "account": {

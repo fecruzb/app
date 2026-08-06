@@ -11,7 +11,8 @@ import {
 import { cn } from "@app/ui/lib/utils";
 import i18n, { LANG_KEY, LOCALES, type Locale } from "./index";
 
-function setLocale(locale: Locale) {
+/** Persists the choice and switches the active language. */
+export function setLocale(locale: Locale) {
   localStorage.setItem(LANG_KEY, locale);
   void i18n.changeLanguage(locale);
 }

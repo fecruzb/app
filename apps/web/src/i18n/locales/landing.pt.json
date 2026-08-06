@@ -50,6 +50,19 @@
     "dark": "Escuro",
     "tryIt": "Experimente — esta página muda conforme você clica. Sua escolha é salva e compartilhada com o app."
   },
+  "i18n": {
+    "eyebrow": "Internacionalização",
+    "title": "Dois JSONs, uma chamada t()",
+    "body": "O texto da UI mora em arquivos de locale — o inglês é a fonte da verdade, o português vem ao lado. Componentes nunca hardcodam strings: chamam t(\"…\"), e o seletor de idioma (ou o navegador) faz o resto. Adicione a chave nos dois arquivos e toda tela que a usa atualiza.",
+    "points": [
+      "en.json + pt.json em apps/web/src/i18n/locales/ — mesmas chaves, dois idiomas",
+      "useTranslation() e t(\"tasks.title\") — sem provider por página",
+      "A preferência fica no localStorage; na primeira visita segue o idioma do navegador",
+      "Esta landing é traduzida do mesmo jeito que o shell do app"
+    ],
+    "language": "Idioma",
+    "tryIt": "Experimente — mude o idioma aqui e a página inteira acompanha, inclusive esta seção."
+  },
   "database": {
     "eyebrow": "O banco de dados",
     "title": "Postgres, modelado em TypeScript puro",
@@ -371,12 +384,7 @@
       "description": "Recurso de exemplo",
       "placeholder": "Adicionar uma task...",
       "add": "Adicionar",
-      "items": [
-        "Desenhar o schema",
-        "Ligar o repository",
-        "Expor a rota",
-        "Construir a tela"
-      ],
+      "items": ["Desenhar o schema", "Ligar o repository", "Expor a rota", "Construir a tela"],
       "left": "Recurso de exemplo com CRUD por tenant · 2 de 4 restantes"
     },
     "account": {
