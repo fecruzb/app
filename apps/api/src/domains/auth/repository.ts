@@ -68,7 +68,11 @@ export const authRepository = {
 
   // -- sessions ------------------------------------------------------------
 
-  async insertSession(values: { tokenHash: string; userId: string; expiresAt: Date }) {
+  async insertSession(values: {
+    tokenHash: string;
+    userId: string;
+    expiresAt: Date;
+  }): Promise<void> {
     await db.insert(sessions).values(values);
   },
 
@@ -81,12 +85,12 @@ export const authRepository = {
     return row?.user ?? null;
   },
 
-  async deleteSessionByTokenHash(tokenHash: string) {
+  async deleteSessionByTokenHash(tokenHash: string): Promise<void> {
     await db.delete(sessions).where(eq(sessions.tokenHash, tokenHash));
   },
 
   /** Deletes the user's sessions; exceptTokenHash keeps the current one. */
-  async deleteUserSessions(userId: string, exceptTokenHash?: string) {
+  async deleteUserSessions(userId: string, exceptTokenHash?: string): Promise<void> {
     const where = exceptTokenHash
       ? and(eq(sessions.userId, userId), ne(sessions.tokenHash, exceptTokenHash))
       : eq(sessions.userId, userId);
@@ -100,7 +104,7 @@ export const authRepository = {
     purpose: ActionTokenPurpose;
     tokenHash: string;
     expiresAt: Date;
-  }) {
+  }): Promise<void> {
     // One valid token per user/purpose at a time
     await db
       .delete(actionTokens)

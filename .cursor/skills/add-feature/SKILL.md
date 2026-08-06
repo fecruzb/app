@@ -33,7 +33,7 @@ Checklist (track progress):
 
 **2. Register + migrate** — add `export * from "@/domains/<domain>/schema"` to `apps/api/src/db/schema.ts` (the barrel drizzle-kit reads), then run `npm run db:generate` and `npm run db:migrate`. Never write SQL migrations by hand.
 
-**3. Repository** — `repository.ts`, an exported object of async methods that owns ALL the SQL. Every method takes `tenantId` and filters by it. CRUD names are fixed: `list` / `find` / `insert` / `update` / `delete`. Endpoints, services and tools never write queries.
+**3. Repository** — `repository.ts`, an exported object of async methods that owns ALL the SQL. For a new tenant-scoped resource, copy `task`: CRUD names `list` / `find` / `insert` / `update` / `delete`, every method takes `tenantId` and filters by it, `baseQuery()` only when `list`/`find` share a join, mutations via `db.insert`/`update`/`delete`, annotated returns. Return rows (or join shapes), never DTOs — mapping stays in `dto.ts`. Endpoints, services and tools never write queries. (Platform domains like `auth`/`tenant` use entity-prefixed method names instead; see `api-structure.mdc`.)
 
 **4. Shared contract** — `packages/shared/src/<domain>.ts`: a Zod `<thing>InputSchema` with real constraints and a `type XxxDto` (dates as ISO strings). Add `export * from "./<domain>"` to `packages/shared/src/index.ts`.
 

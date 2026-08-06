@@ -4,6 +4,7 @@ import {
   ArrowRightIcon,
   BoxIcon,
   CheckIcon,
+  CloudIcon,
   DatabaseIcon,
   EraserIcon,
   FolderTreeIcon,
@@ -61,13 +62,21 @@ type Slice = {
 };
 
 const repositoryFile = `// domains/task/repository.ts — all SQL, scoped by tenantId
+const baseQuery = () =>
+  db
+    .select({ task: tasks, authorName: users.name })
+    .from(tasks)
+    .leftJoin(users, eq(users.id, tasks.authorId));
+
 export const taskRepository = {
-  list(tenantId: string): Promise<TaskWithAuthor[]> {
+  // Shared select+join — list/find reuse baseQuery()
+  async list(tenantId: string): Promise<TaskWithAuthor[]> {
     return baseQuery()
       .where(eq(tasks.tenantId, tenantId))
       .orderBy(desc(tasks.createdAt));
   },
 
+  // Mutations are a different SQL verb — db.insert / update / delete
   async insert(values: {
     tenantId: string;
     authorId: string | null;
@@ -188,6 +197,7 @@ const resourceSlices: Slice[] = [
       "One folder per feature — schema, repository, dto, endpoints, tools",
       "Fixed roles, never a grab-bag file; service.ts only when there's real logic",
       "The repository owns the SQL; every query filters by tenantId",
+      "DTO mapping lives in dto.ts — never inline in the repository or endpoint",
       "Boundaries fail the lint, not just code review",
     ],
     visual: <CodeBlock filename="apps/api/src/domains/task/" code={apiTreeFile} lang="text" />,
@@ -208,11 +218,12 @@ const resourceSlices: Slice[] = [
     id: "repository",
     eyebrow: "The queries",
     title: "All SQL lives in one repository",
-    body: "Every method takes a tenantId and filters by it — isolation isn't a reminder here, it's the only way the data can be reached at all. Stick to the naming — list / find / insert / update / delete — and the rest of the stack knows exactly what to expect.",
+    body: "Every method takes a tenantId and filters by it — isolation isn't a reminder here, it's the only way the data can be reached at all. For a tenant-scoped resource, stick to list / find / insert / update / delete. Reads that share a join go through a local baseQuery(); mutations use db.insert / update / delete and return the row — DTO mapping stays in dto.ts.",
     points: [
       "No query exists without a tenant filter",
       "CRUD is named list / find / insert / update / delete",
-      "The repository owns the SQL — endpoints and tools never write queries",
+      "baseQuery() for shared joins; db.insert / update / delete for mutations",
+      "Returns rows — dto.ts maps to the API shape; endpoints never write SQL",
     ],
     visual: <CodeBlock filename="domains/task/repository.ts" code={repositoryFile} lang="ts" />,
   },
@@ -439,6 +450,24 @@ const monorepoPillar: Foundation = {
   visual: <CodeBlock filename="app-base" code={repoTreeFile} lang="text" />,
 };
 
+const mediaStoreFile = `// lib/media-store.ts — the one interface any domain touches for files
+export interface MediaStore {
+  put(key: string, data: Buffer): Promise<void>;
+  get(key: string): Promise<Buffer | null>;
+  has(key: string): Promise<boolean>;
+  remove(key: string): Promise<void>;
+}
+
+// domains/images/media.ts — the backend is picked once, at boot
+export const mediaStore: MediaStore = env.r2.endpoint
+  ? r2Store    // integrations/r2.ts — Cloudflare R2, public URL
+  : localStore; // disk — dev only, Render's disk is ephemeral
+
+export async function writeMedia(key: string, data: Buffer) {
+  const compressed = await compressImage(data); // sharp → WebP
+  await mediaStore.put(key, compressed);
+}`;
+
 // The foundations that follow the data model: configuration, then running it.
 const foundations: Foundation[] = [
   {
@@ -453,6 +482,18 @@ const foundations: Foundation[] = [
       "SELF_SIGNUP_ENABLED flips the app between open signup and invite-only",
     ],
     visual: <EnvMock />,
+  },
+  {
+    icon: CloudIcon,
+    eyebrow: "Storage",
+    title: "Object storage, ready before you need it",
+    body: "Any domain that has to store a file — images, avatars, exports, whatever your product needs — goes through one small interface: put, get, has, remove. Add R2 credentials and it writes straight to Cloudflare's object storage with a public URL; leave them out and it falls back to the local disk, so there's a resource to build on from day one, not a feature you have to wire yourself.",
+    points: [
+      "MediaStore is the only interface a domain touches — swap the backend without touching callers",
+      "No R2 credentials? Falls back to the local disk automatically — nothing to configure to start",
+      "Images already run through it, compressed to WebP on write — copy that domain for your own files",
+    ],
+    visual: <CodeBlock filename="lib/media-store.ts" code={mediaStoreFile} lang="ts" />,
   },
   {
     icon: TerminalIcon,

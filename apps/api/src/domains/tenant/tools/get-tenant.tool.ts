@@ -1,4 +1,5 @@
 import { defineTool } from "@/agent/tool";
+import { toMemberDto } from "../dto";
 import { tenantRepository } from "../repository";
 
 export const getTenantTool = defineTool({
@@ -7,7 +8,7 @@ export const getTenantTool = defineTool({
     "Current tenant info: name, slug, the user's role and the list of members with roles.",
   inputSchema: {},
   execute: async (ctx) => {
-    const members = await tenantRepository.listMembers(ctx.tenantId);
+    const members = (await tenantRepository.listMembers(ctx.tenantId)).map(toMemberDto);
     return {
       name: ctx.tenantName,
       slug: ctx.tenantSlug,

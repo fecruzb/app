@@ -30,8 +30,11 @@ Rules:
 - Table shape (copy `domains/task/schema.ts`): `uuid("id").primaryKey().defaultRandom()`, `tenant_id` FK with `onDelete: "cascade"`, `...timestamps` from `@/db/columns`, and an index on `tenantId`
 - Endpoint handler is `export async function <action>(c: AppContext)` — the name matches the route action (`createTask`, `login`), no `Endpoint` suffix, no default export
 - Validate input with `parseBody(c, schema)` (schema from `@app/shared`); read UUID route params with `uuidParam(c, "name")`; throw `HttpError(status, message)`; return with `c.json(...)`
-- Map rows to DTOs in `dto.ts` (`toXxxDto`), never inline inside an endpoint
-- All SQL lives in `repository.ts` as an exported object of async methods; every resource query filters by `tenantId`. CRUD methods are named `list`/`find`/`insert`/`update`/`delete`
+- Map rows to DTOs in `dto.ts` (`toXxxDto`), never inline inside an endpoint or repository
+- All SQL lives in `repository.ts` as an exported object of async methods. Two shapes (copy the matching one):
+  - **Resource repo** (canonical: `task`, also `images`): one primary table, tenant-scoped. CRUD names are fixed: `list` / `find` / `insert` / `update` / `delete`. Every method takes `tenantId` and filters by it. Use a local `baseQuery()` only when `list`/`find` share a select+join. Mutations use `db.insert` / `db.update` / `db.delete` (+ `.returning()` when the row is needed). Annotate returns (`Promise<T>`, `Promise<T | null>`, `Promise<void>`).
+  - **Platform repo** (`auth`, `tenant`, `usage`): owns several tables or non-CRUD access. Prefix methods by entity (`insertUser`, `listMembers`, `sumUserSpendSince`). Section comments are fine. No forced `baseQuery` or short CRUD names.
+- Repository returns DB rows / join shapes — never `@app/shared` DTOs. Map in `dto.ts`.
 - `service.ts` only when there's real business logic; plain CRUD calls the repository straight from the endpoint/tool
 - Tenant routes: `routes.ts` applies `requireAuth`/`requireTenant` once via `.use`
 - Public, token-authenticated surfaces (e.g. `inviteRoutes`) may be a second export mounted at their own path — that's the one accepted exception to "one route group per domain"

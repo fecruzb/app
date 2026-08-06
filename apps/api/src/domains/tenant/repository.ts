@@ -1,6 +1,5 @@
 // All tenant data access (tenants, members, invites) goes through here.
 import { and, asc, desc, eq, gt } from "drizzle-orm";
-import type { MemberDto, TenantSummaryDto } from "@app/shared";
 import { db } from "@/db/client";
 import { users, type User } from "@/domains/auth/schema";
 import {
@@ -12,6 +11,9 @@ import {
   type TenantMember,
 } from "./schema";
 
+export type MemberWithUser = { member: TenantMember; user: User };
+export type TenantWithRole = { tenant: Tenant; role: TenantMember["role"] };
+
 export const tenantRepository = {
   // -- tenants ---------------------------------------------------------------
 
@@ -20,7 +22,7 @@ export const tenantRepository = {
     return tenant ?? null;
   },
 
-  /** Tenant mais antigo do banco (fallback do MCP stdio). */
+  /** Oldest tenant in the database (MCP stdio fallback). */
   async findOldest(): Promise<Tenant | null> {
     const [tenant] = await db.select().from(tenants).orderBy(asc(tenants.createdAt)).limit(1);
     return tenant ?? null;
@@ -42,19 +44,13 @@ export const tenantRepository = {
 
   // -- members -----------------------------------------------------------------
 
-  async getUserTenants(userId: string): Promise<TenantSummaryDto[]> {
-    const rows = await db
+  async getUserTenants(userId: string): Promise<TenantWithRole[]> {
+    return db
       .select({ tenant: tenants, role: tenantMembers.role })
       .from(tenantMembers)
       .innerJoin(tenants, eq(tenants.id, tenantMembers.tenantId))
       .where(eq(tenantMembers.userId, userId))
       .orderBy(asc(tenants.createdAt));
-    return rows.map((r) => ({
-      id: r.tenant.id,
-      name: r.tenant.name,
-      slug: r.tenant.slug,
-      role: r.role,
-    }));
   },
 
   /** Tenant + user membership in a single round-trip (used by the middleware). */
@@ -70,20 +66,13 @@ export const tenantRepository = {
     return row ?? null;
   },
 
-  async listMembers(tenantId: string): Promise<MemberDto[]> {
-    const rows = await db
+  async listMembers(tenantId: string): Promise<MemberWithUser[]> {
+    return db
       .select({ member: tenantMembers, user: users })
       .from(tenantMembers)
       .innerJoin(users, eq(users.id, tenantMembers.userId))
       .where(eq(tenantMembers.tenantId, tenantId))
       .orderBy(tenantMembers.createdAt);
-    return rows.map((r) => ({
-      userId: r.user.id,
-      name: r.user.name,
-      email: r.user.email,
-      role: r.member.role,
-      joinedAt: r.member.createdAt.toISOString(),
-    }));
   },
 
   async findMember(tenantId: string, userId: string): Promise<TenantMember | null> {
@@ -103,7 +92,7 @@ export const tenantRepository = {
     return row?.member ?? null;
   },
 
-  /** Primeiro owner do tenant (autor das escritas no MCP stdio). */
+  /** First owner of the tenant (author of MCP stdio writes). */
   async findFirstOwner(tenantId: string): Promise<User | null> {
     const [row] = await db
       .select({ user: users })
@@ -123,18 +112,26 @@ export const tenantRepository = {
     return rows.length;
   },
 
-  async insertMember(values: { tenantId: string; userId: string; role: TenantMember["role"] }) {
+  async insertMember(values: {
+    tenantId: string;
+    userId: string;
+    role: TenantMember["role"];
+  }): Promise<void> {
     await db.insert(tenantMembers).values(values);
   },
 
-  async updateMemberRole(tenantId: string, userId: string, role: TenantMember["role"]) {
+  async updateMemberRole(
+    tenantId: string,
+    userId: string,
+    role: TenantMember["role"],
+  ): Promise<void> {
     await db
       .update(tenantMembers)
       .set({ role })
       .where(and(eq(tenantMembers.tenantId, tenantId), eq(tenantMembers.userId, userId)));
   },
 
-  async deleteMember(tenantId: string, userId: string) {
+  async deleteMember(tenantId: string, userId: string): Promise<void> {
     await db
       .delete(tenantMembers)
       .where(and(eq(tenantMembers.tenantId, tenantId), eq(tenantMembers.userId, userId)));
@@ -154,7 +151,7 @@ export const tenantRepository = {
   },
 
   /** Remove pending invites for the email (one active invite per email). */
-  async deleteInvitesByEmail(tenantId: string, email: string) {
+  async deleteInvitesByEmail(tenantId: string, email: string): Promise<void> {
     await db
       .delete(tenantInvites)
       .where(and(eq(tenantInvites.tenantId, tenantId), eq(tenantInvites.email, email)));
@@ -172,13 +169,13 @@ export const tenantRepository = {
     return invite;
   },
 
-  async deleteInvite(tenantId: string, inviteId: string) {
+  async deleteInvite(tenantId: string, inviteId: string): Promise<void> {
     await db
       .delete(tenantInvites)
       .where(and(eq(tenantInvites.tenantId, tenantId), eq(tenantInvites.id, inviteId)));
   },
 
-  async deleteInviteById(inviteId: string) {
+  async deleteInviteById(inviteId: string): Promise<void> {
     await db.delete(tenantInvites).where(eq(tenantInvites.id, inviteId));
   },
 

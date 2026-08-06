@@ -3,7 +3,7 @@ import { z } from "zod";
 export const tenantRoles = ["owner", "admin", "member"] as const;
 export type TenantRole = (typeof tenantRoles)[number];
 
-/** Roles que podem gerenciar o tenant (renomear, membros, convites). */
+/** Roles that can manage the tenant (rename, members, invites). */
 export const managerRoles: TenantRole[] = ["owner", "admin"];
 
 // -- schemas -------------------------------------------------------------------

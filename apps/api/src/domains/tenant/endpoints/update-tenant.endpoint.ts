@@ -1,8 +1,8 @@
 import { updateTenantSchema } from "@app/shared";
 import { parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
+import { toTenantSummary } from "../dto";
 import { tenantRepository } from "../repository";
-import { toTenantSummary } from "../service";
 
 export async function updateTenant(c: AppContext) {
   const data = await parseBody(c, updateTenantSchema);

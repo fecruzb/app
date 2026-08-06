@@ -762,6 +762,12 @@ export function EnvMock() {
     },
     { key: "MAIL_FROM", value: "App Base <onboarding@resend.dev>", optional: true },
     { key: "OPENAI_API_KEY", value: "sk-…", note: "no key → agent hidden", optional: true },
+    {
+      key: "R2_PUBLIC_BASE_URL",
+      value: "https://pub-….r2.dev",
+      note: "no URL → images saved to local disk instead",
+      optional: true,
+    },
     { key: "SELF_SIGNUP_ENABLED", value: "true", optional: true },
   ];
   return (

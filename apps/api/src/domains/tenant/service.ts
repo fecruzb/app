@@ -1,6 +1,5 @@
 // Tenant business rules. There is no manual creation: every user gets a
 // personal tenant on signup and joins others by invite.
-import type { TenantRole, TenantSummaryDto } from "@app/shared";
 import { tenantRepository } from "./repository";
 import type { Tenant } from "./schema";
 
@@ -30,8 +29,4 @@ export async function createTenantWithOwner(name: string, userId: string): Promi
   const tenant = await tenantRepository.insertTenant({ name, slug });
   await tenantRepository.insertMember({ tenantId: tenant.id, userId, role: "owner" });
   return tenant;
-}
-
-export function toTenantSummary(tenant: Tenant, role: TenantRole): TenantSummaryDto {
-  return { id: tenant.id, name: tenant.name, slug: tenant.slug, role };
 }

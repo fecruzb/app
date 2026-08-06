@@ -1,4 +1,5 @@
 import type { ApiKeyDto, MeDto, UserDto } from "@app/shared";
+import { toTenantSummary } from "@/domains/tenant/dto";
 import { tenantRepository } from "@/domains/tenant/repository";
 import type { ApiKeyWithTenant } from "./repository";
 import type { User } from "./schema";
@@ -27,5 +28,9 @@ export function toApiKeyDto(key: ApiKeyWithTenant): ApiKeyDto {
 
 /** Standard session response: user + tenants they belong to. */
 export async function buildMe(user: User): Promise<MeDto> {
-  return { user: toUserDto(user), tenants: await tenantRepository.getUserTenants(user.id) };
+  const rows = await tenantRepository.getUserTenants(user.id);
+  return {
+    user: toUserDto(user),
+    tenants: rows.map((r) => toTenantSummary(r.tenant, r.role)),
+  };
 }
