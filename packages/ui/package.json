@@ -17,7 +17,8 @@
     "./confirm-dialog": "./src/components/confirm-dialog.tsx",
     "./empty-state": "./src/components/empty-state.tsx",
     "./page-header": "./src/components/page-header.tsx",
-    "./page-loading": "./src/components/page-loading.tsx"
+    "./page-loading": "./src/components/page-loading.tsx",
+    "./resizable": "./src/components/resizable.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
@@ -35,6 +36,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.28.0",
+    "react-resizable-panels": "^4.12.2",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {

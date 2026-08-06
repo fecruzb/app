@@ -36,7 +36,7 @@ Framework-agnostic, tenant-agnostic base UI shared across web apps. Import per c
 `import { Button } from "@app/ui/button"`.
 
 - Primitives (shadcn — don't hand-rewrite): `avatar`, `badge`, `button`, `card`, `dialog`,
-  `dropdown-menu`, `input`, `label`, `textarea`
+  `dropdown-menu`, `input`, `label`, `resizable`, `textarea`
 - Generic composites: `confirm-dialog` (`ConfirmProvider`/`useConfirm`), `empty-state`,
   `page-header`, `page-loading`
 - `cn` lives here: `import { cn } from "@app/ui/lib/utils"`
