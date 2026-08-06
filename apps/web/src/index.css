@@ -63,3 +63,27 @@
     -webkit-font-smoothing: antialiased;
   }
 }
+
+@layer utilities {
+  .reveal {
+    opacity: 0;
+    transform: translateY(1rem);
+    transition:
+      opacity 0.6s ease,
+      transform 0.6s ease;
+  }
+  .reveal.reveal-delay {
+    transition-delay: 0.12s;
+  }
+  .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+}
