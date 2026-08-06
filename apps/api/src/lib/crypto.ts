@@ -24,3 +24,13 @@ export function generateToken(): string {
 export function hashToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
+
+// -- API keys: prefixed opaque tokens for programmatic access -----------------
+
+export const API_KEY_PREFIX = "abk_";
+
+/** Returns the full key (shown once) and the visible prefix stored for display. */
+export function generateApiKey(): { key: string; prefix: string } {
+  const key = API_KEY_PREFIX + randomBytes(24).toString("base64url");
+  return { key, prefix: key.slice(0, 12) };
+}

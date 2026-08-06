@@ -1,7 +1,35 @@
 // All auth data access goes through here — endpoints and service never write SQL.
-import { and, eq, gt, ne } from "drizzle-orm";
+import { and, desc, eq, gt, ne } from "drizzle-orm";
 import { db } from "@/db/client";
-import { actionTokens, sessions, users, type ActionTokenPurpose, type User } from "./schema";
+import { tenants } from "@/domains/tenant/schema";
+import {
+  actionTokens,
+  apiKeys,
+  sessions,
+  users,
+  type ActionTokenPurpose,
+  type ApiKey,
+  type User,
+} from "./schema";
+
+export type ApiKeyPrincipal = {
+  keyId: string;
+  userId: string;
+  userName: string;
+  tenantId: string;
+  tenantName: string;
+  tenantSlug: string;
+};
+
+export type ApiKeyWithTenant = {
+  id: string;
+  name: string;
+  prefix: string;
+  tenantId: string;
+  tenantName: string;
+  lastUsedAt: Date | null;
+  createdAt: Date;
+};
 
 export const authRepository = {
   // -- users ---------------------------------------------------------------
@@ -95,5 +123,61 @@ export const authRepository = {
     if (!row) return null;
     await db.delete(actionTokens).where(eq(actionTokens.id, row.id));
     return row.userId;
+  },
+
+  // -- api keys ------------------------------------------------------------
+
+  async insertApiKey(values: {
+    userId: string;
+    tenantId: string;
+    name: string;
+    tokenHash: string;
+    prefix: string;
+  }): Promise<ApiKey> {
+    const [key] = await db.insert(apiKeys).values(values).returning();
+    return key;
+  },
+
+  async listApiKeys(userId: string): Promise<ApiKeyWithTenant[]> {
+    return db
+      .select({
+        id: apiKeys.id,
+        name: apiKeys.name,
+        prefix: apiKeys.prefix,
+        tenantId: apiKeys.tenantId,
+        tenantName: tenants.name,
+        lastUsedAt: apiKeys.lastUsedAt,
+        createdAt: apiKeys.createdAt,
+      })
+      .from(apiKeys)
+      .innerJoin(tenants, eq(tenants.id, apiKeys.tenantId))
+      .where(eq(apiKeys.userId, userId))
+      .orderBy(desc(apiKeys.createdAt));
+  },
+
+  async deleteApiKey(userId: string, keyId: string): Promise<void> {
+    await db.delete(apiKeys).where(and(eq(apiKeys.id, keyId), eq(apiKeys.userId, userId)));
+  },
+
+  /** Resolves a key hash to its principal (user + tenant), or null. */
+  async findApiKeyPrincipal(tokenHash: string): Promise<ApiKeyPrincipal | null> {
+    const [row] = await db
+      .select({
+        keyId: apiKeys.id,
+        userId: users.id,
+        userName: users.name,
+        tenantId: tenants.id,
+        tenantName: tenants.name,
+        tenantSlug: tenants.slug,
+      })
+      .from(apiKeys)
+      .innerJoin(users, eq(users.id, apiKeys.userId))
+      .innerJoin(tenants, eq(tenants.id, apiKeys.tenantId))
+      .where(eq(apiKeys.tokenHash, tokenHash));
+    return row ?? null;
+  },
+
+  async touchApiKey(keyId: string): Promise<void> {
+    await db.update(apiKeys).set({ lastUsedAt: new Date() }).where(eq(apiKeys.id, keyId));
   },
 };

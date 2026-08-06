@@ -1,10 +1,10 @@
 // Central registry: joins the tools declared by each domain.
 // When creating a new domain, add its array here.
-import { noteTools } from "@/domains/note/tools";
+import { taskTools } from "@/domains/task/tools";
 import { tenantTools } from "@/domains/tenant/tools";
 import type { AgentTool } from "./tool";
 
-export const allTools: AgentTool[] = [...tenantTools, ...noteTools];
+export const allTools: AgentTool[] = [...tenantTools, ...taskTools];
 
 const byName = new Map(allTools.map((tool) => [tool.name, tool]));
 

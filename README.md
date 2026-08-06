@@ -35,8 +35,9 @@ Without `RESEND_API_KEY`, emails (verification, password reset, invites) are log
 - **Multi-tenant**: every user gets a personal tenant (no manual creation); joins others only by invite. The tenant switcher only appears when belonging to 2+. Roles `owner` / `admin` / `member` and data isolation via middleware
 - **Invites**: by email, accepted with an existing account or by creating one on the spot
 - **Public site**: landing with CTAs + auth screens, separate from the logged-in area
-- **Example resource**: `notes` — per-tenant CRUD, end to end (schema → route → page)
-- **Agent + MCP**: a floating button in the app opens a chat with an assistant (OpenAI) that runs the MCP tools in the tenant context. The same tools are available to Cursor over stdio (`npm run mcp`, already registered in `.cursor/mcp.json`)
+- **Example resource**: `tasks` — a per-tenant to-do list, end to end (schema → route → page)
+- **Agent + MCP**: a floating button in the app opens a chat with an assistant (OpenAI) that runs the MCP tools in the tenant context. The same tools are exposed two more ways: over stdio for local dev (`npm run mcp`, registered in `.cursor/mcp.json`) and over HTTP as a **remote MCP server** (`POST /api/mcp`) authenticated by a personal API key
+- **API keys**: users mint tenant-scoped keys in _My account_ and plug the remote MCP server into Cursor (or any MCP client) to drive the app from their editor
 - **`SELF_SIGNUP_ENABLED` flag**: turn off to operate invite-only
 
 ## Structure
@@ -49,7 +50,8 @@ apps/api/src/
 ├── server.ts             # HTTP entrypoint: starts the server
 ├── context.ts            # typed request context (user/tenant/membership from middlewares)
 ├── agent/                # agent surface (not a domain): assistant (policy), registry,
-│                         # mcp-server, tool (contract), mcp (stdio entry), endpoints/, routes
+│                         # mcp-server (adapter), tool (contract), mcp (stdio entry),
+│                         # mcp-http (remote MCP over HTTP, API-key auth), endpoints/, routes
 ├── lib/                  # pure utilities (no app dependency): env (validated at boot),
 │                         # crypto, logger, errors, email layout
 ├── integrations/         # external service wrappers: openai (client + tool loop), resend
@@ -58,32 +60,32 @@ apps/api/src/
 │   ├── account/          # endpoints/ (profile, password), routes
 │   ├── tenant/           # tenants + members + invites: schema, repository, service,
 │   │                     # emails, middleware, endpoints/, tools/, routes
-│   └── note/             # example resource: schema, repository, dto, endpoints/, tools/, routes
+│   └── task/             # example resource (to-do list): schema, repository, dto, endpoints/, tools/, routes
 └── db/                   # client, schema.ts (barrel for drizzle-kit), columns (audit), seed
 
 apps/web                  # React SPA (public pages + logged-in area)
-packages/shared           # Zod schemas and DTOs per domain (auth, tenant, note, agent)
+packages/shared           # Zod schemas and DTOs per domain (auth, tenant, task, agent)
 ```
 
 Conventions:
 
-- **One endpoint per file** in `domains/<domain>/endpoints/`, named `<action>.endpoint.ts` (e.g. `create-note.endpoint.ts`); the domain's `routes.ts` is just the method + path + middlewares map.
-- **One tool per file** in `domains/<domain>/tools/`, named `<action>.tool.ts` (e.g. `create-note.tool.ts`); the tool is self-describing (`summarize` marks a write and becomes a chip in the chat UI). Register the domain's array in `agent/registry.ts`.
+- **One endpoint per file** in `domains/<domain>/endpoints/`, named `<action>.endpoint.ts` (e.g. `create-task.endpoint.ts`); the domain's `routes.ts` is just the method + path + middlewares map.
+- **One tool per file** in `domains/<domain>/tools/`, named `<action>.tool.ts` (e.g. `create-task.tool.ts`); the tool is self-describing (`summarize` marks a write and becomes a chip in the chat UI). Register the domain's array in `agent/registry.ts`.
 - **Tools are transport-neutral**: they return JSON-serializable data and throw `Error` for expected failures. `agent/mcp-server.ts` translates to MCP; `agent/assistant.ts` translates to the OpenAI loop. Domains never import MCP/OpenAI (lint blocks it).
 - **Name suffix = file role.** Single-role domain files keep the role name (`repository.ts`, `service.ts`, `schema.ts`, `routes.ts`); action files (several per domain) carry the `.endpoint.ts` / `.tool.ts` suffix.
 - **The repository owns the SQL** — endpoints and services don't write queries. Every resource query filters by `tenantId`.
-- **Service only when there's real business logic** (sessions, tokens, invites…). Plain CRUD calls the repository straight from the endpoint/tool — that's why `note` has no `service.ts` while `auth`/`tenant` do. Once an operation gains a rule, create the service and route the endpoint and tool through it.
+- **Service only when there's real business logic** (sessions, tokens, invites…). Plain CRUD calls the repository straight from the endpoint/tool — that's why `task` has no `service.ts` while `auth`/`tenant` do. Once an operation gains a rule, create the service and route the endpoint and tool through it.
 - **Tenant isolation is safe by default** — each tenant-scoped domain's `routes.ts` applies `requireAuth`/`requireTenant` once (via `.use`), so every new route is isolated from the start.
 - **New table?** Export the domain schema in `db/schema.ts` (the barrel drizzle-kit reads) and run `db:generate`.
 - **Env is validated at boot** (`lib/env.ts`, Zod): a missing required variable kills the process with a clear message instead of breaking on a query. Add new vars to that schema.
 - **Imports use the `@/` alias** (→ `apps/api/src/`): anything crossing a boundary uses the alias — `@/lib/*`, `@/integrations/*`, `@/db/*`, `@/domains/<other>/*`. Only imports within the same domain stay relative (`./repository`, `../service`). This way moving files doesn't break imports and `../../../` disappears.
 - **Boundaries are enforced by lint** (`.oxlintrc.json`, `no-restricted-imports`): `lib/` can't depend on anything in the app; `integrations/` only on `lib/`; domains only know the agent contract (`@/agent/tool`) and never MCP/OpenAI directly. Cross the line and `npm run lint` flags it.
-- **The agent is its own surface** (`agent/`), not a domain: it _consumes_ the domains via `registry.ts` (which joins each domain's `tools/`). It has two layers: the _policy_ (`agent/assistant.ts` — who the agent is and how it acts) and the _mechanics_ (`integrations/openai.ts` — OpenAI client + the tool-calling loop). Registry tools are called directly on the request; `agent/mcp-server.ts` + `agent/mcp.ts` only kick in for stdio mode (Cursor).
+- **The agent is its own surface** (`agent/`), not a domain: it _consumes_ the domains via `registry.ts` (which joins each domain's `tools/`). It has two layers: the _policy_ (`agent/assistant.ts` — who the agent is and how it acts) and the _mechanics_ (`integrations/openai.ts` — OpenAI client + the tool-calling loop). The same registry is exposed three ways from one place: the in-app chat (OpenAI loop), stdio (`agent/mcp.ts`, local Cursor) and HTTP (`agent/mcp-http.ts`, remote clients authenticated by an API key).
 
 Useful entry points:
 
 - `apps/api/src/app.ts` — all routes mounted in one place
-- `apps/api/src/domains/note/` + `apps/web/src/pages/app/NotesPage.tsx` — a complete domain to copy
+- `apps/api/src/domains/task/` + `apps/web/src/domains/task/pages/TasksPage.tsx` — a complete domain to copy
 - `apps/api/src/domains/tenant/middleware.ts` — tenant isolation
 - `apps/api/src/agent/registry.ts` — tools available to the agent and MCP
 - `apps/web/src/App.tsx` — SPA route map
@@ -91,7 +93,7 @@ Useful entry points:
 ## Deriving a new product
 
 1. Clone/copy this repo and rename it (`package.json`, `index.html`, "App Base" text, `render.yaml`)
-2. Replace the `notes` resource with your domain: copy `apps/api/src/domains/note/` (schema → repository → endpoints → tools), export the schema in `db/schema.ts`, run `db:generate`, add the schemas to `packages/shared` and the page in web
+2. Replace the `tasks` resource with your domain: copy `apps/api/src/domains/task/` (schema → repository → endpoints → tools), export the schema in `db/schema.ts`, run `db:generate`, add the schemas to `packages/shared` and the page in web
 3. Adjust the landing (`apps/web/src/pages/public/LandingPage.tsx`)
 4. Set `RESEND_API_KEY` and `MAIL_FROM` for real emails
 5. Deploy: push the repo to GitHub and create a Blueprint on Render pointing to `render.yaml`
@@ -109,6 +111,23 @@ Copy `.env.example` to `.env` at the root (in production Render injects everythi
 | `OPENAI_API_KEY`      | Optional — without it the agent is disabled                                    |
 | `ASSISTANT_MODEL`     | Agent model (default `gpt-4o-mini`)                                            |
 | `SELF_SIGNUP_ENABLED` | `false` to turn off public sign-up                                             |
+
+## Connect an MCP client (remote)
+
+The API exposes a remote MCP server at `POST /api/mcp`, authenticated by a personal API key. Create a key in **My account → API keys** (it's scoped to one tenant and shown only once), then add it to your MCP client. For Cursor, in `.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "app-base": {
+      "url": "https://your-app.onrender.com/api/mcp",
+      "headers": { "Authorization": "Bearer abk_..." }
+    }
+  }
+}
+```
+
+The client gets the same tools as the in-app agent, acting on that key's tenant. Revoke a key from the same screen to cut access. (For local development against your own machine, `npm run mcp` runs the stdio server instead — no key needed.)
 
 ## Scripts
 

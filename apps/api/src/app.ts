@@ -9,10 +9,11 @@ import { secureHeaders } from "hono/secure-headers";
 import { env } from "@/lib/env";
 import { errorHandler } from "@/lib/errors";
 import { hasOpenAiKey } from "@/integrations/openai";
+import { mcpHttp } from "@/agent/mcp-http";
 import { agentRoutes } from "@/agent/routes";
 import { accountRoutes } from "@/domains/account/routes";
 import { authRoutes } from "@/domains/auth/routes";
-import { noteRoutes } from "@/domains/note/routes";
+import { taskRoutes } from "@/domains/task/routes";
 import { inviteRoutes, tenantRoutes } from "@/domains/tenant/routes";
 
 export const app = new Hono();
@@ -27,10 +28,13 @@ app.get("/api/config", (c) =>
   c.json({ selfSignupEnabled: env.selfSignupEnabled, aiEnabled: hasOpenAiKey() }),
 );
 
+// Remote MCP over HTTP, authenticated by a personal API key (Bearer token).
+app.all("/api/mcp", mcpHttp);
+
 app.route("/api/auth", authRoutes);
 app.route("/api/account", accountRoutes);
 app.route("/api/tenants", tenantRoutes);
-app.route("/api/tenants/:tenantId/notes", noteRoutes);
+app.route("/api/tenants/:tenantId/tasks", taskRoutes);
 app.route("/api/tenants/:tenantId/agent", agentRoutes);
 app.route("/api/invites", inviteRoutes);
 
