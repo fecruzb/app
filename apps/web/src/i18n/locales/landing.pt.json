@@ -75,7 +75,7 @@
     "title": "Um recurso, de ponta a ponta",
     "bodyBefore": "",
     "bodyCode": "tasks",
-    "bodyAfter": " é o domínio placeholder. Mesmo nome na API e no web, papéis fixos de cada lado, um contrato compartilhado em packages/shared. Percorra a API (schema → repository → rota → tool), depois o domínio React (pasta → api.ts → routes → page), e chegue na tela. Copie esse par de pastas para o seu recurso."
+    "bodyAfter": " é o domínio placeholder. Mesmo nome na API e no web, papéis fixos de cada lado, um contrato compartilhado em packages/shared. Percorra a API (tabela → schema.ts → repository → rota → tool), depois o domínio React (pasta → api.ts → routes → page), e chegue na tela. Copie esse par de pastas para o seu recurso."
   },
   "showScreen": "Mostrar tela {{n}}",
   "monorepo": {
@@ -167,6 +167,16 @@
         "tenant_id amarra cada linha a um workspace e faz cascade no delete",
         "author_id referencia o usuário mas é nullable — set null no delete",
         "Migrations são geradas a partir do schema, nunca escritas à mão"
+      ]
+    },
+    "schemaFile": {
+      "eyebrow": "O arquivo de schema",
+      "title": "O pgTable que cria a tabela",
+      "body": "Essa tabela é declarada em schema.ts com o pgTable do Drizzle — id, FK de tenant com cascade, author opcional, campos, …timestamps e um índice em tenantId. Exporte o tipo Task inferido do mesmo arquivo. Registre o schema em db/schema.ts e o db:generate escreve a migration.",
+      "points": [
+        "Copie domains/task/schema.ts para toda tabela nova com escopo de tenant",
+        "…timestamps vem de @/db/columns — não reinvente created_at",
+        "Exporte em db/schema.ts e rode npm run db:generate — nunca escreva SQL à mão"
       ]
     },
     "repository": {

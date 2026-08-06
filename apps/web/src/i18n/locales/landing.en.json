@@ -75,7 +75,7 @@
     "title": "One resource, top to bottom",
     "bodyBefore": "",
     "bodyCode": "tasks",
-    "bodyAfter": " is the placeholder domain. Same name on API and web, fixed roles on each side, one shared contract in packages/shared. Walk the API (schema → repository → route → tool), then the React domain (folder → api.ts → routes → page), and land on the screen. Copy that folder pair for your own resource."
+    "bodyAfter": " is the placeholder domain. Same name on API and web, fixed roles on each side, one shared contract in packages/shared. Walk the API (table → schema.ts → repository → route → tool), then the React domain (folder → api.ts → routes → page), and land on the screen. Copy that folder pair for your own resource."
   },
   "showScreen": "Show screen {{n}}",
   "monorepo": {
@@ -167,6 +167,16 @@
         "tenant_id ties every row to a workspace and cascades on delete",
         "author_id references the user but is nullable — set null on delete",
         "Migrations are generated from the schema, never hand-written"
+      ]
+    },
+    "schemaFile": {
+      "eyebrow": "The schema file",
+      "title": "The pgTable that creates it",
+      "body": "That table is declared in schema.ts with Drizzle's pgTable — id, tenant FK with cascade, optional author, fields, …timestamps, and an index on tenantId. Export the inferred Task type from the same file. Register the schema in db/schema.ts, then db:generate writes the migration.",
+      "points": [
+        "Copy domains/task/schema.ts for every new tenant-scoped table",
+        "…timestamps comes from @/db/columns — don't reinvent created_at",
+        "Export from db/schema.ts, then npm run db:generate — never hand-write SQL"
       ]
     },
     "repository": {

@@ -75,6 +75,28 @@ export const taskRepository = {
   async delete(tenantId: string, id: string): Promise<boolean> { /* … */ },
 };`;
 
+const schemaFile = `/**
+ * Tasks
+ *
+ * One row per task. Scoped to a tenant; optional author (set null on user delete).
+ */
+export const tasks = pgTable(
+  "tasks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => tenants.id, { onDelete: "cascade" }),
+    authorId: uuid("author_id").references(() => users.id, { onDelete: "set null" }),
+    title: text("title").notNull(),
+    completed: boolean("completed").notNull().default(false),
+    ...timestamps,
+  },
+  (t) => [index("tasks_tenant_idx").on(t.tenantId)],
+);
+
+export type Task = typeof tasks.$inferSelect;`;
+
 const repositoryMethodFile = `/**
  * List tasks
  *
@@ -319,6 +341,7 @@ export const themes: Theme[] = [
 type SliceLocaleKey =
   | "convention"
   | "schema"
+  | "schemaFile"
   | "repository"
   | "repositoryMethod"
   | "route"
@@ -390,6 +413,13 @@ function buildResourceSlices(t: TFunction): Slice[] {
       id: "schema",
       ...sliceCopy("schema", t),
       visual: <TaskTable />,
+    },
+    {
+      id: "schema-file",
+      ...sliceCopy("schemaFile", t),
+      visual: (
+        <CodeBlock filename="domains/task/schema.ts" code={schemaFile} lang="ts" />
+      ),
     },
     {
       id: "repository",
