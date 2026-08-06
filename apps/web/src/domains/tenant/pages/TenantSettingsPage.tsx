@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
 import type { TenantRole } from "@app/shared";
@@ -15,11 +16,13 @@ import { PageHeader } from "@app/ui/page-header";
 import { RoleSelect } from "@/components/role-select";
 import { showApiError } from "@/lib/api";
 import { initials } from "@/lib/utils";
+import { dateLocale } from "@/i18n";
 import { useAuth } from "@/domains/auth/auth-provider";
 import { tenantApi } from "../api";
 import { useTenant } from "../tenant-provider";
 
 function GeneralSection() {
+  const { t } = useTranslation();
   const { me, refresh } = useAuth();
   const { tenant, isManager } = useTenant();
   const navigate = useNavigate();
@@ -30,9 +33,9 @@ function GeneralSection() {
     mutationFn: () => tenantApi.rename(tenant.id, name),
     onSuccess: async () => {
       await refresh();
-      toast.success("Tenant renamed");
+      toast.success(t("settings.renamed"));
     },
-    onError: (err) => showApiError(err, "Failed to save"),
+    onError: (err) => showApiError(err, t("settings.saveFailed")),
   });
 
   const leaveMutation = useMutation({
@@ -41,7 +44,7 @@ function GeneralSection() {
       await refresh();
       navigate("/app");
     },
-    onError: (err) => showApiError(err, "Failed to leave tenant"),
+    onError: (err) => showApiError(err, t("settings.leaveFailed")),
   });
 
   function handleSubmit(e: FormEvent) {
@@ -51,9 +54,9 @@ function GeneralSection() {
 
   async function handleLeave() {
     const ok = await confirm({
-      title: "Leave tenant",
-      description: `Leave "${tenant.name}"?`,
-      confirmLabel: "Leave",
+      title: t("settings.leaveTitle"),
+      description: t("settings.leaveDescription", { name: tenant.name }),
+      confirmLabel: t("common.leave"),
       destructive: true,
     });
     if (ok) leaveMutation.mutate();
@@ -62,14 +65,16 @@ function GeneralSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>General</CardTitle>
-        <CardDescription>Tenant name and identification (slug: {tenant.slug})</CardDescription>
+        <CardTitle>{t("settings.general")}</CardTitle>
+        <CardDescription>
+          {t("settings.generalDescription", { slug: tenant.slug })}
+        </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
         {isManager ? (
           <form onSubmit={handleSubmit} className="flex items-end gap-2">
             <div className="grid flex-1 gap-2">
-              <Label htmlFor="tenant-name">Name</Label>
+              <Label htmlFor="tenant-name">{t("common.name")}</Label>
               <Input
                 id="tenant-name"
                 required
@@ -79,19 +84,17 @@ function GeneralSection() {
               />
             </div>
             <Button type="submit" disabled={renameMutation.isPending || name === tenant.name}>
-              {renameMutation.isPending ? "Saving..." : "Save"}
+              {renameMutation.isPending ? t("common.saving") : t("common.save")}
             </Button>
           </form>
         ) : (
-          <p className="text-sm text-muted-foreground">
-            Only administrators can rename the tenant.
-          </p>
+          <p className="text-sm text-muted-foreground">{t("settings.onlyAdminsRename")}</p>
         )}
         {/* Owners can't leave their own tenant — the option only exists for guests. */}
         {tenant.role !== "owner" && (
           <div className="border-t pt-4">
             <Button variant="outline" onClick={() => void handleLeave()}>
-              Leave this tenant
+              {t("settings.leaveTenant")}
             </Button>
           </div>
         )}
@@ -101,6 +104,7 @@ function GeneralSection() {
 }
 
 function MembersSection() {
+  const { t } = useTranslation();
   const { me } = useAuth();
   const { tenant, isManager } = useTenant();
   const queryClient = useQueryClient();
@@ -118,11 +122,11 @@ function MembersSection() {
       tenantApi.setMemberRole(tenant.id, userId, role),
     onSuccess: () => {
       void invalidate();
-      toast.success("Role updated");
+      toast.success(t("settings.roleUpdated"));
     },
     onError: (err) => {
       void invalidate();
-      showApiError(err, "Failed to update role");
+      showApiError(err, t("settings.roleUpdateFailed"));
     },
   });
 
@@ -130,16 +134,16 @@ function MembersSection() {
     mutationFn: (userId: string) => tenantApi.removeMember(tenant.id, userId),
     onSuccess: () => {
       void invalidate();
-      toast.success("Member removed");
+      toast.success(t("settings.memberRemoved"));
     },
-    onError: (err) => showApiError(err, "Failed to remove member"),
+    onError: (err) => showApiError(err, t("settings.removeFailed")),
   });
 
   async function handleRemove(userId: string, name: string) {
     const ok = await confirm({
-      title: "Remove member",
-      description: `Remove ${name} from the tenant?`,
-      confirmLabel: "Remove",
+      title: t("settings.removeTitle"),
+      description: t("settings.removeDescription", { name }),
+      confirmLabel: t("common.remove"),
       destructive: true,
     });
     if (ok) removeMutation.mutate(userId);
@@ -148,11 +152,11 @@ function MembersSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Members</CardTitle>
-        <CardDescription>Who has access to this tenant</CardDescription>
+        <CardTitle>{t("settings.members")}</CardTitle>
+        <CardDescription>{t("settings.membersDescription")}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-3">
-        {isLoading && <p className="text-sm text-muted-foreground">Loading members...</p>}
+        {isLoading && <p className="text-sm text-muted-foreground">{t("settings.loadingMembers")}</p>}
         {members?.map((member) => {
           const isSelf = member.userId === me?.user.id;
           return (
@@ -163,7 +167,7 @@ function MembersSection() {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">
                   {member.name}
-                  {isSelf && <span className="text-muted-foreground"> (you)</span>}
+                  {isSelf && <span className="text-muted-foreground"> {t("common.you")}</span>}
                 </p>
                 <p className="truncate text-xs text-muted-foreground">{member.email}</p>
               </div>
@@ -181,11 +185,11 @@ function MembersSection() {
                     onClick={() => void handleRemove(member.userId, member.name)}
                   >
                     <Trash2Icon />
-                    <span className="sr-only">Remove</span>
+                    <span className="sr-only">{t("common.remove")}</span>
                   </Button>
                 </>
               ) : (
-                <Badge variant="secondary">{member.role}</Badge>
+                <Badge variant="secondary">{t(`roles.${member.role}`)}</Badge>
               )}
             </div>
           );
@@ -196,6 +200,7 @@ function MembersSection() {
 }
 
 function InvitesSection() {
+  const { t, i18n } = useTranslation();
   const { tenant } = useTenant();
   const queryClient = useQueryClient();
   const [email, setEmail] = useState("");
@@ -214,25 +219,25 @@ function InvitesSection() {
     onSuccess: () => {
       void invalidate();
       setEmail("");
-      toast.success("Invite sent by email");
+      toast.success(t("settings.inviteSent"));
     },
-    onError: (err) => showApiError(err, "Failed to invite"),
+    onError: (err) => showApiError(err, t("settings.inviteFailed")),
   });
 
   const revokeMutation = useMutation({
     mutationFn: (inviteId: string) => tenantApi.revokeInvite(tenant.id, inviteId),
     onSuccess: () => {
       void invalidate();
-      toast.success("Invite revoked");
+      toast.success(t("settings.inviteRevoked"));
     },
-    onError: (err) => showApiError(err, "Failed to revoke invite"),
+    onError: (err) => showApiError(err, t("settings.revokeInviteFailed")),
   });
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Invites</CardTitle>
-        <CardDescription>Invite people to this tenant by email</CardDescription>
+        <CardTitle>{t("settings.invites")}</CardTitle>
+        <CardDescription>{t("settings.invitesDescription")}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
         <form
@@ -243,7 +248,7 @@ function InvitesSection() {
           className="flex flex-wrap items-end gap-2"
         >
           <div className="grid min-w-48 flex-1 gap-2">
-            <Label htmlFor="invite-email">Email</Label>
+            <Label htmlFor="invite-email">{t("common.email")}</Label>
             <Input
               id="invite-email"
               type="email"
@@ -254,7 +259,7 @@ function InvitesSection() {
           </div>
           <RoleSelect value={role} onChange={setRole} />
           <Button type="submit" disabled={createMutation.isPending}>
-            {createMutation.isPending ? "Sending..." : "Invite"}
+            {createMutation.isPending ? t("common.sending") : t("settings.invite")}
           </Button>
         </form>
 
@@ -263,9 +268,13 @@ function InvitesSection() {
             {invites.map((invite) => (
               <div key={invite.id} className="flex items-center gap-3 text-sm">
                 <span className="min-w-0 flex-1 truncate">{invite.email}</span>
-                <Badge variant="outline">{invite.role}</Badge>
+                <Badge variant="outline">{t(`roles.${invite.role}`)}</Badge>
                 <span className="text-xs text-muted-foreground">
-                  expires {new Date(invite.expiresAt).toLocaleDateString("en-US")}
+                  {t("settings.expires", {
+                    date: new Date(invite.expiresAt).toLocaleDateString(
+                      dateLocale(i18n.language),
+                    ),
+                  })}
                 </span>
                 <Button
                   variant="ghost"
@@ -273,7 +282,7 @@ function InvitesSection() {
                   onClick={() => revokeMutation.mutate(invite.id)}
                 >
                   <Trash2Icon />
-                  <span className="sr-only">Revoke</span>
+                  <span className="sr-only">{t("common.revoke")}</span>
                 </Button>
               </div>
             ))}
@@ -285,11 +294,12 @@ function InvitesSection() {
 }
 
 export function TenantSettingsPage() {
+  const { t } = useTranslation();
   const { isManager } = useTenant();
 
   return (
     <div className="grid gap-6">
-      <PageHeader title="Settings" description="Manage the tenant, members and invites" />
+      <PageHeader title={t("settings.title")} description={t("settings.description")} />
       <GeneralSection />
       <MembersSection />
       {isManager && <InvitesSection />}

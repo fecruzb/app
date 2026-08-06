@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { BoxIcon } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@app/ui/card";
 
@@ -14,11 +15,12 @@ export function AuthLayout({
   children: ReactNode;
   footer?: ReactNode;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40 px-4 py-12">
       <Link to="/" className="mb-6 flex items-center gap-2 font-semibold">
         <BoxIcon className="size-5 text-primary" />
-        App Base
+        {t("brand")}
       </Link>
       <Card className="w-full max-w-sm">
         <CardHeader>

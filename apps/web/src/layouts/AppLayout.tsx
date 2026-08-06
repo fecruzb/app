@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   BoxIcon,
   CheckIcon,
@@ -38,6 +39,7 @@ import { TenantProvider, useTenant } from "@/domains/tenant/tenant-provider";
  * others). With a single tenant nothing is shown — the environment is implicit.
  */
 function TenantSwitcher() {
+  const { t } = useTranslation();
   const { me } = useAuth();
   const { tenant } = useTenant();
   const navigate = useNavigate();
@@ -54,11 +56,14 @@ function TenantSwitcher() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="start">
-        <DropdownMenuLabel>Your tenants</DropdownMenuLabel>
-        {tenants.map((t) => (
-          <DropdownMenuItem key={t.id} onSelect={() => navigate(`/app/${t.slug}`)}>
-            <span className="flex-1 truncate">{t.name}</span>
-            {t.id === tenant.id && <CheckIcon />}
+        <DropdownMenuLabel>{t("nav.yourTenants")}</DropdownMenuLabel>
+        {tenants.map((tenantOption) => (
+          <DropdownMenuItem
+            key={tenantOption.id}
+            onSelect={() => navigate(`/app/${tenantOption.slug}`)}
+          >
+            <span className="flex-1 truncate">{tenantOption.name}</span>
+            {tenantOption.id === tenant.id && <CheckIcon />}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
@@ -67,6 +72,7 @@ function TenantSwitcher() {
 }
 
 function UserMenu() {
+  const { t } = useTranslation();
   const { me, logout } = useAuth();
   const { tenant } = useTenant();
   const navigate = useNavigate();
@@ -90,7 +96,7 @@ function UserMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="start" side="top">
         <DropdownMenuItem onSelect={() => navigate(`/app/${tenant.slug}/account`)}>
-          <UserIcon /> My account
+          <UserIcon /> {t("nav.myAccount")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -98,7 +104,7 @@ function UserMenu() {
             void logout().then(() => navigate("/"));
           }}
         >
-          <LogOutIcon /> Sign out
+          <LogOutIcon /> {t("nav.signOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -106,6 +112,7 @@ function UserMenu() {
 }
 
 function VerifyEmailBanner() {
+  const { t } = useTranslation();
   const { me } = useAuth();
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -117,9 +124,9 @@ function VerifyEmailBanner() {
     try {
       await authApi.resendVerification();
       setSent(true);
-      toast.success("Verification email resent");
+      toast.success(t("layout.verificationResent"));
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Failed to resend");
+      toast.error(err instanceof ApiError ? err.message : t("layout.resendFailed"));
     } finally {
       setSending(false);
     }
@@ -128,28 +135,32 @@ function VerifyEmailBanner() {
   return (
     <div className="flex flex-wrap items-center gap-2 border-b bg-amber-50 px-4 py-2 text-sm text-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
       <MailWarningIcon className="size-4 shrink-0" />
-      <span className="flex-1">Confirm your email to secure your account.</span>
+      <span className="flex-1">{t("layout.verifyBanner")}</span>
       {!sent && (
         <Button size="sm" variant="outline" onClick={() => void resend()} disabled={sending}>
-          {sending ? "Sending..." : "Resend email"}
+          {sending ? t("common.sending") : t("layout.resendEmail")}
         </Button>
       )}
     </div>
   );
 }
 
-function navItems(slug: string) {
-  return [
-    { to: `/app/${slug}`, end: true, icon: HomeIcon, label: "Home" },
-    { to: `/app/${slug}/tasks`, end: false, icon: CheckSquareIcon, label: "Tasks" },
-    { to: `/app/${slug}/images`, end: false, icon: ImageIcon, label: "Images" },
-    { to: `/app/${slug}/settings`, end: false, icon: SettingsIcon, label: "Settings" },
-  ];
-}
-
 function Shell() {
+  const { t } = useTranslation();
   const { tenant } = useTenant();
   const { aiEnabled } = useAppConfig();
+
+  const items = [
+    { to: `/app/${tenant.slug}`, end: true, icon: HomeIcon, label: t("nav.home") },
+    { to: `/app/${tenant.slug}/tasks`, end: false, icon: CheckSquareIcon, label: t("nav.tasks") },
+    { to: `/app/${tenant.slug}/images`, end: false, icon: ImageIcon, label: t("nav.images") },
+    {
+      to: `/app/${tenant.slug}/settings`,
+      end: false,
+      icon: SettingsIcon,
+      label: t("nav.settings"),
+    },
+  ];
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
@@ -157,13 +168,13 @@ function Shell() {
         <div className="flex items-center justify-between px-2">
           <Link to="/" className="flex items-center gap-2 font-semibold">
             <BoxIcon className="size-5 text-primary" />
-            App Base
+            {t("brand")}
           </Link>
           <ThemeControls />
         </div>
         <TenantSwitcher />
         <nav className="flex gap-1 md:flex-1 md:flex-col">
-          {navItems(tenant.slug).map((item) => (
+          {items.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}

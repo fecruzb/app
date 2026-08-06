@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import { useTranslation } from "react-i18next";
 import {
   BoxIcon,
   CheckIcon,
@@ -44,24 +45,25 @@ function Window({ label, children }: { label: string; children: React.ReactNode 
 }
 
 export function AgentChatMock() {
+  const { t } = useTranslation();
   return (
     <Window label="assistant">
       <div className="flex items-center gap-2 border-b px-4 py-3">
         <SparklesIcon className="size-4" />
-        <span className="flex-1 text-sm font-semibold">Assistant</span>
+        <span className="flex-1 text-sm font-semibold">{t("landing.preview.agent.title")}</span>
       </div>
       <div className="space-y-3 p-4">
         <div className="flex justify-end">
           <div className="max-w-[85%] rounded-lg bg-primary px-3 py-2 text-sm text-primary-foreground">
-            Add a task to prepare tomorrow's standup
+            {t("landing.preview.agent.suggestion")}
           </div>
         </div>
         <div className="flex">
           <div className="max-w-[85%] rounded-lg bg-muted px-3 py-2 text-sm">
-            Done — I added “Prepare tomorrow's standup” to your task list.
+            {t("landing.preview.agent.reply")}
             <div className="mt-2 flex flex-wrap gap-1">
               <span className="rounded-full border px-2 py-0.5 text-xs text-muted-foreground">
-                Task created: Prepare tomorrow's standup
+                {t("landing.preview.agent.chip")}
               </span>
             </div>
           </div>
@@ -69,7 +71,7 @@ export function AgentChatMock() {
       </div>
       <div className="flex items-end gap-2 border-t p-3">
         <div className="flex h-9 flex-1 items-center rounded-md border px-3 text-sm text-muted-foreground">
-          Talk to the assistant…
+          {t("landing.preview.agent.placeholder")}
         </div>
         <div className="flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
           <SendIcon className="size-4" />
@@ -115,11 +117,12 @@ function AuthBody({
   children: React.ReactNode;
   footer: string;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col items-center gap-5 bg-muted/40 p-4 sm:p-8">
       <div className="flex items-center gap-2 font-semibold">
         <BoxIcon className="size-5" />
-        App Base
+        {t("brand")}
       </div>
       <div className="w-full max-w-xs rounded-xl border bg-card p-5 text-left shadow-sm sm:p-6">
         <p className="text-lg font-semibold">{title}</p>
@@ -150,31 +153,33 @@ function AuthScreen({
 }
 
 export function LoginMock() {
+  const { t } = useTranslation();
   return (
     <AuthScreen
       route="/login"
-      title="Welcome back"
-      description="Sign in to continue."
-      footer="New here? Create account"
+      title={t("landing.preview.login.title")}
+      description={t("landing.preview.login.description")}
+      footer={t("landing.preview.login.footer")}
     >
-      <Field label="Email" value="you@example.com" />
-      <Field label="Password" value="••••••••" mono />
-      <SubmitButton label="Sign in" />
+      <Field label={t("landing.preview.email")} value="you@example.com" />
+      <Field label={t("landing.preview.password")} value="••••••••" mono />
+      <SubmitButton label={t("landing.preview.login.submit")} />
     </AuthScreen>
   );
 }
 
 function RegisterBody() {
+  const { t } = useTranslation();
   return (
     <AuthBody
-      title="Create your account"
-      description="Start in seconds."
-      footer="Have an account? Sign in"
+      title={t("landing.preview.register.title")}
+      description={t("landing.preview.register.description")}
+      footer={t("landing.preview.register.footer")}
     >
-      <Field label="Name" value="Ada Lovelace" />
-      <Field label="Email" value="you@example.com" />
-      <Field label="Password" value="••••••••" mono />
-      <SubmitButton label="Create account" />
+      <Field label={t("landing.preview.name")} value="Ada Lovelace" />
+      <Field label={t("landing.preview.email")} value="you@example.com" />
+      <Field label={t("landing.preview.password")} value="••••••••" mono />
+      <SubmitButton label={t("landing.preview.register.submit")} />
     </AuthBody>
   );
 }
@@ -188,14 +193,15 @@ export function RegisterMock() {
 }
 
 function ForgotPasswordBody() {
+  const { t } = useTranslation();
   return (
     <AuthBody
-      title="Forgot password"
-      description="We'll email you a reset link."
-      footer="Remembered it? Sign in"
+      title={t("landing.preview.forgot.title")}
+      description={t("landing.preview.forgot.description")}
+      footer={t("landing.preview.forgot.footer")}
     >
-      <Field label="Email" value="you@example.com" />
-      <SubmitButton label="Send reset link" />
+      <Field label={t("landing.preview.email")} value="you@example.com" />
+      <SubmitButton label={t("landing.preview.forgot.submit")} />
     </AuthBody>
   );
 }
@@ -209,15 +215,16 @@ export function ForgotPasswordMock() {
 }
 
 function ResetPasswordBody() {
+  const { t } = useTranslation();
   return (
     <AuthBody
-      title="Choose a new password"
-      description="Set a new password for your account."
-      footer="Link expires in 1 hour"
+      title={t("landing.preview.reset.title")}
+      description={t("landing.preview.reset.description")}
+      footer={t("landing.preview.reset.footer")}
     >
-      <Field label="New password" value="••••••••" mono />
-      <Field label="Confirm password" value="••••••••" mono />
-      <SubmitButton label="Reset password" />
+      <Field label={t("landing.preview.reset.newPassword")} value="••••••••" mono />
+      <Field label={t("landing.preview.reset.confirmPassword")} value="••••••••" mono />
+      <SubmitButton label={t("landing.preview.reset.submit")} />
     </AuthBody>
   );
 }
@@ -242,6 +249,7 @@ function EmailBody({
   body: React.ReactNode;
   cta: string;
 }) {
+  const { t } = useTranslation();
   return (
     <>
       <div className="flex items-center gap-3 border-b px-4 py-3">
@@ -251,18 +259,18 @@ function EmailBody({
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold">{subject}</p>
           <p className="truncate text-xs text-muted-foreground">
-            App Base &lt;no-reply@appbase.dev&gt; → you@example.com
+            {t("brand")} &lt;no-reply@appbase.dev&gt; → you@example.com
           </p>
         </div>
         <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
-          now
+          {t("landing.preview.now")}
         </span>
       </div>
       <div className="bg-muted/40 p-4 sm:p-6">
         <div className="mx-auto max-w-sm rounded-xl border bg-card p-5 text-center shadow-sm sm:p-6">
           <div className="mb-4 flex items-center justify-center gap-2 font-semibold">
             <BoxIcon className="size-5" />
-            App Base
+            {t("brand")}
           </div>
           <p className="text-base font-semibold">{heading}</p>
           <p className="mt-2 text-sm text-muted-foreground">{body}</p>
@@ -276,23 +284,25 @@ function EmailBody({
 }
 
 function VerifyEmailBody() {
+  const { t } = useTranslation();
   return (
     <EmailBody
-      subject="Confirm your email"
-      heading="Confirm your email"
-      body="Hi Ada! Confirm your email address to finish signing up. This link expires in 24 hours."
-      cta="Confirm email"
+      subject={t("landing.preview.verifyEmail.subject")}
+      heading={t("landing.preview.verifyEmail.heading")}
+      body={t("landing.preview.verifyEmail.body")}
+      cta={t("landing.preview.verifyEmail.cta")}
     />
   );
 }
 
 function ResetEmailBody() {
+  const { t } = useTranslation();
   return (
     <EmailBody
-      subject="Reset your password"
-      heading="Reset your password"
-      body="We got a request to reset your password. This link is single-use and expires in 1 hour. If it wasn't you, ignore this email."
-      cta="Reset password"
+      subject={t("landing.preview.resetEmail.subject")}
+      heading={t("landing.preview.resetEmail.heading")}
+      body={t("landing.preview.resetEmail.body")}
+      cta={t("landing.preview.resetEmail.cta")}
     />
   );
 }
@@ -306,38 +316,51 @@ export function VerifyEmailMock() {
 }
 
 function InviteMembersBody() {
+  const { t } = useTranslation();
   const members = [
-    { name: "Ada Lovelace", email: "ada@acme.com", role: "owner", self: true },
-    { name: "Alan Turing", email: "alan@acme.com", role: "admin", self: false },
+    {
+      name: "Ada Lovelace",
+      email: "ada@acme.com",
+      role: t("landing.preview.roles.owner"),
+      self: true,
+    },
+    {
+      name: "Alan Turing",
+      email: "alan@acme.com",
+      role: t("landing.preview.roles.admin"),
+      self: false,
+    },
   ];
   return (
     <div className="space-y-4 p-5">
       <div className="rounded-lg border">
         <div className="border-b px-4 py-3">
-          <p className="text-sm font-semibold">Invites</p>
-          <p className="text-xs text-muted-foreground">Invite people to this tenant by email</p>
+          <p className="text-sm font-semibold">{t("landing.preview.invites.title")}</p>
+          <p className="text-xs text-muted-foreground">{t("landing.preview.invites.description")}</p>
         </div>
         <div className="flex items-end gap-2 p-4">
           <div className="flex-1">
-            <p className="mb-1 text-xs font-medium">Email</p>
+            <p className="mb-1 text-xs font-medium">{t("landing.preview.invites.email")}</p>
             <div className="flex h-9 items-center rounded-md border px-3 text-sm text-muted-foreground">
               sam@acme.com
             </div>
           </div>
           <div className="flex h-9 items-center gap-1 rounded-md border px-3 text-sm text-muted-foreground">
-            member
+            {t("landing.preview.roles.member")}
             <ChevronsUpDownIcon className="size-3.5" />
           </div>
           <div className="flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">
-            Invite
+            {t("landing.preview.invites.invite")}
           </div>
         </div>
       </div>
 
       <div className="rounded-lg border">
         <div className="border-b px-4 py-3">
-          <p className="text-sm font-semibold">Members</p>
-          <p className="text-xs text-muted-foreground">Who has access to this tenant</p>
+          <p className="text-sm font-semibold">{t("landing.preview.invites.membersTitle")}</p>
+          <p className="text-xs text-muted-foreground">
+            {t("landing.preview.invites.membersDescription")}
+          </p>
         </div>
         <div className="divide-y">
           {members.map((m) => (
@@ -351,7 +374,9 @@ function InviteMembersBody() {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">
                   {m.name}
-                  {m.self && <span className="text-muted-foreground"> (you)</span>}
+                  {m.self && (
+                    <span className="text-muted-foreground"> {t("landing.preview.invites.you")}</span>
+                  )}
                 </p>
                 <p className="truncate text-xs text-muted-foreground">{m.email}</p>
               </div>
@@ -375,18 +400,19 @@ export function InviteMembersMock() {
 }
 
 function InviteEmailBody() {
+  const { t } = useTranslation();
   return (
     <EmailBody
-      subject="Invitation to Acme Inc"
-      heading="Invitation to Acme Inc"
+      subject={t("landing.preview.inviteEmail.subject")}
+      heading={t("landing.preview.inviteEmail.heading")}
       body={
         <>
-          Ada Lovelace invited you to join{" "}
-          <span className="font-medium text-foreground">Acme Inc</span>. This invite expires in 7
-          days.
+          {t("landing.preview.inviteEmail.bodyBefore")}
+          <span className="font-medium text-foreground">Acme Inc</span>
+          {t("landing.preview.inviteEmail.bodyAfter")}
         </>
       }
-      cta="Accept invite"
+      cta={t("landing.preview.inviteEmail.cta")}
     />
   );
 }
@@ -400,19 +426,20 @@ export function InviteEmailMock() {
 }
 
 export function McpKeysMock() {
+  const { t } = useTranslation();
   return (
     <Window label="/app/acme/account">
       <div className="space-y-4 p-5">
         <div className="rounded-lg border">
           <div className="border-b px-4 py-3">
             <p className="flex items-center gap-1.5 text-sm font-semibold">
-              <KeyRoundIcon className="size-3.5" /> API keys (MCP)
+              <KeyRoundIcon className="size-3.5" /> {t("landing.preview.mcp.title")}
             </p>
-            <p className="text-xs text-muted-foreground">Reach the tenant over MCP from Cursor</p>
+            <p className="text-xs text-muted-foreground">{t("landing.preview.mcp.description")}</p>
           </div>
           <div className="flex items-end gap-2 p-4">
             <div className="flex-1">
-              <p className="mb-1 text-xs font-medium">Name</p>
+              <p className="mb-1 text-xs font-medium">{t("landing.preview.name")}</p>
               <div className="flex h-9 items-center rounded-md border px-3 text-sm text-muted-foreground">
                 Cursor
               </div>
@@ -422,7 +449,7 @@ export function McpKeysMock() {
               <ChevronsUpDownIcon className="size-3.5" />
             </div>
             <div className="flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">
-              Create key
+              {t("landing.preview.mcp.create")}
             </div>
           </div>
           <div className="mx-4 mb-4 rounded-md border bg-muted/40 p-3">
@@ -444,10 +471,11 @@ export function McpKeysMock() {
 }
 
 export function ShellMock() {
+  const { t } = useTranslation();
   const nav = [
-    { icon: HomeIcon, label: "Home", active: true },
-    { icon: CheckSquareIcon, label: "Tasks", active: false },
-    { icon: SettingsIcon, label: "Settings", active: false },
+    { icon: HomeIcon, label: t("landing.preview.nav.home"), active: true },
+    { icon: CheckSquareIcon, label: t("landing.preview.nav.tasks"), active: false },
+    { icon: SettingsIcon, label: t("landing.preview.nav.settings"), active: false },
   ];
   return (
     <Window label="/app/acme">
@@ -455,7 +483,7 @@ export function ShellMock() {
         <aside className="flex w-44 flex-col gap-3 border-r p-3">
           <div className="flex items-center gap-2 px-2 font-semibold">
             <BoxIcon className="size-4" />
-            App Base
+            {t("brand")}
           </div>
           <div className="flex items-center justify-between rounded-md border px-3 py-1.5 text-xs">
             <span className="truncate">Acme Inc</span>
@@ -485,24 +513,31 @@ export function ShellMock() {
           </div>
         </aside>
         <div className="flex-1 p-5">
-          <p className="text-base font-semibold">Hi, Ada</p>
+          <p className="text-base font-semibold">{t("landing.preview.shell.hi")}</p>
           <p className="text-xs text-muted-foreground">
-            You're in <span className="font-medium text-foreground">Acme Inc</span>
-            <span className="ml-1 rounded bg-muted px-1.5 py-0.5 text-[10px]">owner</span>
+            {t("landing.preview.shell.youreIn")}{" "}
+            <span className="font-medium text-foreground">Acme Inc</span>
+            <span className="ml-1 rounded bg-muted px-1.5 py-0.5 text-[10px]">
+              {t("landing.preview.roles.owner")}
+            </span>
           </p>
           <div className="mt-4 grid grid-cols-2 gap-3">
             <div className="rounded-lg border p-3">
-              <p className="text-xs font-semibold">3 members</p>
-              <p className="mt-1 text-[11px] text-muted-foreground">People with access</p>
+              <p className="text-xs font-semibold">{t("landing.preview.shell.members")}</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                {t("landing.preview.shell.peopleAccess")}
+              </p>
               <p className="mt-3 flex items-center gap-1 text-[11px]">
-                Manage members <CheckIcon className="size-3" />
+                {t("landing.preview.shell.manageMembers")} <CheckIcon className="size-3" />
               </p>
             </div>
             <div className="rounded-lg border p-3">
-              <p className="text-xs font-semibold">5 tasks</p>
-              <p className="mt-1 text-[11px] text-muted-foreground">Example resource</p>
+              <p className="text-xs font-semibold">{t("landing.preview.shell.tasksCount")}</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                {t("landing.preview.shell.exampleResource")}
+              </p>
               <p className="mt-3 flex items-center gap-1 text-[11px]">
-                View tasks <CheckIcon className="size-3" />
+                {t("landing.preview.shell.viewTasks")} <CheckIcon className="size-3" />
               </p>
             </div>
           </div>
@@ -517,27 +552,25 @@ export function ShellMock() {
 }
 
 export function TasksMock() {
-  const tasks = [
-    { title: "Design the schema", done: true },
-    { title: "Wire the repository", done: true },
-    { title: "Expose the route", done: false },
-    { title: "Build the screen", done: false },
-  ];
+  const { t } = useTranslation();
+  const items = t("landing.preview.tasks.items", { returnObjects: true }) as string[];
+  const tasks = (Array.isArray(items) ? items : []).map((title, i) => ({
+    title,
+    done: i < 2,
+  }));
   return (
     <Window label="/app/acme/tasks">
       <div className="space-y-4 p-5 text-sm">
         <div>
-          <p className="text-base font-semibold">Tasks</p>
-          <p className="text-xs text-muted-foreground">
-            Example resource with per-tenant CRUD · 2 of 4 left
-          </p>
+          <p className="text-base font-semibold">{t("landing.preview.tasks.title")}</p>
+          <p className="text-xs text-muted-foreground">{t("landing.preview.tasks.left")}</p>
         </div>
         <div className="flex gap-2">
           <div className="flex h-9 flex-1 items-center rounded-md border px-3 text-xs text-muted-foreground">
-            Add a task...
+            {t("landing.preview.tasks.placeholder")}
           </div>
           <div className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground">
-            <PlusIcon className="size-3.5" /> Add
+            <PlusIcon className="size-3.5" /> {t("landing.preview.tasks.add")}
           </div>
         </div>
         <div className="divide-y rounded-lg border">
@@ -567,26 +600,27 @@ export function TasksMock() {
 }
 
 export function AccountMock() {
+  const { t } = useTranslation();
   return (
     <Window label="/app/acme/account">
       <div className="space-y-4 p-5 text-sm">
         <div>
-          <p className="text-base font-semibold">My account</p>
-          <p className="text-xs text-muted-foreground">Manage your profile and security.</p>
+          <p className="text-base font-semibold">{t("landing.preview.account.title")}</p>
+          <p className="text-xs text-muted-foreground">{t("landing.preview.account.description")}</p>
         </div>
         <div className="rounded-lg border p-4">
           <div className="mb-3 flex items-center gap-2 text-xs font-semibold">
-            <UserIcon className="size-3.5" /> Profile
+            <UserIcon className="size-3.5" /> {t("landing.preview.account.profile")}
           </div>
-          <Field label="Name" value="Ada Lovelace" />
+          <Field label={t("landing.preview.name")} value="Ada Lovelace" />
           <div className="h-2" />
-          <Field label="Email" value="ada@acme.com" />
+          <Field label={t("landing.preview.email")} value="ada@acme.com" />
         </div>
         <div className="rounded-lg border p-4">
           <div className="mb-3 flex items-center gap-2 text-xs font-semibold">
-            <KeyRoundIcon className="size-3.5" /> Password
+            <KeyRoundIcon className="size-3.5" /> {t("landing.preview.account.password")}
           </div>
-          <Field label="New password" value="••••••••" mono />
+          <Field label={t("landing.preview.account.newPassword")} value="••••••••" mono />
         </div>
       </div>
     </Window>
@@ -751,6 +785,7 @@ export function TaskTable() {
 
 /** A .env file: the variables the app reads, with which are required vs optional. */
 export function EnvMock() {
+  const { t } = useTranslation();
   const rows: { key: string; value: string; note?: string; optional?: boolean }[] = [
     { key: "DATABASE_URL", value: "postgres://app:app@localhost:5442/app_base" },
     { key: "APP_URL", value: "http://localhost:3000" },
@@ -761,7 +796,12 @@ export function EnvMock() {
       optional: true,
     },
     { key: "MAIL_FROM", value: "App Base <onboarding@resend.dev>", optional: true },
-    { key: "OPENAI_API_KEY", value: "sk-…", note: "no key → agent hidden", optional: true },
+    {
+      key: "OPENAI_API_KEY",
+      value: "sk-…",
+      note: t("landing.preview.env.noKeyNote"),
+      optional: true,
+    },
     {
       key: "R2_PUBLIC_BASE_URL",
       value: "https://pub-….r2.dev",
@@ -784,7 +824,7 @@ export function EnvMock() {
                   row.optional ? "bg-muted text-muted-foreground" : "bg-primary/15 text-primary"
                 }`}
               >
-                {row.optional ? "optional" : "required"}
+                {row.optional ? t("landing.preview.env.optional") : "required"}
               </span>
             </div>
             {row.note && <p className="pl-0 text-[10px] text-muted-foreground/70"># {row.note}</p>}

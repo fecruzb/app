@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button } from "@app/ui/button";
 import { Input } from "@app/ui/input";
@@ -11,6 +12,7 @@ import { authApi } from "../api";
 import { useAuth } from "../auth-provider";
 
 export function RegisterPage() {
+  const { t } = useTranslation();
   const { setMe } = useAuth();
   const { selfSignupEnabled } = useAppConfig();
   const navigate = useNavigate();
@@ -25,10 +27,10 @@ export function RegisterPage() {
     try {
       const me = await authApi.register({ name, email, password });
       setMe(me);
-      toast.success("Account created! We sent a confirmation email.");
+      toast.success(t("auth.accountCreated"));
       navigate("/app", { replace: true });
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Failed to create account");
+      toast.error(err instanceof ApiError ? err.message : t("auth.createFailed"));
     } finally {
       setSubmitting(false);
     }
@@ -37,37 +39,35 @@ export function RegisterPage() {
   if (!selfSignupEnabled) {
     return (
       <AuthLayout
-        title="Invite-only sign-up"
-        description="Public sign-up is disabled. Ask an administrator for an invite."
+        title={t("auth.inviteOnlyTitle")}
+        description={t("auth.inviteOnlyDescription")}
         footer={
           <Link to="/login" className="font-medium text-foreground hover:underline">
-            Back to sign in
+            {t("auth.backToSignIn")}
           </Link>
         }
       >
-        <p className="text-sm text-muted-foreground">
-          If you received an invite by email, open the link to create your account.
-        </p>
+        <p className="text-sm text-muted-foreground">{t("auth.inviteOnlyHint")}</p>
       </AuthLayout>
     );
   }
 
   return (
     <AuthLayout
-      title="Create account"
-      description="Get started free in seconds"
+      title={t("auth.createAccount")}
+      description={t("auth.createAccountDescription")}
       footer={
         <span>
-          Already have an account?{" "}
+          {t("auth.alreadyHaveAccount")}{" "}
           <Link to="/login" className="font-medium text-foreground hover:underline">
-            Sign in
+            {t("auth.signIn")}
           </Link>
         </span>
       }
     >
       <form onSubmit={handleSubmit} className="grid gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="name">Name</Label>
+          <Label htmlFor="name">{t("common.name")}</Label>
           <Input
             id="name"
             autoComplete="name"
@@ -78,7 +78,7 @@ export function RegisterPage() {
           />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t("common.email")}</Label>
           <Input
             id="email"
             type="email"
@@ -89,7 +89,7 @@ export function RegisterPage() {
           />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">{t("common.password")}</Label>
           <Input
             id="password"
             type="password"
@@ -99,10 +99,10 @@ export function RegisterPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <p className="text-xs text-muted-foreground">Minimum of 8 characters</p>
+          <p className="text-xs text-muted-foreground">{t("common.minPassword")}</p>
         </div>
         <Button type="submit" disabled={submitting}>
-          {submitting ? "Creating..." : "Create account"}
+          {submitting ? t("common.creating") : t("auth.createAccount")}
         </Button>
       </form>
     </AuthLayout>

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { Trans, useTranslation } from "react-i18next";
 import { Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@app/ui/button";
@@ -12,6 +13,7 @@ import { useAuth } from "@/domains/auth/auth-provider";
 import { tenantApi } from "../api";
 
 export function AcceptInvitePage() {
+  const { t } = useTranslation();
   const { token } = useParams();
   const { me, isLoading: authLoading, refresh } = useAuth();
   const navigate = useNavigate();
@@ -35,10 +37,10 @@ export function AcceptInvitePage() {
     try {
       const result = await tenantApi.acceptInvite(token!, body);
       await refresh();
-      toast.success(`Welcome to ${invite?.tenantName}!`);
+      toast.success(t("invite.welcome", { tenant: invite?.tenantName }));
       navigate(`/app/${result.tenantSlug}`, { replace: true });
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Failed to accept invite");
+      toast.error(err instanceof ApiError ? err.message : t("invite.acceptFailed"));
     } finally {
       setSubmitting(false);
     }
@@ -51,9 +53,9 @@ export function AcceptInvitePage() {
 
   if (isLoading || authLoading) {
     return (
-      <AuthLayout title="Invite">
+      <AuthLayout title={t("invite.title")}>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Loader2Icon className="size-4 animate-spin" /> Loading invite...
+          <Loader2Icon className="size-4 animate-spin" /> {t("invite.loading")}
         </div>
       </AuthLayout>
     );
@@ -61,9 +63,9 @@ export function AcceptInvitePage() {
 
   if (error || !invite) {
     return (
-      <AuthLayout title="Invalid invite" description="This invite doesn't exist or has expired.">
+      <AuthLayout title={t("invite.invalidTitle")} description={t("invite.invalidDescription")}>
         <Button variant="outline" asChild>
-          <Link to="/">Go to home</Link>
+          <Link to="/">{t("invite.goHome")}</Link>
         </Button>
       </AuthLayout>
     );
@@ -73,17 +75,24 @@ export function AcceptInvitePage() {
   if (me) {
     return (
       <AuthLayout
-        title={`Invitation to ${invite.tenantName}`}
-        description={`You've been invited as ${invite.role === "admin" ? "an administrator" : "a member"}.`}
+        title={t("invite.invitationTo", { tenant: invite.tenantName })}
+        description={
+          invite.role === "admin" ? t("invite.invitedAsAdmin") : t("invite.invitedAsMember")
+        }
       >
         {me.user.email === invite.email ? (
           <Button className="w-full" disabled={submitting} onClick={() => void accept()}>
-            {submitting ? "Joining..." : `Join ${invite.tenantName}`}
+            {submitting
+              ? t("invite.joining")
+              : t("invite.join", { tenant: invite.tenantName })}
           </Button>
         ) : (
           <p className="text-sm text-muted-foreground">
-            This invite is for <strong>{invite.email}</strong>, but you're signed in as{" "}
-            <strong>{me.user.email}</strong>. Sign out of the current account to accept.
+            <Trans
+              i18nKey="invite.emailMismatch"
+              values={{ inviteEmail: invite.email, yourEmail: me.user.email }}
+              components={{ strong: <strong /> }}
+            />
           </p>
         )}
       </AuthLayout>
@@ -94,12 +103,12 @@ export function AcceptInvitePage() {
   if (invite.userExists) {
     return (
       <AuthLayout
-        title={`Invitation to ${invite.tenantName}`}
-        description={`Sign in with the account ${invite.email} to accept the invite.`}
+        title={t("invite.invitationTo", { tenant: invite.tenantName })}
+        description={t("invite.signInToAccept", { email: invite.email })}
       >
         <Button className="w-full" asChild>
           <Link to="/login" state={{ from: `/invite/${token}` }}>
-            Sign in
+            {t("auth.signIn")}
           </Link>
         </Button>
       </AuthLayout>
@@ -109,12 +118,12 @@ export function AcceptInvitePage() {
   // Logged out without an account: create one on the spot
   return (
     <AuthLayout
-      title={`Invitation to ${invite.tenantName}`}
-      description={`Create your account with the email ${invite.email} to join.`}
+      title={t("invite.invitationTo", { tenant: invite.tenantName })}
+      description={t("invite.createToJoin", { email: invite.email })}
     >
       <form onSubmit={handleNewAccount} className="grid gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="name">Name</Label>
+          <Label htmlFor="name">{t("common.name")}</Label>
           <Input
             id="name"
             autoComplete="name"
@@ -125,7 +134,7 @@ export function AcceptInvitePage() {
           />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">{t("common.password")}</Label>
           <Input
             id="password"
             type="password"
@@ -135,10 +144,10 @@ export function AcceptInvitePage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <p className="text-xs text-muted-foreground">Minimum of 8 characters</p>
+          <p className="text-xs text-muted-foreground">{t("common.minPassword")}</p>
         </div>
         <Button type="submit" disabled={submitting}>
-          {submitting ? "Creating..." : "Create account and join"}
+          {submitting ? t("common.creating") : t("invite.createAndJoin")}
         </Button>
       </form>
     </AuthLayout>

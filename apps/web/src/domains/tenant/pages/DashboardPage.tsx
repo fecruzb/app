@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { ArrowRightIcon, CheckSquareIcon, UsersIcon } from "lucide-react";
 import { Badge } from "@app/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@app/ui/card";
@@ -9,6 +10,7 @@ import { tenantApi } from "../api";
 import { useTenant } from "../tenant-provider";
 
 export function DashboardPage() {
+  const { t } = useTranslation();
   const { me } = useAuth();
   const { tenant } = useTenant();
 
@@ -24,10 +26,12 @@ export function DashboardPage() {
   return (
     <div className="grid gap-6">
       <div>
-        <h1 className="text-2xl font-semibold">Hi, {me?.user.name.split(" ")[0]}</h1>
+        <h1 className="text-2xl font-semibold">
+          {t("dashboard.hi", { name: me?.user.name.split(" ")[0] })}
+        </h1>
         <p className="mt-1 flex items-center gap-2 text-muted-foreground">
-          You're in <strong className="text-foreground">{tenant.name}</strong>
-          <Badge variant="secondary">{tenant.role}</Badge>
+          {t("dashboard.youreIn")} <strong className="text-foreground">{tenant.name}</strong>
+          <Badge variant="secondary">{t(`roles.${tenant.role}`)}</Badge>
         </p>
       </div>
 
@@ -35,30 +39,32 @@ export function DashboardPage() {
         <Card>
           <CardHeader>
             <UsersIcon className="mb-2 size-5 text-muted-foreground" />
-            <CardTitle>{members ? members.length : "—"} member(s)</CardTitle>
-            <CardDescription>People with access to this tenant</CardDescription>
+            <CardTitle>
+              {members ? t("dashboard.members", { count: members.length }) : "—"}
+            </CardTitle>
+            <CardDescription>{t("dashboard.membersDescription")}</CardDescription>
           </CardHeader>
           <CardContent>
             <Link
               to={`/app/${tenant.slug}/settings`}
               className="inline-flex items-center gap-1 text-sm font-medium hover:underline"
             >
-              Manage members <ArrowRightIcon className="size-3.5" />
+              {t("dashboard.manageMembers")} <ArrowRightIcon className="size-3.5" />
             </Link>
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
             <CheckSquareIcon className="mb-2 size-5 text-muted-foreground" />
-            <CardTitle>{tasks ? tasks.length : "—"} task(s)</CardTitle>
-            <CardDescription>Example resource — replace with your domain</CardDescription>
+            <CardTitle>{tasks ? t("dashboard.tasks", { count: tasks.length }) : "—"}</CardTitle>
+            <CardDescription>{t("dashboard.tasksDescription")}</CardDescription>
           </CardHeader>
           <CardContent>
             <Link
               to={`/app/${tenant.slug}/tasks`}
               className="inline-flex items-center gap-1 text-sm font-medium hover:underline"
             >
-              View tasks <ArrowRightIcon className="size-3.5" />
+              {t("dashboard.viewTasks")} <ArrowRightIcon className="size-3.5" />
             </Link>
           </CardContent>
         </Card>

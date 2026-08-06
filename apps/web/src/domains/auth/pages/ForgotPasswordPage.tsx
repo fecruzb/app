@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
+import { Trans, useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button } from "@app/ui/button";
 import { Input } from "@app/ui/input";
@@ -9,6 +10,7 @@ import { ApiError } from "@/lib/api";
 import { authApi } from "../api";
 
 export function ForgotPasswordPage() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
@@ -20,7 +22,7 @@ export function ForgotPasswordPage() {
       await authApi.forgotPassword({ email });
       setSent(true);
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Failed to send");
+      toast.error(err instanceof ApiError ? err.message : t("auth.sendFailed"));
     } finally {
       setSubmitting(false);
     }
@@ -28,23 +30,26 @@ export function ForgotPasswordPage() {
 
   return (
     <AuthLayout
-      title="Recover password"
-      description="We'll send a reset link to your email"
+      title={t("auth.recoverTitle")}
+      description={t("auth.recoverDescription")}
       footer={
         <Link to="/login" className="font-medium text-foreground hover:underline">
-          Back to sign in
+          {t("auth.backToSignIn")}
         </Link>
       }
     >
       {sent ? (
         <p className="text-sm text-muted-foreground">
-          If an account exists for <strong>{email}</strong>, you'll receive an email with the reset
-          link shortly. The link expires in 1 hour.
+          <Trans
+            i18nKey="auth.recoverSent"
+            values={{ email }}
+            components={{ strong: <strong /> }}
+          />
         </p>
       ) : (
         <form onSubmit={handleSubmit} className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("common.email")}</Label>
             <Input
               id="email"
               type="email"
@@ -55,7 +60,7 @@ export function ForgotPasswordPage() {
             />
           </div>
           <Button type="submit" disabled={submitting}>
-            {submitting ? "Sending..." : "Send link"}
+            {submitting ? t("common.sending") : t("auth.sendLink")}
           </Button>
         </form>
       )}

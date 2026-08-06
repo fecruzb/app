@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@app/ui/card";
 import { cn } from "@app/ui/lib/utils";
+import { dateLocale } from "@/i18n";
 import { usageApi } from "./api";
 
 /** Amounts travel as micro-dollars (USD * 1_000_000). */
@@ -9,8 +11,8 @@ function formatUsd(micros: number): string {
   return `$${(micros / 1_000_000).toFixed(2)}`;
 }
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-US", {
+function formatDate(iso: string, lang: string): string {
+  return new Date(iso).toLocaleDateString(dateLocale(lang), {
     month: "short",
     day: "numeric",
     timeZone: "UTC",
@@ -18,6 +20,7 @@ function formatDate(iso: string): string {
 }
 
 export function AiUsageCard() {
+  const { t, i18n } = useTranslation();
   const { data: usage } = useQuery({
     queryKey: ["ai-usage"],
     queryFn: usageApi.getAi,
@@ -27,15 +30,14 @@ export function AiUsageCard() {
 
   const capped = usage.limitMicros > 0;
   const percent = capped ? Math.min(100, (usage.spentMicros / usage.limitMicros) * 100) : 0;
+  const periodEnd = formatDate(usage.periodEnd, i18n.language);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>AI usage</CardTitle>
+        <CardTitle>{t("usage.title")}</CardTitle>
         <CardDescription>
-          {capped
-            ? `Monthly assistant budget — resets on ${formatDate(usage.periodEnd)}`
-            : "Assistant usage this month — no budget limit is set"}
+          {capped ? t("usage.budgetResets", { date: periodEnd }) : t("usage.noLimit")}
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-2">
@@ -43,11 +45,14 @@ export function AiUsageCard() {
           <span className="font-medium">
             {formatUsd(usage.spentMicros)}
             {capped && (
-              <span className="text-muted-foreground"> of {formatUsd(usage.limitMicros)}</span>
+              <span className="text-muted-foreground">
+                {" "}
+                {t("usage.of", { limit: formatUsd(usage.limitMicros) })}
+              </span>
             )}
           </span>
           <span className="text-xs text-muted-foreground">
-            {usage.requestCount} {usage.requestCount === 1 ? "request" : "requests"}
+            {t("usage.request", { count: usage.requestCount })}
           </span>
         </div>
 
@@ -64,9 +69,7 @@ export function AiUsageCard() {
         )}
 
         {usage.overLimit && (
-          <p className="text-xs text-destructive">
-            Monthly limit reached — the assistant is paused until {formatDate(usage.periodEnd)}.
-          </p>
+          <p className="text-xs text-destructive">{t("usage.limitReached", { date: periodEnd })}</p>
         )}
       </CardContent>
     </Card>

@@ -1,0 +1,415 @@
+{
+  "signIn": "Sign in",
+  "goToApp": "Go to app",
+  "tryDemo": "Try the demo",
+  "tryLiveDemo": "Try the live demo",
+  "hero": {
+    "eyebrow": "Open-source SaaS boilerplate · React + Hono + Postgres",
+    "title": "The starting point for your next SaaS",
+    "body": "Stop rebuilding auth, tenants, email and an AI agent for every project. This is the groundwork — a typed monorepo, organized by domain, ready to become your product."
+  },
+  "stackSection": {
+    "title": "A stack you already know",
+    "body": "Boring, well-documented tools — nothing exotic to learn before you're productive."
+  },
+  "stack": {
+    "frontend": "Frontend",
+    "backend": "Backend",
+    "database": "Database",
+    "ai": "AI",
+    "tooling": "Tooling"
+  },
+  "foundationsIntro": {
+    "eyebrow": "What's under the hood",
+    "title": "The foundations, already wired",
+    "body": "Before any of your product exists, these pieces are in place and connected: how the code is laid out, where the data lives, and one real resource walked top to bottom."
+  },
+  "tourIntro": {
+    "eyebrow": "The product tour",
+    "title": "An app that's already assembled",
+    "body": "Those foundations, rendered as real screens. Here's the tour, in the order you'd meet them: sign in, get set up, then step into the workspace and everything it ships with."
+  },
+  "closing": {
+    "title": "From here on, it's your code",
+    "body": "This isn't a framework you depend on or a service you subscribe to — it's a starting point you own. Clone it and every line is yours: rename it, gut it, take it wherever your product needs to go. Even this landing page is just the first thing you'll replace.",
+    "skipDemo": "Or skip the demo — clone the repo and start building."
+  },
+  "footer": {
+    "copyright": "© {{year}} App Base",
+    "builtWith": "Built with React, Hono and Postgres"
+  },
+  "theming": {
+    "eyebrow": "Theming",
+    "title": "One file, every color — light and dark",
+    "bodyBefore": "A theme is just two sets of tokens: light and dark. The primary color drives buttons, highlights and focus rings; the rest is neutral surfaces you rarely touch. Pick a primary, and the whole UI — landing page included — recolors from CSS variables. No component edits, no ",
+    "bodyCode": "dark:",
+    "bodyAfter": " classes to chase.",
+    "primaryColor": "Primary color",
+    "mode": "Mode",
+    "light": "Light",
+    "dark": "Dark",
+    "tryIt": "Try it — this page changes as you click. Your choice is saved and shared with the app."
+  },
+  "database": {
+    "eyebrow": "The database",
+    "title": "Postgres, modeled in plain TypeScript",
+    "bodyBefore": "Persistence is Postgres with Drizzle as the ORM — no separate schema language, no ORM console. A table is a ",
+    "bodyCode": "pgTable",
+    "bodyAfter": " in the domain that owns it. Here are the models the boilerplate already ships, one group at a time."
+  },
+  "resourceIntro": {
+    "eyebrow": "Example resource",
+    "title": "One resource, top to bottom",
+    "bodyBefore": "",
+    "bodyCode": "tasks",
+    "bodyAfter": " is the one placeholder resource. First the convention — a feature is a folder — then the whole slice: the table, the queries, the route and the agent tool on the API, then the React domain, its api.ts and page, and the screen. This is the exact shape you'd copy for your own."
+  },
+  "showScreen": "Show screen {{n}}",
+  "monorepo": {
+    "eyebrow": "The layout",
+    "title": "One typed monorepo, wired end to end",
+    "body": "Everything lives in one repo run by npm workspaces and Turborepo: the Hono API, the React SPA, and a shared package of Zod schemas both sides import. That shared package is the trick — change a request shape there and whichever side you forgot stops compiling.",
+    "points": [
+      "packages/shared is one source of truth for types across API and web",
+      "In production the API serves the built SPA — one origin, no CORS",
+      "TypeScript everywhere, end to end — a domain is a folder on both sides"
+    ]
+  },
+  "config": {
+    "eyebrow": "Configuration",
+    "title": "One .env, validated at boot",
+    "body": "Everything the app reads comes from a single .env, checked by Zod when the process starts — a missing or malformed var fails fast with a clear message. Only two things matter to run locally, and they already have working defaults; the rest are optional and degrade gracefully.",
+    "points": [
+      "DATABASE_URL and APP_URL are all you need — both default for local dev",
+      "No RESEND_API_KEY? Emails print to the console instead of sending",
+      "No OPENAI_API_KEY? The AI agent is simply hidden — nothing breaks",
+      "SELF_SIGNUP_ENABLED flips the app between open signup and invite-only"
+    ]
+  },
+  "storage": {
+    "eyebrow": "Storage",
+    "title": "Object storage, ready before you need it",
+    "body": "Any domain that has to store a file — images, avatars, exports, whatever your product needs — goes through one small interface: put, get, has, remove. Add R2 credentials and it writes straight to Cloudflare's object storage with a public URL; leave them out and it falls back to the local disk, so there's a resource to build on from day one, not a feature you have to wire yourself.",
+    "points": [
+      "MediaStore is the only interface a domain touches — swap the backend without touching callers",
+      "No R2 credentials? Falls back to the local disk automatically — nothing to configure to start",
+      "Images already run through it, compressed to WebP on write — copy that domain for your own files"
+    ]
+  },
+  "localRun": {
+    "eyebrow": "Run it locally",
+    "title": "One command, the whole stack up",
+    "body": "No local Postgres to install: npm run setup uses Docker to boot Postgres 16, applies the migrations and seeds a demo workspace. npm run dev then starts the API and the SPA together — you're clicking a real app in under a minute.",
+    "points": [
+      "Docker Compose runs Postgres on :5442 — nothing to install by hand",
+      "setup migrates and seeds a demo tenant and user for you",
+      "npm run dev boots the API (:5000) and the SPA (:3000) at once",
+      "The .env ships with working local defaults, validated at boot"
+    ]
+  },
+  "render": {
+    "eyebrow": "Ship to production",
+    "title": "Deploys to Render from one YAML",
+    "body": "Production is described once in render.yaml: a single web service that runs the API and serves the built SPA, plus a managed Postgres. Push to main and Render builds, runs migrations on pre-deploy, and health-checks before going live — no deploy scripts to write.",
+    "points": [
+      "One web service (API + SPA, one origin) and one managed Postgres",
+      "Migrations run automatically on pre-deploy, before traffic shifts",
+      "Auto-deploy on push to main, gated by a /api/health check",
+      "Secrets stay out of the repo with sync: false"
+    ]
+  },
+  "ownership": {
+    "delete": {
+      "title": "Delete the example",
+      "description": "Tasks are a placeholder. Remove the domain, drop the table, and put your product's resources in its place — nothing else breaks."
+    },
+    "unsubscribe": {
+      "title": "Nothing to unsubscribe from",
+      "description": "Auth is scrypt and cookies, email is one swappable module, deploy is a YAML file. Swap any piece without asking permission."
+    },
+    "rules": {
+      "title": "Rewrite the rules",
+      "description": "The conventions are markdown in .cursor/rules/, each scoped by glob to the files it governs — so the agent reads the same playbook. Disagree with one? Edit it, and it follows you instead."
+    }
+  },
+  "slices": {
+    "convention": {
+      "eyebrow": "The convention",
+      "title": "A feature is a folder",
+      "body": "Before the files, the shape. On the API, every feature is a domain — a single folder that owns its slice top to bottom, and each file has one fixed role, so you always know where a thing lives (and where to add the next one). Import directions are enforced by lint, so the structure can't quietly rot as the app grows.",
+      "points": [
+        "One folder per feature — schema, repository, dto, routes, tools",
+        "Fixed roles, never a grab-bag file; service.ts only when there's real logic",
+        "The repository owns the SQL; every query filters by tenantId",
+        "DTO mapping lives in dto.ts — never inline in the repository or route",
+        "Boundaries fail the lint, not just code review"
+      ]
+    },
+    "schema": {
+      "eyebrow": "The table",
+      "title": "A table is a pgTable in its domain",
+      "body": "The tasks table shows the exact shape every table you add will follow: a uuid primary key, a tenant_id foreign key that scopes it to a workspace, the timestamps helper, and an index on the tenant. Run db:generate and the SQL migration is derived from this file — the schema stays the source of truth.",
+      "points": [
+        "tenant_id ties every row to a workspace and cascades on delete",
+        "author_id references the user but is nullable — set null on delete",
+        "Migrations are generated from the schema, never hand-written"
+      ]
+    },
+    "repository": {
+      "eyebrow": "The queries",
+      "title": "All SQL lives in one repository",
+      "body": "Every method takes a tenantId and filters by it — isolation isn't a reminder here, it's the only way the data can be reached at all. For a tenant-scoped resource, stick to list / find / insert / update / delete. Each method writes its query in full — no shared helpers — and returns the row; DTO mapping stays in dto.ts.",
+      "points": [
+        "No query exists without a tenant filter",
+        "CRUD is named list / find / insert / update / delete",
+        "Each method owns its query end to end — readable without jumping around",
+        "Returns rows — dto.ts maps to the API shape; routes never write SQL"
+      ]
+    },
+    "route": {
+      "eyebrow": "The route",
+      "title": "A thin handler, wired in one line",
+      "body": "The handler is structured as Input → Processing → Output: validate with the shared schema, call the repository, map through the DTO. It gets one line in routes/index.ts, where auth and tenant middleware already run for the whole group — so the handler never checks a session or resolves a tenant itself.",
+      "points": [
+        "Handler sections: Input → Processing → Output",
+        "The tenant comes from context, never a request param",
+        "Middleware is applied once via .use — new routes are isolated by default"
+      ]
+    },
+    "tool": {
+      "eyebrow": "The agent",
+      "title": "One file teaches the assistant",
+      "body": "The same resource becomes an agent tool with a single defineTool — a name, a Zod input and an execute that reuses the repository you already wrote. That one definition drives the in-app chat, local Cursor over stdio and the remote MCP server, with zero extra glue.",
+      "points": [
+        "Same definition drives the chat, stdio and the remote MCP server",
+        "summarize marks a write — it shows up as a chip in the chat",
+        "Tools never import MCP or OpenAI — the lint blocks it"
+      ]
+    },
+    "webConvention": {
+      "eyebrow": "The frontend",
+      "title": "React, organized by the same domains",
+      "body": "The web app mirrors the API: one folder per feature under domains/, and everything else is shared shell. A domain holds its typed api.ts, its route-level pages/, its routes.tsx and any domain-specific components. Generic, tenant-agnostic UI lives in the @app/ui package; app shell and layouts sit outside the domains.",
+      "points": [
+        "domains/<feature>/ mirrors the API — api.ts, pages/, routes.tsx, components",
+        "app/ holds App.tsx + config; layouts/ holds AppLayout, AuthLayout, RequireAuth",
+        "Base UI (Button, Card, PageHeader, EmptyState…) is imported from @app/ui",
+        "Imports use the @/ alias; @app/ui never reaches back into a domain"
+      ]
+    },
+    "api": {
+      "eyebrow": "The network boundary",
+      "title": "One api.ts wraps every call",
+      "body": "The only file that touches the network is the domain's api.ts — a thin object over the shared HTTP client, returning the same DTO the API sends. Pages never call fetch or the raw client directly, so every request for a resource has exactly one place to change.",
+      "points": [
+        "Network only through the domain api.ts — never a raw fetch in a page",
+        "Returns the shared DTO type — the client is typed end to end",
+        "The tenant id is part of the path, mirroring the API's routes"
+      ]
+    },
+    "page": {
+      "eyebrow": "The page",
+      "title": "Reads are queries, writes invalidate",
+      "body": "Every page follows the same TanStack Query template: reads are a useQuery keyed by the tenant, writes are a useMutation that invalidates on success — so you never hand-manage a loading flag or a refresh. Shared pieces from @app/ui — PageHeader, PageLoading, EmptyState and useConfirm — cover the states so pages stay about the feature.",
+      "points": [
+        "useQuery for reads, useMutation + invalidate for writes",
+        "PageLoading while loading, EmptyState when a list is empty",
+        "Destructive actions go through useConfirm(); errors through showApiError()"
+      ]
+    },
+    "screen": {
+      "eyebrow": "The screen",
+      "title": "The result: a full CRUD feature",
+      "body": "That's the whole slice, top to bottom — and this is the screen it powers. Per-tenant create, list, toggle and delete, wired end to end. Copy the folder, rename it, and your own resource lands exactly here.",
+      "points": [
+        "Per-tenant create, list, toggle and delete out of the box",
+        "The exact shape you'll clone for your product's resources",
+        "Delete the example and drop yours in — nothing else breaks"
+      ]
+    }
+  },
+  "chapters": {
+    "signIn": {
+      "eyebrow": "Sign in",
+      "title": "Login, clean and familiar",
+      "body": "Email, password, a link to recovery, and secure sessions on submit — scrypt hashing and an httpOnly cookie, no auth vendor. Built with shadcn/ui, ready to rebrand."
+    },
+    "signUp": {
+      "eyebrow": "Sign up",
+      "title": "Registration that sets everything up",
+      "body": "Name, email, password. Each new user gets a personal tenant and a verification email automatically — the link is single-use and expires in 24 hours."
+    },
+    "recovery": {
+      "eyebrow": "Password recovery",
+      "title": "Forgot password, fully handled",
+      "body": "Request a reset link by email, then set a new password on a screen guarded by a short-lived, single-use token — validated server-side and hashed with scrypt."
+    },
+    "shell": {
+      "eyebrow": "The app shell",
+      "title": "A workspace, not a blank page",
+      "body": "Sidebar nav, a tenant switcher that appears only with more than one, a user menu and the theme controls. Your screens drop straight into the outlet."
+    },
+    "agent": {
+      "eyebrow": "The AI agent",
+      "title": "A chat that gets things done",
+      "body": "A floating assistant in every tenant: ask or command, it runs the right tools, shows what changed as a chip, and refreshes the data on its own."
+    },
+    "account": {
+      "eyebrow": "Your account",
+      "title": "Profile and security, built in",
+      "body": "Every user manages their own profile and password from a dedicated account screen — the same patterns you'll reuse for any personal settings you add."
+    },
+    "team": {
+      "eyebrow": "Team & invites",
+      "title": "Bring the rest of the team",
+      "body": "Owners and admins invite by email and pick a role; members and pending invites live in settings, each revocable. The invite lands as a 7-day link in their inbox."
+    },
+    "mcp": {
+      "eyebrow": "Bring your own tools",
+      "title": "The same tools, over MCP",
+      "body": "Mint a tenant-scoped API key and plug the remote MCP server into Cursor or Claude — the agent's tools, right in your editor."
+    }
+  },
+  "db": {
+    "identity": {
+      "eyebrow": "Identity",
+      "title": "Users, sessions and tokens",
+      "body": "The auth domain owns everything about a person: their credentials, the sessions that keep them signed in, and the single-use tokens emailed for verification and password resets. Passwords are scrypt hashes; sessions and tokens store only a hash, never the raw value.",
+      "points": [
+        "users holds the account; a unique email is the login",
+        "sessions and action_tokens reference user_id and cascade on delete",
+        "api_keys are personal and scoped to one tenant for MCP access"
+      ]
+    },
+    "tenancy": {
+      "eyebrow": "Tenancy",
+      "title": "Workspaces and who belongs to them",
+      "body": "Every account works inside a tenant. tenant_members is the join table between users and tenants with a role, and tenant_invites carries pending invitations by email. This is the backbone that makes the whole app multi-tenant.",
+      "points": [
+        "tenant_members has a composite key of (tenant_id, user_id)",
+        "role is an enum — owner, admin, member — enforced at the type level",
+        "Invites expire and carry the role the person will get on accept"
+      ]
+    }
+  },
+  "preview": {
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "now": "now",
+    "login": {
+      "title": "Welcome back",
+      "description": "Sign in to continue.",
+      "footer": "New here? Create account",
+      "submit": "Sign in"
+    },
+    "register": {
+      "title": "Create your account",
+      "description": "Start in seconds.",
+      "footer": "Have an account? Sign in",
+      "submit": "Create account"
+    },
+    "forgot": {
+      "title": "Forgot password",
+      "description": "We'll email you a reset link.",
+      "footer": "Remembered it? Sign in",
+      "submit": "Send reset link"
+    },
+    "reset": {
+      "title": "Choose a new password",
+      "description": "Set a new password for your account.",
+      "footer": "Link expires in 1 hour",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "submit": "Reset password"
+    },
+    "verifyEmail": {
+      "subject": "Confirm your email",
+      "heading": "Confirm your email",
+      "body": "Hi Ada! Confirm your email address to finish signing up. This link expires in 24 hours.",
+      "cta": "Confirm email"
+    },
+    "resetEmail": {
+      "subject": "Reset your password",
+      "heading": "Reset your password",
+      "body": "We got a request to reset your password. This link is single-use and expires in 1 hour. If it wasn't you, ignore this email.",
+      "cta": "Reset password"
+    },
+    "inviteEmail": {
+      "subject": "Invitation to Acme Inc",
+      "heading": "Invitation to Acme Inc",
+      "bodyBefore": "Ada Lovelace invited you to join ",
+      "bodyAfter": ". This invite expires in 7 days.",
+      "cta": "Accept invite"
+    },
+    "invites": {
+      "title": "Invites",
+      "description": "Invite people to this tenant by email",
+      "email": "Email",
+      "invite": "Invite",
+      "membersTitle": "Members",
+      "membersDescription": "Who has access to this tenant",
+      "you": "(you)"
+    },
+    "nav": {
+      "home": "Home",
+      "tasks": "Tasks",
+      "settings": "Settings"
+    },
+    "shell": {
+      "exampleResource": "Example resource",
+      "hi": "Hi, Ada",
+      "youreIn": "You're in",
+      "members": "3 members",
+      "peopleAccess": "People with access",
+      "manageMembers": "Manage members",
+      "tasksCount": "5 tasks",
+      "viewTasks": "View tasks"
+    },
+    "tasks": {
+      "title": "Tasks",
+      "description": "Example resource",
+      "placeholder": "Add a task...",
+      "add": "Add",
+      "items": [
+        "Design the schema",
+        "Wire the repository",
+        "Expose the route",
+        "Build the screen"
+      ],
+      "left": "Example resource with per-tenant CRUD · 2 of 4 left"
+    },
+    "account": {
+      "profile": "Profile",
+      "password": "Password",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "save": "Save",
+      "changePassword": "Change password",
+      "title": "My account",
+      "description": "Manage your profile and security."
+    },
+    "agent": {
+      "title": "Assistant",
+      "placeholder": "Talk to the assistant…",
+      "suggestion": "Add a task to prepare tomorrow's standup",
+      "reply": "Sure — I'll add that task for you.",
+      "chip": "Task created: Prepare standup"
+    },
+    "mcp": {
+      "title": "API keys (MCP)",
+      "description": "Reach the tenant over MCP from Cursor",
+      "create": "Create key",
+      "copyNow": "Copy your key now — it won't be shown again"
+    },
+    "env": {
+      "optional": "optional",
+      "noKeyNote": "no key → agent hidden"
+    },
+    "roles": {
+      "owner": "owner",
+      "admin": "admin",
+      "member": "member"
+    }
+  }
+}

@@ -1,0 +1,415 @@
+{
+  "signIn": "Entrar",
+  "goToApp": "Ir para o app",
+  "tryDemo": "Experimentar o demo",
+  "tryLiveDemo": "Experimentar o demo ao vivo",
+  "hero": {
+    "eyebrow": "Boilerplate SaaS open-source · React + Hono + Postgres",
+    "title": "O ponto de partida do seu próximo SaaS",
+    "body": "Pare de reconstruir autenticação, tenants, e-mail e um agente de IA em todo projeto. Este é o alicerce — um monorepo tipado, organizado por domínio, pronto para virar o seu produto."
+  },
+  "stackSection": {
+    "title": "Uma stack que você já conhece",
+    "body": "Ferramentas chatas e bem documentadas — nada exótico para aprender antes de ser produtivo."
+  },
+  "stack": {
+    "frontend": "Frontend",
+    "backend": "Backend",
+    "database": "Database",
+    "ai": "AI",
+    "tooling": "Tooling"
+  },
+  "foundationsIntro": {
+    "eyebrow": "Por baixo do capô",
+    "title": "As fundações, já conectadas",
+    "body": "Antes de qualquer pedaço do seu produto existir, essas peças já estão no lugar e ligadas: como o código se organiza, onde os dados vivem e um recurso real percorrido de ponta a ponta."
+  },
+  "tourIntro": {
+    "eyebrow": "O tour do produto",
+    "title": "Um app que já vem montado",
+    "body": "Essas fundações, renderizadas como telas de verdade. O tour, na ordem em que você as encontraria: entrar, configurar e então entrar no workspace com tudo o que ele já traz."
+  },
+  "closing": {
+    "title": "A partir daqui, o código é seu",
+    "body": "Isto não é um framework do qual você depende nem um serviço ao qual você assina — é um ponto de partida que você possui. Clone e cada linha é sua: renomeie, desmonte, leve para onde o produto precisar ir. Até esta landing page é só a primeira coisa que você vai substituir.",
+    "skipDemo": "Ou pule o demo — clone o repositório e comece a construir."
+  },
+  "footer": {
+    "copyright": "© {{year}} App Base",
+    "builtWith": "Feito com React, Hono e Postgres"
+  },
+  "theming": {
+    "eyebrow": "Temas",
+    "title": "Um arquivo, todas as cores — claro e escuro",
+    "bodyBefore": "Um tema é só dois conjuntos de tokens: light e dark. A cor primária dirige botões, destaques e anéis de foco; o resto são superfícies neutras que você quase não toca. Escolha um primary e a UI inteira — inclusive a landing — recoloriza pelas variáveis CSS. Sem editar componentes, sem sair caçando classes ",
+    "bodyCode": "dark:",
+    "bodyAfter": ".",
+    "primaryColor": "Cor primária",
+    "mode": "Modo",
+    "light": "Claro",
+    "dark": "Escuro",
+    "tryIt": "Experimente — esta página muda conforme você clica. Sua escolha é salva e compartilhada com o app."
+  },
+  "database": {
+    "eyebrow": "O banco de dados",
+    "title": "Postgres, modelado em TypeScript puro",
+    "bodyBefore": "A persistência é Postgres com Drizzle como ORM — sem linguagem de schema separada, sem console de ORM. Uma tabela é um ",
+    "bodyCode": "pgTable",
+    "bodyAfter": " no domínio que a possui. Aqui estão os modelos que o boilerplate já traz, um grupo de cada vez."
+  },
+  "resourceIntro": {
+    "eyebrow": "Recurso de exemplo",
+    "title": "Um recurso, de ponta a ponta",
+    "bodyBefore": "",
+    "bodyCode": "tasks",
+    "bodyAfter": " é o único recurso placeholder. Primeiro a convenção — uma feature é uma pasta — depois o slice inteiro: a tabela, as queries, a rota e a tool do agente na API, então o domínio React, seu api.ts e page, e a tela. Este é exatamente o formato que você copiaria para o seu."
+  },
+  "showScreen": "Mostrar tela {{n}}",
+  "monorepo": {
+    "eyebrow": "A organização",
+    "title": "Um monorepo tipado, ligado de ponta a ponta",
+    "body": "Tudo vive num único repositório com npm workspaces e Turborepo: a API Hono, o SPA React e um pacote compartilhado de schemas Zod que os dois lados importam. Esse pacote compartilhado é o truque — mude o formato de um request lá e o lado que você esqueceu deixa de compilar.",
+    "points": [
+      "packages/shared é a única fonte da verdade de tipos entre API e web",
+      "Em produção a API serve o SPA buildado — uma origem, sem CORS",
+      "TypeScript em tudo, de ponta a ponta — um domínio é uma pasta nos dois lados"
+    ]
+  },
+  "config": {
+    "eyebrow": "Configuração",
+    "title": "Um .env, validado no boot",
+    "body": "Tudo o que o app lê vem de um único .env, checado pelo Zod quando o processo sobe — variável ausente ou malformada falha rápido com mensagem clara. Só duas coisas importam para rodar localmente, e já têm defaults que funcionam; o resto é opcional e degrada com elegância.",
+    "points": [
+      "DATABASE_URL e APP_URL são tudo o que você precisa — ambos já têm default local",
+      "Sem RESEND_API_KEY? Os e-mails vão para o console em vez de serem enviados",
+      "Sem OPENAI_API_KEY? O agente de IA simplesmente some — nada quebra",
+      "SELF_SIGNUP_ENABLED alterna o app entre cadastro aberto e só por convite"
+    ]
+  },
+  "storage": {
+    "eyebrow": "Armazenamento",
+    "title": "Object storage, pronto antes de você precisar",
+    "body": "Qualquer domínio que precise guardar um arquivo — imagens, avatares, exports, o que o produto pedir — passa por uma interface pequena: put, get, has, remove. Com credenciais R2, grava direto no object storage da Cloudflare com URL pública; sem elas, cai no disco local, então já há um recurso para construir desde o dia um, não uma feature que você precisa plugar sozinho.",
+    "points": [
+      "MediaStore é a única interface que um domínio toca — troque o backend sem mexer nos callers",
+      "Sem credenciais R2? Cai no disco local automaticamente — nada para configurar para começar",
+      "Imagens já passam por ele, comprimidas para WebP na gravação — copie esse domínio para os seus arquivos"
+    ]
+  },
+  "localRun": {
+    "eyebrow": "Rode localmente",
+    "title": "Um comando, a stack inteira no ar",
+    "body": "Sem Postgres local para instalar: npm run setup usa Docker para subir o Postgres 16, aplica as migrations e faz seed de um workspace demo. npm run dev sobe a API e o SPA juntos — você está clicando num app de verdade em menos de um minuto.",
+    "points": [
+      "Docker Compose sobe o Postgres na :5442 — nada para instalar na mão",
+      "setup migra e faz seed de um tenant e usuário demo para você",
+      "npm run dev sobe a API (:5000) e o SPA (:3000) de uma vez",
+      "O .env já vem com defaults locais que funcionam, validados no boot"
+    ]
+  },
+  "render": {
+    "eyebrow": "Envie para produção",
+    "title": "Deploy no Render a partir de um YAML",
+    "body": "A produção está descrita uma vez no render.yaml: um único web service que roda a API e serve o SPA buildado, mais um Postgres gerenciado. Push na main e o Render builda, roda as migrations no pre-deploy e faz health-check antes de ir ao ar — sem scripts de deploy para escrever.",
+    "points": [
+      "Um web service (API + SPA, uma origem) e um Postgres gerenciado",
+      "Migrations rodam automaticamente no pre-deploy, antes do tráfego migrar",
+      "Auto-deploy no push para main, protegido por um check em /api/health",
+      "Segredos ficam fora do repositório com sync: false"
+    ]
+  },
+  "ownership": {
+    "delete": {
+      "title": "Apague o exemplo",
+      "description": "Tasks é um placeholder. Remova o domínio, drope a tabela e coloque os recursos do seu produto no lugar — nada mais quebra."
+    },
+    "unsubscribe": {
+      "title": "Nada de cancelar assinatura",
+      "description": "Auth é scrypt e cookies, e-mail é um módulo trocável, deploy é um arquivo YAML. Troque qualquer peça sem pedir permissão."
+    },
+    "rules": {
+      "title": "Reescreva as regras",
+      "description": "As convenções são markdown em .cursor/rules/, cada uma com escopo por glob nos arquivos que governa — então o agente lê o mesmo playbook. Discorda de alguma? Edite, e ele passa a te seguir."
+    }
+  },
+  "slices": {
+    "convention": {
+      "eyebrow": "A convenção",
+      "title": "Uma feature é uma pasta",
+      "body": "Antes dos arquivos, a forma. Na API, cada feature é um domínio — uma única pasta que possui seu slice de cima a baixo, e cada arquivo tem um papel fixo, então você sempre sabe onde algo mora (e onde colocar o próximo). Direções de import são reforçadas pelo lint, então a estrutura não apodrece em silêncio conforme o app cresce.",
+      "points": [
+        "Uma pasta por feature — schema, repository, dto, routes, tools",
+        "Papéis fixos, nunca um arquivo-canguru; service.ts só quando há lógica de verdade",
+        "O repository é dono do SQL; toda query filtra por tenantId",
+        "O mapeamento de DTO mora em dto.ts — nunca inline no repository ou na rota",
+        "As fronteiras falham no lint, não só no code review"
+      ]
+    },
+    "schema": {
+      "eyebrow": "A tabela",
+      "title": "Uma tabela é um pgTable no seu domínio",
+      "body": "A tabela tasks mostra o formato exato que toda tabela que você adicionar vai seguir: uma primary key uuid, uma foreign key tenant_id que a escopa a um workspace, o helper de timestamps e um índice no tenant. Rode db:generate e a migration SQL sai deste arquivo — o schema continua sendo a fonte da verdade.",
+      "points": [
+        "tenant_id amarra cada linha a um workspace e faz cascade no delete",
+        "author_id referencia o usuário mas é nullable — set null no delete",
+        "Migrations são geradas a partir do schema, nunca escritas à mão"
+      ]
+    },
+    "repository": {
+      "eyebrow": "As queries",
+      "title": "Todo o SQL mora num único repository",
+      "body": "Todo método recebe um tenantId e filtra por ele — isolamento não é um lembrete aqui, é a única forma de alcançar os dados. Para um recurso com escopo de tenant, fique em list / find / insert / update / delete. Cada método escreve sua query por completo — sem helpers compartilhados — e devolve a row; o mapeamento de DTO fica em dto.ts.",
+      "points": [
+        "Nenhuma query existe sem filtro de tenant",
+        "O CRUD se chama list / find / insert / update / delete",
+        "Cada método é dono da sua query de ponta a ponta — legível sem saltar de arquivo",
+        "Devolve rows — dto.ts mapeia para o formato da API; rotas nunca escrevem SQL"
+      ]
+    },
+    "route": {
+      "eyebrow": "A rota",
+      "title": "Um handler fino, plugado numa linha",
+      "body": "O handler é estruturado como Input → Processing → Output: valida com o schema compartilhado, chama o repository, mapeia pelo DTO. Ganha uma linha em routes/index.ts, onde o middleware de auth e tenant já roda para o grupo inteiro — então o handler nunca checa sessão nem resolve um tenant sozinho.",
+      "points": [
+        "Seções do handler: Input → Processing → Output",
+        "O tenant vem do context, nunca de um param da request",
+        "Middleware é aplicado uma vez via .use — rotas novas já nascem isoladas"
+      ]
+    },
+    "tool": {
+      "eyebrow": "O agente",
+      "title": "Um arquivo ensina o assistente",
+      "body": "O mesmo recurso vira uma tool do agente com um único defineTool — um nome, um input Zod e um execute que reusa o repository que você já escreveu. Essa definição única dirige o chat in-app, o Cursor local via stdio e o servidor MCP remoto, sem cola extra.",
+      "points": [
+        "A mesma definição dirige o chat, o stdio e o servidor MCP remoto",
+        "summarize marca uma escrita — aparece como chip no chat",
+        "Tools nunca importam MCP ou OpenAI — o lint bloqueia"
+      ]
+    },
+    "webConvention": {
+      "eyebrow": "O frontend",
+      "title": "React, organizado pelos mesmos domínios",
+      "body": "O web app espelha a API: uma pasta por feature em domains/, e o resto é shell compartilhado. Um domínio guarda seu api.ts tipado, suas pages/ de rota, seu routes.tsx e quaisquer componentes específicos. UI genérica e agnóstica de tenant mora no pacote @app/ui; shell e layouts ficam fora dos domínios.",
+      "points": [
+        "domains/<feature>/ espelha a API — api.ts, pages/, routes.tsx, components",
+        "app/ guarda App.tsx + config; layouts/ guarda AppLayout, AuthLayout, RequireAuth",
+        "UI base (Button, Card, PageHeader, EmptyState…) é importada de @app/ui",
+        "Imports usam o alias @/; @app/ui nunca aponta de volta para um domínio"
+      ]
+    },
+    "api": {
+      "eyebrow": "A fronteira de rede",
+      "title": "Um api.ts envolve cada chamada",
+      "body": "O único arquivo que toca a rede é o api.ts do domínio — um objeto fino sobre o cliente HTTP compartilhado, devolvendo o mesmo DTO que a API envia. Pages nunca chamam fetch ou o cliente cru diretamente, então cada request de um recurso tem exatamente um lugar para mudar.",
+      "points": [
+        "Rede só pelo api.ts do domínio — nunca um fetch cru numa page",
+        "Devolve o tipo DTO compartilhado — o client é tipado de ponta a ponta",
+        "O id do tenant faz parte do path, espelhando as rotas da API"
+      ]
+    },
+    "page": {
+      "eyebrow": "A page",
+      "title": "Leituras são queries, escritas invalidam",
+      "body": "Toda page segue o mesmo template TanStack Query: leituras são um useQuery com chave no tenant, escritas são um useMutation que invalida no sucesso — então você nunca gerencia na mão um loading flag ou um refresh. Peças compartilhadas de @app/ui — PageHeader, PageLoading, EmptyState e useConfirm — cobrem os estados para a page ficar sobre a feature.",
+      "points": [
+        "useQuery para leituras, useMutation + invalidate para escritas",
+        "PageLoading enquanto carrega, EmptyState quando a lista está vazia",
+        "Ações destrutivas passam por useConfirm(); erros por showApiError()"
+      ]
+    },
+    "screen": {
+      "eyebrow": "A tela",
+      "title": "O resultado: uma feature CRUD completa",
+      "body": "Esse é o slice inteiro, de cima a baixo — e esta é a tela que ele alimenta. Create, list, toggle e delete por tenant, ligados de ponta a ponta. Copie a pasta, renomeie, e o seu recurso pousa exatamente aqui.",
+      "points": [
+        "Create, list, toggle e delete por tenant de fábrica",
+        "O formato exato que você vai clonar para os recursos do produto",
+        "Apague o exemplo e coloque o seu — nada mais quebra"
+      ]
+    }
+  },
+  "chapters": {
+    "signIn": {
+      "eyebrow": "Entrar",
+      "title": "Login limpo e familiar",
+      "body": "E-mail, senha, um link de recuperação e sessões seguras no submit — hash com scrypt e cookie httpOnly, sem vendor de auth. Feito com shadcn/ui, pronto para rebrand."
+    },
+    "signUp": {
+      "eyebrow": "Cadastro",
+      "title": "Registro que já deixa tudo pronto",
+      "body": "Nome, e-mail, senha. Cada novo usuário ganha um tenant pessoal e um e-mail de verificação automaticamente — o link é de uso único e expira em 24 horas."
+    },
+    "recovery": {
+      "eyebrow": "Recuperação de senha",
+      "title": "Esqueci a senha, tratado por completo",
+      "body": "Peça um link de reset por e-mail e então defina uma nova senha numa tela protegida por um token de curta duração e uso único — validado no servidor e hasheado com scrypt."
+    },
+    "shell": {
+      "eyebrow": "O shell do app",
+      "title": "Um workspace, não uma página em branco",
+      "body": "Nav na sidebar, um seletor de tenant que só aparece com mais de um, menu do usuário e os controles de tema. Suas telas caem direto no outlet."
+    },
+    "agent": {
+      "eyebrow": "O agente de IA",
+      "title": "Um chat que resolve as coisas",
+      "body": "Um assistente flutuante em todo tenant: peça ou comande, ele roda as tools certas, mostra o que mudou como chip e atualiza os dados sozinho."
+    },
+    "account": {
+      "eyebrow": "Sua conta",
+      "title": "Perfil e segurança, já embutidos",
+      "body": "Todo usuário gerencia o próprio perfil e senha numa tela de conta dedicada — os mesmos padrões que você vai reusar para qualquer configuração pessoal que adicionar."
+    },
+    "team": {
+      "eyebrow": "Time e convites",
+      "title": "Traga o resto do time",
+      "body": "Owners e admins convidam por e-mail e escolhem um papel; membros e convites pendentes vivem em settings, cada um revogável. O convite chega como um link de 7 dias na caixa de entrada."
+    },
+    "mcp": {
+      "eyebrow": "Traga suas próprias tools",
+      "title": "As mesmas tools, via MCP",
+      "body": "Gere uma API key com escopo de tenant e plogue o servidor MCP remoto no Cursor ou Claude — as tools do agente, direto no seu editor."
+    }
+  },
+  "db": {
+    "identity": {
+      "eyebrow": "Identidade",
+      "title": "Users, sessions e tokens",
+      "body": "O domínio de auth é dono de tudo sobre uma pessoa: as credenciais, as sessions que mantêm o login e os tokens de uso único enviados por e-mail para verificação e reset de senha. Senhas são hashes scrypt; sessions e tokens guardam só o hash, nunca o valor cru.",
+      "points": [
+        "users guarda a conta; um e-mail único é o login",
+        "sessions e action_tokens referenciam user_id e fazem cascade no delete",
+        "api_keys são pessoais e com escopo de um tenant para acesso MCP"
+      ]
+    },
+    "tenancy": {
+      "eyebrow": "Tenancy",
+      "title": "Workspaces e quem faz parte",
+      "body": "Toda conta trabalha dentro de um tenant. tenant_members é a tabela de junção entre users e tenants com um role, e tenant_invites carrega convites pendentes por e-mail. Essa é a espinha dorsal que torna o app multi-tenant.",
+      "points": [
+        "tenant_members tem chave composta de (tenant_id, user_id)",
+        "role é um enum — owner, admin, member — reforçado no nível de tipo",
+        "Convites expiram e carregam o role que a pessoa terá ao aceitar"
+      ]
+    }
+  },
+  "preview": {
+    "email": "E-mail",
+    "password": "Senha",
+    "name": "Nome",
+    "now": "agora",
+    "login": {
+      "title": "Bem-vindo de volta",
+      "description": "Entre para continuar.",
+      "footer": "Novo por aqui? Criar conta",
+      "submit": "Entrar"
+    },
+    "register": {
+      "title": "Crie sua conta",
+      "description": "Comece em segundos.",
+      "footer": "Já tem conta? Entrar",
+      "submit": "Criar conta"
+    },
+    "forgot": {
+      "title": "Esqueci a senha",
+      "description": "Vamos enviar um link de reset por e-mail.",
+      "footer": "Lembrou? Entrar",
+      "submit": "Enviar link de reset"
+    },
+    "reset": {
+      "title": "Escolha uma nova senha",
+      "description": "Defina uma nova senha para sua conta.",
+      "footer": "O link expira em 1 hora",
+      "newPassword": "Nova senha",
+      "confirmPassword": "Confirmar senha",
+      "submit": "Redefinir senha"
+    },
+    "verifyEmail": {
+      "subject": "Confirme seu e-mail",
+      "heading": "Confirme seu e-mail",
+      "body": "Oi, Ada! Confirme seu endereço de e-mail para terminar o cadastro. Este link expira em 24 horas.",
+      "cta": "Confirmar e-mail"
+    },
+    "resetEmail": {
+      "subject": "Redefina sua senha",
+      "heading": "Redefina sua senha",
+      "body": "Recebemos um pedido para redefinir sua senha. Este link é de uso único e expira em 1 hora. Se não foi você, ignore este e-mail.",
+      "cta": "Redefinir senha"
+    },
+    "inviteEmail": {
+      "subject": "Convite para Acme Inc",
+      "heading": "Convite para Acme Inc",
+      "bodyBefore": "Ada Lovelace convidou você para entrar em ",
+      "bodyAfter": ". Este convite expira em 7 dias.",
+      "cta": "Aceitar convite"
+    },
+    "invites": {
+      "title": "Convites",
+      "description": "Convide pessoas para este tenant por e-mail",
+      "email": "E-mail",
+      "invite": "Convidar",
+      "membersTitle": "Membros",
+      "membersDescription": "Quem tem acesso a este tenant",
+      "you": "(você)"
+    },
+    "nav": {
+      "home": "Início",
+      "tasks": "Tasks",
+      "settings": "Configurações"
+    },
+    "shell": {
+      "exampleResource": "Recurso de exemplo",
+      "hi": "Olá, Ada",
+      "youreIn": "Você está em",
+      "members": "3 membros",
+      "peopleAccess": "Pessoas com acesso",
+      "manageMembers": "Gerenciar membros",
+      "tasksCount": "5 tarefas",
+      "viewTasks": "Ver tarefas"
+    },
+    "tasks": {
+      "title": "Tasks",
+      "description": "Recurso de exemplo",
+      "placeholder": "Adicionar uma task...",
+      "add": "Adicionar",
+      "items": [
+        "Desenhar o schema",
+        "Ligar o repository",
+        "Expor a rota",
+        "Construir a tela"
+      ],
+      "left": "Recurso de exemplo com CRUD por tenant · 2 de 4 restantes"
+    },
+    "account": {
+      "profile": "Perfil",
+      "password": "Senha",
+      "currentPassword": "Senha atual",
+      "newPassword": "Nova senha",
+      "save": "Salvar",
+      "changePassword": "Alterar senha",
+      "title": "Minha conta",
+      "description": "Gerencie seu perfil e segurança."
+    },
+    "agent": {
+      "title": "Assistente",
+      "placeholder": "Fale com o assistente…",
+      "suggestion": "Adicione uma task para preparar o standup de amanhã",
+      "reply": "Claro — vou adicionar essa tarefa para você.",
+      "chip": "Tarefa criada: Preparar standup"
+    },
+    "mcp": {
+      "title": "API keys (MCP)",
+      "description": "Acesse o tenant via MCP pelo Cursor",
+      "create": "Criar key",
+      "copyNow": "Copie sua key agora — ela não será mostrada de novo"
+    },
+    "env": {
+      "optional": "opcional",
+      "noKeyNote": "sem key → agente oculto"
+    },
+    "roles": {
+      "owner": "owner",
+      "admin": "admin",
+      "member": "member"
+    }
+  }
+}

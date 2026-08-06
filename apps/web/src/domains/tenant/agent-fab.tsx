@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { Trans, useTranslation } from "react-i18next";
 import { Loader2Icon, MicIcon, SendIcon, SparklesIcon, SquareIcon, XIcon } from "lucide-react";
 import { toast } from "sonner";
 import type { AgentAction, AgentMessage } from "@app/shared";
@@ -10,12 +11,6 @@ import { useAudioRecorder } from "@/lib/use-audio-recorder";
 import { cn } from "@app/ui/lib/utils";
 import { agentApi } from "./agent-api";
 import { useTenant } from "./tenant-provider";
-
-const SUGGESTIONS = [
-  "who belongs to this tenant?",
-  "add a task to prepare tomorrow's meeting",
-  "generate an image of a lighthouse at sunset",
-];
 
 type ChatMessage = AgentMessage & { actions?: AgentAction[] };
 
@@ -43,6 +38,7 @@ function renderContent(content: string) {
  * Messages can be typed or dictated (recorded here, transcribed server-side).
  */
 export function AgentFab() {
+  const { t } = useTranslation();
   const { tenant } = useTenant();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -51,6 +47,9 @@ export function AgentFab() {
   const [busy, setBusy] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const suggestions = t("agent.suggestions", { returnObjects: true });
+  const suggestionList = Array.isArray(suggestions) ? (suggestions as string[]) : [];
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -78,7 +77,7 @@ export function AgentFab() {
       }
     } catch (err) {
       // The 402 from the monthly AI budget lands here and shows in the chat.
-      const message = err instanceof ApiError ? err.message : "Failed to reach the agent";
+      const message = err instanceof ApiError ? err.message : t("agent.reachFailed");
       setMessages([...history, { role: "assistant", content: `⚠ ${message}` }]);
       setText(content);
     } finally {
@@ -94,7 +93,7 @@ export function AgentFab() {
     try {
       transcript = (await agentApi.transcribe(tenant.id, audio)).text.trim();
     } catch (err) {
-      showApiError(err, "Failed to transcribe the recording");
+      showApiError(err, t("agent.transcribeFailed"));
       return;
     } finally {
       setTranscribing(false);
@@ -103,7 +102,7 @@ export function AgentFab() {
     }
 
     if (!transcript) {
-      toast.warning("Couldn't hear that — try again");
+      toast.warning(t("agent.hearFailed"));
       return;
     }
     void send(transcript);
@@ -112,11 +111,7 @@ export function AgentFab() {
   const recorder = useAudioRecorder({
     onAudio: (audio) => void handleAudio(audio),
     onError: (kind) =>
-      toast.error(
-        kind === "permission"
-          ? "I need permission to use the microphone"
-          : "This browser doesn't support audio recording",
-      ),
+      toast.error(kind === "permission" ? t("agent.micPermission") : t("agent.micUnsupported")),
   });
 
   function handleSubmit(e: FormEvent) {
@@ -137,7 +132,7 @@ export function AgentFab() {
         onClick={() => setOpen(true)}
       >
         <SparklesIcon className="size-5" />
-        <span className="sr-only">Open assistant</span>
+        <span className="sr-only">{t("agent.open")}</span>
       </Button>
     );
   }
@@ -146,15 +141,15 @@ export function AgentFab() {
     <div className="fixed inset-x-4 bottom-5 z-50 flex h-[28rem] max-h-[calc(100dvh-5rem)] flex-col overflow-hidden rounded-xl border bg-background shadow-xl md:inset-x-auto md:right-5 md:w-96">
       <header className="flex items-center gap-2 border-b px-4 py-3">
         <SparklesIcon className="size-4" />
-        <span className="flex-1 text-sm font-semibold">Assistant</span>
+        <span className="flex-1 text-sm font-semibold">{t("agent.title")}</span>
         {messages.length > 0 && (
           <Button variant="ghost" size="sm" onClick={() => setMessages([])} disabled={busy}>
-            Clear
+            {t("agent.clear")}
           </Button>
         )}
         <Button variant="ghost" size="icon" onClick={handleClose}>
           <XIcon />
-          <span className="sr-only">Close</span>
+          <span className="sr-only">{t("agent.close")}</span>
         </Button>
       </header>
 
@@ -162,9 +157,13 @@ export function AgentFab() {
         {messages.length === 0 && (
           <div className="grid gap-2">
             <p className="text-sm text-muted-foreground">
-              Ask or request something about <strong>{tenant.name}</strong>. Examples:
+              <Trans
+                i18nKey="agent.intro"
+                values={{ tenant: tenant.name }}
+                components={{ strong: <strong /> }}
+              />
             </p>
-            {SUGGESTIONS.map((s) => (
+            {suggestionList.map((s) => (
               <button
                 key={s}
                 type="button"
@@ -210,7 +209,7 @@ export function AgentFab() {
         {(busy || transcribing) && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Loader2Icon className="size-4 animate-spin" />
-            {transcribing ? "Transcribing..." : "Thinking..."}
+            {transcribing ? t("agent.transcribing") : t("agent.thinking")}
           </div>
         )}
       </div>
@@ -220,7 +219,7 @@ export function AgentFab() {
           <div className="flex h-9 flex-1 items-center gap-2 rounded-md border border-destructive/40 bg-destructive/5 pl-3 pr-1">
             <span className="flex flex-1 items-center gap-2 text-sm text-muted-foreground">
               <span className="size-2 animate-pulse rounded-full bg-destructive" />
-              Recording...
+              {t("agent.recording")}
             </span>
             <Button
               type="button"
@@ -230,7 +229,7 @@ export function AgentFab() {
               onClick={recorder.cancel}
             >
               <XIcon />
-              <span className="sr-only">Cancel recording</span>
+              <span className="sr-only">{t("agent.cancelRecording")}</span>
             </Button>
           </div>
         ) : (
@@ -243,7 +242,7 @@ export function AgentFab() {
                 void send(text);
               }
             }}
-            placeholder={transcribing ? "Transcribing..." : "Talk to the assistant..."}
+            placeholder={transcribing ? t("agent.transcribing") : t("agent.placeholder")}
             rows={1}
             className="min-h-9 resize-none"
             disabled={busy || transcribing}
@@ -254,12 +253,12 @@ export function AgentFab() {
         {recorder.recording ? (
           <Button type="button" size="icon" variant="destructive" onClick={recorder.stop}>
             <SquareIcon className="size-3 fill-current" />
-            <span className="sr-only">Finish recording</span>
+            <span className="sr-only">{t("agent.finishRecording")}</span>
           </Button>
         ) : text.trim() ? (
           <Button type="submit" size="icon" disabled={busy}>
             <SendIcon />
-            <span className="sr-only">Send</span>
+            <span className="sr-only">{t("agent.send")}</span>
           </Button>
         ) : (
           <Button
@@ -270,7 +269,7 @@ export function AgentFab() {
             onClick={() => void recorder.start()}
           >
             {transcribing ? <Loader2Icon className="animate-spin" /> : <MicIcon />}
-            <span className="sr-only">Record a message</span>
+            <span className="sr-only">{t("agent.record")}</span>
           </Button>
         )}
       </form>

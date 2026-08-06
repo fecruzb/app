@@ -1,10 +1,12 @@
 ---
-description: Project language — everything written in the repo is English
+description: Project language — code is English; UI strings live in locale files
 alwaysApply: true
 ---
 
 # Language
 
-The whole project is in English: code, comments, identifiers, docs, rules, commits, logs, UI copy, emails, API messages and agent text. Chat with the user may be in any language, but anything written to the repo is English.
+Code, comments, identifiers, docs, rules, commits, logs, API messages, emails and agent text stay in English. Chat with the user may be in any language.
+
+**UI copy** lives in `apps/web/src/i18n/locales/` (`en.json` is the source of truth, `pt.json` is Brazilian Portuguese). Components use `useTranslation()` / `t("…")` — never hardcode user-facing strings in JSX. When you add a string, add it to both locale files.
 
 Keep comments minimal and direct — explain non-obvious intent, not what the code already says.

@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button } from "@app/ui/button";
 import { Input } from "@app/ui/input";
@@ -10,6 +11,7 @@ import { authApi } from "../api";
 import { useAuth } from "../auth-provider";
 
 export function ResetPasswordPage() {
+  const { t } = useTranslation();
   const { token } = useParams();
   const { setMe } = useAuth();
   const navigate = useNavigate();
@@ -22,10 +24,10 @@ export function ResetPasswordPage() {
     try {
       const me = await authApi.resetPassword({ token, password });
       setMe(me);
-      toast.success("Password reset!");
+      toast.success(t("auth.passwordReset"));
       navigate("/app", { replace: true });
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Failed to reset password");
+      toast.error(err instanceof ApiError ? err.message : t("auth.resetFailed"));
     } finally {
       setSubmitting(false);
     }
@@ -33,17 +35,17 @@ export function ResetPasswordPage() {
 
   return (
     <AuthLayout
-      title="New password"
-      description="Choose a new password for your account"
+      title={t("auth.newPasswordTitle")}
+      description={t("auth.newPasswordDescription")}
       footer={
         <Link to="/forgot-password" className="font-medium text-foreground hover:underline">
-          Request a new link
+          {t("auth.requestNewLink")}
         </Link>
       }
     >
       <form onSubmit={handleSubmit} className="grid gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="password">New password</Label>
+          <Label htmlFor="password">{t("auth.newPassword")}</Label>
           <Input
             id="password"
             type="password"
@@ -53,10 +55,10 @@ export function ResetPasswordPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <p className="text-xs text-muted-foreground">Minimum of 8 characters</p>
+          <p className="text-xs text-muted-foreground">{t("common.minPassword")}</p>
         </div>
         <Button type="submit" disabled={submitting}>
-          {submitting ? "Saving..." : "Reset password"}
+          {submitting ? t("common.saving") : t("auth.resetPassword")}
         </Button>
       </form>
     </AuthLayout>

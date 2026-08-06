@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button } from "@app/ui/button";
 import { Input } from "@app/ui/input";
@@ -11,6 +12,7 @@ import { authApi } from "../api";
 import { useAuth } from "../auth-provider";
 
 export function LoginPage() {
+  const { t } = useTranslation();
   const { setMe } = useAuth();
   const { selfSignupEnabled } = useAppConfig();
   const navigate = useNavigate();
@@ -28,7 +30,7 @@ export function LoginPage() {
       const from = (location.state as { from?: string } | null)?.from;
       navigate(from ?? "/app", { replace: true });
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Failed to sign in");
+      toast.error(err instanceof ApiError ? err.message : t("auth.signInFailed"));
     } finally {
       setSubmitting(false);
     }
@@ -36,14 +38,14 @@ export function LoginPage() {
 
   return (
     <AuthLayout
-      title="Sign in"
-      description="Access your account with email and password"
+      title={t("auth.signIn")}
+      description={t("auth.signInDescription")}
       footer={
         selfSignupEnabled && (
           <span>
-            Don't have an account?{" "}
+            {t("auth.noAccount")}{" "}
             <Link to="/register" className="font-medium text-foreground hover:underline">
-              Create account
+              {t("auth.createAccount")}
             </Link>
           </span>
         )
@@ -51,7 +53,7 @@ export function LoginPage() {
     >
       <form onSubmit={handleSubmit} className="grid gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t("common.email")}</Label>
           <Input
             id="email"
             type="email"
@@ -63,9 +65,9 @@ export function LoginPage() {
         </div>
         <div className="grid gap-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("common.password")}</Label>
             <Link to="/forgot-password" className="text-xs text-muted-foreground hover:underline">
-              Forgot password?
+              {t("auth.forgotPassword")}
             </Link>
           </div>
           <Input
@@ -78,7 +80,7 @@ export function LoginPage() {
           />
         </div>
         <Button type="submit" disabled={submitting}>
-          {submitting ? "Signing in..." : "Sign in"}
+          {submitting ? t("auth.signingIn") : t("auth.signIn")}
         </Button>
       </form>
     </AuthLayout>

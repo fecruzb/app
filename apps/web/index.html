@@ -11,13 +11,19 @@
   </head>
   <body>
     <div id="root"></div>
-    <!-- Apply the stored mode before paint so dark reloads don't flash white. -->
+    <!-- Apply stored prefs before paint so dark/lang reloads don't flash. -->
     <script>
       try {
         var m = localStorage.getItem("app:mode");
         if (m === "dark") {
           document.documentElement.classList.add("dark");
           document.documentElement.style.colorScheme = "dark";
+        }
+        var lang = localStorage.getItem("app:lang");
+        if (lang === "en" || lang === "pt") {
+          document.documentElement.lang = lang;
+        } else if ((navigator.language || "").toLowerCase().indexOf("pt") === 0) {
+          document.documentElement.lang = "pt";
         }
       } catch (e) {}
     </script>

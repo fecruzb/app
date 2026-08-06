@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { CheckIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import type { TaskDto } from "@app/shared";
 import { Button } from "@app/ui/button";
@@ -18,6 +19,7 @@ import { taskApi } from "../api";
 // shared PageHeader / PageLoading / EmptyState / useConfirm. Copy this shape.
 
 export function TasksPage() {
+  const { t } = useTranslation();
   const { tenant } = useTenant();
   const queryClient = useQueryClient();
   const confirm = useConfirm();
@@ -36,20 +38,20 @@ export function TasksPage() {
       void invalidate();
       setTitle("");
     },
-    onError: (err) => showApiError(err, "Failed to add task"),
+    onError: (err) => showApiError(err, t("tasks.addFailed")),
   });
 
   const toggleMutation = useMutation({
     mutationFn: (task: TaskDto) =>
       taskApi.update(tenant.id, task.id, { title: task.title, completed: !task.completed }),
     onSuccess: () => void invalidate(),
-    onError: (err) => showApiError(err, "Failed to update task"),
+    onError: (err) => showApiError(err, t("tasks.updateFailed")),
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => taskApi.delete(tenant.id, id),
     onSuccess: () => void invalidate(),
-    onError: (err) => showApiError(err, "Failed to delete task"),
+    onError: (err) => showApiError(err, t("tasks.deleteFailed")),
   });
 
   function handleSubmit(e: FormEvent) {
@@ -60,34 +62,32 @@ export function TasksPage() {
 
   async function handleDelete(task: TaskDto) {
     const ok = await confirm({
-      title: "Delete task",
-      description: `Delete "${task.title}"?`,
-      confirmLabel: "Delete",
+      title: t("tasks.deleteTitle"),
+      description: t("tasks.deleteDescription", { title: task.title }),
+      confirmLabel: t("common.delete"),
       destructive: true,
     });
     if (ok) deleteMutation.mutate(task.id);
   }
 
-  const remaining = tasks?.filter((t) => !t.completed).length ?? 0;
+  const remaining = tasks?.filter((task) => !task.completed).length ?? 0;
+  const description =
+    t("tasks.description") +
+    (tasks && tasks.length > 0 ? t("tasks.remaining", { remaining, total: tasks.length }) : "");
 
   return (
     <div className="grid gap-6">
-      <PageHeader
-        title="Tasks"
-        description={`Example resource with per-tenant CRUD${
-          tasks && tasks.length > 0 ? ` · ${remaining} of ${tasks.length} left` : ""
-        }`}
-      />
+      <PageHeader title={t("tasks.title")} description={description} />
 
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Input
-          placeholder="Add a task..."
+          placeholder={t("tasks.placeholder")}
           maxLength={200}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
         <Button type="submit" disabled={createMutation.isPending || !title.trim()}>
-          <PlusIcon /> Add
+          <PlusIcon /> {t("tasks.add")}
         </Button>
       </form>
 
@@ -111,7 +111,7 @@ export function TasksPage() {
                 >
                   {task.completed && <CheckIcon className="size-3.5" />}
                   <span className="sr-only">
-                    {task.completed ? "Mark as not done" : "Mark as done"}
+                    {task.completed ? t("tasks.markNotDone") : t("tasks.markDone")}
                   </span>
                 </button>
                 <span
@@ -124,14 +124,14 @@ export function TasksPage() {
                 </span>
                 <Button variant="ghost" size="icon" onClick={() => void handleDelete(task)}>
                   <Trash2Icon />
-                  <span className="sr-only">Delete</span>
+                  <span className="sr-only">{t("common.delete")}</span>
                 </Button>
               </div>
             ))}
           </CardContent>
         </Card>
       ) : (
-        <EmptyState>No tasks yet. Add the first one!</EmptyState>
+        <EmptyState>{t("tasks.empty")}</EmptyState>
       )}
     </div>
   );

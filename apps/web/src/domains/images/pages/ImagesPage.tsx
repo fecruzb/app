@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { Trash2Icon, UploadIcon } from "lucide-react";
 import type { ImageDto } from "@app/shared";
 import { Button } from "@app/ui/button";
@@ -12,6 +13,7 @@ import { useTenant } from "@/domains/tenant/tenant-provider";
 import { imageApi } from "../api";
 
 export function ImagesPage() {
+  const { t } = useTranslation();
   const { tenant } = useTenant();
   const queryClient = useQueryClient();
   const confirm = useConfirm();
@@ -27,13 +29,13 @@ export function ImagesPage() {
   const uploadMutation = useMutation({
     mutationFn: (file: File) => imageApi.upload(tenant.id, file),
     onSuccess: () => void invalidate(),
-    onError: (err) => showApiError(err, "Failed to upload image"),
+    onError: (err) => showApiError(err, t("images.uploadFailed")),
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => imageApi.delete(tenant.id, id),
     onSuccess: () => void invalidate(),
-    onError: (err) => showApiError(err, "Failed to delete image"),
+    onError: (err) => showApiError(err, t("images.deleteFailed")),
   });
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -44,22 +46,21 @@ export function ImagesPage() {
 
   async function handleDelete(image: ImageDto) {
     const ok = await confirm({
-      title: "Delete image",
-      description: "This can't be undone.",
-      confirmLabel: "Delete",
+      title: t("images.deleteTitle"),
+      description: t("images.deleteDescription"),
+      confirmLabel: t("common.delete"),
       destructive: true,
     });
     if (ok) deleteMutation.mutate(image.id);
   }
 
+  const description =
+    t("images.description") +
+    (images && images.length > 0 ? t("images.total", { count: images.length }) : "");
+
   return (
     <div className="grid gap-6">
-      <PageHeader
-        title="Images"
-        description={`Upload and manage the tenant's images${
-          images && images.length > 0 ? ` · ${images.length} total` : ""
-        }`}
-      />
+      <PageHeader title={t("images.title")} description={description} />
 
       <div>
         <input
@@ -70,7 +71,7 @@ export function ImagesPage() {
           onChange={handleFileChange}
         />
         <Button onClick={() => fileInputRef.current?.click()} disabled={uploadMutation.isPending}>
-          <UploadIcon /> {uploadMutation.isPending ? "Uploading..." : "Upload image"}
+          <UploadIcon /> {uploadMutation.isPending ? t("images.uploading") : t("images.upload")}
         </Button>
       </div>
 
@@ -88,13 +89,13 @@ export function ImagesPage() {
                 onClick={() => void handleDelete(image)}
               >
                 <Trash2Icon />
-                <span className="sr-only">Delete</span>
+                <span className="sr-only">{t("common.delete")}</span>
               </Button>
             </div>
           ))}
         </div>
       ) : (
-        <EmptyState>No images yet. Upload the first one!</EmptyState>
+        <EmptyState>{t("images.empty")}</EmptyState>
       )}
     </div>
   );

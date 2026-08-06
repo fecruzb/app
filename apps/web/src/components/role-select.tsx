@@ -1,4 +1,5 @@
 import type { TenantRole } from "@app/shared";
+import { useTranslation } from "react-i18next";
 import { cn } from "@app/ui/lib/utils";
 
 type Props = {
@@ -11,6 +12,7 @@ type Props = {
 
 /** Native select styled to match inputs, for picking a tenant role. */
 export function RoleSelect({ value, onChange, includeOwner, className }: Props) {
+  const { t } = useTranslation();
   return (
     <select
       className={cn(
@@ -20,9 +22,9 @@ export function RoleSelect({ value, onChange, includeOwner, className }: Props) 
       value={value}
       onChange={(e) => onChange(e.target.value as TenantRole)}
     >
-      {includeOwner && <option value="owner">owner</option>}
-      <option value="admin">admin</option>
-      <option value="member">member</option>
+      {includeOwner && <option value="owner">{t("roles.owner")}</option>}
+      <option value="admin">{t("roles.admin")}</option>
+      <option value="member">{t("roles.member")}</option>
     </select>
   );
 }
