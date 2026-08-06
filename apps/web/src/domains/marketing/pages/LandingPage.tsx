@@ -344,7 +344,17 @@ function dbGroupCopy(key: "identity" | "tenancy", t: TFunction) {
 }
 
 function chapterCopy(
-  key: "signIn" | "signUp" | "recovery" | "shell" | "agent" | "account" | "team" | "mcp",
+  key:
+    | "signIn"
+    | "signUp"
+    | "recovery"
+    | "shell"
+    | "agent"
+    | "account"
+    | "team"
+    | "admin"
+    | "plans"
+    | "mcp",
   t: TFunction,
 ) {
   return {
@@ -428,6 +438,8 @@ function buildChapters(t: TFunction): Chapter[] {
     { id: "agent", ...chapterCopy("agent", t), mock: AgentChatMock },
     { id: "account", ...chapterCopy("account", t), mock: AccountMock },
     { id: "team", ...chapterCopy("team", t), flow: flows.invite },
+    { id: "admin", ...chapterCopy("admin", t), flow: flows.admin },
+    { id: "plans", ...chapterCopy("plans", t), flow: flows.plans },
     { id: "mcp", ...chapterCopy("mcp", t), mock: McpKeysMock },
   ];
 }

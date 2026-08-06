@@ -10,7 +10,7 @@ import { tenants } from "@/domains/tenant/schema";
 /**
  * AI usage events
  *
- * Append-only spend records. Budget is global per user; `tenantId` is audit only.
+ * Append-only spend records. Entitlements are per user inside a tenant (plan).
  */
 export const aiUsageEvents = pgTable(
   "ai_usage_events",
@@ -22,7 +22,7 @@ export const aiUsageEvents = pgTable(
     /**
      * Tenant context
      *
-     * Audit only — the monthly budget is global per user, across tenants.
+     * Spend is aggregated per `(userId, tenantId)` against the tenant plan.
      */
     tenantId: uuid("tenant_id").references(() => tenants.id, { onDelete: "set null" }),
     model: text("model").notNull(),

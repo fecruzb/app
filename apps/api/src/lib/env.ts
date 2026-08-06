@@ -26,8 +26,6 @@ const schema = z.object({
   TRANSCRIBE_MODEL: z.string().default("gpt-4o-mini-transcribe"),
   /** Image generation model behind the agent's generate_image tool. */
   IMAGE_MODEL: z.string().default("gpt-image-1-mini"),
-  /** Monthly AI spend cap per user. 0 keeps tracking but never blocks. */
-  AI_MONTHLY_BUDGET_USD: z.coerce.number().min(0).default(10),
   MAIL_FROM: z.string().default("App Base <onboarding@resend.dev>"),
   /** When "false", accounts can only be created via invite. */
   SELF_SIGNUP_ENABLED: z
@@ -71,7 +69,6 @@ export const env = {
   assistantModel: raw.ASSISTANT_MODEL,
   transcribeModel: raw.TRANSCRIBE_MODEL,
   imageModel: raw.IMAGE_MODEL,
-  aiMonthlyBudgetMicros: Math.round(raw.AI_MONTHLY_BUDGET_USD * 1_000_000),
   mailFrom: raw.MAIL_FROM,
   selfSignupEnabled: raw.SELF_SIGNUP_ENABLED,
   /** Lowercased emails from PLATFORM_ADMIN_EMAILS (empty set when unset). */

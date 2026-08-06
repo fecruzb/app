@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { planIdSchema, type PlanId } from "./billing";
+import type { MemberDto } from "./tenant";
 
 /** URL-safe tenant slug (matches slugify rules). */
 export const tenantSlugSchema = z
@@ -19,10 +21,14 @@ export const updateAdminTenantSchema = z
   .object({
     name: z.string().trim().min(2).max(100).optional(),
     slug: tenantSlugSchema.optional(),
+    planId: planIdSchema.optional(),
   })
-  .refine((data) => data.name !== undefined || data.slug !== undefined, {
-    message: "Provide name and/or slug",
-  });
+  .refine(
+    (data) => data.name !== undefined || data.slug !== undefined || data.planId !== undefined,
+    {
+      message: "Provide name, slug, and/or planId",
+    },
+  );
 
 export const createPlatformInviteSchema = z.object({
   email: z.email().toLowerCase(),
@@ -49,7 +55,9 @@ export type AdminTenantDto = {
   id: string;
   name: string;
   slug: string;
+  planId: PlanId;
   memberCount: number;
+  members: MemberDto[];
   createdAt: string;
 };
 

@@ -66,9 +66,7 @@ function GeneralSection() {
     <Card>
       <CardHeader>
         <CardTitle>{t("settings.general")}</CardTitle>
-        <CardDescription>
-          {t("settings.generalDescription", { slug: tenant.slug })}
-        </CardDescription>
+        <CardDescription>{t("settings.generalDescription", { slug: tenant.slug })}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
         {isManager ? (
@@ -156,7 +154,9 @@ function MembersSection() {
         <CardDescription>{t("settings.membersDescription")}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-3">
-        {isLoading && <p className="text-sm text-muted-foreground">{t("settings.loadingMembers")}</p>}
+        {isLoading && (
+          <p className="text-sm text-muted-foreground">{t("settings.loadingMembers")}</p>
+        )}
         {members?.map((member) => {
           const isSelf = member.userId === me?.user.id;
           return (
@@ -271,9 +271,7 @@ function InvitesSection() {
                 <Badge variant="outline">{t(`roles.${invite.role}`)}</Badge>
                 <span className="text-xs text-muted-foreground">
                   {t("settings.expires", {
-                    date: new Date(invite.expiresAt).toLocaleDateString(
-                      dateLocale(i18n.language),
-                    ),
+                    date: new Date(invite.expiresAt).toLocaleDateString(dateLocale(i18n.language)),
                   })}
                 </span>
                 <Button

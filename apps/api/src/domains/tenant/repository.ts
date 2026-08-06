@@ -5,7 +5,7 @@
  * methods; queries are written inline. Returns rows / join shapes — map to
  * DTOs in `dto.ts`.
  */
-import { and, asc, desc, eq, gt } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt } from "drizzle-orm";
 import { db } from "@/db/client";
 import { users, type User } from "@/domains/auth/schema";
 import {
@@ -25,6 +25,17 @@ export type TenantWithRole = { tenant: Tenant; role: TenantMember["role"] };
 
 export const tenantRepository = {
   /**
+   * Find a tenant by id
+   *
+   * @param tenantId - Tenant id
+   * @returns The tenant row, or null
+   */
+  async findById(tenantId: string): Promise<Tenant | null> {
+    const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tenantId));
+    return tenant ?? null;
+  },
+
+  /**
    * Find a tenant by slug
    *
    * Returns null if no tenant matches.
@@ -35,6 +46,36 @@ export const tenantRepository = {
   async findBySlug(slug: string): Promise<Tenant | null> {
     const [tenant] = await db.select().from(tenants).where(eq(tenants.slug, slug));
     return tenant ?? null;
+  },
+
+  /**
+   * Count members
+   *
+   * @param tenantId - Tenant id
+   * @returns Number of memberships
+   */
+  async countMembers(tenantId: string): Promise<number> {
+    const [row] = await db
+      .select({ value: count() })
+      .from(tenantMembers)
+      .where(eq(tenantMembers.tenantId, tenantId));
+    return Number(row?.value ?? 0);
+  },
+
+  /**
+   * Count pending invites
+   *
+   * Non-expired invites only.
+   *
+   * @param tenantId - Tenant id
+   * @returns Number of pending invites
+   */
+  async countPendingInvites(tenantId: string): Promise<number> {
+    const [row] = await db
+      .select({ value: count() })
+      .from(tenantInvites)
+      .where(and(eq(tenantInvites.tenantId, tenantId), gt(tenantInvites.expiresAt, new Date())));
+    return Number(row?.value ?? 0);
   },
 
   /**

@@ -1,6 +1,6 @@
 # app-base
 
-Multi-tenant SaaS app template, ready to become a new product. Comes with users, complete authentication, tenants with members and invites, transactional emails, a public site and deploy on Render.
+Multi-tenant SaaS app template, ready to become a new product. Comes with users, complete authentication, tenants with members and invites, plans & seat/AI entitlements (billing skeleton), platform admin, transactional emails, a public site and deploy on Render.
 
 ## Stack
 
@@ -34,11 +34,13 @@ Without `RESEND_API_KEY`, emails (verification, password reset, invites) are log
 
 - **Auth**: sign-up, login, logout, password recovery, email verification, password change (ends other sessions)
 - **Multi-tenant**: every user gets a personal tenant (no manual creation); joins others only by invite. The tenant switcher only appears when belonging to 2+. Roles `owner` / `admin` / `member` and data isolation via middleware
-- **Invites**: by email, accepted with an existing account or by creating one on the spot
+- **Invites**: by email, accepted with an existing account or by creating one on the spot. Seat caps from the tenant plan block invites when the workspace is full
+- **Plans & billing**: code catalog (`free` / `starter` / `pro` / `usage`) on `tenants.plan_id` — seat limits and per-member AI allowances. Platform admin assigns the plan; tenants see a read-only Billing page. Ready to wire Stripe (or any PSP) later by setting `planId`
+- **Platform admin** (`/admin`): people, platform signup invites, tenants (with members + plan edit modal), and the plans catalog. Bootstrap with `PLATFORM_ADMIN_EMAILS`
 - **Public site**: landing with CTAs + auth screens, separate from the logged-in area
-- **Example resource**: `tasks` — a per-tenant to-do list, end to end (schema → route → page)
+- **Example resources**: `tasks` (to-do list) and `images` (uploads via MediaStore) — per-tenant, end to end
 - **Agent + MCP**: a floating button in the app opens a chat with an assistant (OpenAI) that runs the MCP tools in the tenant context. The same tools are exposed two more ways: over stdio for local dev (`npm run mcp`, registered in `.cursor/mcp.json`) and over HTTP as a **remote MCP server** (`POST /api/mcp`) authenticated by a personal API key
-- **API keys**: users mint tenant-scoped keys in _My account_ and plug the remote MCP server into Cursor (or any MCP client) to drive the app from their editor
+- **API keys**: users mint tenant-scoped keys under _Integrations_ and plug the remote MCP server into Cursor (or any MCP client)
 - **`SELF_SIGNUP_ENABLED` flag**: turn off to operate invite-only
 
 ## Structure
@@ -55,17 +57,22 @@ apps/api/src/
 │                         # mcp-http (remote MCP over HTTP, API-key auth), routes/
 ├── lib/                  # pure utilities (no app dependency): env (validated at boot),
 │                         # crypto, logger, errors, email layout
-├── integrations/         # external service wrappers: openai (client + tool loop), resend
+├── integrations/         # external service wrappers: openai (client + tool loop), resend, r2/media
 ├── domains/
 │   ├── auth/             # schema, repository, service, dto, emails, middleware, routes/
-│   ├── account/          # routes/ (profile, password)
+│   ├── account/          # routes/ (profile, password, API keys)
+│   ├── admin/            # platform admin: users, platform invites, tenants, plans
+│   ├── billing/          # plan catalog + tenant billing snapshot + seat/AI asserts
 │   ├── tenant/           # tenants + members + invites: schema, repository, service,
 │   │                     # emails, middleware, routes/, tools/
-│   └── task/             # example resource (to-do list): schema, repository, dto, routes/, tools/
+│   ├── usage/            # AI spend tracking (per user × tenant × month)
+│   ├── task/             # example resource (to-do list): schema, repository, dto, routes/, tools/
+│   └── images/           # example uploads via MediaStore
 └── db/                   # client, schema.ts (barrel for drizzle-kit), columns (audit), seed
 
 apps/web                  # React SPA (public pages + logged-in area)
-packages/shared           # Zod schemas and DTOs per domain (auth, tenant, task, agent)
+packages/shared           # Zod schemas and DTOs per domain (auth, tenant, billing, task, …)
+packages/ui               # app-neutral base UI (shadcn), imported per subpath
 ```
 
 Conventions:
@@ -75,10 +82,10 @@ Conventions:
 - **Tools are transport-neutral**: they return JSON-serializable data and throw `Error` for expected failures. `agent/mcp-server.ts` translates to MCP; `agent/assistant.ts` translates to the OpenAI loop. Domains never import MCP/OpenAI (lint blocks it).
 - **Name suffix = file role.** Single-role domain files keep the role name (`repository.ts`, `service.ts`, `schema.ts`); folders own their index (`routes/index.ts`, `tools/index.ts`); action files carry the `.route.ts` / `.tool.ts` suffix.
 - **The repository owns the SQL** — routes and services don't write queries. Every resource query filters by `tenantId`.
-- **Service only when there's real business logic** (sessions, tokens, invites…). Plain CRUD calls the repository straight from the route/tool — that's why `task` has no `service.ts` while `auth`/`tenant` do. Once an operation gains a rule, create the service and route the HTTP handler and tool through it.
+- **Service only when there's real business logic** (sessions, tokens, invites, seat/AI gates…). Plain CRUD calls the repository straight from the route/tool — that's why `task` has no `service.ts` while `auth`/`tenant`/`billing` do. Once an operation gains a rule, create the service and route the HTTP handler and tool through it.
 - **Tenant isolation is safe by default** — each tenant-scoped domain's `routes/index.ts` applies `requireAuth`/`requireTenant` once (via `.use`), so every new route is isolated from the start.
 - **New table?** Export the domain schema in `db/schema.ts` (the barrel drizzle-kit reads) and run `db:generate`.
-- **Env is validated at boot** (`lib/env.ts`, Zod): a missing required variable kills the process with a clear message instead of breaking on a query. Add new vars to that schema.
+- **Env is validated at boot** (`lib/env.ts`, Zod): a missing required variable kills the process with a clear message instead of breaking on a query. Add new vars to that schema, `.env.example`, and `render.yaml`.
 - **Imports use the `@/` alias** (→ `apps/api/src/`): anything crossing a boundary uses the alias — `@/lib/*`, `@/integrations/*`, `@/db/*`, `@/domains/<other>/*`. Only imports within the same domain stay relative (`./repository`, `../service`). This way moving files doesn't break imports and `../../../` disappears.
 - **Boundaries are enforced by lint** (`.oxlintrc.json`, `no-restricted-imports`): `lib/` can't depend on anything in the app; `integrations/` only on `lib/`; domains only know the agent contract (`@/agent/tool`) and never MCP/OpenAI directly. Cross the line and `npm run lint` flags it.
 - **The agent is its own surface** (`agent/`), not a domain: it _consumes_ the domains via `registry.ts` (which joins each domain's `tools/`). It has two layers: the _policy_ (`agent/assistant.ts` — who the agent is and how it acts) and the _mechanics_ (`integrations/openai.ts` — OpenAI client + the tool-calling loop). The same registry is exposed three ways from one place: the in-app chat (OpenAI loop), stdio (`agent/mcp.ts`, local Cursor) and HTTP (`agent/mcp-http.ts`, remote clients authenticated by an API key).
@@ -87,6 +94,7 @@ Useful entry points:
 
 - `apps/api/src/app.ts` — all routes mounted in one place
 - `apps/api/src/domains/task/` + `apps/web/src/domains/task/pages/TasksPage.tsx` — a complete domain to copy
+- `apps/api/src/domains/billing/` — plan catalog, seat assert, AI assert, tenant billing snapshot
 - `apps/api/src/domains/tenant/middleware.ts` — tenant isolation
 - `apps/api/src/agent/registry.ts` — tools available to the agent and MCP
 - `apps/web/src/app/App.tsx` — SPA route map
@@ -95,9 +103,10 @@ Useful entry points:
 
 1. Clone/copy this repo and rename it (`package.json`, `index.html`, "App Base" text, `render.yaml`)
 2. Replace the `tasks` resource with your domain: copy `apps/api/src/domains/task/` (schema → repository → routes → tools), export the schema in `db/schema.ts`, run `db:generate`, add the schemas to `packages/shared` and the page in web
-3. Adjust the landing (`apps/web/src/domains/marketing/pages/LandingPage.tsx`)
-4. Set `RESEND_API_KEY` and `MAIL_FROM` for real emails
-5. Deploy: push the repo to GitHub and create a Blueprint on Render pointing to `render.yaml`
+3. Adjust the plan catalog in `apps/api/src/domains/billing/plans.ts` and shared `packages/shared/src/billing.ts` if your pricing differs
+4. Adjust the landing (`apps/web/src/domains/marketing/pages/LandingPage.tsx` + `landing.*.json`)
+5. Set `RESEND_API_KEY` and `MAIL_FROM` for real emails
+6. Deploy: push the repo to GitHub and create a Blueprint on Render pointing to `render.yaml`
 
 ## Environment variables
 
@@ -114,9 +123,11 @@ Copy `.env.example` to `.env` at the root (in production Render injects everythi
 | `SELF_SIGNUP_ENABLED`   | `false` to turn off public sign-up                                             |
 | `PLATFORM_ADMIN_EMAILS` | Comma-separated emails always treated as platform admins once verified         |
 
+AI spend limits come from the tenant's plan in the billing catalog — there is no separate `AI_MONTHLY_BUDGET_USD` env var.
+
 ## Connect an MCP client (remote)
 
-The API exposes a remote MCP server at `POST /api/mcp`, authenticated by a personal API key. Create a key in **My account → API keys** (it's scoped to one tenant and shown only once), then add it to your MCP client. For Cursor, in `.cursor/mcp.json`:
+The API exposes a remote MCP server at `POST /api/mcp`, authenticated by a personal API key. Create a key in **Integrations** (it's scoped to one tenant and shown only once), then add it to your MCP client. For Cursor, in `.cursor/mcp.json`:
 
 ```json
 {

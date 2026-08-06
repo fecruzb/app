@@ -29,7 +29,7 @@ export async function transcribe(c: AppContext) {
   const tenant = c.get("tenant");
 
   // -- Processing ------------------------------------------------------------
-  await assertAiBudget(user.id);
+  await assertAiBudget(user.id, tenant.id);
 
   if (Number(c.req.header("content-length") ?? 0) > MAX_AUDIO_BYTES) {
     throw new HttpError(413, "Recording too long");

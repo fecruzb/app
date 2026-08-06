@@ -8,7 +8,7 @@
 import { and, asc, count, desc, eq, gt, sql } from "drizzle-orm";
 import { db } from "@/db/client";
 import { users, type User } from "@/domains/auth/schema";
-import { tenantMembers, tenants, type Tenant } from "@/domains/tenant/schema";
+import { tenantMembers, tenants, type Tenant, type TenantMember } from "@/domains/tenant/schema";
 import { platformInvites, type PlatformInvite } from "./schema";
 
 /** User row plus how many tenants they belong to. */
@@ -17,10 +17,20 @@ export type UserWithTenantCount = {
   tenantCount: number;
 };
 
-/** Tenant row plus member count. */
+/** One member of a tenant for the admin tenants list. */
+export type TenantMemberSummary = {
+  userId: string;
+  name: string;
+  email: string;
+  role: TenantMember["role"];
+  joinedAt: Date;
+};
+
+/** Tenant row plus members (and count). */
 export type TenantWithMemberCount = {
   tenant: Tenant;
   memberCount: number;
+  members: TenantMemberSummary[];
 };
 
 /** Platform invite plus inviter display name. */
@@ -69,9 +79,9 @@ export const adminRepository = {
   /**
    * List all tenants
    *
-   * Oldest first, with member counts.
+   * Oldest first, with members and counts.
    *
-   * @returns Tenants with member counts
+   * @returns Tenants with members
    */
   async listTenants(): Promise<TenantWithMemberCount[]> {
     const rows = await db
@@ -83,9 +93,37 @@ export const adminRepository = {
       .leftJoin(tenantMembers, eq(tenantMembers.tenantId, tenants.id))
       .groupBy(tenants.id)
       .orderBy(asc(tenants.createdAt));
+
+    const memberRows = await db
+      .select({
+        tenantId: tenantMembers.tenantId,
+        userId: users.id,
+        name: users.name,
+        email: users.email,
+        role: tenantMembers.role,
+        joinedAt: tenantMembers.createdAt,
+      })
+      .from(tenantMembers)
+      .innerJoin(users, eq(users.id, tenantMembers.userId))
+      .orderBy(asc(tenantMembers.createdAt));
+
+    const membersByTenant = new Map<string, TenantMemberSummary[]>();
+    for (const row of memberRows) {
+      const list = membersByTenant.get(row.tenantId) ?? [];
+      list.push({
+        userId: row.userId,
+        name: row.name,
+        email: row.email,
+        role: row.role,
+        joinedAt: row.joinedAt,
+      });
+      membersByTenant.set(row.tenantId, list);
+    }
+
     return rows.map((row) => ({
       tenant: row.tenant,
       memberCount: Number(row.memberCount),
+      members: membersByTenant.get(row.tenant.id) ?? [],
     }));
   },
 
@@ -109,7 +147,7 @@ export const adminRepository = {
    */
   async updateTenant(
     tenantId: string,
-    patch: { name?: string; slug?: string },
+    patch: { name?: string; slug?: string; planId?: Tenant["planId"] },
   ): Promise<Tenant | null> {
     const [tenant] = await db
       .update(tenants)

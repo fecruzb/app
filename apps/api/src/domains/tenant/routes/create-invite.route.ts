@@ -4,6 +4,7 @@ import { sendEmail } from "@/integrations/resend";
 import { env } from "@/lib/env";
 import { HttpError, parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
+import { assertSeatAvailableForInvite } from "@/domains/billing/service";
 import { toInviteDto } from "../dto";
 import { inviteTemplate } from "../emails";
 import { tenantRepository } from "../repository";
@@ -33,7 +34,10 @@ export async function createInvite(c: AppContext) {
     throw new HttpError(409, "This person is already a member of the tenant");
   }
 
+  // Drop any pending invite for this email first so a re-invite does not
+  // double-count against the seat cap.
   await tenantRepository.deleteInvitesByEmail(tenant.id, data.email);
+  await assertSeatAvailableForInvite(tenant.id);
 
   const token = generateToken();
   const invite = await tenantRepository.insertInvite({

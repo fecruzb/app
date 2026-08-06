@@ -3,6 +3,8 @@ import type {
   AdminTenantDto,
   AdminUserDto,
   MeDto,
+  PlanDto,
+  PlanId,
   PublicPlatformInviteDto,
 } from "@app/shared";
 import { api } from "@/lib/api";
@@ -12,8 +14,9 @@ export const adminApi = {
   updateUser: (userId: string, body: { isPlatformAdmin: boolean }) =>
     api.patch<AdminUserDto>(`/admin/users/${userId}`, body),
   listTenants: () => api.get<AdminTenantDto[]>("/admin/tenants"),
-  updateTenant: (tenantId: string, body: { name?: string; slug?: string }) =>
+  updateTenant: (tenantId: string, body: { name?: string; slug?: string; planId?: PlanId }) =>
     api.patch<AdminTenantDto>(`/admin/tenants/${tenantId}`, body),
+  listPlans: () => api.get<PlanDto[]>("/admin/plans"),
   listInvites: () => api.get<AdminPlatformInviteDto[]>("/admin/invites"),
   createInvite: (body: { email: string }) =>
     api.post<AdminPlatformInviteDto>("/admin/invites", body),

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@app/ui/card";
 import { cn } from "@app/ui/lib/utils";
 import { dateLocale } from "@/i18n";
+import { useTenant } from "@/domains/tenant/tenant-provider";
 import { usageApi } from "./api";
 
 /** Amounts travel as micro-dollars (USD * 1_000_000). */
@@ -21,9 +22,10 @@ function formatDate(iso: string, lang: string): string {
 
 export function AiUsageCard() {
   const { t, i18n } = useTranslation();
+  const { tenant } = useTenant();
   const { data: usage } = useQuery({
-    queryKey: ["ai-usage"],
-    queryFn: usageApi.getAi,
+    queryKey: ["ai-usage", tenant.id],
+    queryFn: () => usageApi.getAi(tenant.id),
   });
 
   if (!usage) return null;

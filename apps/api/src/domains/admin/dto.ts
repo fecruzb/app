@@ -28,7 +28,15 @@ export function toAdminTenantDto(row: TenantWithMemberCount): AdminTenantDto {
     id: row.tenant.id,
     name: row.tenant.name,
     slug: row.tenant.slug,
+    planId: row.tenant.planId,
     memberCount: row.memberCount,
+    members: row.members.map((member) => ({
+      userId: member.userId,
+      name: member.name,
+      email: member.email,
+      role: member.role,
+      joinedAt: member.joinedAt.toISOString(),
+    })),
     createdAt: row.tenant.createdAt.toISOString(),
   };
 }

@@ -33,6 +33,8 @@
     "home": "Home",
     "tasks": "Tasks",
     "images": "Images",
+    "billing": "Billing",
+    "integrations": "Integrations",
     "settings": "Settings",
     "myAccount": "My account",
     "admin": "Admin",
@@ -134,7 +136,11 @@
     "newPassword": "New password",
     "changePassword": "Change password",
     "passwordChanged": "Password changed — other sessions were ended",
-    "changePasswordFailed": "Failed to change password",
+    "changePasswordFailed": "Failed to change password"
+  },
+  "integrations": {
+    "title": "Integrations",
+    "description": "Connect external tools to this workspace",
     "apiKeys": "API keys (MCP)",
     "apiKeysDescription": "Personal keys to reach the tenant over MCP from Cursor and other tools. Each key is scoped to one tenant.",
     "keyNamePlaceholder": "e.g. Cursor",
@@ -184,6 +190,50 @@
     "revokeInviteFailed": "Failed to revoke invite",
     "expires": "expires {{date}}"
   },
+  "billing": {
+    "title": "Plan & billing",
+    "pageDescription": "Seats, AI usage, and the plan for this workspace",
+    "overviewTitle": "Current plan",
+    "seatPrice": "{{price}} / seat / month",
+    "statSeats": "Seats",
+    "statAi": "AI this month",
+    "statResets": "Resets",
+    "resetsHint": "UTC calendar month",
+    "seatsUsed": "{{used}} / {{max}}",
+    "seatsUnlimited": "{{used}}",
+    "seatsDetail": "{{members}} members · {{invites}} pending invites",
+    "aiIncluded": "{{amount}} included per member",
+    "aiPassthrough": "Passthrough — no hard cap",
+    "noCap": "no cap",
+    "membersTitle": "Usage by member",
+    "membersDescription": "AI spend this month per seat (allowance {{limit}})",
+    "you": "(you)",
+    "of": "of {{limit}}",
+    "request_one": "{{count}} request",
+    "request_other": "{{count}} requests",
+    "changePlan": "Change plan",
+    "planLabel": "Plan",
+    "changePlanCta": "Upgrade",
+    "changePlanHint": "Self-serve upgrades aren't enabled yet. Only a platform admin can change plans — ready to wire to Stripe or any payment provider."
+  },
+  "plans": {
+    "free": {
+      "name": "Free",
+      "summary": "Solo workspace — no invites, $5 AI / month"
+    },
+    "starter": {
+      "name": "Starter",
+      "summary": "Owner + 2 invites · $5 / seat · $5 AI / member"
+    },
+    "pro": {
+      "name": "Pro",
+      "summary": "Up to 10 seats · $5 / seat · $5 AI / member"
+    },
+    "usage": {
+      "name": "Pay as you go",
+      "summary": "$10 / seat · AI usage passed through"
+    }
+  },
   "invite": {
     "title": "Invite",
     "loading": "Loading invite...",
@@ -209,8 +259,8 @@
   },
   "usage": {
     "title": "AI usage",
-    "budgetResets": "Monthly assistant budget — resets on {{date}}",
-    "noLimit": "Assistant usage this month — no budget limit is set",
+    "budgetResets": "Your AI allowance in this workspace — resets on {{date}}",
+    "noLimit": "AI usage in this workspace this month — no hard cap (passthrough)",
     "of": "of {{limit}}",
     "request_one": "{{count}} request",
     "request_other": "{{count}} requests",
@@ -286,9 +336,13 @@
       "description": "Every workspace on the platform",
       "members_one": "{{count}} member",
       "members_other": "{{count}} members",
+      "noMembers": "No members",
+      "empty": "No tenants yet",
       "edit": "Edit",
+      "editTitle": "Edit tenant",
       "name": "Name",
       "slug": "Slug",
+      "plan": "Plan",
       "slugHint": "Lowercase letters, numbers, and hyphens only (2–40 chars). Changing it updates app URLs.",
       "cancel": "Cancel",
       "updated": "Tenant updated",
@@ -296,8 +350,15 @@
     },
     "plans": {
       "title": "Plans",
-      "description": "Product plans and billing",
-      "empty": "Plans aren't modeled yet — this is a placeholder for when you add billing."
+      "description": "Product plans and billing entitlements",
+      "seats_one": "{{count}} seat",
+      "seats_other": "{{count}} seats",
+      "seatsUnlimited": "Unlimited seats",
+      "seatPrice": "{{price}} / seat / month",
+      "seatFree": "No seat charge",
+      "aiIncluded": "{{amount}} AI included per member / month",
+      "aiPassthrough": "AI usage passed through (no hard cap)",
+      "pspHint": "Ready to wire to Stripe or any payment provider — checkout only needs to set the tenant's planId."
     }
   },
   "join": {

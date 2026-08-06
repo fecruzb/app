@@ -43,7 +43,7 @@ export const generateImageTool = defineTool({
     const { tenantId, userId } = ctx;
 
     // -- Processing ------------------------------------------------------------
-    if (userId) await assertAiBudget(userId);
+    if (userId) await assertAiBudget(userId, tenantId);
 
     const { data, usage } = await generateImage({
       model: env.imageModel,

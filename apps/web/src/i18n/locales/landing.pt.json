@@ -96,7 +96,8 @@
       "DATABASE_URL e APP_URL são tudo o que você precisa — ambos já têm default local",
       "Sem RESEND_API_KEY? Os e-mails vão para o console em vez de serem enviados",
       "Sem OPENAI_API_KEY? O agente de IA simplesmente some — nada quebra",
-      "SELF_SIGNUP_ENABLED alterna o app entre cadastro aberto e só por convite"
+      "SELF_SIGNUP_ENABLED alterna o app entre cadastro aberto e só por convite",
+      "PLATFORM_ADMIN_EMAILS lista e-mails que são sempre platform admins depois de verificados"
     ]
   },
   "storage": {
@@ -269,18 +270,28 @@
     },
     "account": {
       "eyebrow": "Sua conta",
-      "title": "Perfil e segurança, já embutidos",
-      "body": "Todo usuário gerencia o próprio perfil e senha numa tela de conta dedicada — os mesmos padrões que você vai reusar para qualquer configuração pessoal que adicionar."
+      "title": "Perfil, segurança e onde ficam as keys",
+      "body": "Todo usuário gerencia o próprio perfil e senha em Minha conta. As API keys do MCP remoto ficam em Integrações — os mesmos padrões que você reusa para qualquer configuração pessoal."
     },
     "team": {
       "eyebrow": "Time e convites",
       "title": "Traga o resto do time",
-      "body": "Owners e admins convidam por e-mail e escolhem um papel; membros e convites pendentes vivem em settings, cada um revogável. O convite chega como um link de 7 dias na caixa de entrada."
+      "body": "Owners e admins convidam por e-mail e escolhem um papel; membros e convites pendentes vivem em settings, cada um revogável. O convite chega como um link de 7 dias. O limite de assentos do plano bloqueia convites quando o workspace está cheio."
+    },
+    "admin": {
+      "eyebrow": "Admin da plataforma",
+      "title": "Administre o produto inteiro em /admin",
+      "body": "Ortogonal aos roles de tenant: platform admins veem todas as contas e workspaces (com as pessoas listadas em cada tenant), convidam pessoas a se cadastrar no app (com o próprio workspace — não o seu), atribuem planos e bootstrapam acesso com PLATFORM_ADMIN_EMAILS."
+    },
+    "plans": {
+      "eyebrow": "Planos e billing",
+      "title": "Assentos e IA, prontos para o Stripe",
+      "body": "Quatro planos no código — Free, Starter, Pro e Pay as you go — com limite de assentos e IA por membro. O admin da plataforma atribui o plano; o tenant vê o uso em Billing. O checkout depois só precisa setar planId. Ligue Stripe ou qualquer meio de pagamento quando quiser."
     },
     "mcp": {
       "eyebrow": "Traga suas próprias tools",
       "title": "As mesmas tools, via MCP",
-      "body": "Gere uma API key com escopo de tenant e plogue o servidor MCP remoto no Cursor ou Claude — as tools do agente, direto no seu editor."
+      "body": "Gere uma API key com escopo de tenant em Integrações e plogue o servidor MCP remoto no Cursor ou Claude — as tools do agente, direto no seu editor."
     }
   },
   "db": {
@@ -297,10 +308,11 @@
     "tenancy": {
       "eyebrow": "Tenancy",
       "title": "Workspaces e quem faz parte",
-      "body": "Toda conta trabalha dentro de um tenant. tenant_members é a tabela de junção entre users e tenants com um role, e tenant_invites carrega convites pendentes por e-mail. Essa é a espinha dorsal que torna o app multi-tenant.",
+      "body": "Toda conta trabalha dentro de um tenant. tenant_members é a tabela de junção entre users e tenants com um role, e tenant_invites carrega convites pendentes por e-mail. plan_id no tenant escolhe assentos e limites de IA no catálogo em código — essa é a espinha dorsal que torna o app multi-tenant.",
       "points": [
         "tenant_members tem chave composta de (tenant_id, user_id)",
         "role é um enum — owner, admin, member — reforçado no nível de tipo",
+        "plan_id seleciona entitlements Free / Starter / Pro / usage (ainda sem Stripe)",
         "Convites expiram e carregam o role que a pessoa terá ao aceitar"
       ]
     }
@@ -355,6 +367,50 @@
       "bodyAfter": ". Este convite expira em 7 dias.",
       "cta": "Aceitar convite"
     },
+    "platformInviteEmail": {
+      "subject": "Você foi convidado(a) para o App Base",
+      "heading": "Você foi convidado(a) para o App Base",
+      "bodyBefore": "Ada Lovelace convidou você a criar uma conta e conhecer o app. Este convite expira em 7 dias.",
+      "cta": "Criar sua conta"
+    },
+    "admin": {
+      "brand": "Admin",
+      "subtitle": "Administração da plataforma",
+      "navPeople": "Pessoas",
+      "navInvites": "Convites",
+      "navTenants": "Tenants",
+      "navPlans": "Planos",
+      "peopleTitle": "Pessoas",
+      "peopleDescription": "Todas as contas da plataforma",
+      "platformAdmin": "admin da plataforma",
+      "verified": "verificado",
+      "makeAdmin": "Tornar admin",
+      "removeAdmin": "Remover admin",
+      "invitesTitle": "Convites",
+      "invitesDescription": "Convide pessoas para criar uma conta e conhecer o app",
+      "sendInvite": "Enviar convite",
+      "pending": "Convites pendentes",
+      "expires": "expira em 7 dias",
+      "tenantsTitle": "Tenants",
+      "tenantsDescription": "Cada workspace — pessoas, plano e edição no mesmo lugar",
+      "edit": "Editar",
+      "memberOne": "membro",
+      "memberOther": "membros"
+    },
+    "plans": {
+      "title": "Planos",
+      "description": "Catálogo no código — assentos e direitos de IA",
+      "freeName": "Free",
+      "freeDetail": "1 assento · sem convites · $5 de IA / mês",
+      "starterName": "Starter",
+      "starterDetail": "3 assentos · $5 / assento · $5 de IA / membro",
+      "proName": "Pro",
+      "proDetail": "10 assentos · $5 / assento · $5 de IA / membro",
+      "usageName": "Pay as you go",
+      "usageDetail": "$10 / assento · IA repassada",
+      "changePlan": "Mudar plano",
+      "pspHint": "Pronto para Stripe ou qualquer PSP — o checkout seta o planId"
+    },
     "invites": {
       "title": "Convites",
       "description": "Convide pessoas para este tenant por e-mail",
@@ -406,7 +462,7 @@
     },
     "mcp": {
       "title": "API keys (MCP)",
-      "description": "Acesse o tenant via MCP pelo Cursor",
+      "description": "Integrações — acesse o tenant via MCP pelo Cursor",
       "create": "Criar key",
       "copyNow": "Copie sua key agora — ela não será mostrada de novo"
     },

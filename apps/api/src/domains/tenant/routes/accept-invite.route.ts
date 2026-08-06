@@ -11,6 +11,7 @@ import {
   SESSION_COOKIE,
   setSessionCookie,
 } from "@/domains/auth/service";
+import { assertSeatAvailableForAccept } from "@/domains/billing/service";
 import { tenantRepository } from "../repository";
 
 /**
@@ -48,6 +49,7 @@ export async function acceptInvite(c: AppContext) {
     }
     const existing = await tenantRepository.findMember(tenant.id, sessionUser.id);
     if (!existing) {
+      await assertSeatAvailableForAccept(tenant.id);
       await tenantRepository.insertMember({
         tenantId: tenant.id,
         userId: sessionUser.id,
@@ -61,6 +63,7 @@ export async function acceptInvite(c: AppContext) {
     }
 
     const data = await parseBody(c, acceptInviteNewAccountSchema);
+    await assertSeatAvailableForAccept(tenant.id);
     const user = await authRepository.insertUser({
       name: data.name,
       email: invite.email,

@@ -18,7 +18,13 @@ export function setLocale(locale: Locale) {
 }
 
 /** Dropdown that switches the UI language (EN / PT). */
-export function LocalePicker({ className }: { className?: string }) {
+export function LocalePicker({
+  className,
+  side = "bottom",
+}: {
+  className?: string;
+  side?: "top" | "bottom";
+}) {
   const { t, i18n: i18nInstance } = useTranslation();
   const current = (
     LOCALES.includes(i18nInstance.language as Locale)
@@ -40,7 +46,7 @@ export function LocalePicker({ className }: { className?: string }) {
           <LanguagesIcon />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-44">
+      <DropdownMenuContent align="center" side={side} avoidCollisions={false} className="w-44">
         <DropdownMenuLabel>{t("theme.language")}</DropdownMenuLabel>
         {LOCALES.map((locale) => (
           <DropdownMenuItem key={locale} onSelect={() => setLocale(locale)}>

@@ -32,8 +32,6 @@ services:
         value: gpt-4o-mini-transcribe
       - key: IMAGE_MODEL
         value: gpt-image-1-mini
-      - key: AI_MONTHLY_BUDGET_USD
-        value: "10"
       - key: SELF_SIGNUP_ENABLED
         value: "true"
       # Comma-separated emails always treated as platform admins once verified

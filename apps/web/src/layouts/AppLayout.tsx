@@ -6,10 +6,12 @@ import {
   CheckIcon,
   CheckSquareIcon,
   ChevronsUpDownIcon,
+  CreditCardIcon,
   HomeIcon,
   ImageIcon,
   LogOutIcon,
   MailWarningIcon,
+  PlugIcon,
   SettingsIcon,
   ShieldIcon,
   UserIcon,
@@ -95,9 +97,15 @@ function UserMenu() {
           </span>
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="start" side="top">
+      <DropdownMenuContent className="w-56" align="center" side="top">
         <DropdownMenuItem onSelect={() => navigate(`/app/${tenant.slug}/account`)}>
           <UserIcon /> {t("nav.myAccount")}
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => navigate(`/app/${tenant.slug}/billing`)}>
+          <CreditCardIcon /> {t("nav.billing")}
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => navigate(`/app/${tenant.slug}/integrations`)}>
+          <PlugIcon /> {t("nav.integrations")}
         </DropdownMenuItem>
         {me.user.isPlatformAdmin && (
           <DropdownMenuItem onSelect={() => navigate("/admin")}>
@@ -169,17 +177,16 @@ function Shell() {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col md:flex-row">
-      <aside className="flex flex-col gap-4 border-b p-4 md:min-h-screen md:w-64 md:border-b-0 md:border-r">
-        <div className="flex items-center justify-between px-2">
+    <div className="flex h-svh flex-col overflow-hidden md:flex-row">
+      <aside className="flex shrink-0 flex-col gap-4 border-b p-4 md:h-full md:w-64 md:border-b-0 md:border-r md:py-8">
+        <div className="px-2">
           <Link to="/" className="flex items-center gap-2 font-semibold">
-            <BoxIcon className="size-5 text-primary" />
-            {t("brand")}
+            <BoxIcon className="size-5 shrink-0 text-primary" />
+            <span className="truncate">{t("brand")}</span>
           </Link>
-          <ThemeControls />
         </div>
         <TenantSwitcher />
-        <nav className="flex gap-1 md:flex-1 md:flex-col">
+        <nav className="flex gap-1 overflow-x-auto md:min-h-0 md:flex-1 md:flex-col md:overflow-y-auto">
           {items.map((item) => (
             <NavLink
               key={item.to}
@@ -203,10 +210,13 @@ function Shell() {
             </NavLink>
           ))}
         </nav>
-        <UserMenu />
+        <div className="mt-auto flex shrink-0 flex-col gap-2">
+          <ThemeControls className="w-full px-1" menuSide="top" menuAlign="bar" />
+          <UserMenu />
+        </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
         <VerifyEmailBanner />
         <main className="mx-auto w-full max-w-4xl flex-1 p-4 md:p-8">
           <Outlet />

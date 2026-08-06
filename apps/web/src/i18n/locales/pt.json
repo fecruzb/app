@@ -33,6 +33,8 @@
     "home": "Início",
     "tasks": "Tarefas",
     "images": "Imagens",
+    "billing": "Billing",
+    "integrations": "Integrações",
     "settings": "Configurações",
     "myAccount": "Minha conta",
     "admin": "Admin",
@@ -134,7 +136,11 @@
     "newPassword": "Nova senha",
     "changePassword": "Alterar senha",
     "passwordChanged": "Senha alterada — as outras sessões foram encerradas",
-    "changePasswordFailed": "Falha ao alterar senha",
+    "changePasswordFailed": "Falha ao alterar senha"
+  },
+  "integrations": {
+    "title": "Integrações",
+    "description": "Conecte ferramentas externas a este workspace",
     "apiKeys": "Chaves de API (MCP)",
     "apiKeysDescription": "Chaves pessoais para acessar o tenant via MCP no Cursor e em outras ferramentas. Cada chave é vinculada a um tenant.",
     "keyNamePlaceholder": "ex.: Cursor",
@@ -184,6 +190,50 @@
     "revokeInviteFailed": "Falha ao revogar convite",
     "expires": "expira em {{date}}"
   },
+  "billing": {
+    "title": "Plano e billing",
+    "pageDescription": "Assentos, uso de IA e o plano deste workspace",
+    "overviewTitle": "Plano atual",
+    "seatPrice": "{{price}} / assento / mês",
+    "statSeats": "Assentos",
+    "statAi": "IA este mês",
+    "statResets": "Reinicia",
+    "resetsHint": "Mês calendário UTC",
+    "seatsUsed": "{{used}} / {{max}}",
+    "seatsUnlimited": "{{used}}",
+    "seatsDetail": "{{members}} membros · {{invites}} convites pendentes",
+    "aiIncluded": "{{amount}} incluída por membro",
+    "aiPassthrough": "Repasse — sem teto rígido",
+    "noCap": "sem teto",
+    "membersTitle": "Uso por membro",
+    "membersDescription": "Gasto de IA este mês por assento (cota {{limit}})",
+    "you": "(você)",
+    "of": "de {{limit}}",
+    "request_one": "{{count}} requisição",
+    "request_other": "{{count}} requisições",
+    "changePlan": "Mudar plano",
+    "planLabel": "Plano",
+    "changePlanCta": "Upgrade",
+    "changePlanHint": "Upgrade pelo app ainda não está habilitado. Só um admin da plataforma pode mudar o plano — pronto para ligar no Stripe ou qualquer meio de pagamento."
+  },
+  "plans": {
+    "free": {
+      "name": "Free",
+      "summary": "Workspace solo — sem convites, $5 de IA / mês"
+    },
+    "starter": {
+      "name": "Starter",
+      "summary": "Owner + 2 convites · $5 / assento · $5 de IA / membro"
+    },
+    "pro": {
+      "name": "Pro",
+      "summary": "Até 10 assentos · $5 / assento · $5 de IA / membro"
+    },
+    "usage": {
+      "name": "Pay as you go",
+      "summary": "$10 / assento · IA repassada"
+    }
+  },
   "invite": {
     "title": "Convite",
     "loading": "Carregando convite...",
@@ -209,8 +259,8 @@
   },
   "usage": {
     "title": "Uso de IA",
-    "budgetResets": "Orçamento mensal do assistente — reinicia em {{date}}",
-    "noLimit": "Uso do assistente neste mês — sem limite de orçamento",
+    "budgetResets": "Sua cota de IA neste workspace — reinicia em {{date}}",
+    "noLimit": "Uso de IA neste workspace este mês — sem teto rígido (passthrough)",
     "of": "de {{limit}}",
     "request_one": "{{count}} requisição",
     "request_other": "{{count}} requisições",
@@ -286,9 +336,13 @@
       "description": "Todos os workspaces da plataforma",
       "members_one": "{{count}} membro",
       "members_other": "{{count}} membros",
+      "noMembers": "Nenhum membro",
+      "empty": "Nenhum tenant ainda",
       "edit": "Editar",
+      "editTitle": "Editar tenant",
       "name": "Nome",
       "slug": "Slug",
+      "plan": "Plano",
       "slugHint": "Só letras minúsculas, números e hífens (2–40 caracteres). Alterar muda as URLs do app.",
       "cancel": "Cancelar",
       "updated": "Tenant atualizado",
@@ -296,8 +350,15 @@
     },
     "plans": {
       "title": "Planos",
-      "description": "Planos e cobrança do produto",
-      "empty": "Planos ainda não estão modelados — este é um placeholder para quando você adicionar billing."
+      "description": "Planos e direitos de cobrança do produto",
+      "seats_one": "{{count}} assento",
+      "seats_other": "{{count}} assentos",
+      "seatsUnlimited": "Assentos ilimitados",
+      "seatPrice": "{{price}} / assento / mês",
+      "seatFree": "Sem cobrança por assento",
+      "aiIncluded": "{{amount}} de IA incluída por membro / mês",
+      "aiPassthrough": "Uso de IA repassado (sem teto rígido)",
+      "pspHint": "Pronto para ligar no Stripe ou qualquer meio de pagamento — o checkout só precisa definir o planId do tenant."
     }
   },
   "join": {

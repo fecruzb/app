@@ -96,7 +96,8 @@
       "DATABASE_URL and APP_URL are all you need — both default for local dev",
       "No RESEND_API_KEY? Emails print to the console instead of sending",
       "No OPENAI_API_KEY? The AI agent is simply hidden — nothing breaks",
-      "SELF_SIGNUP_ENABLED flips the app between open signup and invite-only"
+      "SELF_SIGNUP_ENABLED flips the app between open signup and invite-only",
+      "PLATFORM_ADMIN_EMAILS lists emails that are always platform admins once verified"
     ]
   },
   "storage": {
@@ -269,18 +270,28 @@
     },
     "account": {
       "eyebrow": "Your account",
-      "title": "Profile and security, built in",
-      "body": "Every user manages their own profile and password from a dedicated account screen — the same patterns you'll reuse for any personal settings you add."
+      "title": "Profile, security, and where keys live",
+      "body": "Every user manages their own profile and password from My account. API keys for the remote MCP server live under Integrations — same patterns you'll reuse for any personal settings you add."
     },
     "team": {
       "eyebrow": "Team & invites",
       "title": "Bring the rest of the team",
-      "body": "Owners and admins invite by email and pick a role; members and pending invites live in settings, each revocable. The invite lands as a 7-day link in their inbox."
+      "body": "Owners and admins invite by email and pick a role; members and pending invites live in settings, each revocable. The invite lands as a 7-day link in their inbox. Seat caps from the tenant plan block invites when the workspace is full."
+    },
+    "admin": {
+      "eyebrow": "Platform admin",
+      "title": "Run the whole product from /admin",
+      "body": "Orthogonal to tenant roles: platform admins see every account and workspace (with members listed on each tenant), invite people to sign up for the app (their own workspace — not yours), assign plans, and bootstrap access with PLATFORM_ADMIN_EMAILS."
+    },
+    "plans": {
+      "eyebrow": "Plans & billing",
+      "title": "Seats and AI entitlements, ready for Stripe",
+      "body": "Four plans in code — Free, Starter, Pro, and Pay as you go — with seat caps and per-member AI allowances. Platform admin assigns the plan; tenants see usage under Billing. Checkout later only needs to set planId. Wire Stripe or any payment provider when you're ready."
     },
     "mcp": {
       "eyebrow": "Bring your own tools",
       "title": "The same tools, over MCP",
-      "body": "Mint a tenant-scoped API key and plug the remote MCP server into Cursor or Claude — the agent's tools, right in your editor."
+      "body": "Mint a tenant-scoped API key under Integrations and plug the remote MCP server into Cursor or Claude — the agent's tools, right in your editor."
     }
   },
   "db": {
@@ -297,10 +308,11 @@
     "tenancy": {
       "eyebrow": "Tenancy",
       "title": "Workspaces and who belongs to them",
-      "body": "Every account works inside a tenant. tenant_members is the join table between users and tenants with a role, and tenant_invites carries pending invitations by email. This is the backbone that makes the whole app multi-tenant.",
+      "body": "Every account works inside a tenant. tenant_members is the join table between users and tenants with a role, and tenant_invites carries pending invitations by email. plan_id on the tenant picks seats and AI limits from the code catalog — this is the backbone that makes the whole app multi-tenant.",
       "points": [
         "tenant_members has a composite key of (tenant_id, user_id)",
         "role is an enum — owner, admin, member — enforced at the type level",
+        "plan_id selects Free / Starter / Pro / usage entitlements (no Stripe required yet)",
         "Invites expire and carry the role the person will get on accept"
       ]
     }
@@ -355,6 +367,50 @@
       "bodyAfter": ". This invite expires in 7 days.",
       "cta": "Accept invite"
     },
+    "platformInviteEmail": {
+      "subject": "You're invited to App Base",
+      "heading": "You're invited to App Base",
+      "bodyBefore": "Ada Lovelace invited you to create an account and try the app. This invite expires in 7 days.",
+      "cta": "Create your account"
+    },
+    "admin": {
+      "brand": "Admin",
+      "subtitle": "Platform administration",
+      "navPeople": "People",
+      "navInvites": "Invites",
+      "navTenants": "Tenants",
+      "navPlans": "Plans",
+      "peopleTitle": "People",
+      "peopleDescription": "Every account on the platform",
+      "platformAdmin": "platform admin",
+      "verified": "verified",
+      "makeAdmin": "Make admin",
+      "removeAdmin": "Remove admin",
+      "invitesTitle": "Invites",
+      "invitesDescription": "Invite people to create an account and try the app",
+      "sendInvite": "Send invite",
+      "pending": "Pending invites",
+      "expires": "expires in 7 days",
+      "tenantsTitle": "Tenants",
+      "tenantsDescription": "Every workspace — people, plan, and edit in one place",
+      "edit": "Edit",
+      "memberOne": "member",
+      "memberOther": "members"
+    },
+    "plans": {
+      "title": "Plans",
+      "description": "Catalog in code — seats and AI entitlements",
+      "freeName": "Free",
+      "freeDetail": "1 seat · no invites · $5 AI / month",
+      "starterName": "Starter",
+      "starterDetail": "3 seats · $5 / seat · $5 AI / member",
+      "proName": "Pro",
+      "proDetail": "10 seats · $5 / seat · $5 AI / member",
+      "usageName": "Pay as you go",
+      "usageDetail": "$10 / seat · AI passthrough",
+      "changePlan": "Change plan",
+      "pspHint": "Ready for Stripe or any PSP — checkout sets planId"
+    },
     "invites": {
       "title": "Invites",
       "description": "Invite people to this tenant by email",
@@ -406,7 +462,7 @@
     },
     "mcp": {
       "title": "API keys (MCP)",
-      "description": "Reach the tenant over MCP from Cursor",
+      "description": "Integrations — reach the tenant over MCP from Cursor",
       "create": "Create key",
       "copyNow": "Copy your key now — it won't be shown again"
     },

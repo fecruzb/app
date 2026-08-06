@@ -1,34 +1,48 @@
 /**
  * Usage repository
  *
- * Owns every SQL touch of AI usage events. Spend is scoped per user (global,
- * across tenants). Queries are written inline.
+ * Owns every SQL touch of AI usage events. Product gates use per-user spend
+ * inside a tenant; events still record both ids for audit.
  */
 import { and, eq, gte, sql } from "drizzle-orm";
 import { db } from "@/db/client";
 import { aiUsageEvents } from "./schema";
 
-/** Aggregated spend and request count for a user. */
+/** Aggregated spend and request count. */
 export type UsageTotals = { costMicros: number; requestCount: number };
+
+/** Per-user totals inside a tenant. */
+export type UserUsageTotals = UsageTotals & { userId: string };
 
 export const usageRepository = {
   /**
-   * Sum user spend since a date
+   * Sum user spend in a tenant since a date
    *
-   * Aggregated totals served by the (user, created_at) index.
+   * Used for per-seat AI entitlements.
    *
    * @param userId - User id
+   * @param tenantId - Tenant id
    * @param since - Inclusive lower bound on created_at
    * @returns Total cost in micros and request count
    */
-  async sumUserSpendSince(userId: string, since: Date): Promise<UsageTotals> {
+  async sumUserTenantSpendSince(
+    userId: string,
+    tenantId: string,
+    since: Date,
+  ): Promise<UsageTotals> {
     const [row] = await db
       .select({
         costMicros: sql<string>`coalesce(sum(${aiUsageEvents.costMicros}), 0)`,
         requestCount: sql<string>`count(*)`,
       })
       .from(aiUsageEvents)
-      .where(and(eq(aiUsageEvents.userId, userId), gte(aiUsageEvents.createdAt, since)));
+      .where(
+        and(
+          eq(aiUsageEvents.userId, userId),
+          eq(aiUsageEvents.tenantId, tenantId),
+          gte(aiUsageEvents.createdAt, since),
+        ),
+      );
 
     return {
       costMicros: Number(row?.costMicros ?? 0),
@@ -37,19 +51,63 @@ export const usageRepository = {
   },
 
   /**
+   * Sum tenant spend since a date
+   *
+   * Workspace rollup for billing UI.
+   *
+   * @param tenantId - Tenant id
+   * @param since - Inclusive lower bound on created_at
+   * @returns Total cost in micros and request count
+   */
+  async sumTenantSpendSince(tenantId: string, since: Date): Promise<UsageTotals> {
+    const [row] = await db
+      .select({
+        costMicros: sql<string>`coalesce(sum(${aiUsageEvents.costMicros}), 0)`,
+        requestCount: sql<string>`count(*)`,
+      })
+      .from(aiUsageEvents)
+      .where(and(eq(aiUsageEvents.tenantId, tenantId), gte(aiUsageEvents.createdAt, since)));
+
+    return {
+      costMicros: Number(row?.costMicros ?? 0),
+      requestCount: Number(row?.requestCount ?? 0),
+    };
+  },
+
+  /**
+   * Sum spend per user in a tenant since a date
+   *
+   * Only users with at least one usage event appear. Join with members in the
+   * service to include seats with zero spend.
+   *
+   * @param tenantId - Tenant id
+   * @param since - Inclusive lower bound on created_at
+   * @returns Per-user totals
+   */
+  async sumSpendByUserSince(tenantId: string, since: Date): Promise<UserUsageTotals[]> {
+    const rows = await db
+      .select({
+        userId: aiUsageEvents.userId,
+        costMicros: sql<string>`coalesce(sum(${aiUsageEvents.costMicros}), 0)`,
+        requestCount: sql<string>`count(*)`,
+      })
+      .from(aiUsageEvents)
+      .where(and(eq(aiUsageEvents.tenantId, tenantId), gte(aiUsageEvents.createdAt, since)))
+      .groupBy(aiUsageEvents.userId);
+
+    return rows.map((row) => ({
+      userId: row.userId,
+      costMicros: Number(row.costMicros ?? 0),
+      requestCount: Number(row.requestCount ?? 0),
+    }));
+  },
+
+  /**
    * Insert a usage event
    *
    * Append-only; no row returned.
    *
    * @param values - New usage event fields
-   * @param values.userId - User who incurred the spend
-   * @param values.tenantId - Tenant context, or null
-   * @param values.model - Model id
-   * @param values.inputTokens - Input token count
-   * @param values.cachedInputTokens - Cached input token count
-   * @param values.outputTokens - Output token count
-   * @param values.rounds - Agent round count
-   * @param values.costMicros - Cost in micros
    */
   async insert(values: {
     userId: string;

@@ -10,7 +10,7 @@ import { adminRepository } from "../repository";
  *
  * `PATCH /api/admin/tenants/:tenantId`
  *
- * Updates name and/or slug from the platform admin area.
+ * Updates name, slug, and/or plan from the platform admin area.
  *
  * @param c - Platform admin request context
  * @returns 200 with the updated admin tenant DTO
@@ -29,9 +29,10 @@ export async function updateTenant(c: AppContext) {
     if (taken) throw new HttpError(409, "Slug already in use");
   }
 
-  const patch: { name?: string; slug?: string } = {};
+  const patch: { name?: string; slug?: string; planId?: typeof data.planId } = {};
   if (data.name !== undefined) patch.name = data.name;
   if (data.slug !== undefined) patch.slug = data.slug;
+  if (data.planId !== undefined) patch.planId = data.planId;
 
   const tenant = await adminRepository.updateTenant(tenantId, patch);
   if (!tenant) throw new HttpError(404, "Tenant not found");

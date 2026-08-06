@@ -28,7 +28,7 @@ export async function chat(c: AppContext) {
   const role = c.get("membership").role;
 
   // -- Processing ------------------------------------------------------------
-  await assertAiBudget(user.id);
+  await assertAiBudget(user.id, tenant.id);
 
   const { usage, ...result } = await runAssistant(
     {
