@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {
   ArrowRightIcon,
   BoxIcon,
+  CheckIcon,
   KeyRoundIcon,
   LayersIcon,
   MailIcon,
@@ -66,7 +67,10 @@ type Showcase = {
   id: string;
   eyebrow: string;
   title: string;
-  body: string;
+  /** One or more paragraphs of narrative copy. */
+  body: string[];
+  /** Concrete technical points shown below the copy. */
+  highlights: string[];
   filename: string;
   code: string;
   lang?: "ts" | "json" | "text";
@@ -74,10 +78,84 @@ type Showcase = {
 
 const showcases: Showcase[] = [
   {
+    id: "auth",
+    eyebrow: "Authentication",
+    title: "Sessions you own, end to end",
+    body: [
+      "Instead of leaning on an auth SaaS, the base implements the whole thing in a few small files. Sign-up creates a user with a scrypt-hashed password; login mints an opaque token, stores its hash in the database and sets it in an httpOnly cookie. There's no JWT to leak and nothing to revoke remotely — deleting the row logs the session out.",
+      "The same service issues short-lived action tokens for email verification and password reset, each hashed at rest with its own TTL. A single requireAuth middleware turns the cookie back into a typed user for every protected route.",
+    ],
+    highlights: [
+      "Opaque session token, only its hash stored (30-day TTL)",
+      "httpOnly + SameSite=Lax cookie, secure in production",
+      "Action tokens for verify/reset, hashed with per-purpose expiry",
+      "requireAuth injects the user into the typed context",
+    ],
+    filename: "domains/auth/service.ts",
+    code: `export const SESSION_COOKIE = "app_session";
+export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+export async function createSession(userId: string): Promise<string> {
+  const token = generateToken();
+  await authRepository.insertSession({
+    tokenHash: hashToken(token),
+    userId,
+    expiresAt: new Date(Date.now() + SESSION_TTL_MS),
+  });
+  return token;
+}
+
+export function setSessionCookie(c: Context, token: string): void {
+  setCookie(c, SESSION_COOKIE, token, {
+    path: "/",
+    httpOnly: true,
+    sameSite: "Lax",
+    secure: env.isProduction,
+    maxAge: SESSION_TTL_MS / 1000,
+  });
+}`,
+  },
+  {
+    id: "tenant",
+    eyebrow: "Multi-tenancy",
+    title: "Isolation that starts at the middleware",
+    body: [
+      "Every tenant-scoped route sits behind requireTenant. It reads the :tenantId from the URL, confirms the logged-in user is actually a member, and puts the resolved tenant and membership on the context. Handlers then read c.get(\"tenant\").id — never a tenant id from the request body — so there's no path for one tenant to touch another's data.",
+      "Roles ride along the same way: requireManager checks the membership already loaded, so an authorization rule is one middleware in the route definition, not a check scattered across handlers.",
+    ],
+    highlights: [
+      "Membership verified before any handler runs",
+      "tenant_id always comes from the context, never the body",
+      "Roles (owner/admin/member) enforced by requireManager",
+      "A personal tenant is created for every new user",
+    ],
+    filename: "domains/tenant/middleware.ts",
+    code: `export const requireTenant = createMiddleware<AppEnv>(async (c, next) => {
+  const tenantId = c.req.param("tenantId");
+  if (!tenantId || !UUID_RE.test(tenantId)) throw new HttpError(404, "Tenant not found");
+
+  const row = await tenantRepository.findTenantWithMembership(tenantId, c.get("user").id);
+  if (!row) throw new HttpError(404, "Tenant not found");
+
+  c.set("tenant", row.tenant);
+  c.set("membership", row.membership);
+  await next();
+});`,
+  },
+  {
     id: "agent",
     eyebrow: "The AI agent",
     title: "Give the agent a new skill in one file",
-    body: "Tools live inside their domain and are transport-neutral — the same definition is exposed over MCP and driven by the OpenAI loop. Return JSON, throw on errors; the chat UI and the model adapt at the edges. Add a file, restart, and the assistant can use it.",
+    body: [
+      "The floating assistant doesn't just chat — it calls tools that read and write real tenant data. Each tool lives inside its domain and declares a name, a Zod input schema and an execute function. The contract is transport-neutral: it returns plain JSON and throws on expected failures.",
+      "That one definition is exposed two ways without extra code — over the Model Context Protocol and through the OpenAI tool-calling loop. A summarize field marks a tool as a write, which the chat renders as an action chip and uses to refresh the screen afterward. Drop a file in tools/, and the agent can use it.",
+    ],
+    highlights: [
+      "One file per tool, co-located with its domain",
+      "Same definition drives both MCP and the OpenAI loop",
+      "Zod input schema validates the model's arguments",
+      "summarize marks writes; reads omit it",
+    ],
     filename: "domains/note/tools/create-note.tool.ts",
     code: `export const createNoteTool = defineTool({
   name: "create_note",
@@ -99,10 +177,50 @@ const showcases: Showcase[] = [
 });`,
   },
   {
+    id: "email",
+    eyebrow: "Transactional email",
+    title: "One function, safe in every environment",
+    body: [
+      "Domains never talk to an email provider directly — they call sendEmail with a subject and HTML. The Resend integration is the only place that knows the API, so swapping providers is a single file change.",
+      "Without a RESEND_API_KEY, sendEmail logs the whole message to the console instead of sending it, so local development never risks a real inbox and you can still click the verification link from the terminal. Sends are fire-and-forget, so the HTTP response never waits on the provider.",
+    ],
+    highlights: [
+      "Verification, password reset and tenant invites included",
+      "Provider isolated — domains only call sendEmail",
+      "No API key? It logs to the console instead of sending",
+      "Fire-and-forget so requests don't block on email",
+    ],
+    filename: "integrations/resend.ts",
+    code: `export async function sendEmail({ to, subject, html }: EmailPayload): Promise<void> {
+  if (!env.resendApiKey) {
+    logger.info(\`\\n[email] (dev, not sent) to: \${to}\\n[email] subject: \${subject}\\n\${html}\\n\`);
+    return;
+  }
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: \`Bearer \${env.resendApiKey}\`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ from: env.mailFrom, to, subject, html }),
+  });
+  // ...log the resend id or the failure
+}`,
+  },
+  {
     id: "structure",
     eyebrow: "The structure",
     title: "A place for everything, enforced by lint",
-    body: "Features live in domains/. Pure helpers in lib/, external services in integrations/, the agent surface in agent/. The frontend mirrors it. These aren't just conventions — oxlint rules stop lib/ from importing a domain, or a domain from importing OpenAI directly.",
+    body: [
+      "Features live in domains/, pure helpers in lib/, external services in integrations/, and the agent surface in agent/. The frontend mirrors the same shape. Files are named by role — create-note.endpoint.ts, create-note.tool.ts — so you can guess a path before opening the folder.",
+      "These aren't just conventions in a README. oxlint's no-restricted-imports rules make the boundaries real: lib/ can't import a domain, a domain can't reach into the agent's internals or import OpenAI directly. The architecture can't quietly rot as the app grows.",
+    ],
+    highlights: [
+      "domains/ · lib/ · integrations/ · agent/ — one job each",
+      "Files named by role: *.endpoint.ts, *.tool.ts",
+      "Frontend mirrors the API, domain for domain",
+      "Import boundaries fail the lint, not just code review",
+    ],
     filename: "apps/",
     lang: "text",
     code: `apps/
@@ -119,27 +237,19 @@ const showcases: Showcase[] = [
     └── domains/{auth,tenant,note,marketing}/`,
   },
   {
-    id: "endpoint",
-    eyebrow: "The API",
-    title: "Endpoints stay boring on purpose",
-    body: "One handler per file. Body validated by a shared Zod schema, tenant and user already resolved by middleware and read from the typed context, data mapped to a DTO before it leaves. No controllers, no decorators — just a typed function.",
-    filename: "domains/note/endpoints/create-note.endpoint.ts",
-    code: `export async function createNote(c: AppContext) {
-  const data = await parseBody(c, noteInputSchema);
-  const note = await noteRepository.insert({
-    tenantId: c.get("tenant").id,
-    authorId: c.get("user").id,
-    title: data.title,
-    content: data.content,
-  });
-  return c.json(toNoteDto({ note, authorName: c.get("user").name }), 201);
-}`,
-  },
-  {
     id: "deploy",
     eyebrow: "The deploy",
     title: "Commit the Blueprint, push, done",
-    body: "The whole app is one Render web service plus a Postgres database, described in render.yaml. Migrations run on pre-deploy, health checks are wired, and secrets stay out of the repo. Point it at your repo and the first deploy just works.",
+    body: [
+      "The whole app ships as one Render web service plus a Postgres database, both described in render.yaml. In production the API serves the built SPA from the same origin, so cookies stay simple and there's no CORS to configure.",
+      "Migrations run automatically as a pre-deploy step, a health check tells Render when the service is live, and secrets are marked sync: false so they never live in the repo. Point Render at your fork and the first deploy just works.",
+    ],
+    highlights: [
+      "Single web service — API and SPA on one origin",
+      "Migrations run on pre-deploy, not by hand",
+      "Health check at /api/health for zero-downtime deploys",
+      "Secrets kept out of the repo with sync: false",
+    ],
     filename: "render.yaml",
     lang: "text",
     code: `services:
@@ -307,16 +417,28 @@ export function LandingPage() {
 function ShowcaseSection({ showcase, flip }: { showcase: Showcase; flip: boolean }) {
   return (
     <section className="px-4 py-16 sm:py-20">
-      <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
+      <div className="mx-auto grid max-w-5xl items-start gap-10 lg:grid-cols-2 lg:gap-14">
         <div className={`reveal ${flip ? "lg:order-2" : ""}`}>
           <p className="text-sm font-medium text-muted-foreground">{showcase.eyebrow}</p>
           <h3 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
             {showcase.title}
           </h3>
-          <p className="mt-4 text-pretty text-muted-foreground">{showcase.body}</p>
+          <div className="mt-4 space-y-3 text-pretty text-muted-foreground">
+            {showcase.body.map((paragraph) => (
+              <p key={paragraph.slice(0, 24)}>{paragraph}</p>
+            ))}
+          </div>
+          <ul className="mt-6 space-y-2.5 text-sm">
+            {showcase.highlights.map((highlight) => (
+              <li key={highlight} className="flex gap-2.5">
+                <CheckIcon className="mt-0.5 size-4 shrink-0 text-primary" />
+                <span>{highlight}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <div className={`reveal reveal-delay ${flip ? "lg:order-1" : ""}`}>
+        <div className={`reveal reveal-delay lg:sticky lg:top-24 ${flip ? "lg:order-1" : ""}`}>
           <CodeBlock filename={showcase.filename} code={showcase.code} lang={showcase.lang} />
         </div>
       </div>
