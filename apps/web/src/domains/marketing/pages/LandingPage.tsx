@@ -70,17 +70,8 @@ const repositoryOutlineFile = `// domains/task/repository.ts — one object, fix
 export const taskRepository = {
   async list(tenantId: string): Promise<TaskWithAuthor[]> { /* … */ },
   async find(tenantId: string, id: string): Promise<TaskWithAuthor | null> { /* … */ },
-  async insert(values: {
-    tenantId: string;
-    authorId: string | null;
-    title: string;
-    completed: boolean;
-  }): Promise<Task> { /* … */ },
-  async update(
-    tenantId: string,
-    id: string,
-    values: { title?: string; completed?: boolean },
-  ): Promise<Task | null> { /* … */ },
+  async insert(values: InsertTask): Promise<Task> { /* … */ },
+  async update(tenantId: string, id: string, values: UpdateTask): Promise<Task | null> { /* … */ },
   async delete(tenantId: string, id: string): Promise<boolean> { /* … */ },
 };`;
 
@@ -397,11 +388,7 @@ function buildResourceSlices(t: TFunction): Slice[] {
       id: "repository",
       ...sliceCopy("repository", t),
       visual: (
-        <CodeBlock
-          filename="domains/task/repository.ts"
-          code={repositoryOutlineFile}
-          lang="ts"
-        />
+        <CodeBlock filename="domains/task/repository.ts" code={repositoryOutlineFile} lang="ts" />
       ),
     },
     {
