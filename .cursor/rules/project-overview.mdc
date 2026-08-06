@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Project overview
 
-app-base is a multi-tenant SaaS **template** meant to become a new product: users, full auth (opaque DB session + httpOnly cookie), tenants with members/invites, transactional email, an AI agent (in-app chat + MCP over stdio and HTTP), a public landing page and a one-service deploy on Render (the API serves the built SPA — one origin, simple cookies). The `task` domain is the placeholder resource you copy or replace.
+app-base is a multi-tenant SaaS **template** meant to become a new product: users, full auth (opaque DB session + httpOnly cookie), tenants with members/invites, transactional email, an AI agent (in-app chat + MCP over stdio and HTTP), a platform admin area (`users.isPlatformAdmin` / `PLATFORM_ADMIN_EMAILS` → `/admin`), a public landing page and a one-service deploy on Render (the API serves the built SPA — one origin, simple cookies). The `task` domain is the placeholder resource you copy or replace.
 
 Monorepo (npm workspaces + Turborepo):
 
@@ -22,7 +22,7 @@ To add a feature/resource end to end, follow the checklist in the `add-feature` 
 
 ## Invariants — never break these
 
-- **Tenant isolation**: every resource query filters by `tenantId`. The tenant comes from middleware context (`requireAuth`/`requireTenant`), never from user input
+- **Tenant isolation**: every resource query filters by `tenantId`. The tenant comes from middleware context (`requireAuth`/`requireTenant`), never from user input. Cross-tenant platform admin queries live only under `/api/admin` gated by `requirePlatformAdmin` — never as a bypass of tenant routes
 - **Contracts live in `packages/shared`**: request schemas and DTO types are imported by both API and web — never duplicated on either side
 - **Layer boundaries are lint-enforced** (`.oxlintrc.json`): `lib/` imports nothing from the app, `integrations/` only uses `lib/`, domains only know `@/agent/tool` and never import MCP/OpenAI
 - **Migrations are generated** from the Drizzle schema (`npm run db:generate`), never hand-written

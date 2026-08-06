@@ -5,13 +5,19 @@ import { tasks } from "@/domains/task/schema";
 import { createTenantWithOwner } from "@/domains/tenant/service";
 
 // Idempotent seed with a demo user for development.
-// Login: demo@example.com / demo1234
+// Login: demo@example.com / demo1234 (platform admin)
 
 const DEMO_EMAIL = "demo@example.com";
 
 async function seed() {
-  if (await authRepository.findUserByEmail(DEMO_EMAIL)) {
-    console.log("[seed] demo user already exists, nothing to do");
+  const existing = await authRepository.findUserByEmail(DEMO_EMAIL);
+  if (existing) {
+    if (!existing.isPlatformAdmin) {
+      await authRepository.updateUser(existing.id, { isPlatformAdmin: true });
+      console.log("[seed] promoted demo user to platform admin");
+    } else {
+      console.log("[seed] demo user already exists, nothing to do");
+    }
     return;
   }
 
@@ -20,6 +26,7 @@ async function seed() {
     email: DEMO_EMAIL,
     passwordHash: hashPassword("demo1234"),
     emailVerifiedAt: new Date(),
+    isPlatformAdmin: true,
   });
 
   const tenant = await createTenantWithOwner("Demo Company", user.id);
@@ -51,7 +58,7 @@ async function seed() {
     },
   ]);
 
-  console.log(`[seed] created: ${DEMO_EMAIL} / demo1234 (tenant "${tenant.name}")`);
+  console.log(`[seed] created: ${DEMO_EMAIL} / demo1234 (tenant "${tenant.name}", platform admin)`);
 }
 
 seed()

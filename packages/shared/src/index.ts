@@ -5,6 +5,7 @@ export * from "./task";
 export * from "./agent";
 export * from "./usage";
 export * from "./images";
+export * from "./admin";
 
 /** Standard API error shape. */
 export type ApiError = {

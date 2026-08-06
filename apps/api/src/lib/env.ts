@@ -34,6 +34,11 @@ const schema = z.object({
     .string()
     .default("true")
     .transform((v) => v !== "false"),
+  /**
+   * Comma-separated emails that are always platform admins once verified.
+   * Independent of the DB flag — change the env and access follows on next request.
+   */
+  PLATFORM_ADMIN_EMAILS: z.string().optional(),
   NODE_ENV: z.string().default("development"),
 
   // Image storage (R2, Cloudflare): without these four the API falls back to
@@ -69,6 +74,13 @@ export const env = {
   aiMonthlyBudgetMicros: Math.round(raw.AI_MONTHLY_BUDGET_USD * 1_000_000),
   mailFrom: raw.MAIL_FROM,
   selfSignupEnabled: raw.SELF_SIGNUP_ENABLED,
+  /** Lowercased emails from PLATFORM_ADMIN_EMAILS (empty set when unset). */
+  platformAdminEmails: new Set(
+    (raw.PLATFORM_ADMIN_EMAILS ?? "")
+      .split(",")
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean),
+  ),
   isProduction: raw.NODE_ENV === "production",
 
   r2: {

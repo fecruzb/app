@@ -3,6 +3,7 @@ import { acceptInviteNewAccountSchema } from "@app/shared";
 import { hashPassword, hashToken } from "@/lib/crypto";
 import { HttpError, parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
+import { isEnvPlatformAdminEmail } from "@/domains/auth/platform-admin";
 import { authRepository } from "@/domains/auth/repository";
 import {
   createSession,
@@ -65,8 +66,13 @@ export async function acceptInvite(c: AppContext) {
       email: invite.email,
       passwordHash: hashPassword(data.password),
       emailVerifiedAt: new Date(),
+      isPlatformAdmin: isEnvPlatformAdminEmail(invite.email),
     });
-    await tenantRepository.insertMember({ tenantId: tenant.id, userId: user.id, role: invite.role });
+    await tenantRepository.insertMember({
+      tenantId: tenant.id,
+      userId: user.id,
+      role: invite.role,
+    });
     await tenantRepository.deleteInviteById(invite.id);
 
     sessionToSet = await createSession(user.id);

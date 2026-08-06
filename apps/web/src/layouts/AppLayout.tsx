@@ -11,6 +11,7 @@ import {
   LogOutIcon,
   MailWarningIcon,
   SettingsIcon,
+  ShieldIcon,
   UserIcon,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -98,6 +99,11 @@ function UserMenu() {
         <DropdownMenuItem onSelect={() => navigate(`/app/${tenant.slug}/account`)}>
           <UserIcon /> {t("nav.myAccount")}
         </DropdownMenuItem>
+        {me.user.isPlatformAdmin && (
+          <DropdownMenuItem onSelect={() => navigate("/admin")}>
+            <ShieldIcon /> {t("nav.admin")}
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onSelect={() => {

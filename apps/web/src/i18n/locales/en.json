@@ -35,6 +35,7 @@
     "images": "Images",
     "settings": "Settings",
     "myAccount": "My account",
+    "admin": "Admin",
     "signOut": "Sign out",
     "yourTenants": "Your tenants"
   },
@@ -239,5 +240,43 @@
     "hearFailed": "Couldn't hear that — try again",
     "micPermission": "I need permission to use the microphone",
     "micUnsupported": "This browser doesn't support audio recording"
+  },
+  "admin": {
+    "brand": "Admin",
+    "subtitle": "Platform administration",
+    "backToApp": "Back to app",
+    "nav": {
+      "users": "People",
+      "tenants": "Tenants",
+      "plans": "Plans"
+    },
+    "users": {
+      "title": "People",
+      "description": "Every account on the platform",
+      "tenants_one": "{{count}} tenant",
+      "tenants_other": "{{count}} tenants",
+      "verified": "verified",
+      "unverified": "unverified",
+      "platformAdmin": "platform admin",
+      "grantAdmin": "Make admin",
+      "revokeAdmin": "Remove admin",
+      "updated": "User updated",
+      "updateFailed": "Failed to update user"
+    },
+    "tenants": {
+      "title": "Tenants",
+      "description": "Every workspace on the platform",
+      "members_one": "{{count}} member",
+      "members_other": "{{count}} members",
+      "rename": "Rename",
+      "cancel": "Cancel",
+      "renamed": "Tenant renamed",
+      "renameFailed": "Failed to rename tenant"
+    },
+    "plans": {
+      "title": "Plans",
+      "description": "Product plans and billing",
+      "empty": "Plans aren't modeled yet — this is a placeholder for when you add billing."
+    }
   }
 }

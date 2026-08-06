@@ -3,7 +3,7 @@
  *
  * Users, opaque sessions, email action tokens, and tenant-scoped API keys.
  */
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { timestamps } from "@/db/columns";
 import { tenants } from "@/domains/tenant/schema";
 
@@ -11,6 +11,7 @@ import { tenants } from "@/domains/tenant/schema";
  * Users
  *
  * Global accounts (not tenant-scoped). Password is stored as a hash only.
+ * `isPlatformAdmin` is orthogonal to tenant roles — grants the /admin area.
  */
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -18,6 +19,7 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
   emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
+  isPlatformAdmin: boolean("is_platform_admin").notNull().default(false),
   ...timestamps,
 });
 

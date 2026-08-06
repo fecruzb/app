@@ -8,7 +8,7 @@ alwaysApply: false
 
 Mirror the API: features live in `domains/<domain>/`, everything else is shared shell.
 
-- `domains/<domain>/` — one folder per feature (auth, tenant, account, task, marketing):
+- `domains/<domain>/` — one folder per feature (auth, tenant, account, task, marketing, admin):
   - `api.ts` — typed calls for this domain (wraps `@/lib/api`); the only place that builds this domain's routes
   - `<name>-provider.tsx` — domain context/state when needed (e.g. auth, tenant)
   - `pages/XxxPage.tsx` — route-level screens (PascalCase, one per file)
@@ -18,6 +18,7 @@ Mirror the API: features live in `domains/<domain>/`, everything else is shared 
   - Public marketing screens (landing, pricing…) live in `domains/marketing/`. The landing page
     (`LandingPage.tsx`) embeds code snippets that mirror the repo's real conventions (repository,
     route, tool, page template) — if a convention changes, update those snippets too
+  - Platform admin (`domains/admin/`) mounts at `/admin` outside `:tenantSlug` — gated by `me.user.isPlatformAdmin`
 - `app/` — application shell: `App.tsx` (route map), `config.ts` (`useAppConfig()` → `selfSignupEnabled`, `aiEnabled` — the server-driven flags), `NotFoundPage.tsx`
 - `layouts/` — AppLayout (sidebar shell + `navItems()` — add a nav link there for each new domain page), AuthLayout, RequireAuth
 - `theme/` — the theming system: `themes.ts` (each theme = light + dark token sets; add a brand by copying a block and changing `--primary`), `theme-provider.tsx`, `theme-controls.tsx` (includes the language picker). Components never hardcode colors — they use the CSS variables

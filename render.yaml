@@ -36,6 +36,9 @@ services:
         value: "10"
       - key: SELF_SIGNUP_ENABLED
         value: "true"
+      # Comma-separated emails always treated as platform admins once verified
+      - key: PLATFORM_ADMIN_EMAILS
+        sync: false
       # Image storage (R2, Cloudflare) — same account/credentials as the cookbook.
       - key: CLOUDFLARE_ACCESS_KEY_ID
         sync: false

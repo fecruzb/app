@@ -103,15 +103,16 @@ Useful entry points:
 
 Copy `.env.example` to `.env` at the root (in production Render injects everything):
 
-| Var                   | Description                                                                    |
-| --------------------- | ------------------------------------------------------------------------------ |
-| `DATABASE_URL`        | Postgres (default points to the local Docker)                                  |
-| `APP_URL`             | Public URL used in email links (falls back to `RENDER_EXTERNAL_URL` on Render) |
-| `RESEND_API_KEY`      | Optional — without it, emails are logged to the console                        |
-| `MAIL_FROM`           | Sender, e.g. `My App <no-reply@myapp.com>`                                     |
-| `OPENAI_API_KEY`      | Optional — without it the agent is disabled                                    |
-| `ASSISTANT_MODEL`     | Agent model (default `gpt-4o-mini`)                                            |
-| `SELF_SIGNUP_ENABLED` | `false` to turn off public sign-up                                             |
+| Var                     | Description                                                                    |
+| ----------------------- | ------------------------------------------------------------------------------ |
+| `DATABASE_URL`          | Postgres (default points to the local Docker)                                  |
+| `APP_URL`               | Public URL used in email links (falls back to `RENDER_EXTERNAL_URL` on Render) |
+| `RESEND_API_KEY`        | Optional — without it, emails are logged to the console                        |
+| `MAIL_FROM`             | Sender, e.g. `My App <no-reply@myapp.com>`                                     |
+| `OPENAI_API_KEY`        | Optional — without it the agent is disabled                                    |
+| `ASSISTANT_MODEL`       | Agent model (default `gpt-4o-mini`)                                            |
+| `SELF_SIGNUP_ENABLED`   | `false` to turn off public sign-up                                             |
+| `PLATFORM_ADMIN_EMAILS` | Comma-separated emails always treated as platform admins once verified         |
 
 ## Connect an MCP client (remote)
 

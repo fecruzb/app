@@ -84,6 +84,7 @@ export const authRepository = {
     email: string;
     passwordHash: string;
     emailVerifiedAt?: Date;
+    isPlatformAdmin?: boolean;
   }): Promise<User> {
     const [user] = await db.insert(users).values(values).returning();
     return user;
@@ -99,11 +100,12 @@ export const authRepository = {
    * @param patch.name - Display name
    * @param patch.passwordHash - Hashed password
    * @param patch.emailVerifiedAt - Verification timestamp
+   * @param patch.isPlatformAdmin - Platform admin flag
    * @returns The updated user row
    */
   async updateUser(
     id: string,
-    patch: Partial<Pick<User, "name" | "passwordHash" | "emailVerifiedAt">>,
+    patch: Partial<Pick<User, "name" | "passwordHash" | "emailVerifiedAt" | "isPlatformAdmin">>,
   ): Promise<User> {
     const [user] = await db
       .update(users)

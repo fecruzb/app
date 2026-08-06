@@ -12,6 +12,7 @@ import { hasOpenAiKey } from "@/integrations/openai";
 import { mcpHttp } from "@/agent/mcp-http";
 import { agentRoutes } from "@/agent/routes";
 import { accountRoutes } from "@/domains/account/routes";
+import { adminRoutes } from "@/domains/admin/routes";
 import { authRoutes } from "@/domains/auth/routes";
 import { imageRoutes } from "@/domains/images/routes";
 import { MEDIA_DIR, mediaPublicUrl, mediaStore, usingR2 } from "@/domains/images/media";
@@ -36,6 +37,7 @@ app.all("/api/mcp", mcpHttp);
 
 app.route("/api/auth", authRoutes);
 app.route("/api/account", accountRoutes);
+app.route("/api/admin", adminRoutes);
 app.route("/api/usage", usageRoutes);
 app.route("/api/tenants", tenantRoutes);
 app.route("/api/tenants/:tenantId/tasks", taskRoutes);

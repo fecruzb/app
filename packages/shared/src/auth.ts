@@ -48,6 +48,7 @@ export type UserDto = {
   name: string;
   email: string;
   emailVerified: boolean;
+  isPlatformAdmin: boolean;
   createdAt: string;
 };
 
