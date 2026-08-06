@@ -2,12 +2,26 @@ import { HttpError, uuidParam } from "@/lib/errors";
 import type { AppContext } from "@/context";
 import { tenantRepository } from "../repository";
 
+/**
+ * Remove a member
+ *
+ * `DELETE /api/tenants/:tenantId/members/:userId`
+ *
+ * Removes a member from the current tenant, or lets the caller leave. Owners
+ * cannot leave their own tenant; the last owner cannot be removed.
+ *
+ * @param c - Authenticated tenant request context
+ * @returns 200 with `{ ok: true }`
+ */
 export async function removeMember(c: AppContext) {
+  // -- Input -----------------------------------------------------------------
   const tenant = c.get("tenant");
   const actor = c.get("membership");
+  const user = c.get("user");
   const targetUserId = uuidParam(c, "userId");
-  const isSelf = targetUserId === c.get("user").id;
+  const isSelf = targetUserId === user.id;
 
+  // -- Processing ------------------------------------------------------------
   if (!isSelf && actor.role !== "owner" && actor.role !== "admin") {
     throw new HttpError(403, "Only administrators can remove members");
   }
@@ -26,5 +40,7 @@ export async function removeMember(c: AppContext) {
   }
 
   await tenantRepository.deleteMember(tenant.id, targetUserId);
+
+  // -- Output ----------------------------------------------------------------
   return c.json({ ok: true });
 }

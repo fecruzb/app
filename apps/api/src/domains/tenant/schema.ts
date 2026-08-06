@@ -1,8 +1,18 @@
+/**
+ * Tenant schema
+ *
+ * Workspaces, memberships, and pending invites.
+ */
 import { pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { tenantRoles } from "@app/shared";
 import { timestamps } from "@/db/columns";
 import { users } from "@/domains/auth/schema";
 
+/**
+ * Tenants
+ *
+ * One workspace per row. Slug is unique and used in URLs.
+ */
 export const tenants = pgTable("tenants", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
@@ -10,6 +20,11 @@ export const tenants = pgTable("tenants", {
   ...timestamps,
 });
 
+/**
+ * Tenant members
+ *
+ * User membership in a tenant with a role. Composite primary key.
+ */
 export const tenantMembers = pgTable(
   "tenant_members",
   {
@@ -25,6 +40,11 @@ export const tenantMembers = pgTable(
   (t) => [primaryKey({ columns: [t.tenantId, t.userId] })],
 );
 
+/**
+ * Tenant invites
+ *
+ * Pending invites by email. Token is stored hashed; expires after a TTL.
+ */
 export const tenantInvites = pgTable("tenant_invites", {
   id: uuid("id").primaryKey().defaultRandom(),
   tenantId: uuid("tenant_id")
@@ -38,6 +58,11 @@ export const tenantInvites = pgTable("tenant_invites", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+/** Selected tenant row. */
 export type Tenant = typeof tenants.$inferSelect;
+
+/** Selected membership row. */
 export type TenantMember = typeof tenantMembers.$inferSelect;
+
+/** Selected invite row. */
 export type TenantInvite = typeof tenantInvites.$inferSelect;

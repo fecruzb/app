@@ -1,5 +1,9 @@
-// Task domain route map (mounted at /api/tenants/:tenantId/tasks).
-// Copy this domain as the base for your product's resources.
+/**
+ * Task routes
+ *
+ * Tenant-scoped task CRUD. Auth and tenant middleware run once for the group.
+ * Handlers live in `endpoints/*`.
+ */
 import { Hono } from "hono";
 import type { AppEnv } from "@/context";
 import { requireAuth } from "@/domains/auth/middleware";
@@ -10,6 +14,11 @@ import { getTask } from "./endpoints/get-task.endpoint";
 import { listTasks } from "./endpoints/list-tasks.endpoint";
 import { updateTask } from "./endpoints/update-task.endpoint";
 
+/**
+ * Task route group
+ *
+ * Mounted at `/api/tenants/:tenantId/tasks`.
+ */
 export const taskRoutes = new Hono<AppEnv>()
   .use("*", requireAuth, requireTenant)
   .get("/", listTasks)

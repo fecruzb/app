@@ -4,12 +4,26 @@ import type { AppContext } from "@/context";
 import { authRepository } from "../repository";
 import { consumeActionToken } from "../service";
 
+/**
+ * Verify email
+ *
+ * `POST /api/auth/verify-email`
+ *
+ * Consumes a verification token and marks the user's email as verified.
+ *
+ * @param c - Public request context
+ * @returns 200 with `{ ok: true }`
+ */
 export async function verifyEmail(c: AppContext) {
+  // -- Input -----------------------------------------------------------------
   const data = await parseBody(c, verifyEmailSchema);
 
+  // -- Processing ------------------------------------------------------------
   const userId = await consumeActionToken(data.token, "verify_email");
   if (!userId) throw new HttpError(400, "Invalid or expired link — request a new one");
 
   await authRepository.updateUser(userId, { emailVerifiedAt: new Date() });
+
+  // -- Output ----------------------------------------------------------------
   return c.json({ ok: true });
 }

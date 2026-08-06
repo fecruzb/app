@@ -6,14 +6,28 @@ import { usageRepository } from "@/domains/usage/repository";
 import { assertAiBudget } from "@/domains/usage/service";
 import { runAssistant } from "../assistant";
 
+/**
+ * Chat with the assistant
+ *
+ * `POST /api/tenants/:tenantId/agent`
+ *
+ * Runs the in-app assistant for the current tenant user, enforces the AI
+ * budget, records usage, and returns the assistant result.
+ *
+ * @param c - Authenticated tenant request context
+ * @returns 200 with the assistant response payload
+ */
 export async function chat(c: AppContext) {
+  // -- Input -----------------------------------------------------------------
   if (!hasOpenAiKey()) {
     throw new HttpError(503, "Agent unavailable — set OPENAI_API_KEY");
   }
   const { messages } = await parseBody(c, agentChatSchema);
   const tenant = c.get("tenant");
   const user = c.get("user");
+  const role = c.get("membership").role;
 
+  // -- Processing ------------------------------------------------------------
   await assertAiBudget(user.id);
 
   const { usage, ...result } = await runAssistant(
@@ -23,11 +37,13 @@ export async function chat(c: AppContext) {
       tenantSlug: tenant.slug,
       userId: user.id,
       userName: user.name,
-      role: c.get("membership").role,
+      role,
     },
     messages,
   );
 
   await usageRepository.insert({ userId: user.id, tenantId: tenant.id, ...usage });
+
+  // -- Output ----------------------------------------------------------------
   return c.json(result);
 }

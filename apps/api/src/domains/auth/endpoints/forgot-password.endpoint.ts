@@ -7,9 +7,22 @@ import { resetPasswordTemplate } from "../emails";
 import { authRepository } from "../repository";
 import { createActionToken } from "../service";
 
+/**
+ * Request a password reset
+ *
+ * `POST /api/auth/forgot-password`
+ *
+ * If the email matches an account, sends a reset link. Always returns success
+ * so responses do not reveal whether the email exists.
+ *
+ * @param c - Public request context
+ * @returns 200 with `{ ok: true }`
+ */
 export async function forgotPassword(c: AppContext) {
+  // -- Input -----------------------------------------------------------------
   const data = await parseBody(c, forgotPasswordSchema);
 
+  // -- Processing ------------------------------------------------------------
   const user = await authRepository.findUserByEmail(data.email);
   if (user) {
     const token = await createActionToken(user.id, "reset_password");
@@ -19,6 +32,7 @@ export async function forgotPassword(c: AppContext) {
     );
     void sendEmail({ to: user.email, subject, html });
   }
-  // Always 200 to avoid revealing whether the email exists
+
+  // -- Output ----------------------------------------------------------------
   return c.json({ ok: true });
 }

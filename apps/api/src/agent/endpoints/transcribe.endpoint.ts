@@ -5,20 +5,32 @@ import { assertAiBudget } from "@/domains/usage/service";
 import { env } from "@/lib/env";
 import { HttpError } from "@/lib/errors";
 
-// Roughly 20 minutes of Opus — well under OpenAI's own 25 MB ceiling.
+/** Max audio upload size (~20 minutes of Opus; under OpenAI's 25 MB ceiling). */
 const MAX_AUDIO_BYTES = 10_000_000;
 
-/** Voice input for the assistant: audio in, text out. The caller sends it as a message. */
+/**
+ * Transcribe audio
+ *
+ * `POST /api/tenants/:tenantId/agent/transcribe`
+ *
+ * Voice input for the assistant: accepts multipart audio, checks the user's AI
+ * budget, transcribes via OpenAI, records usage, and returns the text.
+ * Content-Length is checked before buffering an oversized body.
+ *
+ * @param c - Authenticated tenant request context
+ * @returns 200 with `{ text }`
+ */
 export async function transcribe(c: AppContext) {
+  // -- Input -----------------------------------------------------------------
   if (!hasOpenAiKey()) {
     throw new HttpError(503, "Agent unavailable — set OPENAI_API_KEY");
   }
   const user = c.get("user");
   const tenant = c.get("tenant");
 
+  // -- Processing ------------------------------------------------------------
   await assertAiBudget(user.id);
 
-  // Checked before reading the body so an oversized upload isn't buffered.
   if (Number(c.req.header("content-length") ?? 0) > MAX_AUDIO_BYTES) {
     throw new HttpError(413, "Recording too long");
   }
@@ -34,5 +46,6 @@ export async function transcribe(c: AppContext) {
   const { text, usage } = await transcribeAudio({ model: env.transcribeModel, file: audio });
   await usageRepository.insert({ userId: user.id, tenantId: tenant.id, ...usage });
 
+  // -- Output ----------------------------------------------------------------
   return c.json({ text });
 }

@@ -27,14 +27,15 @@ Where to add:
 
 Rules:
 
-- Table shape (copy `domains/task/schema.ts`): `uuid("id").primaryKey().defaultRandom()`, `tenant_id` FK with `onDelete: "cascade"`, `...timestamps` from `@/db/columns`, and an index on `tenantId`
-- Endpoint handler is `export async function <action>(c: AppContext)` — the name matches the route action (`createTask`, `login`), no `Endpoint` suffix, no default export
+- Table shape (copy `domains/task/schema.ts`): `uuid("id").primaryKey().defaultRandom()`, `tenant_id` FK with `onDelete: "cascade"`, `...timestamps` from `@/db/columns`, and an index on `tenantId`. Same JSDoc habit as repositories: file header (title + module description), each table with title / blank / description; non-obvious columns get the same treatment.
+- Endpoint handler is `export async function <action>(c: AppContext)` — the name matches the route action (`createTask`, `login`), no `Endpoint` suffix, no default export. Same JSDoc habit: title / blank / `` `METHOD /path` `` (final HTTP route) / blank / description / `@param c` / `@returns` (status + body).
+- Endpoint body uses three section banners (same dash length): `// -- Input ---`, `// -- Processing ---`, `// -- Output ---`. Input holds `parseBody` / `uuidParam` / `c.get` and other request locals; Processing holds repository/service calls, auth checks, business rules and throws; Output holds DTO mapping, cookies and `c.json` / return. Always include all three, even on thin handlers. Blank line before each banner (except possibly Input right after `{`) and blank line between sections.
 - Validate input with `parseBody(c, schema)` (schema from `@app/shared`); read UUID route params with `uuidParam(c, "name")`; throw `HttpError(status, message)`; return with `c.json(...)`
 - Map rows to DTOs in `dto.ts` (`toXxxDto`), never inline inside an endpoint or repository
 - All SQL lives in `repository.ts` as an exported object of async methods. Two shapes (copy the matching one):
   - **Resource repo** (canonical: `task`, also `images`): one primary table, tenant-scoped. CRUD names are fixed: `list` / `find` / `insert` / `update` / `delete`. Every method takes `tenantId` and filters by it. Write each query inline in the method (no shared query helpers). Mutations use `.returning()` when the row is needed. Annotate returns. File header is title + module description (official tone, not "template"). Each method: title, blank line, description, then `@param` / `@returns`. Prefer `/** */` over `//`.
   - **Platform repo** (`auth`, `tenant`, `usage`): owns several tables or non-CRUD access. Prefix methods by entity (`insertUser`, `listMembers`, `sumUserSpendSince`). Same JSDoc habit as resource repos.
 - Repository returns DB rows / join shapes — never `@app/shared` DTOs. Map in `dto.ts`.
-- `service.ts` only when there's real business logic; plain CRUD calls the repository straight from the endpoint/tool
-- Tenant routes: `routes.ts` applies `requireAuth`/`requireTenant` once via `.use`
+- `service.ts` only when there's real business logic; plain CRUD calls the repository straight from the endpoint/tool. Same JSDoc habit as repositories: file header (title + module description), each export with title / blank / description / `@param` / `@returns`.
+- Tenant routes: `routes.ts` applies `requireAuth`/`requireTenant` once via `.use`. Same JSDoc habit: file header (title + module description) and a title / blank / description on each exported route group (include mount path).
 - Public, token-authenticated surfaces (e.g. `inviteRoutes`) may be a second export mounted at their own path — that's the one accepted exception to "one route group per domain"

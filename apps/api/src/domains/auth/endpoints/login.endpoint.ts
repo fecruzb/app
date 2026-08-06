@@ -5,15 +5,31 @@ import { buildMe } from "../dto";
 import { authRepository } from "../repository";
 import { createSession, setSessionCookie, verifyPassword } from "../service";
 
+/**
+ * Log in
+ *
+ * `POST /api/auth/login`
+ *
+ * Verifies email and password, creates a session cookie, and returns the
+ * authenticated user payload. Uses a generic 401 so responses do not reveal
+ * whether the email exists.
+ *
+ * @param c - Public request context
+ * @returns 200 with the me payload and session cookie set
+ */
 export async function login(c: AppContext) {
+  // -- Input -----------------------------------------------------------------
   const data = await parseBody(c, loginSchema);
 
+  // -- Processing ------------------------------------------------------------
   const user = await authRepository.findUserByEmail(data.email);
-  // Generic message to avoid revealing whether the email exists
   if (!user || !verifyPassword(user.passwordHash, data.password)) {
     throw new HttpError(401, "Invalid email or password");
   }
 
-  setSessionCookie(c, await createSession(user.id));
+  const sessionToken = await createSession(user.id);
+
+  // -- Output ----------------------------------------------------------------
+  setSessionCookie(c, sessionToken);
   return c.json(await buildMe(user));
 }

@@ -1,4 +1,9 @@
-// Auth domain route map — each handler lives in endpoints/*.
+/**
+ * Auth routes
+ *
+ * Public auth surface and the authenticated `/me` endpoint. Handlers live in
+ * `endpoints/*`.
+ */
 import { Hono } from "hono";
 import type { AppEnv } from "@/context";
 import { forgotPassword } from "./endpoints/forgot-password.endpoint";
@@ -11,6 +16,11 @@ import { resetPassword } from "./endpoints/reset-password.endpoint";
 import { verifyEmail } from "./endpoints/verify-email.endpoint";
 import { requireAuth } from "./middleware";
 
+/**
+ * Auth route group
+ *
+ * Mounted at `/api/auth`. Session cookie is set on login/register.
+ */
 export const authRoutes = new Hono<AppEnv>()
   .post("/register", register)
   .post("/login", login)

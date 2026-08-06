@@ -95,14 +95,21 @@ export const taskRepository = {
 
 const endpointFile = `// domains/task/endpoints/create-task.endpoint.ts
 export async function createTask(c: AppContext) {
+  // -- Input -----------------------------------------------------------------
   const data = await parseBody(c, taskInputSchema);
+  const tenant = c.get("tenant");
+  const user = c.get("user");
+
+  // -- Processing ------------------------------------------------------------
   const task = await taskRepository.insert({
-    tenantId: c.get("tenant").id,
-    authorId: c.get("user").id,
+    tenantId: tenant.id,
+    authorId: user.id,
     title: data.title,
     completed: data.completed ?? false,
   });
-  return c.json(toTaskDto({ task, authorName: c.get("user").name }), 201);
+
+  // -- Output ----------------------------------------------------------------
+  return c.json(toTaskDto({ task, authorName: user.name }), 201);
 }
 
 // routes.ts — auth + tenant middleware applied once for the group
@@ -236,9 +243,9 @@ const resourceSlices: Slice[] = [
     id: "endpoint",
     eyebrow: "The endpoint",
     title: "A thin handler, wired in one line",
-    body: "The handler stays three lines of intent: validate the body with the shared schema, call the repository, map through the DTO. It gets one line in routes.ts, where auth and tenant middleware already run for the whole group — so the handler never checks a session or resolves a tenant itself.",
+    body: "The handler is structured as Input → Processing → Output: validate with the shared schema, call the repository, map through the DTO. It gets one line in routes.ts, where auth and tenant middleware already run for the whole group — so the handler never checks a session or resolves a tenant itself.",
     points: [
-      "Handler is validate → repository → DTO, nothing more",
+      "Handler sections: Input → Processing → Output",
       "The tenant comes from context, never a request param",
       "Middleware is applied once via .use — new routes are isolated by default",
     ],

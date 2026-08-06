@@ -1,7 +1,17 @@
+/**
+ * Auth schema
+ *
+ * Users, opaque sessions, email action tokens, and tenant-scoped API keys.
+ */
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { timestamps } from "@/db/columns";
 import { tenants } from "@/domains/tenant/schema";
 
+/**
+ * Users
+ *
+ * Global accounts (not tenant-scoped). Password is stored as a hash only.
+ */
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
@@ -11,6 +21,12 @@ export const users = pgTable("users", {
   ...timestamps,
 });
 
+/**
+ * Sessions
+ *
+ * Opaque session tokens. Only the hash is stored; the raw value lives in the
+ * httpOnly cookie.
+ */
 export const sessions = pgTable("sessions", {
   id: uuid("id").primaryKey().defaultRandom(),
   tokenHash: text("token_hash").notNull().unique(),
@@ -21,7 +37,11 @@ export const sessions = pgTable("sessions", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-/** Single-use tokens sent by email (verification and password reset). */
+/**
+ * Action tokens
+ *
+ * Single-use tokens sent by email (verification and password reset).
+ */
 export const actionTokens = pgTable("action_tokens", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id")
@@ -34,9 +54,10 @@ export const actionTokens = pgTable("action_tokens", {
 });
 
 /**
- * Personal API keys for programmatic access (e.g. the MCP server in Cursor).
- * Each key belongs to a user and is scoped to a single tenant. Only the hash is
- * stored; `prefix` is the visible head shown in the UI.
+ * API keys
+ *
+ * Programmatic access (e.g. MCP). Each key belongs to a user and is scoped to
+ * one tenant. Only the hash is stored; `prefix` is the visible head in the UI.
  */
 export const apiKeys = pgTable("api_keys", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -53,6 +74,11 @@ export const apiKeys = pgTable("api_keys", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+/** Selected user row. */
 export type User = typeof users.$inferSelect;
+
+/** Selected API key row. */
 export type ApiKey = typeof apiKeys.$inferSelect;
+
+/** Purpose of an email action token. */
 export type ActionTokenPurpose = (typeof actionTokens.purpose.enumValues)[number];

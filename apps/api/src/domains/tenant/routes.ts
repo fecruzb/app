@@ -1,4 +1,10 @@
-// Tenant domain route map — each handler lives in endpoints/*.
+/**
+ * Tenant routes
+ *
+ * Workspace settings, members, and invites. Auth + membership are applied once
+ * on the path tenant so every new route is isolated by default. Handlers live
+ * in `endpoints/*`.
+ */
 import { Hono } from "hono";
 import type { AppEnv } from "@/context";
 import { requireAuth } from "@/domains/auth/middleware";
@@ -14,8 +20,11 @@ import { updateMemberRole } from "./endpoints/update-member-role.endpoint";
 import { updateTenant } from "./endpoints/update-tenant.endpoint";
 import { requireManager, requireTenant } from "./middleware";
 
-// Everything here requires session + membership in the path tenant, applied
-// once — every new route is tenant-isolated by default.
+/**
+ * Tenant route group
+ *
+ * Mounted at `/api/tenants`. Requires session + membership in the path tenant.
+ */
 export const tenantRoutes = new Hono<AppEnv>()
   .use("/:tenantId/*", requireAuth, requireTenant)
   .use("/:tenantId", requireAuth, requireTenant)
@@ -28,7 +37,11 @@ export const tenantRoutes = new Hono<AppEnv>()
   .post("/:tenantId/invites", requireManager, createInvite)
   .delete("/:tenantId/invites/:inviteId", requireManager, revokeInvite);
 
-/** Public invite routes (the token is the credential). */
+/**
+ * Invite route group
+ *
+ * Public invite surface — the token is the credential. Mounted separately.
+ */
 export const inviteRoutes = new Hono<AppEnv>()
   .get("/:token", getInvite)
   .post("/:token/accept", acceptInvite);
