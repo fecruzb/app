@@ -17,6 +17,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useAppConfig } from "@/app/config";
 import { useAuth } from "@/domains/auth/auth-provider";
 import { CodeBlock } from "../code-block";
+import {
+  AgentChatMock,
+  ForgotPasswordMock,
+  InviteEmailMock,
+  InviteMembersMock,
+  LoginMock,
+  McpKeysMock,
+  RegisterMock,
+  ResetPasswordMock,
+  ShellMock,
+  VerifyEmailMock,
+} from "../product-preview";
 
 type Included = {
   icon: ComponentType<{ className?: string }>;
@@ -29,31 +41,31 @@ const included: Included[] = [
     icon: KeyRoundIcon,
     title: "Authentication",
     description:
-      "Sign-up, login, password reset and email verification. Own it — no auth vendor, scrypt hashing, sessions in an httpOnly cookie.",
+      "Sign-up, login, reset and verification — no auth vendor. scrypt hashing, sessions in an httpOnly cookie.",
   },
   {
     icon: UsersIcon,
     title: "Multi-tenancy",
     description:
-      "A personal tenant per user, invites, roles (owner/admin/member) and every query scoped by tenant_id so data never leaks.",
+      "A personal tenant per user, invites, roles, and every query scoped by tenant_id so data never leaks.",
   },
   {
     icon: SparklesIcon,
-    title: "AI agent",
+    title: "AI agent + remote MCP",
     description:
-      "A floating assistant wired to your data through MCP tools. Define a tool in a domain and it can call it — no glue code.",
+      "A floating assistant wired to your data — the same tools ship as a remote MCP server for Cursor.",
   },
   {
     icon: MailIcon,
     title: "Transactional email",
     description:
-      "Resend over HTTP behind one swappable module, with a dev fallback that logs to the console so nothing leaks.",
+      "Resend behind one swappable module, with a dev fallback that logs to the console instead of sending.",
   },
   {
     icon: LayersIcon,
     title: "Domain architecture",
     description:
-      "Front and back organized by domain with layered boundaries enforced by lint — a shape that scales past the demo.",
+      "Front and back organized by domain, with layered boundaries enforced by lint. Scales past the demo.",
   },
   {
     icon: RocketIcon,
@@ -67,8 +79,8 @@ type Showcase = {
   id: string;
   eyebrow: string;
   title: string;
-  /** One or more paragraphs of narrative copy. */
-  body: string[];
+  /** A single short paragraph — keep it tight. */
+  body: string;
   /** Concrete technical points shown below the copy. */
   highlights: string[];
   filename: string;
@@ -78,172 +90,165 @@ type Showcase = {
 
 const showcases: Showcase[] = [
   {
-    id: "auth",
-    eyebrow: "Authentication",
-    title: "Sessions you own, end to end",
-    body: [
-      "Instead of leaning on an auth SaaS, the base implements the whole thing in a few small files. Sign-up creates a user with a scrypt-hashed password; login mints an opaque token, stores its hash in the database and sets it in an httpOnly cookie. There's no JWT to leak and nothing to revoke remotely — deleting the row logs the session out.",
-      "The same service issues short-lived action tokens for email verification and password reset, each hashed at rest with its own TTL. A single requireAuth middleware turns the cookie back into a typed user for every protected route.",
-    ],
+    id: "workspace",
+    eyebrow: "The workspace",
+    title: "One typed monorepo, three parts",
+    body: "A single repo wired with npm workspaces and Turborepo: the Hono API, the React SPA, and a shared package of types both import. Change a request shape and the other side stops compiling — they can't drift apart.",
     highlights: [
-      "Opaque session token, only its hash stored (30-day TTL)",
-      "httpOnly + SameSite=Lax cookie, secure in production",
-      "Action tokens for verify/reset, hashed with per-purpose expiry",
-      "requireAuth injects the user into the typed context",
+      "npm workspaces + Turborepo — cached, parallel tasks",
+      "packages/shared: one source of truth for types",
+      "API serves the built SPA in prod — one origin, no CORS",
+      "TypeScript everywhere, end to end",
     ],
-    filename: "domains/auth/service.ts",
-    code: `export const SESSION_COOKIE = "app_session";
-export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
-
-export async function createSession(userId: string): Promise<string> {
-  const token = generateToken();
-  await authRepository.insertSession({
-    tokenHash: hashToken(token),
-    userId,
-    expiresAt: new Date(Date.now() + SESSION_TTL_MS),
-  });
-  return token;
-}
-
-export function setSessionCookie(c: Context, token: string): void {
-  setCookie(c, SESSION_COOKIE, token, {
-    path: "/",
-    httpOnly: true,
-    sameSite: "Lax",
-    secure: env.isProduction,
-    maxAge: SESSION_TTL_MS / 1000,
-  });
-}`,
-  },
-  {
-    id: "tenant",
-    eyebrow: "Multi-tenancy",
-    title: "Isolation that starts at the middleware",
-    body: [
-      "Every tenant-scoped route sits behind requireTenant. It reads the :tenantId from the URL, confirms the logged-in user is actually a member, and puts the resolved tenant and membership on the context. Handlers then read c.get(\"tenant\").id — never a tenant id from the request body — so there's no path for one tenant to touch another's data.",
-      "Roles ride along the same way: requireManager checks the membership already loaded, so an authorization rule is one middleware in the route definition, not a check scattered across handlers.",
-    ],
-    highlights: [
-      "Membership verified before any handler runs",
-      "tenant_id always comes from the context, never the body",
-      "Roles (owner/admin/member) enforced by requireManager",
-      "A personal tenant is created for every new user",
-    ],
-    filename: "domains/tenant/middleware.ts",
-    code: `export const requireTenant = createMiddleware<AppEnv>(async (c, next) => {
-  const tenantId = c.req.param("tenantId");
-  if (!tenantId || !UUID_RE.test(tenantId)) throw new HttpError(404, "Tenant not found");
-
-  const row = await tenantRepository.findTenantWithMembership(tenantId, c.get("user").id);
-  if (!row) throw new HttpError(404, "Tenant not found");
-
-  c.set("tenant", row.tenant);
-  c.set("membership", row.membership);
-  await next();
-});`,
-  },
-  {
-    id: "agent",
-    eyebrow: "The AI agent",
-    title: "Give the agent a new skill in one file",
-    body: [
-      "The floating assistant doesn't just chat — it calls tools that read and write real tenant data. Each tool lives inside its domain and declares a name, a Zod input schema and an execute function. The contract is transport-neutral: it returns plain JSON and throws on expected failures.",
-      "That one definition is exposed two ways without extra code — over the Model Context Protocol and through the OpenAI tool-calling loop. A summarize field marks a tool as a write, which the chat renders as an action chip and uses to refresh the screen afterward. Drop a file in tools/, and the agent can use it.",
-    ],
-    highlights: [
-      "One file per tool, co-located with its domain",
-      "Same definition drives both MCP and the OpenAI loop",
-      "Zod input schema validates the model's arguments",
-      "summarize marks writes; reads omit it",
-    ],
-    filename: "domains/note/tools/create-note.tool.ts",
-    code: `export const createNoteTool = defineTool({
-  name: "create_note",
-  description: "Creates a note in the tenant.",
-  inputSchema: {
-    title: z.string().trim().min(1).max(200),
-    content: z.string().max(20000).default(""),
-  },
-  summarize: (args) => \`Note created: \${args.title}\`,
-  execute: async (ctx, { title, content }) => {
-    const note = await noteRepository.insert({
-      tenantId: ctx.tenantId,
-      authorId: ctx.userId,
-      title,
-      content,
-    });
-    return { id: note.id, title: note.title };
-  },
-});`,
-  },
-  {
-    id: "email",
-    eyebrow: "Transactional email",
-    title: "One function, safe in every environment",
-    body: [
-      "Domains never talk to an email provider directly — they call sendEmail with a subject and HTML. The Resend integration is the only place that knows the API, so swapping providers is a single file change.",
-      "Without a RESEND_API_KEY, sendEmail logs the whole message to the console instead of sending it, so local development never risks a real inbox and you can still click the verification link from the terminal. Sends are fire-and-forget, so the HTTP response never waits on the provider.",
-    ],
-    highlights: [
-      "Verification, password reset and tenant invites included",
-      "Provider isolated — domains only call sendEmail",
-      "No API key? It logs to the console instead of sending",
-      "Fire-and-forget so requests don't block on email",
-    ],
-    filename: "integrations/resend.ts",
-    code: `export async function sendEmail({ to, subject, html }: EmailPayload): Promise<void> {
-  if (!env.resendApiKey) {
-    logger.info(\`\\n[email] (dev, not sent) to: \${to}\\n[email] subject: \${subject}\\n\${html}\\n\`);
-    return;
-  }
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: \`Bearer \${env.resendApiKey}\`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ from: env.mailFrom, to, subject, html }),
-  });
-  // ...log the resend id or the failure
-}`,
-  },
-  {
-    id: "structure",
-    eyebrow: "The structure",
-    title: "A place for everything, enforced by lint",
-    body: [
-      "Features live in domains/, pure helpers in lib/, external services in integrations/, and the agent surface in agent/. The frontend mirrors the same shape. Files are named by role — create-note.endpoint.ts, create-note.tool.ts — so you can guess a path before opening the folder.",
-      "These aren't just conventions in a README. oxlint's no-restricted-imports rules make the boundaries real: lib/ can't import a domain, a domain can't reach into the agent's internals or import OpenAI directly. The architecture can't quietly rot as the app grows.",
-    ],
-    highlights: [
-      "domains/ · lib/ · integrations/ · agent/ — one job each",
-      "Files named by role: *.endpoint.ts, *.tool.ts",
-      "Frontend mirrors the API, domain for domain",
-      "Import boundaries fail the lint, not just code review",
-    ],
-    filename: "apps/",
+    filename: "repo",
     lang: "text",
-    code: `apps/
-├── api/src/
-│   ├── domains/{auth,tenant,note}/
-│   │   ├── *.endpoint.ts   HTTP handlers
-│   │   ├── *.tool.ts       agent tools
-│   │   ├── repository.ts   service.ts
-│   │   └── schema.ts       routes.ts
-│   ├── integrations/       openai · resend
-│   ├── agent/              assistant · mcp · registry
-│   └── lib/                pure utilities
-└── web/src/
-    └── domains/{auth,tenant,note,marketing}/`,
+    code: `app-base/
+├── apps/
+│   ├── api/          Hono + Drizzle + Postgres
+│   └── web/          React + Vite SPA
+├── packages/
+│   └── shared/       Zod schemas + DTOs (both sides)
+├── .cursor/rules/    conventions the AI follows
+├── render.yaml       one-service deploy
+└── turbo.json        task graph`,
+  },
+  {
+    id: "domain",
+    eyebrow: "Organized by domain",
+    title: "A feature is a folder, in layers",
+    body: "Each domain owns its slice top to bottom — schema, repository, service, DTO, endpoints and agent tools. Import directions are enforced by lint, so the structure can't quietly rot as the app grows.",
+    highlights: [
+      "Repository = all SQL; every query filtered by tenantId",
+      "service.ts only when there's real logic — CRUD skips it",
+      "Boundaries fail the lint, not just code review",
+      "@/ alias across layers; relative paths within a domain",
+    ],
+    filename: "apps/api/src/domains/task/",
+    lang: "text",
+    code: `domains/task/
+├── schema.ts        Drizzle table
+├── repository.ts    all SQL (scoped by tenantId)
+├── service.ts       business logic (optional)
+├── dto.ts           row → API shape
+├── routes.ts        wires endpoints + middleware
+├── endpoints/       create-task.endpoint.ts …
+└── tools/           create-task.tool.ts … (agent)`,
+  },
+  {
+    id: "endpoint",
+    eyebrow: "Add an endpoint",
+    title: "A new route is one file and one line",
+    body: "Drop a handler in the domain's endpoints/ and register it in routes.ts, where auth and tenant middleware already run for the whole group. The handler stays thin: validate, hit the repository, map through the DTO.",
+    highlights: [
+      "Handler stays thin: validate → repository → DTO",
+      "Auth + tenant middleware applied once in routes.ts",
+      "Input validated by a shared Zod schema",
+      "Tenant comes from context — one tenant can't touch another",
+    ],
+    filename: "domains/task/routes.ts",
+    code: `const route = new Hono<AppEnv>();
+route.use(requireAuth, requireTenant); // once for the group
+
+route.get("/", listTasks);
+route.post("/", createTask);
+route.patch("/:id/archive", archiveTask); // ← new endpoint
+
+export const taskRoutes = route;`,
+  },
+  {
+    id: "tool",
+    eyebrow: "Add an agent skill",
+    title: "One file gives the agent a new tool",
+    body: "A tool is a single defineTool — name, Zod input, execute. That one definition drives the in-app chat, local Cursor over stdio, and the remote MCP server, with zero extra glue.",
+    highlights: [
+      "Same definition drives the chat, stdio and remote MCP",
+      "Zod input validates whatever the model sends",
+      "summarize marks writes; reads leave it off",
+      "Tools never import MCP or OpenAI — the lint blocks it",
+    ],
+    filename: "domains/task/tools/archive-task.tool.ts",
+    code: `export const archiveTaskTool = defineTool({
+  name: "archive_task",
+  description: "Archives a task by id.",
+  inputSchema: { id: z.string().uuid() },
+  summarize: () => "Task archived", // write → chip in the chat
+  execute: (ctx, { id }) => taskRepository.archive(ctx.tenantId, id),
+});`,
+  },
+  {
+    id: "schema",
+    eyebrow: "Add a table",
+    title: "Schema in the domain, migration from it",
+    body: "Tables are TypeScript, defined with Drizzle inside their domain. Export from db/schema.ts and run db:generate — the SQL migration is derived from the schema, so code stays the source of truth.",
+    highlights: [
+      "Schema is code — migrations are generated, not hand-written",
+      "Reused id + timestamp columns from a helper",
+      "tenant_id foreign key cascades on delete",
+      "db:generate locally, runs on pre-deploy in prod",
+    ],
+    filename: "domains/task/schema.ts",
+    code: `export const tasks = pgTable(
+  "tasks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => tenants.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    completed: boolean("completed").notNull().default(false),
+    ...timestamps, // created_at / updated_at helper
+  },
+  (t) => [index("tasks_tenant_idx").on(t.tenantId)],
+);`,
+  },
+  {
+    id: "frontend",
+    eyebrow: "The frontend",
+    title: "A SPA that mirrors the API",
+    body: "Same shape as the backend: one folder per domain with its pages, components and an api.ts — the only place that touches the network. Server state is TanStack Query, so a mutation invalidates and the screen refreshes itself.",
+    highlights: [
+      "Each domain: pages/ · components · api.ts · provider",
+      "Network only through the domain api.ts — never raw fetch",
+      "TanStack Query for server state; invalidate to refresh",
+      "shadcn/ui + Tailwind; @/ alias everywhere",
+    ],
+    filename: "apps/web/src/domains/task/",
+    lang: "text",
+    code: `domains/task/
+├── pages/TasksPage.tsx   route-level screen
+├── task-list.tsx         domain component
+├── api.ts                typed calls → @/lib/api
+└── routes.tsx            <Route> group
+
+// shared shell, outside domains:
+// app/ · layouts/ · components/ui/ · lib/`,
+  },
+  {
+    id: "rules",
+    eyebrow: "Cursor rules",
+    title: "The conventions live in the repo",
+    body: "The patterns here are written as Cursor rules, scoped by glob so the right guidance loads for the file you edit. Ask the agent to add an endpoint and it already knows the layers, the names and where to register it.",
+    highlights: [
+      "api-structure — layers, boundaries, where to add things",
+      "web-structure — folders, imports, the network boundary",
+      "agent-tools — the transport-neutral tool contract",
+      "language — English across code, UI and comments",
+    ],
+    filename: ".cursor/rules/",
+    lang: "text",
+    code: `.cursor/rules/
+├── api-structure.mdc   globs: apps/api/**
+├── web-structure.mdc   globs: apps/web/**
+├── agent-tools.mdc     globs: **/*.tool.ts
+└── language.mdc        alwaysApply
+
+# each rule scoped by glob → loads for the file you edit`,
   },
   {
     id: "env",
     eyebrow: "Configuration",
-    title: "Environment variables, typed and validated",
-    body: [
-      "Configuration is small and honest. A single .env at the repo root drives local development, and a Zod schema in lib/env.ts validates it at boot — a missing or malformed variable kills the process with a readable message instead of failing deep inside a request.",
-      "Optional keys degrade gracefully: no RESEND_API_KEY sends emails to the console, no OPENAI_API_KEY hides the agent, and SELF_SIGNUP_ENABLED flips the app to invite-only. The rest of the code reads a typed env object, never process.env directly.",
-    ],
+    title: "Env vars, typed and validated",
+    body: "One .env at the root, validated by a Zod schema at boot — a bad variable fails fast with a readable error. Optional keys degrade instead of crashing: no Resend key logs emails to the console, no OpenAI key hides the agent.",
     highlights: [
       "Validated once at boot, fails fast with a clear error",
       "Sensible local defaults — clone and run, no setup",
@@ -272,10 +277,7 @@ SELF_SIGNUP_ENABLED=true`,
     id: "deploy",
     eyebrow: "The deploy",
     title: "Commit the Blueprint, push, done",
-    body: [
-      "The whole app ships as one Render web service plus a Postgres database, both described in render.yaml. In production the API serves the built SPA from the same origin, so cookies stay simple and there's no CORS to configure.",
-      "Migrations run automatically as a pre-deploy step, a health check tells Render when the service is live, and secrets are marked sync: false so they never live in the repo. Point Render at your fork and the first deploy just works.",
-    ],
+    body: "The whole app ships as one Render web service plus Postgres, described in render.yaml. Migrations run on pre-deploy, a health check gates go-live, and secrets stay out of the repo with sync: false.",
     highlights: [
       "Single web service — API and SPA on one origin",
       "Migrations run on pre-deploy, not by hand",
@@ -299,6 +301,69 @@ databases:
     postgresMajorVersion: "16"`,
   },
 ];
+
+const product = [
+  {
+    eyebrow: "Sign in",
+    title: "Login, clean and familiar",
+    body: "Email, password, a link to recovery, and secure sessions on submit — built with shadcn/ui, ready to rebrand.",
+    mock: LoginMock,
+  },
+  {
+    eyebrow: "Sign up",
+    title: "Registration in seconds",
+    body: "Name, email, password. Each new user gets a personal tenant and a verification email automatically.",
+    mock: RegisterMock,
+  },
+  {
+    eyebrow: "Email verification",
+    title: "Confirm the address, then start",
+    body: "A confirmation email goes out through Resend. The link is single-use and expires in 24 hours.",
+    mock: VerifyEmailMock,
+  },
+  {
+    eyebrow: "Password recovery",
+    title: "Forgot password, handled",
+    body: "Request a reset link by email, sent through Resend with a short-lived token that expires on its own.",
+    mock: ForgotPasswordMock,
+  },
+  {
+    eyebrow: "Password reset",
+    title: "Set a new password safely",
+    body: "The link opens a reset screen; the token is validated server-side, used once, and the password hashed with scrypt.",
+    mock: ResetPasswordMock,
+  },
+  {
+    eyebrow: "The app shell",
+    title: "A workspace, not a blank page",
+    body: "Sidebar nav, a tenant switcher that shows only with more than one, and a user menu. Your screens drop straight in.",
+    mock: ShellMock,
+  },
+  {
+    eyebrow: "Invite members",
+    title: "Add teammates from settings",
+    body: "Owners and admins type an email, pick a role, and send. Members and pending invites live right there, each revocable.",
+    mock: InviteMembersMock,
+  },
+  {
+    eyebrow: "The invite email",
+    title: "The invite lands in their inbox",
+    body: "An email with a 7-day link — accept it and the invitee lands in the tenant with the role you picked.",
+    mock: InviteEmailMock,
+  },
+  {
+    eyebrow: "The AI agent",
+    title: "A chat that gets things done",
+    body: "A floating assistant in every tenant: ask or command, it runs the right tools, shows what changed as a chip, and refreshes.",
+    mock: AgentChatMock,
+  },
+  {
+    eyebrow: "Bring your own tools",
+    title: "The same tools, over MCP",
+    body: "Mint a tenant-scoped API key and plug the remote MCP server into Cursor or Claude — the agent's tools, in your editor.",
+    mock: McpKeysMock,
+  },
+] as const;
 
 const stack = [
   { label: "Frontend", value: "React 19 · Vite · Tailwind · shadcn/ui · TanStack Query" },
@@ -392,10 +457,39 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-5xl px-4 pt-16 pb-4 text-center">
-          <h2 className="text-2xl font-semibold tracking-tight">See how it's built</h2>
+        <section className="mx-auto w-full max-w-5xl px-4 pt-20 pb-4 text-center">
+          <h2 className="text-2xl font-semibold tracking-tight">What your users get</h2>
           <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
-            Real code from the repo — the patterns you'll extend, not marketing screenshots.
+            Not just endpoints — real product surfaces, designed and working out of the box.
+          </p>
+        </section>
+
+        {product.map((item, i) => {
+          const Mock = item.mock;
+          const flip = i % 2 === 1;
+          return (
+            <section key={item.title} className="px-4 py-10 sm:py-12">
+              <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
+                <div className={`reveal ${flip ? "lg:order-2" : ""}`}>
+                  <p className="text-sm font-medium text-muted-foreground">{item.eyebrow}</p>
+                  <h3 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+                    {item.title}
+                  </h3>
+                  <p className="mt-4 text-pretty text-muted-foreground">{item.body}</p>
+                </div>
+                <div className={`reveal reveal-delay ${flip ? "lg:order-1" : ""}`}>
+                  <Mock />
+                </div>
+              </div>
+            </section>
+          );
+        })}
+
+        <section className="mx-auto w-full max-w-5xl px-4 pt-20 pb-4 text-center">
+          <h2 className="text-2xl font-semibold tracking-tight">How it's built</h2>
+          <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
+            The shape of the codebase and how you extend it — the workspace, the domains, and where
+            a new endpoint, tool or table actually goes.
           </p>
         </section>
 
@@ -455,11 +549,7 @@ function ShowcaseSection({ showcase, flip }: { showcase: Showcase; flip: boolean
           <h3 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
             {showcase.title}
           </h3>
-          <div className="mt-4 space-y-3 text-pretty text-muted-foreground">
-            {showcase.body.map((paragraph) => (
-              <p key={paragraph.slice(0, 24)}>{paragraph}</p>
-            ))}
-          </div>
+          <p className="mt-4 text-pretty text-muted-foreground">{showcase.body}</p>
           <ul className="mt-6 space-y-2.5 text-sm">
             {showcase.highlights.map((highlight) => (
               <li key={highlight} className="flex gap-2.5">
