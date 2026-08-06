@@ -27,8 +27,9 @@ Where to add:
 
 Rules:
 
+- Table shape (copy `domains/task/schema.ts`): `uuid("id").primaryKey().defaultRandom()`, `tenant_id` FK with `onDelete: "cascade"`, `...timestamps` from `@/db/columns`, and an index on `tenantId`
 - Endpoint handler is `export async function <action>(c: AppContext)` — the name matches the route action (`createTask`, `login`), no `Endpoint` suffix, no default export
-- Validate input with `parseBody(c, schema)`; throw `HttpError(status, message)`; return with `c.json(...)`
+- Validate input with `parseBody(c, schema)` (schema from `@app/shared`); read UUID route params with `uuidParam(c, "name")`; throw `HttpError(status, message)`; return with `c.json(...)`
 - Map rows to DTOs in `dto.ts` (`toXxxDto`), never inline inside an endpoint
 - All SQL lives in `repository.ts` as an exported object of async methods; every resource query filters by `tenantId`. CRUD methods are named `list`/`find`/`insert`/`update`/`delete`
 - `service.ts` only when there's real business logic; plain CRUD calls the repository straight from the endpoint/tool

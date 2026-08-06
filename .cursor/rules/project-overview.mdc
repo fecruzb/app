@@ -1,0 +1,34 @@
+---
+description: What app-base is, the golden path for new features, and the invariants every change must respect
+alwaysApply: true
+---
+
+# Project overview
+
+app-base is a multi-tenant SaaS **template** meant to become a new product: users, full auth (opaque DB session + httpOnly cookie), tenants with members/invites, transactional email, an AI agent (in-app chat + MCP over stdio and HTTP), a public landing page and a one-service deploy on Render (the API serves the built SPA — one origin, simple cookies). The `task` domain is the placeholder resource you copy or replace.
+
+Monorepo (npm workspaces + Turborepo):
+
+- `apps/api` — Hono + Zod + Drizzle/Postgres, organized by domain
+- `apps/web` — React 19 + Vite SPA; mirrors the API's domains
+- `packages/shared` (`@app/shared`) — Zod input schemas + DTO types imported by both sides
+- `packages/ui` (`@app/ui`) — app-neutral base UI (shadcn), imported per subpath
+
+## The golden path
+
+**A feature is a domain folder on both sides.** Never scatter a feature across shared files: it gets its own `apps/api/src/domains/<domain>/` and `apps/web/src/domains/<domain>/`, with its contract in `packages/shared/src/<domain>.ts`. The `task` domain is the canonical example to copy on both sides.
+
+To add a feature/resource end to end, follow the checklist in the `add-feature` skill (`.cursor/skills/add-feature/SKILL.md`).
+
+## Invariants — never break these
+
+- **Tenant isolation**: every resource query filters by `tenantId`. The tenant comes from middleware context (`requireAuth`/`requireTenant`), never from user input
+- **Contracts live in `packages/shared`**: request schemas and DTO types are imported by both API and web — never duplicated on either side
+- **Layer boundaries are lint-enforced** (`.oxlintrc.json`): `lib/` imports nothing from the app, `integrations/` only uses `lib/`, domains only know `@/agent/tool` and never import MCP/OpenAI
+- **Migrations are generated** from the Drizzle schema (`npm run db:generate`), never hand-written
+- **New env var** = add to the Zod schema in `apps/api/src/lib/env.ts` + `.env.example` + `render.yaml`; optional vars must degrade gracefully (like `RESEND_API_KEY` / `OPENAI_API_KEY` do)
+- **File naming is fixed**: `<action>.endpoint.ts`, `<action>.tool.ts`, `PascalCasePage.tsx`, kebab-case components; single-role domain files keep the role name (`repository.ts`, `service.ts`, `routes.ts`)
+
+## Before finishing any change
+
+Run `npm run lint` and `npm run typecheck` — both must pass. If you changed a Drizzle schema, run `npm run db:generate` (and `npm run db:migrate` locally).

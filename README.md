@@ -89,7 +89,7 @@ Useful entry points:
 - `apps/api/src/domains/task/` + `apps/web/src/domains/task/pages/TasksPage.tsx` — a complete domain to copy
 - `apps/api/src/domains/tenant/middleware.ts` — tenant isolation
 - `apps/api/src/agent/registry.ts` — tools available to the agent and MCP
-- `apps/web/src/App.tsx` — SPA route map
+- `apps/web/src/app/App.tsx` — SPA route map
 
 ## Deriving a new product
 

@@ -15,9 +15,12 @@ Mirror the API: features live in `domains/<domain>/`, everything else is shared 
   - `routes.tsx` — the domain's routes; **every domain with pages has one** (see routing below)
   - domain-specific components live here too (kebab-case)
   - A domain may import another domain's `api`/provider, but keep it minimal
-  - Public marketing screens (landing, pricing…) live in `domains/marketing/`
-- `app/` — application shell: `App.tsx` (route map), `config.ts` (app-level config), `NotFoundPage.tsx`
-- `layouts/` — AppLayout, AuthLayout, RequireAuth
+  - Public marketing screens (landing, pricing…) live in `domains/marketing/`. The landing page
+    (`LandingPage.tsx`) embeds code snippets that mirror the repo's real conventions (repository,
+    endpoint, tool, page template) — if a convention changes, update those snippets too
+- `app/` — application shell: `App.tsx` (route map), `config.ts` (`useAppConfig()` → `selfSignupEnabled`, `aiEnabled` — the server-driven flags), `NotFoundPage.tsx`
+- `layouts/` — AppLayout (sidebar shell + `navItems()` — add a nav link there for each new domain page), AuthLayout, RequireAuth
+- `theme/` — the theming system: `themes.ts` (each theme = light + dark token sets; add a brand by copying a block and changing `--primary`), `theme-provider.tsx`, `theme-controls.tsx`. Components never hardcode colors — they use the CSS variables
 - `components/` — app-specific shared components that carry product copy/logic (e.g. `role-select`); reusable base UI lives in `@app/ui` (see below)
 - `lib/` — pure infra: `api.ts` (raw HTTP client + `ApiError` + `showApiError`), `utils.ts` (`initials`); no domain knowledge
 - Network calls go through a domain `api.ts`, never `fetch`/`@/lib/api` directly from a page

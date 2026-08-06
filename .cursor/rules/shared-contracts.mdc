@@ -1,0 +1,14 @@
+---
+description: Conventions for packages/shared — Zod schemas and DTOs shared by API and web
+globs: packages/shared/**
+alwaysApply: false
+---
+
+# Shared contracts (`@app/shared` → `packages/shared`)
+
+One file per domain (`auth.ts`, `tenant.ts`, `task.ts`, `agent.ts`), re-exported from `src/index.ts`. Both API and web import from `@app/shared` — this package is the single source of truth for request/response shapes. Change a shape here and whichever side you forgot stops compiling; that's the point.
+
+- Input validation: a Zod schema named `<thing>InputSchema` (e.g. `taskInputSchema`) with the real constraints (`trim`, `min`, `max`). The API parses with it (`parseBody`); the web relies on the same limits
+- Output: a plain `type XxxDto` with JSON-safe fields — dates are ISO **strings**, never `Date`; nullable fields are explicit (`string | null`)
+- Zod is the only runtime dependency. No imports from apps, no DB or HTTP knowledge here
+- New domain = new `src/<domain>.ts` + `export * from "./<domain>"` in `src/index.ts`
