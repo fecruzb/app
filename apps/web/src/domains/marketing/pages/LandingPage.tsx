@@ -1,4 +1,4 @@
-import { useEffect, type ComponentType } from "react";
+import { useEffect, useState, type ComponentType } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRightIcon,
@@ -6,32 +6,31 @@ import {
   CheckIcon,
   EraserIcon,
   FlagIcon,
-  KeyRoundIcon,
-  LayersIcon,
-  MailIcon,
+  MoonIcon,
+  PaletteIcon,
   PenLineIcon,
-  RocketIcon,
-  SparklesIcon,
+  SunIcon,
   TerminalIcon,
   UnlockIcon,
-  UsersIcon,
 } from "lucide-react";
 import { Button } from "@app/ui/button";
 import { Card, CardContent } from "@app/ui/card";
 import { useAppConfig } from "@/app/config";
 import { useAuth } from "@/domains/auth/auth-provider";
+import { ThemeControls } from "@/theme/theme-controls";
+import { useTheme } from "@/theme/theme-provider";
+import { BrandIcon } from "../brand-icon";
 import { CodeBlock } from "../code-block";
 import {
+  AccountMock,
   AgentChatMock,
-  ForgotPasswordMock,
-  InviteEmailMock,
-  InviteMembersMock,
+  flows,
   LoginMock,
   McpKeysMock,
-  RegisterMock,
-  ResetPasswordMock,
   ShellMock,
-  VerifyEmailMock,
+  TasksMock,
+  WindowBar,
+  type Screen,
 } from "../product-preview";
 
 type Included = {
@@ -39,45 +38,6 @@ type Included = {
   title: string;
   description: string;
 };
-
-const included: Included[] = [
-  {
-    icon: KeyRoundIcon,
-    title: "Authentication",
-    description:
-      "Sign-up, login, reset and verification — no auth vendor. scrypt hashing, sessions in an httpOnly cookie.",
-  },
-  {
-    icon: UsersIcon,
-    title: "Multi-tenancy",
-    description:
-      "A personal tenant per user, invites, roles, and every query scoped by tenant_id so data never leaks.",
-  },
-  {
-    icon: SparklesIcon,
-    title: "AI agent + remote MCP",
-    description:
-      "A floating assistant wired to your data — the same tools ship as a remote MCP server for Cursor.",
-  },
-  {
-    icon: MailIcon,
-    title: "Transactional email",
-    description:
-      "Resend behind one swappable module, with a dev fallback that logs to the console instead of sending.",
-  },
-  {
-    icon: LayersIcon,
-    title: "Domain architecture",
-    description:
-      "Front and back organized by domain, with layered boundaries enforced by lint. Scales past the demo.",
-  },
-  {
-    icon: RocketIcon,
-    title: "One-service deploy",
-    description:
-      "API and SPA ship together to Render via a Blueprint, with migrations on pre-deploy and a health check.",
-  },
-];
 
 type Step = {
   id: string;
@@ -395,68 +355,75 @@ databases:
   },
 ];
 
-const product = [
+type Chapter = {
+  eyebrow: string;
+  title: string;
+  body: string;
+  /** A single static mock… */
+  mock?: ComponentType;
+  /** …or a multi-screen flow that keeps the browser chrome fixed and swaps the body. */
+  flow?: Screen[];
+};
+
+// The product tour as a flow: land, sign up, recover, then step into the
+// workspace and each thing it ships with. Emails hang off the flow that sends
+// them rather than standing alone.
+const chapters: Chapter[] = [
   {
     eyebrow: "Sign in",
     title: "Login, clean and familiar",
-    body: "Email, password, a link to recovery, and secure sessions on submit — built with shadcn/ui, ready to rebrand.",
+    body: "Email, password, a link to recovery, and secure sessions on submit — scrypt hashing and an httpOnly cookie, no auth vendor. Built with shadcn/ui, ready to rebrand.",
     mock: LoginMock,
   },
   {
     eyebrow: "Sign up",
-    title: "Registration in seconds",
-    body: "Name, email, password. Each new user gets a personal tenant and a verification email automatically.",
-    mock: RegisterMock,
-  },
-  {
-    eyebrow: "Email verification",
-    title: "Confirm the address, then start",
-    body: "A confirmation email goes out through Resend. The link is single-use and expires in 24 hours.",
-    mock: VerifyEmailMock,
+    title: "Registration that sets everything up",
+    body: "Name, email, password. Each new user gets a personal tenant and a verification email automatically — the link is single-use and expires in 24 hours.",
+    flow: flows.register,
   },
   {
     eyebrow: "Password recovery",
-    title: "Forgot password, handled",
-    body: "Request a reset link by email, sent through Resend with a short-lived token that expires on its own.",
-    mock: ForgotPasswordMock,
-  },
-  {
-    eyebrow: "Password reset",
-    title: "Set a new password safely",
-    body: "The link opens a reset screen; the token is validated server-side, used once, and the password hashed with scrypt.",
-    mock: ResetPasswordMock,
+    title: "Forgot password, fully handled",
+    body: "Request a reset link by email, then set a new password on a screen guarded by a short-lived, single-use token — validated server-side and hashed with scrypt.",
+    flow: flows.recovery,
   },
   {
     eyebrow: "The app shell",
     title: "A workspace, not a blank page",
-    body: "Sidebar nav, a tenant switcher that shows only with more than one, and a user menu. Your screens drop straight in.",
+    body: "Sidebar nav, a tenant switcher that appears only with more than one, a user menu and the theme controls. Your screens drop straight into the outlet.",
     mock: ShellMock,
   },
   {
-    eyebrow: "Invite members",
-    title: "Add teammates from settings",
-    body: "Owners and admins type an email, pick a role, and send. Members and pending invites live right there, each revocable.",
-    mock: InviteMembersMock,
-  },
-  {
-    eyebrow: "The invite email",
-    title: "The invite lands in their inbox",
-    body: "An email with a 7-day link — accept it and the invitee lands in the tenant with the role you picked.",
-    mock: InviteEmailMock,
+    eyebrow: "Example resource",
+    title: "A full CRUD feature to copy",
+    body: "Tasks is the placeholder feature — per-tenant create, list, toggle and delete, wired end to end. It's the exact shape you'll clone for your own resources, then delete.",
+    mock: TasksMock,
   },
   {
     eyebrow: "The AI agent",
     title: "A chat that gets things done",
-    body: "A floating assistant in every tenant: ask or command, it runs the right tools, shows what changed as a chip, and refreshes.",
+    body: "A floating assistant in every tenant: ask or command, it runs the right tools, shows what changed as a chip, and refreshes the data on its own.",
     mock: AgentChatMock,
+  },
+  {
+    eyebrow: "Your account",
+    title: "Profile and security, built in",
+    body: "Every user manages their own profile and password from a dedicated account screen — the same patterns you'll reuse for any personal settings you add.",
+    mock: AccountMock,
+  },
+  {
+    eyebrow: "Team & invites",
+    title: "Bring the rest of the team",
+    body: "Owners and admins invite by email and pick a role; members and pending invites live in settings, each revocable. The invite lands as a 7-day link in their inbox.",
+    flow: flows.invite,
   },
   {
     eyebrow: "Bring your own tools",
     title: "The same tools, over MCP",
-    body: "Mint a tenant-scoped API key and plug the remote MCP server into Cursor or Claude — the agent's tools, in your editor.",
+    body: "Mint a tenant-scoped API key and plug the remote MCP server into Cursor or Claude — the agent's tools, right in your editor.",
     mock: McpKeysMock,
   },
-] as const;
+];
 
 // The closing argument: this is owned code, not a dependency.
 const ownership: Included[] = [
@@ -480,13 +447,32 @@ const ownership: Included[] = [
   },
 ];
 
-const stack = [
-  { label: "Frontend", value: "React 19 · Vite · Tailwind · shadcn/ui · TanStack Query" },
-  { label: "Backend", value: "Hono · Zod · Node" },
-  { label: "Database", value: "PostgreSQL · Drizzle ORM" },
-  { label: "AI", value: "OpenAI · Model Context Protocol (MCP)" },
-  { label: "Tooling", value: "TypeScript · Turborepo · oxlint · Prettier" },
+const stack: { label: string; items: string[] }[] = [
+  { label: "Frontend", items: ["React 19", "Vite", "Tailwind", "shadcn/ui", "TanStack Query"] },
+  { label: "Backend", items: ["Hono", "Zod", "Node"] },
+  { label: "Database", items: ["PostgreSQL", "Drizzle ORM"] },
+  { label: "AI", items: ["OpenAI", "Model Context Protocol (MCP)"] },
+  { label: "Tooling", items: ["TypeScript", "Turborepo", "oxlint", "Prettier"] },
 ];
+
+const themeFile = `// src/theme/themes.ts — add your brand in one block
+export const themes: Theme[] = [
+  {
+    id: "violet",
+    label: "Violet",
+    swatch: "oklch(0.55 0.22 295)",
+    light: {
+      ...lightBase,                        // neutral surfaces
+      "--primary": "oklch(0.55 0.22 295)", // buttons, highlights
+      "--primary-foreground": "oklch(0.985 0 0)",
+    },
+    dark: {
+      ...darkBase,
+      "--primary": "oklch(0.68 0.19 295)", // lifted for dark bg
+      "--primary-foreground": "oklch(0.145 0 0)",
+    },
+  },
+];`;
 
 export function LandingPage() {
   const { me } = useAuth();
@@ -498,10 +484,11 @@ export function LandingPage() {
       <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-4">
           <Link to="/" className="flex items-center gap-2 font-semibold">
-            <BoxIcon className="size-5" />
+            <BoxIcon className="size-5 text-primary" />
             App Base
           </Link>
           <nav className="flex items-center gap-2">
+            <ThemeControls className="mr-1" />
             {me ? (
               <Button asChild>
                 <Link to="/app">
@@ -550,7 +537,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section className="border-t px-4 py-16">
+        <section className="border-t bg-muted/40 px-4 py-16">
           <div className="mx-auto max-w-5xl">
             <div className="text-center">
               <h2 className="text-2xl font-semibold tracking-tight">A stack you already know</h2>
@@ -558,68 +545,55 @@ export function LandingPage() {
                 Boring, well-documented tools — nothing exotic to learn before you're productive.
               </p>
             </div>
-            <dl className="mx-auto mt-8 max-w-2xl divide-y rounded-lg border bg-background">
+            <div className="mx-auto mt-8 max-w-2xl divide-y rounded-lg border bg-background">
               {stack.map((s) => (
-                <div key={s.label} className="flex flex-col gap-1 px-6 py-4 sm:flex-row sm:gap-8">
-                  <dt className="w-28 shrink-0 font-medium">{s.label}</dt>
-                  <dd className="text-muted-foreground">{s.value}</dd>
+                <div
+                  key={s.label}
+                  className="flex flex-col gap-2 px-6 py-4 sm:flex-row sm:items-center sm:gap-6"
+                >
+                  <p className="w-24 shrink-0 text-sm font-medium">{s.label}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {s.items.map((item) => (
+                      <span
+                        key={item}
+                        className="flex items-center gap-1.5 rounded-md border bg-muted/50 px-2.5 py-1 text-xs font-medium"
+                      >
+                        <BrandIcon name={item} className="size-3.5" />
+                        {item}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              ))}
-            </dl>
-          </div>
-        </section>
-
-        <section className="border-t bg-muted/40 px-4 py-20">
-          <div className="mx-auto max-w-5xl">
-            <div className="mb-10 text-center">
-              <h2 className="text-2xl font-semibold tracking-tight">What's in the box</h2>
-              <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
-                The plumbing every product needs, already built and wired together.
-              </p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {included.map((item) => (
-                <Card key={item.title} className="reveal bg-background">
-                  <CardContent className="p-6">
-                    <item.icon className="mb-3 size-6" />
-                    <h3 className="font-semibold">{item.title}</h3>
-                    <p className="mt-1.5 text-sm text-muted-foreground">{item.description}</p>
-                  </CardContent>
-                </Card>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-5xl px-4 pt-20 pb-4 text-center">
-          <h2 className="text-2xl font-semibold tracking-tight">What your users get</h2>
-          <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
-            Not just endpoints — real product surfaces, designed and working out of the box.
-          </p>
+        <section className="border-t px-4 pt-20 pb-4">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-medium text-primary">The product tour</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+              An app that's already assembled
+            </h2>
+            <p className="mx-auto mt-3 text-pretty text-muted-foreground">
+              Not a pile of endpoints — a running app with a database, a themeable UI and the
+              screens a real product needs. Here's the tour, in the order you'd meet them: sign in,
+              get set up, then step into the workspace and everything it ships with.
+            </p>
+          </div>
         </section>
 
-        {product.map((item, i) => {
-          const Mock = item.mock;
-          const flip = i % 2 === 1;
-          return (
-            <section key={item.title} className="px-4 py-10 sm:py-12">
-              <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
-                <div className={`reveal ${flip ? "lg:order-2" : ""}`}>
-                  <p className="text-sm font-medium text-muted-foreground">{item.eyebrow}</p>
-                  <h3 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
-                    {item.title}
-                  </h3>
-                  <p className="mt-4 text-pretty text-muted-foreground">{item.body}</p>
-                </div>
-                <div className={`reveal reveal-delay ${flip ? "lg:order-1" : ""}`}>
-                  <Mock />
-                </div>
-              </div>
-            </section>
-          );
-        })}
+        {chapters.slice(0, 4).map((chapter, i) => (
+          <ChapterSection key={chapter.title} chapter={chapter} flip={i % 2 === 1} />
+        ))}
 
-        <section className="border-t px-4 pt-20 pb-8">
+        <ThemingSection />
+
+        {chapters.slice(4).map((chapter, i) => (
+          <ChapterSection key={chapter.title} chapter={chapter} flip={i % 2 === 0} />
+        ))}
+
+        <section id="build" className="scroll-mt-16 border-t px-4 pt-20 pb-8">
           <div className="mx-auto max-w-5xl text-center">
             <h2 className="text-2xl font-semibold tracking-tight">From clone to production</h2>
             <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
@@ -653,7 +627,7 @@ export function LandingPage() {
               {ownership.map((item) => (
                 <Card key={item.title} className="reveal">
                   <CardContent className="p-5">
-                    <item.icon className="mb-3 size-5" />
+                    <item.icon className="mb-3 size-5 text-primary" />
                     <h3 className="text-sm font-semibold">{item.title}</h3>
                     <p className="mt-1.5 text-sm text-muted-foreground">{item.description}</p>
                   </CardContent>
@@ -678,6 +652,172 @@ export function LandingPage() {
           <span>Built with React, Hono and Postgres</span>
         </div>
       </footer>
+    </div>
+  );
+}
+
+/**
+ * Live theming demo — the swatches and toggle drive the real ThemeProvider, so
+ * clicking one recolors this entire page. The code panel is the actual file you
+ * edit to add your own theme.
+ */
+function ThemingSection() {
+  const { themes, themeId, setTheme, mode, setMode } = useTheme();
+
+  return (
+    <section className="border-t px-4 py-20">
+      <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
+        <div className="reveal">
+          <p className="flex items-center gap-2 text-sm font-medium text-primary">
+            <PaletteIcon className="size-4" /> Theming
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+            One file, every color — light and dark
+          </h2>
+          <p className="mt-4 text-pretty text-muted-foreground">
+            A theme is just two sets of tokens: light and dark. The primary color drives buttons,
+            highlights and focus rings; the rest is neutral surfaces you rarely touch. Pick a
+            primary, and the whole UI — landing page included — recolors from CSS variables. No
+            component edits, no <code className="font-mono text-xs">dark:</code> classes to chase.
+          </p>
+
+          <div className="mt-6 space-y-4">
+            <div>
+              <p className="mb-2 text-xs font-medium text-muted-foreground">Primary color</p>
+              <div className="flex flex-wrap gap-2">
+                {themes.map((theme) => (
+                  <button
+                    key={theme.id}
+                    onClick={() => setTheme(theme.id)}
+                    className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors ${
+                      theme.id === themeId
+                        ? "border-primary bg-primary/10 text-foreground"
+                        : "text-muted-foreground hover:bg-accent"
+                    }`}
+                  >
+                    <span
+                      className="size-3.5 rounded-full border"
+                      style={{ backgroundColor: theme.swatch }}
+                    />
+                    {theme.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="mb-2 text-xs font-medium text-muted-foreground">Mode</p>
+              <div className="inline-flex rounded-lg border p-1">
+                <button
+                  onClick={() => setMode("light")}
+                  className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors ${
+                    mode === "light"
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  <SunIcon className="size-4" /> Light
+                </button>
+                <button
+                  onClick={() => setMode("dark")}
+                  className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors ${
+                    mode === "dark" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+                  }`}
+                >
+                  <MoonIcon className="size-4" /> Dark
+                </button>
+              </div>
+            </div>
+
+            <p className="text-sm text-muted-foreground">
+              Try it — this page changes as you click. Your choice is saved and shared with the app.
+            </p>
+          </div>
+        </div>
+
+        <div className="reveal reveal-delay min-w-0">
+          <CodeBlock filename="src/theme/themes.ts" code={themeFile} lang="ts" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** One product-tour chapter: copy on one side, its mock (plus any email) on the other. */
+function ChapterSection({ chapter, flip }: { chapter: Chapter; flip: boolean }) {
+  return (
+    <section className="px-4 py-10 sm:py-12">
+      <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
+        <div className={`reveal ${flip ? "lg:order-2" : ""}`}>
+          <p className="text-sm font-medium text-primary">{chapter.eyebrow}</p>
+          <h3 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+            {chapter.title}
+          </h3>
+          <p className="mt-4 text-pretty text-muted-foreground">{chapter.body}</p>
+        </div>
+        <div className={`reveal reveal-delay min-w-0 ${flip ? "lg:order-1" : ""}`}>
+          <MockCarousel chapter={chapter} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * A single-mock chapter renders its mock as-is. A flow chapter keeps the browser
+ * chrome (frame + bar) fixed and only crossfades the body inside on a timer, so
+ * alternating between screens never resizes the frame or jumps the layout.
+ */
+function MockCarousel({ chapter }: { chapter: Chapter }) {
+  const screens = chapter.flow;
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (!screens || paused) return;
+    const id = setInterval(() => setIndex((i) => (i + 1) % screens.length), 3500);
+    return () => clearInterval(id);
+  }, [screens, paused]);
+
+  if (!screens) {
+    const Only = chapter.mock!;
+    return <Only />;
+  }
+
+  return (
+    <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+      <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
+        <WindowBar label={screens[index].label} />
+        {/* Bodies share one grid cell: the tallest sets a fixed height, they crossfade in place. */}
+        <div className="grid">
+          {screens.map((screen, i) => {
+            const Body = screen.Body;
+            return (
+              <div
+                key={i}
+                aria-hidden={i !== index}
+                className={`col-start-1 row-start-1 transition-opacity duration-500 ${
+                  i === index ? "opacity-100" : "pointer-events-none opacity-0"
+                }`}
+              >
+                <Body />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div className="mt-3 flex gap-1.5">
+        {screens.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setIndex(i)}
+            aria-label={`Show screen ${i + 1}`}
+            className={`h-1.5 rounded-full transition-all ${
+              i === index ? "w-5 bg-primary" : "w-1.5 bg-muted-foreground/30"
+            }`}
+          />
+        ))}
+      </div>
     </div>
   );
 }

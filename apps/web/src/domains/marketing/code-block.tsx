@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CODE_THEME, getHighlighter } from "./highlighter";
+import { CODE_THEMES, getHighlighter } from "./highlighter";
 
 type Lang = "ts" | "json" | "text";
 
@@ -27,7 +27,7 @@ export function CodeBlock({
         setHtml(
           hl.codeToHtml(code, {
             lang: lang === "json" ? "json" : "typescript",
-            theme: CODE_THEME,
+            themes: CODE_THEMES,
           }),
         );
       })

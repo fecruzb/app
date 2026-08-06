@@ -27,6 +27,7 @@ import { ApiError } from "@/lib/api";
 import { cn } from "@app/ui/lib/utils";
 import { initials } from "@/lib/utils";
 import { useAppConfig } from "@/app/config";
+import { ThemeControls } from "@/theme/theme-controls";
 import { authApi } from "@/domains/auth/api";
 import { useAuth } from "@/domains/auth/auth-provider";
 import { TenantProvider, useTenant } from "@/domains/tenant/tenant-provider";
@@ -76,7 +77,9 @@ function UserMenu() {
       <DropdownMenuTrigger asChild>
         <button className="flex w-full items-center gap-2 rounded-md p-2 text-left text-sm hover:bg-accent">
           <Avatar>
-            <AvatarFallback>{initials(me.user.name)}</AvatarFallback>
+            <AvatarFallback className="bg-primary/10 text-primary">
+              {initials(me.user.name)}
+            </AvatarFallback>
           </Avatar>
           <span className="min-w-0 flex-1">
             <span className="block truncate font-medium">{me.user.name}</span>
@@ -122,7 +125,7 @@ function VerifyEmailBanner() {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2 border-b bg-amber-50 px-4 py-2 text-sm text-amber-900">
+    <div className="flex flex-wrap items-center gap-2 border-b bg-amber-50 px-4 py-2 text-sm text-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
       <MailWarningIcon className="size-4 shrink-0" />
       <span className="flex-1">Confirm your email to secure your account.</span>
       {!sent && (
@@ -149,10 +152,13 @@ function Shell() {
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
       <aside className="flex flex-col gap-4 border-b p-4 md:min-h-screen md:w-64 md:border-b-0 md:border-r">
-        <Link to="/" className="flex items-center gap-2 px-2 font-semibold">
-          <BoxIcon className="size-5" />
-          App Base
-        </Link>
+        <div className="flex items-center justify-between px-2">
+          <Link to="/" className="flex items-center gap-2 font-semibold">
+            <BoxIcon className="size-5 text-primary" />
+            App Base
+          </Link>
+          <ThemeControls />
+        </div>
         <TenantSwitcher />
         <nav className="flex gap-1 md:flex-1 md:flex-col">
           {navItems(tenant.slug).map((item) => (
@@ -164,13 +170,17 @@ function Shell() {
                 cn(
                   "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-accent text-accent-foreground"
+                    ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
                 )
               }
             >
-              <item.icon className="size-4" />
-              {item.label}
+              {({ isActive }) => (
+                <>
+                  <item.icon className={cn("size-4", isActive && "text-primary")} />
+                  {item.label}
+                </>
+              )}
             </NavLink>
           ))}
         </nav>

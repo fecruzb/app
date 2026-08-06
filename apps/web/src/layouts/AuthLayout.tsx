@@ -17,7 +17,7 @@ export function AuthLayout({
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40 px-4 py-12">
       <Link to="/" className="mb-6 flex items-center gap-2 font-semibold">
-        <BoxIcon className="size-5" />
+        <BoxIcon className="size-5 text-primary" />
         App Base
       </Link>
       <Card className="w-full max-w-sm">

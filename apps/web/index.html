@@ -11,6 +11,16 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Apply the stored mode before paint so dark reloads don't flash white. -->
+    <script>
+      try {
+        var m = localStorage.getItem("app:mode");
+        if (m === "dark") {
+          document.documentElement.classList.add("dark");
+          document.documentElement.style.colorScheme = "dark";
+        }
+      } catch (e) {}
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

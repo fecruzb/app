@@ -1,16 +1,17 @@
 import { createHighlighterCore, type HighlighterCore } from "shiki/core";
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
 
-export const CODE_THEME = "github-light";
+/** Dual themes — Shiki emits both, and index.css swaps to dark under `.dark`. */
+export const CODE_THEMES = { light: "github-light", dark: "github-dark" } as const;
 
 let instance: Promise<HighlighterCore> | null = null;
 
-/** Lazy singleton: TS + JSON only, JS regex engine (no WASM), one light theme. */
+/** Lazy singleton: TS + JSON only, JS regex engine (no WASM), light + dark. */
 export function getHighlighter(): Promise<HighlighterCore> {
   if (!instance) {
     instance = createHighlighterCore({
       langs: [import("@shikijs/langs/typescript"), import("@shikijs/langs/json")],
-      themes: [import("@shikijs/themes/github-light")],
+      themes: [import("@shikijs/themes/github-light"), import("@shikijs/themes/github-dark")],
       engine: createJavaScriptRegexEngine(),
     });
   }

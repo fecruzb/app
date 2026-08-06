@@ -1,3 +1,4 @@
+import type { ComponentType } from "react";
 import {
   BoxIcon,
   CheckIcon,
@@ -6,23 +7,33 @@ import {
   HomeIcon,
   KeyRoundIcon,
   MailIcon,
+  PlusIcon,
   SendIcon,
   SettingsIcon,
   SparklesIcon,
+  Trash2Icon,
+  UserIcon,
 } from "lucide-react";
 
 /** Static, faithful mockups of the product UI — no data or app imports. */
+
+/** Just the browser chrome bar (dots + label), so it can stay fixed while the body swaps. */
+export function WindowBar({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-2 border-b bg-muted/50 px-4 py-2.5">
+      <span className="size-2.5 rounded-full bg-muted-foreground/25" />
+      <span className="size-2.5 rounded-full bg-muted-foreground/25" />
+      <span className="size-2.5 rounded-full bg-muted-foreground/25" />
+      <span className="ml-2 truncate font-mono text-xs text-muted-foreground">{label}</span>
+    </div>
+  );
+}
 
 /** Chrome frame so a mock reads as a real screen without pretending to be one. */
 function Window({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
-      <div className="flex items-center gap-2 border-b bg-muted/50 px-4 py-2.5">
-        <span className="size-2.5 rounded-full bg-muted-foreground/25" />
-        <span className="size-2.5 rounded-full bg-muted-foreground/25" />
-        <span className="size-2.5 rounded-full bg-muted-foreground/25" />
-        <span className="ml-2 truncate font-mono text-xs text-muted-foreground">{label}</span>
-      </div>
+      <WindowBar label={label} />
       {children}
     </div>
   );
@@ -88,13 +99,38 @@ function SubmitButton({ label }: { label: string }) {
   );
 }
 
-/** A single centered auth screen, filling a full section like the other mocks. */
-function AuthScreen({
-  route,
+/** The inner content of an auth screen (no chrome), so it can crossfade in place. */
+function AuthBody({
   title,
   description,
   children,
   footer,
+}: {
+  title: string;
+  description: string;
+  children: React.ReactNode;
+  footer: string;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-5 bg-muted/40 p-8">
+      <div className="flex items-center gap-2 font-semibold">
+        <BoxIcon className="size-5" />
+        App Base
+      </div>
+      <div className="w-full max-w-xs rounded-xl border bg-card p-6 text-left shadow-sm">
+        <p className="text-lg font-semibold">{title}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+        <div className="mt-5 space-y-3">{children}</div>
+      </div>
+      <p className="text-xs text-muted-foreground">{footer}</p>
+    </div>
+  );
+}
+
+/** A single centered auth screen, filling a full section like the other mocks. */
+function AuthScreen({
+  route,
+  ...body
 }: {
   route: string;
   title: string;
@@ -104,18 +140,7 @@ function AuthScreen({
 }) {
   return (
     <Window label={route}>
-      <div className="flex flex-col items-center gap-5 bg-muted/40 p-8">
-        <div className="flex items-center gap-2 font-semibold">
-          <BoxIcon className="size-5" />
-          App Base
-        </div>
-        <div className="w-full max-w-xs rounded-xl border bg-card p-6 text-left shadow-sm">
-          <p className="text-lg font-semibold">{title}</p>
-          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-          <div className="mt-5 space-y-3">{children}</div>
-        </div>
-        <p className="text-xs text-muted-foreground">{footer}</p>
-      </div>
+      <AuthBody {...body} />
     </Window>
   );
 }
@@ -135,10 +160,9 @@ export function LoginMock() {
   );
 }
 
-export function RegisterMock() {
+function RegisterBody() {
   return (
-    <AuthScreen
-      route="/register"
+    <AuthBody
       title="Create your account"
       description="Start in seconds."
       footer="Have an account? Sign in"
@@ -147,28 +171,42 @@ export function RegisterMock() {
       <Field label="Email" value="you@example.com" />
       <Field label="Password" value="••••••••" mono />
       <SubmitButton label="Create account" />
-    </AuthScreen>
+    </AuthBody>
   );
 }
 
-export function ForgotPasswordMock() {
+export function RegisterMock() {
   return (
-    <AuthScreen
-      route="/forgot-password"
+    <Window label="/register">
+      <RegisterBody />
+    </Window>
+  );
+}
+
+function ForgotPasswordBody() {
+  return (
+    <AuthBody
       title="Forgot password"
       description="We'll email you a reset link."
       footer="Remembered it? Sign in"
     >
       <Field label="Email" value="you@example.com" />
       <SubmitButton label="Send reset link" />
-    </AuthScreen>
+    </AuthBody>
   );
 }
 
-export function ResetPasswordMock() {
+export function ForgotPasswordMock() {
   return (
-    <AuthScreen
-      route="/reset-password"
+    <Window label="/forgot-password">
+      <ForgotPasswordBody />
+    </Window>
+  );
+}
+
+function ResetPasswordBody() {
+  return (
+    <AuthBody
       title="Choose a new password"
       description="Set a new password for your account."
       footer="Link expires in 1 hour"
@@ -176,12 +214,20 @@ export function ResetPasswordMock() {
       <Field label="New password" value="••••••••" mono />
       <Field label="Confirm password" value="••••••••" mono />
       <SubmitButton label="Reset password" />
-    </AuthScreen>
+    </AuthBody>
+  );
+}
+
+export function ResetPasswordMock() {
+  return (
+    <Window label="/reset-password">
+      <ResetPasswordBody />
+    </Window>
   );
 }
 
 /** An email in an inbox frame: header row + the rendered template body with a CTA. */
-function EmailMock({
+function EmailBody({
   subject,
   heading,
   body,
@@ -193,7 +239,7 @@ function EmailMock({
   cta: string;
 }) {
   return (
-    <Window label="inbox">
+    <>
       <div className="flex items-center gap-3 border-b px-4 py-3">
         <div className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary">
           <MailIcon className="size-4" />
@@ -221,13 +267,13 @@ function EmailMock({
           </div>
         </div>
       </div>
-    </Window>
+    </>
   );
 }
 
-export function VerifyEmailMock() {
+function VerifyEmailBody() {
   return (
-    <EmailMock
+    <EmailBody
       subject="Confirm your email"
       heading="Confirm your email"
       body="Hi Ada! Confirm your email address to finish signing up. This link expires in 24 hours."
@@ -236,72 +282,86 @@ export function VerifyEmailMock() {
   );
 }
 
-export function InviteMembersMock() {
+export function VerifyEmailMock() {
+  return (
+    <Window label="inbox">
+      <VerifyEmailBody />
+    </Window>
+  );
+}
+
+function InviteMembersBody() {
   const members = [
     { name: "Ada Lovelace", email: "ada@acme.com", role: "owner", self: true },
     { name: "Alan Turing", email: "alan@acme.com", role: "admin", self: false },
   ];
   return (
-    <Window label="/app/acme/settings">
-      <div className="space-y-4 p-5">
-        <div className="rounded-lg border">
-          <div className="border-b px-4 py-3">
-            <p className="text-sm font-semibold">Invites</p>
-            <p className="text-xs text-muted-foreground">Invite people to this tenant by email</p>
-          </div>
-          <div className="flex items-end gap-2 p-4">
-            <div className="flex-1">
-              <p className="mb-1 text-xs font-medium">Email</p>
-              <div className="flex h-9 items-center rounded-md border px-3 text-sm text-muted-foreground">
-                sam@acme.com
-              </div>
-            </div>
-            <div className="flex h-9 items-center gap-1 rounded-md border px-3 text-sm text-muted-foreground">
-              member
-              <ChevronsUpDownIcon className="size-3.5" />
-            </div>
-            <div className="flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">
-              Invite
-            </div>
-          </div>
+    <div className="space-y-4 p-5">
+      <div className="rounded-lg border">
+        <div className="border-b px-4 py-3">
+          <p className="text-sm font-semibold">Invites</p>
+          <p className="text-xs text-muted-foreground">Invite people to this tenant by email</p>
         </div>
-
-        <div className="rounded-lg border">
-          <div className="border-b px-4 py-3">
-            <p className="text-sm font-semibold">Members</p>
-            <p className="text-xs text-muted-foreground">Who has access to this tenant</p>
+        <div className="flex items-end gap-2 p-4">
+          <div className="flex-1">
+            <p className="mb-1 text-xs font-medium">Email</p>
+            <div className="flex h-9 items-center rounded-md border px-3 text-sm text-muted-foreground">
+              sam@acme.com
+            </div>
           </div>
-          <div className="divide-y">
-            {members.map((m) => (
-              <div key={m.email} className="flex items-center gap-3 px-4 py-3">
-                <div className="flex size-8 items-center justify-center rounded-full bg-muted text-xs font-medium">
-                  {m.name
-                    .split(" ")
-                    .map((p) => p[0])
-                    .join("")}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">
-                    {m.name}
-                    {m.self && <span className="text-muted-foreground"> (you)</span>}
-                  </p>
-                  <p className="truncate text-xs text-muted-foreground">{m.email}</p>
-                </div>
-                <span className="rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                  {m.role}
-                </span>
-              </div>
-            ))}
+          <div className="flex h-9 items-center gap-1 rounded-md border px-3 text-sm text-muted-foreground">
+            member
+            <ChevronsUpDownIcon className="size-3.5" />
+          </div>
+          <div className="flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">
+            Invite
           </div>
         </div>
       </div>
+
+      <div className="rounded-lg border">
+        <div className="border-b px-4 py-3">
+          <p className="text-sm font-semibold">Members</p>
+          <p className="text-xs text-muted-foreground">Who has access to this tenant</p>
+        </div>
+        <div className="divide-y">
+          {members.map((m) => (
+            <div key={m.email} className="flex items-center gap-3 px-4 py-3">
+              <div className="flex size-8 items-center justify-center rounded-full bg-muted text-xs font-medium">
+                {m.name
+                  .split(" ")
+                  .map((p) => p[0])
+                  .join("")}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium">
+                  {m.name}
+                  {m.self && <span className="text-muted-foreground"> (you)</span>}
+                </p>
+                <p className="truncate text-xs text-muted-foreground">{m.email}</p>
+              </div>
+              <span className="rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                {m.role}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function InviteMembersMock() {
+  return (
+    <Window label="/app/acme/settings">
+      <InviteMembersBody />
     </Window>
   );
 }
 
-export function InviteEmailMock() {
+function InviteEmailBody() {
   return (
-    <EmailMock
+    <EmailBody
       subject="Invitation to Acme Inc"
       heading="Invitation to Acme Inc"
       body={
@@ -313,6 +373,14 @@ export function InviteEmailMock() {
       }
       cta="Accept invite"
     />
+  );
+}
+
+export function InviteEmailMock() {
+  return (
+    <Window label="inbox">
+      <InviteEmailBody />
+    </Window>
   );
 }
 
@@ -432,3 +500,102 @@ export function ShellMock() {
     </Window>
   );
 }
+
+export function TasksMock() {
+  const tasks = [
+    { title: "Design the schema", done: true },
+    { title: "Wire the repository", done: true },
+    { title: "Expose the endpoint", done: false },
+    { title: "Build the screen", done: false },
+  ];
+  return (
+    <Window label="/app/acme/tasks">
+      <div className="space-y-4 p-5 text-sm">
+        <div>
+          <p className="text-base font-semibold">Tasks</p>
+          <p className="text-xs text-muted-foreground">
+            Example resource with per-tenant CRUD · 2 of 4 left
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <div className="flex h-9 flex-1 items-center rounded-md border px-3 text-xs text-muted-foreground">
+            Add a task...
+          </div>
+          <div className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground">
+            <PlusIcon className="size-3.5" /> Add
+          </div>
+        </div>
+        <div className="divide-y rounded-lg border">
+          {tasks.map((task) => (
+            <div key={task.title} className="flex items-center gap-3 px-3 py-2.5">
+              <span
+                className={`flex size-4 shrink-0 items-center justify-center rounded-md border ${
+                  task.done ? "border-primary bg-primary text-primary-foreground" : "border-input"
+                }`}
+              >
+                {task.done && <CheckIcon className="size-3" />}
+              </span>
+              <span
+                className={`flex-1 text-xs ${
+                  task.done ? "text-muted-foreground line-through" : ""
+                }`}
+              >
+                {task.title}
+              </span>
+              <Trash2Icon className="size-3.5 text-muted-foreground/60" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </Window>
+  );
+}
+
+export function AccountMock() {
+  return (
+    <Window label="/app/acme/account">
+      <div className="space-y-4 p-5 text-sm">
+        <div>
+          <p className="text-base font-semibold">My account</p>
+          <p className="text-xs text-muted-foreground">Manage your profile and security.</p>
+        </div>
+        <div className="rounded-lg border p-4">
+          <div className="mb-3 flex items-center gap-2 text-xs font-semibold">
+            <UserIcon className="size-3.5" /> Profile
+          </div>
+          <Field label="Name" value="Ada Lovelace" />
+          <div className="h-2" />
+          <Field label="Email" value="ada@acme.com" />
+        </div>
+        <div className="rounded-lg border p-4">
+          <div className="mb-3 flex items-center gap-2 text-xs font-semibold">
+            <KeyRoundIcon className="size-3.5" /> Password
+          </div>
+          <Field label="New password" value="••••••••" mono />
+        </div>
+      </div>
+    </Window>
+  );
+}
+
+/** One screen inside the browser chrome: a route label and its bodyless content. */
+export type Screen = { label: string; Body: ComponentType };
+
+/**
+ * Multi-screen flows for the carousel. Each entry keeps the browser chrome fixed
+ * and only swaps the body inside, so alternating never resizes the frame.
+ */
+export const flows = {
+  register: [
+    { label: "/register", Body: RegisterBody },
+    { label: "inbox", Body: VerifyEmailBody },
+  ],
+  recovery: [
+    { label: "/forgot-password", Body: ForgotPasswordBody },
+    { label: "/reset-password", Body: ResetPasswordBody },
+  ],
+  invite: [
+    { label: "/app/acme/settings", Body: InviteMembersBody },
+    { label: "inbox", Body: InviteEmailBody },
+  ],
+} satisfies Record<string, Screen[]>;
