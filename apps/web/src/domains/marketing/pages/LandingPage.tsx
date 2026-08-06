@@ -75,7 +75,14 @@ export const taskRepository = {
   async delete(tenantId: string, id: string): Promise<boolean> { /* … */ },
 };`;
 
-const repositoryMethodFile = `// list — full query inline; always filters by tenantId
+const repositoryMethodFile = `/**
+ * List tasks
+ *
+ * Newest first for the tenant. Query written inline — no shared helpers.
+ *
+ * @param tenantId - Tenant that owns the tasks
+ * @returns Tasks with author names, newest first
+ */
 async list(tenantId: string): Promise<TaskWithAuthor[]> {
   return db
     .select({ task: tasks, authorName: users.name })
