@@ -4,12 +4,16 @@ import {
   ArrowRightIcon,
   BoxIcon,
   CheckIcon,
+  EraserIcon,
+  FlagIcon,
   KeyRoundIcon,
   LayersIcon,
   MailIcon,
+  PenLineIcon,
   RocketIcon,
   SparklesIcon,
   TerminalIcon,
+  UnlockIcon,
   UsersIcon,
 } from "lucide-react";
 import { Button } from "@app/ui/button";
@@ -75,34 +79,71 @@ const included: Included[] = [
   },
 ];
 
-type Showcase = {
+type Step = {
   id: string;
-  eyebrow: string;
   title: string;
   /** A single short paragraph — keep it tight. */
   body: string;
   /** Concrete technical points shown below the copy. */
-  highlights: string[];
+  points: string[];
+  /** Something the reader can do or verify right now — keeps the guided tone. */
+  checkpoint: string;
   filename: string;
   code: string;
   lang?: "ts" | "json" | "text";
 };
 
-const showcases: Showcase[] = [
+type Phase = {
+  id: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  steps: Step[];
+};
+
+// The whole code story as one chronology: run it, add a feature end to end,
+// ship it. The "notes" feature in phase two follows the repo's real patterns.
+const journey: Phase[] = [
   {
-    id: "workspace",
-    eyebrow: "The workspace",
-    title: "One typed monorepo, three parts",
-    body: "A single repo wired with npm workspaces and Turborepo: the Hono API, the React SPA, and a shared package of types both import. Change a request shape and the other side stops compiling — they can't drift apart.",
-    highlights: [
-      "npm workspaces + Turborepo — cached, parallel tasks",
-      "packages/shared: one source of truth for types",
-      "API serves the built SPA in prod — one origin, no CORS",
-      "TypeScript everywhere, end to end",
-    ],
-    filename: "repo",
-    lang: "text",
-    code: `app-base/
+    id: "start",
+    eyebrow: "Phase 1",
+    title: "Day zero — get it running, learn the map",
+    description:
+      "Before writing any code, get the app on your screen and learn the lay of the land. Fifteen minutes, and you'll know where everything lives.",
+    steps: [
+      {
+        id: "run",
+        title: "Clone and run",
+        body: "Start here. One command boots Postgres in Docker, applies the migrations and seeds a demo workspace; the next starts both dev servers. There's nothing to configure first — the .env ships with working local defaults, validated by Zod at boot, and optional keys degrade gracefully: no Resend key logs emails to the console, no OpenAI key just hides the agent.",
+        points: [
+          "Env validated once at boot — a bad var fails fast",
+          "Optional keys degrade: email → console, agent → hidden",
+          "Code reads a typed env, never raw process.env",
+        ],
+        checkpoint:
+          "Open localhost:3000 and sign in as demo@example.com / demo1234 — you're inside the seeded demo workspace.",
+        filename: "terminal",
+        lang: "text",
+        code: `git clone <your-fork>/app-base && cd app-base
+npm install
+
+npm run setup    # Postgres via Docker + migrate + seed
+npm run dev      # API on :5000 · SPA on :3000`,
+      },
+      {
+        id: "workspace",
+        title: "Meet the workspace",
+        body: "Now take a minute to walk the tree. It's one typed monorepo wired with npm workspaces and Turborepo: the Hono API, the React SPA, and a shared package of Zod schemas both sides import. That shared package is the trick — change a request shape there and whichever side you forgot stops compiling.",
+        points: [
+          "packages/shared: one source of truth for types",
+          "API serves the built SPA in prod — one origin, no CORS",
+          "TypeScript everywhere, end to end",
+        ],
+        checkpoint:
+          "Rename a field in packages/shared/src/task.ts and watch both apps go red — that's the contract doing its job. (Then undo it.)",
+        filename: "repo",
+        lang: "text",
+        code: `app-base/
 ├── apps/
 │   ├── api/          Hono + Drizzle + Postgres
 │   └── web/          React + Vite SPA
@@ -111,182 +152,211 @@ const showcases: Showcase[] = [
 ├── .cursor/rules/    conventions the AI follows
 ├── render.yaml       one-service deploy
 └── turbo.json        task graph`,
-  },
-  {
-    id: "domain",
-    eyebrow: "Organized by domain",
-    title: "A feature is a folder, in layers",
-    body: "Each domain owns its slice top to bottom — schema, repository, service, DTO, endpoints and agent tools. Import directions are enforced by lint, so the structure can't quietly rot as the app grows.",
-    highlights: [
-      "Repository = all SQL; every query filtered by tenantId",
-      "service.ts only when there's real logic — CRUD skips it",
-      "Boundaries fail the lint, not just code review",
-      "@/ alias across layers; relative paths within a domain",
-    ],
-    filename: "apps/api/src/domains/task/",
-    lang: "text",
-    code: `domains/task/
+      },
+      {
+        id: "domain",
+        title: "A feature is a folder",
+        body: "Last stop on the tour: open apps/api/src/domains/task/ — this is the folder you'll copy for everything you build. A domain owns its slice top to bottom (schema, repository, DTO, endpoints, agent tools), and the frontend mirrors the same shape. Import directions are enforced by lint, so the structure can't quietly rot as the app grows.",
+        points: [
+          "Repository = all SQL; every query filtered by tenantId",
+          "service.ts only when there's real logic — CRUD skips it",
+          "Boundaries fail the lint, not just code review",
+        ],
+        checkpoint:
+          "Read task/routes.ts top to bottom once — after that you can predict where any file in this repo lives.",
+        filename: "apps/api/src/domains/task/",
+        lang: "text",
+        code: `domains/task/
 ├── schema.ts        Drizzle table
 ├── repository.ts    all SQL (scoped by tenantId)
-├── service.ts       business logic (optional)
 ├── dto.ts           row → API shape
 ├── routes.ts        wires endpoints + middleware
 ├── endpoints/       create-task.endpoint.ts …
-└── tools/           create-task.tool.ts … (agent)`,
-  },
-  {
-    id: "endpoint",
-    eyebrow: "Add an endpoint",
-    title: "A new route is one file and one line",
-    body: "Drop a handler in the domain's endpoints/ and register it in routes.ts, where auth and tenant middleware already run for the whole group. The handler stays thin: validate, hit the repository, map through the DTO.",
-    highlights: [
-      "Handler stays thin: validate → repository → DTO",
-      "Auth + tenant middleware applied once in routes.ts",
-      "Input validated by a shared Zod schema",
-      "Tenant comes from context — one tenant can't touch another",
-    ],
-    filename: "domains/task/routes.ts",
-    code: `const route = new Hono<AppEnv>();
-route.use(requireAuth, requireTenant); // once for the group
+└── tools/           create-task.tool.ts … (agent)
 
-route.get("/", listTasks);
-route.post("/", createTask);
-route.patch("/:id/archive", archiveTask); // ← new endpoint
+// apps/web mirrors it: domains/task/
+//   api.ts · pages/TasksPage.tsx · routes.tsx`,
+      },
+    ],
+  },
+  {
+    id: "feature",
+    eyebrow: "Phase 2",
+    title: "The loop — build a feature with us, end to end",
+    description:
+      "Time to build. Say your product needs notes: create domains/note/ and walk the same path every feature takes — six small files, each landing exactly where the last one predicted. This is the loop you'll repeat for the rest of the product's life.",
+    steps: [
+      {
+        id: "contract",
+        title: "Declare the contract",
+        body: "Always start with the shape. Create note.ts in the shared package and declare two things: the input schema the API will validate with, and the DTO the frontend will consume. One definition, imported by both sides — there is no second version to keep in sync.",
+        points: [
+          "One schema validates the request and types the client",
+          "Both sides import it — drift is a compile error",
+        ],
+        checkpoint:
+          "From this file on, the compiler tracks every place notes touch — a wrong field anywhere is a build error, not a runtime surprise.",
+        filename: "packages/shared/src/note.ts",
+        code: `export const noteInputSchema = z.object({
+  title: z.string().trim().min(1).max(200),
+});
 
-export const taskRoutes = route;`,
-  },
-  {
-    id: "tool",
-    eyebrow: "Add an agent skill",
-    title: "One file gives the agent a new tool",
-    body: "A tool is a single defineTool — name, Zod input, execute. That one definition drives the in-app chat, local Cursor over stdio, and the remote MCP server, with zero extra glue.",
-    highlights: [
-      "Same definition drives the chat, stdio and remote MCP",
-      "Zod input validates whatever the model sends",
-      "summarize marks writes; reads leave it off",
-      "Tools never import MCP or OpenAI — the lint blocks it",
-    ],
-    filename: "domains/task/tools/archive-task.tool.ts",
-    code: `export const archiveTaskTool = defineTool({
-  name: "archive_task",
-  description: "Archives a task by id.",
-  inputSchema: { id: z.string().uuid() },
-  summarize: () => "Task archived", // write → chip in the chat
-  execute: (ctx, { id }) => taskRepository.archive(ctx.tenantId, id),
-});`,
-  },
-  {
-    id: "schema",
-    eyebrow: "Add a table",
-    title: "Schema in the domain, migration from it",
-    body: "Tables are TypeScript, defined with Drizzle inside their domain. Export from db/schema.ts and run db:generate — the SQL migration is derived from the schema, so code stays the source of truth.",
-    highlights: [
-      "Schema is code — migrations are generated, not hand-written",
-      "Reused id + timestamp columns from a helper",
-      "tenant_id foreign key cascades on delete",
-      "db:generate locally, runs on pre-deploy in prod",
-    ],
-    filename: "domains/task/schema.ts",
-    code: `export const tasks = pgTable(
-  "tasks",
+export type NoteDto = {
+  id: string;
+  title: string;
+  createdAt: string;
+};`,
+      },
+      {
+        id: "table",
+        title: "Add the table",
+        body: "Next, storage. Define the table in TypeScript with Drizzle, inside the domain — note the tenant_id foreign key that ties every note to its workspace. Export it from db/schema.ts, then run npm run db:generate: the SQL migration is derived from your code, so the schema stays the source of truth.",
+        points: [
+          "Migrations are generated, not hand-written",
+          "tenant_id foreign key cascades on delete",
+          "Reused id + timestamp columns from a helper",
+        ],
+        checkpoint:
+          "Look inside apps/api/drizzle/ — the SQL migration was written for you, and it runs automatically on the next deploy.",
+        filename: "domains/note/schema.ts",
+        code: `export const notes = pgTable(
+  "notes",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     tenantId: uuid("tenant_id")
       .notNull()
       .references(() => tenants.id, { onDelete: "cascade" }),
     title: text("title").notNull(),
-    completed: boolean("completed").notNull().default(false),
     ...timestamps, // created_at / updated_at helper
   },
-  (t) => [index("tasks_tenant_idx").on(t.tenantId)],
-);`,
+  (t) => [index("notes_tenant_idx").on(t.tenantId)],
+);
+
+// npm run db:generate  → SQL migration from the schema`,
+      },
+      {
+        id: "repository",
+        title: "Write the queries",
+        body: "Now the data access. All SQL for the domain lives in one repository object, and every method takes tenantId and filters by it — isolation isn't a code-review reminder here, it's the only way the data can be reached at all. Stick to the naming (list / find / insert / update / delete) and the rest of the stack knows what to expect.",
+        points: [
+          "CRUD methods named list / find / insert / update / delete",
+          "No query exists without a tenant filter",
+        ],
+        checkpoint:
+          "Notice what doesn't exist: a way to query notes without a tenant. Leaking across workspaces takes effort here, not care.",
+        filename: "domains/note/repository.ts",
+        code: `export const noteRepository = {
+  async list(tenantId: string): Promise<Note[]> {
+    return db
+      .select()
+      .from(notes)
+      .where(eq(notes.tenantId, tenantId))
+      .orderBy(desc(notes.createdAt));
+  },
+
+  async insert(values: { tenantId: string; title: string }): Promise<Note> {
+    const [note] = await db.insert(notes).values(values).returning();
+    return note;
+  },
+};`,
+      },
+      {
+        id: "endpoint",
+        title: "Expose the endpoint",
+        body: "Wire it to HTTP. The handler stays three lines of intent — parse the body with the shared schema, call the repository, map through the DTO — then gets one line in routes.ts. Auth and tenant middleware already run for the whole group, so the handler never checks a session or resolves a tenant itself.",
+        points: [
+          "Handler stays thin: validate → repository → DTO",
+          "Tenant comes from context — one tenant can't touch another",
+        ],
+        checkpoint:
+          "POST a title to /api/tenants/<id>/notes and the note comes back as JSON — validated, tenant-scoped, typed.",
+        filename: "domains/note/endpoints/create-note.endpoint.ts",
+        code: `export async function createNote(c: AppContext) {
+  const data = await parseBody(c, noteInputSchema);
+  const note = await noteRepository.insert({
+    tenantId: c.get("tenant").id,
+    title: data.title,
+  });
+  return c.json(toNoteDto(note), 201);
+}
+
+// routes.ts — middleware applied once for the group
+export const noteRoutes = new Hono<AppEnv>()
+  .use("*", requireAuth, requireTenant)
+  .get("/", listNotes)
+  .post("/", createNote); // ← the new endpoint`,
+      },
+      {
+        id: "tool",
+        title: "Teach the agent",
+        body: "One more file and the AI catches up with you. A tool is a single defineTool — name, Zod input, execute — that reuses the repository you just wrote. That one definition drives the in-app chat, local Cursor over stdio and the remote MCP server, with zero extra glue.",
+        points: [
+          "Same definition drives the chat, stdio and remote MCP",
+          "summarize marks writes — it becomes a chip in the chat",
+          "Tools never import MCP or OpenAI — the lint blocks it",
+        ],
+        checkpoint:
+          "Open the floating chat and type “create a note called hello” — the agent finds the new tool on its own and shows the write as a chip.",
+        filename: "domains/note/tools/create-note.tool.ts",
+        code: `export const createNoteTool = defineTool({
+  name: "create_note",
+  description: "Creates a note in the tenant.",
+  inputSchema: {
+    title: z.string().trim().min(1).max(200),
+  },
+  summarize: (args) => \`Note created: \${args.title}\`,
+  execute: (ctx, { title }) =>
+    noteRepository.insert({ tenantId: ctx.tenantId, title }),
+});`,
+      },
+      {
+        id: "frontend",
+        title: "Build the screen",
+        body: "Finally, the UI. Mirror the domain on the frontend: an api.ts with the typed calls — the only file that touches the network — and a page built on the TanStack Query template. Reads are queries, writes are mutations that invalidate on success; you never hand-manage a loading flag.",
+        points: [
+          "Network only through the domain api.ts — never raw fetch",
+          "Reads are queries, writes invalidate — no manual loading state",
+        ],
+        checkpoint:
+          "Register the page in routes.tsx and it shows up in the app shell — create a note in the UI and watch the list refresh itself.",
+        filename: "apps/web/src/domains/note/",
+        code: `// api.ts — typed calls, the only network boundary
+export const noteApi = {
+  list: (tenantId: string) =>
+    api.get<NoteDto[]>(\`/tenants/\${tenantId}/notes\`),
+  create: (tenantId: string, body: { title: string }) =>
+    api.post<NoteDto>(\`/tenants/\${tenantId}/notes\`, body),
+};
+
+// pages/NotesPage.tsx — server state via TanStack Query
+const notes = useQuery({
+  queryKey: ["notes", tenant.id],
+  queryFn: () => noteApi.list(tenant.id),
+});`,
+      },
+    ],
   },
   {
-    id: "frontend",
-    eyebrow: "The frontend",
-    title: "A SPA that mirrors the API",
-    body: "Same shape as the backend: one folder per domain with its pages, components and an api.ts — the only place that touches the network. Server state is TanStack Query, so a mutation invalidates and the screen refreshes itself.",
-    highlights: [
-      "Each domain: pages/ · components · api.ts · provider",
-      "Network only through the domain api.ts — never raw fetch",
-      "TanStack Query for server state; invalidate to refresh",
-      "shadcn/ui + Tailwind; @/ alias everywhere",
-    ],
-    filename: "apps/web/src/domains/task/",
-    lang: "text",
-    code: `domains/task/
-├── pages/TasksPage.tsx   route-level screen
-├── task-list.tsx         domain component
-├── api.ts                typed calls → @/lib/api
-└── routes.tsx            <Route> group
-
-// shared shell, outside domains:
-// app/ · layouts/ · components/ui/ · lib/`,
-  },
-  {
-    id: "rules",
-    eyebrow: "Cursor rules",
-    title: "The conventions live in the repo",
-    body: "The patterns here are written as Cursor rules, scoped by glob so the right guidance loads for the file you edit. Ask the agent to add an endpoint and it already knows the layers, the names and where to register it.",
-    highlights: [
-      "api-structure — layers, boundaries, where to add things",
-      "web-structure — folders, imports, the network boundary",
-      "agent-tools — the transport-neutral tool contract",
-      "language — English across code, UI and comments",
-    ],
-    filename: ".cursor/rules/",
-    lang: "text",
-    code: `.cursor/rules/
-├── api-structure.mdc   globs: apps/api/**
-├── web-structure.mdc   globs: apps/web/**
-├── agent-tools.mdc     globs: **/*.tool.ts
-└── language.mdc        alwaysApply
-
-# each rule scoped by glob → loads for the file you edit`,
-  },
-  {
-    id: "env",
-    eyebrow: "Configuration",
-    title: "Env vars, typed and validated",
-    body: "One .env at the root, validated by a Zod schema at boot — a bad variable fails fast with a readable error. Optional keys degrade instead of crashing: no Resend key logs emails to the console, no OpenAI key hides the agent.",
-    highlights: [
-      "Validated once at boot, fails fast with a clear error",
-      "Sensible local defaults — clone and run, no setup",
-      "Optional keys degrade instead of crashing",
-      "Code reads a typed env, never raw process.env",
-    ],
-    filename: ".env.example",
-    lang: "text",
-    code: `# API
-PORT=5000
-DATABASE_URL=postgres://app:app@localhost:5442/app_base
-APP_URL=http://localhost:3000
-
-# Email (without RESEND_API_KEY, emails are logged to the console)
-RESEND_API_KEY=
-MAIL_FROM=App Base <onboarding@resend.dev>
-
-# Agent (without OPENAI_API_KEY the assistant button disappears)
-OPENAI_API_KEY=
-ASSISTANT_MODEL=gpt-4o-mini
-
-# Turn off to operate invite-only
-SELF_SIGNUP_ENABLED=true`,
-  },
-  {
-    id: "deploy",
-    eyebrow: "The deploy",
-    title: "Commit the Blueprint, push, done",
-    body: "The whole app ships as one Render web service plus Postgres, described in render.yaml. Migrations run on pre-deploy, a health check gates go-live, and secrets stay out of the repo with sync: false.",
-    highlights: [
-      "Single web service — API and SPA on one origin",
-      "Migrations run on pre-deploy, not by hand",
-      "Health check at /api/health for zero-downtime deploys",
-      "Secrets kept out of the repo with sync: false",
-    ],
-    filename: "render.yaml",
-    lang: "text",
-    code: `services:
+    id: "ship",
+    eyebrow: "Phase 3",
+    title: "Ship it — and shortcut the next one",
+    description:
+      "The feature is done; getting it to production is a push. And because the path you just walked is written down as rules, the next feature can be a prompt instead of six files.",
+    steps: [
+      {
+        id: "deploy",
+        title: "Push to deploy",
+        body: "No deploy scripts to write — render.yaml already describes production: one Render web service running the API and serving the SPA, plus Postgres. Commit your feature and push. Migrations run on pre-deploy (your notes table included) and a health check gates go-live.",
+        points: [
+          "Single web service — API and SPA on one origin",
+          "Migrations run on pre-deploy, not by hand",
+          "Secrets stay out of the repo with sync: false",
+        ],
+        checkpoint:
+          "Watch the deploy on the Render dashboard: pre-deploy applies your migration, /api/health goes green, notes are live.",
+        filename: "render.yaml",
+        lang: "text",
+        code: `services:
   - type: web
     name: app
     runtime: node
@@ -299,6 +369,29 @@ databases:
   - name: app-db
     plan: basic-256mb
     postgresMajorVersion: "16"`,
+      },
+      {
+        id: "rules",
+        title: "Next time, just ask",
+        body: "Here's the payoff of all that convention: every step you just did by hand is written down as a Cursor rule, scoped by glob to the files it governs. The agent reads the same playbook you just learned — so it can walk phase two for you, same files, same names, same conventions.",
+        points: [
+          "api-structure — layers, boundaries, where things go",
+          "web-structure — folders, imports, the network boundary",
+          "agent-tools — the transport-neutral tool contract",
+        ],
+        checkpoint:
+          "Ask Cursor to “add a comments resource like notes” and review the diff — it lands on the same six files you just wrote.",
+        filename: ".cursor/rules/",
+        lang: "text",
+        code: `.cursor/rules/
+├── api-structure.mdc   globs: apps/api/**
+├── web-structure.mdc   globs: apps/web/**
+├── agent-tools.mdc     globs: **/*.tool.ts
+└── language.mdc        alwaysApply
+
+# each rule scoped by glob → loads for the file you edit`,
+      },
+    ],
   },
 ];
 
@@ -365,47 +458,34 @@ const product = [
   },
 ] as const;
 
+// The closing argument: this is owned code, not a dependency.
+const ownership: Included[] = [
+  {
+    icon: EraserIcon,
+    title: "Delete the example",
+    description:
+      "Tasks are a placeholder. Remove the domain, drop the table, and put your product's resources in its place — nothing else breaks.",
+  },
+  {
+    icon: UnlockIcon,
+    title: "Nothing to unsubscribe from",
+    description:
+      "Auth is scrypt and cookies, email is one swappable module, deploy is a YAML file. Swap any piece without asking permission.",
+  },
+  {
+    icon: PenLineIcon,
+    title: "Rewrite the rules",
+    description:
+      "The conventions are markdown files in .cursor/rules/. Disagree with one? Edit it, and the agent starts following you instead.",
+  },
+];
+
 const stack = [
   { label: "Frontend", value: "React 19 · Vite · Tailwind · shadcn/ui · TanStack Query" },
   { label: "Backend", value: "Hono · Zod · Node" },
   { label: "Database", value: "PostgreSQL · Drizzle ORM" },
   { label: "AI", value: "OpenAI · Model Context Protocol (MCP)" },
   { label: "Tooling", value: "TypeScript · Turborepo · oxlint · Prettier" },
-];
-
-// The canonical path for shipping a full feature end to end. Each step names the
-// file you touch and the one convention that keeps it consistent.
-const featureSteps = [
-  {
-    layer: "Shared",
-    file: "packages/shared/src/<feature>.ts",
-    detail: "A Zod schema and DTO type both the API and the SPA import.",
-  },
-  {
-    layer: "Database",
-    file: "apps/api/src/domains/<feature>/schema.ts",
-    detail: "The Drizzle table. Export it in db/schema.ts and run db:generate.",
-  },
-  {
-    layer: "Data access",
-    file: "domains/<feature>/repository.ts",
-    detail: "All SQL, as list / find / insert / update / delete — every query scoped by tenantId.",
-  },
-  {
-    layer: "HTTP",
-    file: "domains/<feature>/endpoints/<action>.endpoint.ts",
-    detail: "Thin handler: parseBody → repository → DTO. Register it in routes.ts.",
-  },
-  {
-    layer: "Agent",
-    file: "domains/<feature>/tools/<action>.tool.ts",
-    detail: "A defineTool that reuses the repository — the chat and remote MCP get it for free.",
-  },
-  {
-    layer: "Frontend",
-    file: "apps/web/src/domains/<feature>/",
-    detail: "api.ts + a page on the Query template + routes.tsx composed into the shell.",
-  },
 ];
 
 export function LandingPage() {
@@ -470,6 +550,25 @@ export function LandingPage() {
           </div>
         </section>
 
+        <section className="border-t px-4 py-16">
+          <div className="mx-auto max-w-5xl">
+            <div className="text-center">
+              <h2 className="text-2xl font-semibold tracking-tight">A stack you already know</h2>
+              <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
+                Boring, well-documented tools — nothing exotic to learn before you're productive.
+              </p>
+            </div>
+            <dl className="mx-auto mt-8 max-w-2xl divide-y rounded-lg border bg-background">
+              {stack.map((s) => (
+                <div key={s.label} className="flex flex-col gap-1 px-6 py-4 sm:flex-row sm:gap-8">
+                  <dt className="w-28 shrink-0 font-medium">{s.label}</dt>
+                  <dd className="text-muted-foreground">{s.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
         <section className="border-t bg-muted/40 px-4 py-20">
           <div className="mx-auto max-w-5xl">
             <div className="mb-10 text-center">
@@ -520,77 +619,56 @@ export function LandingPage() {
           );
         })}
 
-        <section className="mx-auto w-full max-w-5xl px-4 pt-20 pb-4 text-center">
-          <h2 className="text-2xl font-semibold tracking-tight">How it's built</h2>
-          <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
-            The shape of the codebase and how you extend it — the workspace, the domains, and where
-            a new endpoint, tool or table actually goes.
-          </p>
-        </section>
-
-        {showcases.map((showcase, i) => (
-          <ShowcaseSection key={showcase.id} showcase={showcase} flip={i % 2 === 1} />
-        ))}
-
-        <section className="border-t px-4 py-20">
-          <div className="mx-auto max-w-3xl">
-            <div className="mb-10 text-center">
-              <h2 className="text-2xl font-semibold tracking-tight">Add a feature</h2>
-              <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
-                Every feature travels the same path down the stack. Follow it and a new resource
-                lands exactly where the last one did.
-              </p>
-            </div>
-            <ol className="relative grid gap-6 border-l pl-8">
-              {featureSteps.map((step, i) => (
-                <li key={step.layer} className="reveal relative">
-                  <span className="absolute -left-10.25 flex size-6 items-center justify-center rounded-full border bg-background text-xs font-medium">
-                    {i + 1}
-                  </span>
-                  <p className="text-sm font-semibold">{step.layer}</p>
-                  <code className="mt-0.5 block font-mono text-xs text-muted-foreground">
-                    {step.file}
-                  </code>
-                  <p className="mt-1 text-sm text-muted-foreground">{step.detail}</p>
-                </li>
-              ))}
-            </ol>
-            <p className="mx-auto mt-8 max-w-xl text-center text-sm text-muted-foreground">
-              The same conventions are written as Cursor rules, so the assistant follows this path
-              too — ask it to "add a &lt;feature&gt; resource" and it fills in every step.
+        <section className="border-t px-4 pt-20 pb-8">
+          <div className="mx-auto max-w-5xl text-center">
+            <h2 className="text-2xl font-semibold tracking-tight">From clone to production</h2>
+            <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
+              A guided build, start to finish: run the project, add a real feature — notes — layer
+              by layer, then push it live. Each step shows the exact file you'd write and ends with
+              something you can check.
             </p>
           </div>
         </section>
 
-        <section className="border-t bg-muted/40 px-4 py-20">
-          <div className="mx-auto max-w-5xl">
-            <div className="text-center">
-              <h2 className="text-2xl font-semibold tracking-tight">A stack you already know</h2>
-              <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
-                Boring, well-documented tools — nothing exotic to learn before you're productive.
-              </p>
-            </div>
-            <dl className="mx-auto mt-10 max-w-2xl divide-y rounded-lg border bg-background">
-              {stack.map((s) => (
-                <div key={s.label} className="flex flex-col gap-1 px-6 py-4 sm:flex-row sm:gap-8">
-                  <dt className="w-28 shrink-0 font-medium">{s.label}</dt>
-                  <dd className="text-muted-foreground">{s.value}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </section>
+        {journey.map((phase, phaseIndex) => (
+          <PhaseSection
+            key={phase.id}
+            phase={phase}
+            startAt={journey.slice(0, phaseIndex).reduce((n, p) => n + p.steps.length, 0)}
+          />
+        ))}
 
-        <section className="mx-auto w-full max-w-5xl px-4 py-24 text-center">
-          <h2 className="text-3xl font-semibold tracking-tight">Clone it and start building</h2>
-          <p className="mx-auto mt-3 max-w-md text-muted-foreground">
-            Skip the boilerplate and go straight to the part that's actually your product.
-          </p>
-          <Button size="lg" className="mt-8" asChild>
-            <Link to={me ? "/app" : selfSignupEnabled ? "/register" : "/login"}>
-              {me ? "Go to app" : "Try the live demo"} <ArrowRightIcon />
-            </Link>
-          </Button>
+        <section className="border-t px-4 py-24">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="text-3xl font-semibold tracking-tight text-balance">
+              From here on, it's your code
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-pretty text-muted-foreground">
+              This isn't a framework you depend on or a service you subscribe to — it's a starting
+              point you own. Clone it and every line is yours: rename it, gut it, take it wherever
+              your product needs to go. Even this landing page is just the first thing you'll
+              replace.
+            </p>
+            <div className="mt-10 grid gap-4 text-left sm:grid-cols-3">
+              {ownership.map((item) => (
+                <Card key={item.title} className="reveal">
+                  <CardContent className="p-5">
+                    <item.icon className="mb-3 size-5" />
+                    <h3 className="text-sm font-semibold">{item.title}</h3>
+                    <p className="mt-1.5 text-sm text-muted-foreground">{item.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <Button size="lg" className="mt-10" asChild>
+              <Link to={me ? "/app" : selfSignupEnabled ? "/register" : "/login"}>
+                {me ? "Go to app" : "Try the live demo"} <ArrowRightIcon />
+              </Link>
+            </Button>
+            <p className="mt-4 text-sm text-muted-foreground">
+              Or skip the demo — clone the repo and start building.
+            </p>
+          </div>
         </section>
       </main>
 
@@ -604,32 +682,58 @@ export function LandingPage() {
   );
 }
 
-/** One section per pattern: the reasoning on one side, the real file on the other. */
-function ShowcaseSection({ showcase, flip }: { showcase: Showcase; flip: boolean }) {
+/** One phase of the chronology: a heading plus its numbered steps on a timeline. */
+function PhaseSection({ phase, startAt }: { phase: Phase; startAt: number }) {
   return (
-    <section className="px-4 py-16 sm:py-20">
-      <div className="mx-auto grid max-w-5xl items-start gap-10 lg:grid-cols-2 lg:gap-14">
-        <div className={`reveal ${flip ? "lg:order-2" : ""}`}>
-          <p className="text-sm font-medium text-muted-foreground">{showcase.eyebrow}</p>
-          <h3 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
-            {showcase.title}
-          </h3>
-          <p className="mt-4 text-pretty text-muted-foreground">{showcase.body}</p>
-          <ul className="mt-6 space-y-2.5 text-sm">
-            {showcase.highlights.map((highlight) => (
-              <li key={highlight} className="flex gap-2.5">
+    <section className="px-4 py-10 sm:py-12">
+      <div className="mx-auto max-w-5xl">
+        <div className="reveal mb-10 max-w-2xl">
+          <p className="text-sm font-medium text-primary">{phase.eyebrow}</p>
+          <h3 className="mt-1 text-xl font-semibold tracking-tight sm:text-2xl">{phase.title}</h3>
+          <p className="mt-2 text-pretty text-muted-foreground">{phase.description}</p>
+        </div>
+        <ol className="relative space-y-14 border-l pl-8 sm:pl-10">
+          {phase.steps.map((step, i) => (
+            <StepItem key={step.id} step={step} number={startAt + i + 1} />
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+/** One step: the number on the timeline, the reasoning, and the file it produces. */
+function StepItem({ step, number }: { step: Step; number: number }) {
+  return (
+    <li className="relative">
+      <span className="absolute top-0.5 -left-11 flex size-6 items-center justify-center rounded-full border bg-background text-xs font-medium sm:-left-13">
+        {number}
+      </span>
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,4fr)_minmax(0,5fr)] lg:gap-12">
+        <div className="reveal min-w-0">
+          <h4 className="text-lg font-semibold tracking-tight text-balance">{step.title}</h4>
+          <p className="mt-2.5 text-sm text-pretty text-muted-foreground">{step.body}</p>
+          <ul className="mt-4 space-y-2 text-sm">
+            {step.points.map((point) => (
+              <li key={point} className="flex gap-2.5">
                 <CheckIcon className="mt-0.5 size-4 shrink-0 text-primary" />
-                <span>{highlight}</span>
+                <span>{point}</span>
               </li>
             ))}
           </ul>
+          <div className="mt-5 flex gap-2.5 rounded-lg border bg-muted/40 p-3.5 text-sm">
+            <FlagIcon className="mt-0.5 size-4 shrink-0 text-primary" />
+            <p className="text-pretty">
+              <span className="font-semibold">Checkpoint · </span>
+              <span className="text-muted-foreground">{step.checkpoint}</span>
+            </p>
+          </div>
         </div>
-
-        <div className={`reveal reveal-delay lg:sticky lg:top-24 ${flip ? "lg:order-1" : ""}`}>
-          <CodeBlock filename={showcase.filename} code={showcase.code} lang={showcase.lang} />
+        <div className="reveal reveal-delay min-w-0">
+          <CodeBlock filename={step.filename} code={step.code} lang={step.lang} />
         </div>
       </div>
-    </section>
+    </li>
   );
 }
 
