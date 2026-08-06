@@ -1,15 +1,15 @@
 import { resetPasswordSchema } from "@app/shared";
 import { HttpError, parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
-import { buildMe } from "../dto";
-import { authRepository } from "../repository";
 import {
+  buildMe,
   consumeActionToken,
   createSession,
   deleteUserSessions,
   hashPassword,
   setSessionCookie,
 } from "../service";
+import { authRepository } from "../repository";
 
 /**
  * Reset password

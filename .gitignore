@@ -6,5 +6,8 @@ dist/
 *.log
 .DS_Store
 
+# Local MCP client config may hold API keys — keep a personal copy, never commit.
+.cursor/mcp.json
+
 # Local media fallback (only used when R2 isn't configured) — dev-only, never committed.
 /apps/web/public/

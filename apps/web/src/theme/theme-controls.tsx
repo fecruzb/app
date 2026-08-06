@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  CheckIcon,
-  LanguagesIcon,
-  MoonIcon,
-  PaletteIcon,
-  SunIcon,
-} from "lucide-react";
+import { CheckIcon, LanguagesIcon, MoonIcon, PaletteIcon, SunIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@app/ui/button";
 import {
@@ -67,7 +61,7 @@ export function ThemePicker({
               className="size-4 rounded-full border"
               style={{ backgroundColor: theme.swatch }}
             />
-            <span className="flex-1">{theme.label}</span>
+            <span className="flex-1">{t(`theme.themes.${theme.id}`)}</span>
             {theme.id === themeId && <CheckIcon />}
           </DropdownMenuItem>
         ))}
@@ -108,13 +102,7 @@ export function ThemeControls({
 }
 
 /** Sidebar footer: menus open centered on the full control row. */
-function BarThemeControls({
-  className,
-  menuSide,
-}: {
-  className?: string;
-  menuSide: MenuSide;
-}) {
+function BarThemeControls({ className, menuSide }: { className?: string; menuSide: MenuSide }) {
   const { t, i18n: i18nInstance } = useTranslation();
   const { themes, themeId, setTheme } = useTheme();
   const [localeOpen, setLocaleOpen] = useState(false);
@@ -190,7 +178,7 @@ function BarThemeControls({
                 className="size-4 rounded-full border"
                 style={{ backgroundColor: theme.swatch }}
               />
-              <span className="flex-1">{theme.label}</span>
+              <span className="flex-1">{t(`theme.themes.${theme.id}`)}</span>
               {theme.id === themeId && <CheckIcon />}
             </DropdownMenuItem>
           ))}

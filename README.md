@@ -125,6 +125,7 @@ Copy `.env.example` to `.env` at the root (in production Render injects everythi
 | `IMAGE_MODEL`                  | Image generation model (default `gpt-image-1-mini`)                            |
 | `SELF_SIGNUP_ENABLED`          | `false` to turn off public sign-up                                             |
 | `PLATFORM_ADMIN_EMAILS`        | Comma-separated emails always treated as platform admins once verified         |
+| `MCP_TENANT_SLUG`              | Optional — pins the stdio MCP server (`npm run mcp`) to a tenant slug          |
 | `CLOUDFLARE_S3_API`            | Optional R2 S3 API endpoint — without R2, images write to local disk           |
 | `CLOUDFLARE_ACCESS_KEY_ID`     | Optional R2 access key                                                         |
 | `CLOUDFLARE_SECRET_ACCESS_KEY` | Optional R2 secret                                                             |
@@ -136,7 +137,7 @@ AI spend limits come from the tenant's plan in the billing catalog — there is 
 
 ## Connect an MCP client (remote)
 
-The API exposes a remote MCP server at `POST /api/mcp`, authenticated by a personal API key. Create a key in **Integrations** (it's scoped to one tenant and shown only once), then add it to your MCP client. For Cursor, in `.cursor/mcp.json`:
+The API exposes a remote MCP server at `POST /api/mcp`, authenticated by a personal API key. Create a key in **Integrations** (it's scoped to one tenant and shown only once), then add it to your MCP client. Copy `.cursor/mcp.json.example` to `.cursor/mcp.json` (gitignored — never commit keys) and fill in your key:
 
 ```json
 {
@@ -149,7 +150,7 @@ The API exposes a remote MCP server at `POST /api/mcp`, authenticated by a perso
 }
 ```
 
-The client gets the same tools as the in-app agent, acting on that key's tenant. Revoke a key from the same screen to cut access. (For local development against your own machine, `npm run mcp` runs the stdio server instead — no key needed.)
+The client gets the same tools as the in-app agent, acting on that key's tenant. Revoke a key from the same screen to cut access. (For local development against your own machine, `npm run mcp` runs the stdio server instead — no key needed. Optionally set `MCP_TENANT_SLUG` to pin a tenant.)
 
 ## Scripts
 

@@ -7,7 +7,7 @@ import type { AgentAction, AgentMessage } from "@app/shared";
 import { Button } from "@app/ui/button";
 import { Textarea } from "@app/ui/textarea";
 import { ApiError, showApiError } from "@/lib/api";
-import { useAudioRecorder } from "@/lib/use-audio-recorder";
+import { useAudioRecorder } from "../hooks/use-audio-recorder";
 import { cn } from "@app/ui/lib/utils";
 import { agentApi } from "../agent-api";
 import { useTenant } from "../context/tenant-provider";

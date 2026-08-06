@@ -7,10 +7,13 @@
 // authored by that tenant's first owner.
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { tenantRepository } from "@/domains/tenant/repository";
+import { env } from "@/lib/env";
 import { createMcpServer } from "./mcp-server";
 
-const slug = process.env.MCP_TENANT_SLUG;
-const tenant = slug ? await tenantRepository.findTenantBySlug(slug) : await tenantRepository.findOldestTenant();
+const slug = env.mcpTenantSlug;
+const tenant = slug
+  ? await tenantRepository.findTenantBySlug(slug)
+  : await tenantRepository.findOldestTenant();
 
 if (!tenant) {
   console.error(

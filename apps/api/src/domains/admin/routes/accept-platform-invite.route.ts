@@ -2,7 +2,7 @@ import { acceptPlatformInviteSchema } from "@app/shared";
 import { hashToken } from "@/lib/crypto";
 import { HttpError, parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
-import { buildMe } from "@/domains/auth/dto";
+import { buildMe } from "@/domains/auth/service";
 import { isEnvPlatformAdminEmail } from "@/domains/auth/platform-admin";
 import { authRepository } from "@/domains/auth/repository";
 import { createSession, hashPassword, setSessionCookie } from "@/domains/auth/service";

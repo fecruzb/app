@@ -6,7 +6,8 @@
   "hero": {
     "eyebrow": "Boilerplate SaaS open-source · React + Hono + Postgres",
     "title": "O ponto de partida do seu próximo SaaS",
-    "body": "Pare de reconstruir autenticação, tenants, e-mail e um agente de IA em todo projeto. Este é o alicerce — um monorepo tipado, organizado por domínio, pronto para virar o seu produto."
+    "body": "Pare de reconstruir autenticação, tenants, e-mail e um agente de IA em todo projeto. Este é o alicerce — um monorepo tipado, organizado por domínio, pronto para virar o seu produto.",
+    "clone": "git clone https://github.com/fecruzb/app"
   },
   "stackSection": {
     "title": "Uma stack que você já conhece",
@@ -567,7 +568,27 @@
     },
     "env": {
       "optional": "opcional",
-      "noKeyNote": "sem key → agente oculto"
+      "required": "obrigatório",
+      "noKeyNote": "sem key → agente oculto",
+      "noResendNote": "sem key → e-mails vão para o console",
+      "noR2Note": "sem URL → imagens salvas no disco local"
+    },
+    "window": {
+      "assistant": "assistente",
+      "inbox": "caixa de entrada"
+    },
+    "plansCatalog": {
+      "aiPerSeat": "IA / assento",
+      "included": "$5 incluídos",
+      "passthrough": "repasse"
+    },
+    "render": {
+      "webService": "Web service · Node · API + SPA",
+      "live": "No ar",
+      "postgres": "PostgreSQL 16 · basic-256mb",
+      "available": "Disponível",
+      "autoDeploy": "Auto-deploy no push para main",
+      "preDeploy": "Pre-deploy roda migrations · health check em /api/health"
     },
     "roles": {
       "owner": "owner",

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { taskInputSchema } from "@app/shared";
 import { defineTool } from "@/agent/tool";
 import { taskRepository } from "../repository";
 
@@ -17,7 +18,7 @@ export const updateTaskTool = defineTool({
     "Updates a task's title and/or completed state. Read it first with get_task if you only want to change one field.",
   inputSchema: {
     id: z.string().uuid(),
-    title: z.string().trim().min(1).max(200),
+    title: taskInputSchema.shape.title,
     completed: z.boolean(),
   },
   summarize: (args) => `Task updated: ${args.title}`,

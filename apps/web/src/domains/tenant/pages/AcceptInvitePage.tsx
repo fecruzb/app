@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Trans, useTranslation } from "react-i18next";
 import { Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
@@ -8,7 +8,7 @@ import { Button } from "@app/ui/button";
 import { Input } from "@app/ui/input";
 import { Label } from "@app/ui/label";
 import { AuthLayout } from "@/layouts/AuthLayout";
-import { ApiError } from "@/lib/api";
+import { showApiError } from "@/lib/api";
 import { useAuth } from "@/domains/auth/context/auth-provider";
 import { tenantApi } from "../api";
 
@@ -19,7 +19,6 @@ export function AcceptInvitePage() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [submitting, setSubmitting] = useState(false);
 
   const {
     data: invite,
@@ -32,23 +31,19 @@ export function AcceptInvitePage() {
     retry: false,
   });
 
-  async function accept(body?: { name: string; password: string }) {
-    setSubmitting(true);
-    try {
-      const result = await tenantApi.acceptInvite(token!, body);
+  const acceptMutation = useMutation({
+    mutationFn: (body?: { name: string; password: string }) => tenantApi.acceptInvite(token!, body),
+    onSuccess: async (result) => {
       await refresh();
       toast.success(t("invite.welcome", { tenant: invite?.tenantName }));
       navigate(`/app/${result.tenantSlug}`, { replace: true });
-    } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : t("invite.acceptFailed"));
-    } finally {
-      setSubmitting(false);
-    }
-  }
+    },
+    onError: (err) => showApiError(err, t("invite.acceptFailed")),
+  });
 
   function handleNewAccount(e: FormEvent) {
     e.preventDefault();
-    void accept({ name, password });
+    acceptMutation.mutate({ name, password });
   }
 
   if (isLoading || authLoading) {
@@ -81,8 +76,12 @@ export function AcceptInvitePage() {
         }
       >
         {me.user.email === invite.email ? (
-          <Button className="w-full" disabled={submitting} onClick={() => void accept()}>
-            {submitting
+          <Button
+            className="w-full"
+            disabled={acceptMutation.isPending}
+            onClick={() => acceptMutation.mutate(undefined)}
+          >
+            {acceptMutation.isPending
               ? t("invite.joining")
               : t("invite.join", { tenant: invite.tenantName })}
           </Button>
@@ -146,8 +145,8 @@ export function AcceptInvitePage() {
           />
           <p className="text-xs text-muted-foreground">{t("common.minPassword")}</p>
         </div>
-        <Button type="submit" disabled={submitting}>
-          {submitting ? t("common.creating") : t("invite.createAndJoin")}
+        <Button type="submit" disabled={acceptMutation.isPending}>
+          {acceptMutation.isPending ? t("common.creating") : t("invite.createAndJoin")}
         </Button>
       </form>
     </AuthLayout>

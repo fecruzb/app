@@ -6,7 +6,8 @@
   "hero": {
     "eyebrow": "Open-source SaaS boilerplate · React + Hono + Postgres",
     "title": "The starting point for your next SaaS",
-    "body": "Stop rebuilding auth, tenants, email and an AI agent for every project. This is the groundwork — a typed monorepo, organized by domain, ready to become your product."
+    "body": "Stop rebuilding auth, tenants, email and an AI agent for every project. This is the groundwork — a typed monorepo, organized by domain, ready to become your product.",
+    "clone": "git clone https://github.com/fecruzb/app"
   },
   "stackSection": {
     "title": "A stack you already know",
@@ -567,7 +568,27 @@
     },
     "env": {
       "optional": "optional",
-      "noKeyNote": "no key → agent hidden"
+      "required": "required",
+      "noKeyNote": "no key → agent hidden",
+      "noResendNote": "no key → emails log to console",
+      "noR2Note": "no URL → images saved to local disk instead"
+    },
+    "window": {
+      "assistant": "assistant",
+      "inbox": "inbox"
+    },
+    "plansCatalog": {
+      "aiPerSeat": "AI / seat",
+      "included": "$5 included",
+      "passthrough": "passthrough"
+    },
+    "render": {
+      "webService": "Web service · Node · API + SPA",
+      "live": "Live",
+      "postgres": "PostgreSQL 16 · basic-256mb",
+      "available": "Available",
+      "autoDeploy": "Auto-deploy on push to main",
+      "preDeploy": "Pre-deploy runs migrations · health check at /api/health"
     },
     "roles": {
       "owner": "owner",

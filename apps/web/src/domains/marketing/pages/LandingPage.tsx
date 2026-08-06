@@ -736,7 +736,7 @@ export function LandingPage() {
           <div className="mx-auto mt-8 flex w-fit max-w-full items-center gap-2 overflow-x-auto rounded-lg border bg-muted/50 px-4 py-3 font-mono text-sm">
             <TerminalIcon className="size-4 shrink-0 text-muted-foreground" />
             <span className="text-muted-foreground">$</span>
-            <span className="whitespace-nowrap">git clone https://github.com/fecruzb/app</span>
+            <span className="whitespace-nowrap">{t("landing.hero.clone")}</span>
           </div>
           <div className="mt-8 flex justify-center gap-3">
             <Button size="lg" asChild>
@@ -989,7 +989,7 @@ function ThemingSection() {
                       className="size-3.5 rounded-full border"
                       style={{ backgroundColor: theme.swatch }}
                     />
-                    {theme.label}
+                    {t(`theme.themes.${theme.id}`)}
                   </button>
                 ))}
               </div>
@@ -1221,7 +1221,13 @@ function MockCarousel({ chapter }: { chapter: Chapter }) {
   return (
     <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
       <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
-        <WindowBar label={screens[index].label} />
+        <WindowBar
+          label={
+            screens[index].label === "inbox"
+              ? t("landing.preview.window.inbox")
+              : screens[index].label
+          }
+        />
         {/* Bodies share one grid cell: the tallest sets a fixed height, they crossfade in place. */}
         <div className="grid w-full grid-cols-1">
           {screens.map((screen, i) => {

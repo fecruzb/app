@@ -1,5 +1,5 @@
 import type { AppContext } from "@/context";
-import { buildMe } from "../dto";
+import { buildMe } from "../service";
 
 /**
  * Get current user

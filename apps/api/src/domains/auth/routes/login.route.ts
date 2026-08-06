@@ -1,9 +1,8 @@
 import { loginSchema } from "@app/shared";
 import { HttpError, parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
-import { buildMe } from "../dto";
+import { buildMe, createSession, setSessionCookie, verifyPassword } from "../service";
 import { authRepository } from "../repository";
-import { createSession, setSessionCookie, verifyPassword } from "../service";
 
 /**
  * Log in

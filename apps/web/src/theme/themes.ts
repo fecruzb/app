@@ -14,8 +14,6 @@ export type ThemeTokens = Record<string, string>;
 
 export type Theme = {
   id: string;
-  /** Human label shown in the theme picker. */
-  label: string;
   /** Swatch shown in the picker — usually the light primary. */
   swatch: string;
   light: ThemeTokens;
@@ -65,7 +63,6 @@ const darkBase: ThemeTokens = {
 export const themes: Theme[] = [
   {
     id: "mono",
-    label: "Mono",
     swatch: "oklch(0.205 0 0)",
     light: {
       ...lightBase,
@@ -82,7 +79,6 @@ export const themes: Theme[] = [
   },
   {
     id: "blue",
-    label: "Blue",
     swatch: "oklch(0.55 0.2 255)",
     light: {
       ...lightBase,
@@ -99,7 +95,6 @@ export const themes: Theme[] = [
   },
   {
     id: "violet",
-    label: "Violet",
     swatch: "oklch(0.55 0.22 295)",
     light: {
       ...lightBase,
@@ -116,7 +111,6 @@ export const themes: Theme[] = [
   },
   {
     id: "emerald",
-    label: "Emerald",
     swatch: "oklch(0.6 0.14 163)",
     light: {
       ...lightBase,

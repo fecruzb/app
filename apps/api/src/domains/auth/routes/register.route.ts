@@ -3,9 +3,14 @@ import { env } from "@/lib/env";
 import { HttpError, parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
 import { createTenantWithOwner } from "@/domains/tenant/service";
-import { buildMe } from "../dto";
+import {
+  buildMe,
+  createSession,
+  hashPassword,
+  sendVerificationEmail,
+  setSessionCookie,
+} from "../service";
 import { authRepository } from "../repository";
-import { createSession, hashPassword, sendVerificationEmail, setSessionCookie } from "../service";
 
 /**
  * Register an account

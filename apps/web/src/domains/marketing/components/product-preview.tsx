@@ -47,7 +47,7 @@ function Window({ label, children }: { label: string; children: React.ReactNode 
 export function AgentChatMock() {
   const { t } = useTranslation();
   return (
-    <Window label="assistant">
+    <Window label={t("landing.preview.window.assistant")}>
       <div className="flex items-center gap-2 border-b px-4 py-3">
         <SparklesIcon className="size-4" />
         <span className="flex-1 text-sm font-semibold">{t("landing.preview.agent.title")}</span>
@@ -308,8 +308,9 @@ function ResetEmailBody() {
 }
 
 export function VerifyEmailMock() {
+  const { t } = useTranslation();
   return (
-    <Window label="inbox">
+    <Window label={t("landing.preview.window.inbox")}>
       <VerifyEmailBody />
     </Window>
   );
@@ -423,8 +424,9 @@ function InviteEmailBody() {
 }
 
 export function InviteEmailMock() {
+  const { t } = useTranslation();
   return (
-    <Window label="inbox">
+    <Window label={t("landing.preview.window.inbox")}>
       <InviteEmailBody />
     </Window>
   );
@@ -1055,6 +1057,7 @@ export function TenantTables() {
  * Shown with the same table-card chrome so it reads next to real schemas.
  */
 export function PlansCatalog() {
+  const { t } = useTranslation();
   return (
     <SchemaWindow label="domains/billing/plans.ts">
       <TableCard
@@ -1062,7 +1065,10 @@ export function PlansCatalog() {
         columns={[
           { name: "maxSeats", type: "1" },
           { name: "price / seat", type: "$0" },
-          { name: "AI / seat", type: "$5 included" },
+          {
+            name: t("landing.preview.plansCatalog.aiPerSeat"),
+            type: t("landing.preview.plansCatalog.included"),
+          },
         ]}
       />
       <TableCard
@@ -1070,7 +1076,10 @@ export function PlansCatalog() {
         columns={[
           { name: "maxSeats", type: "3" },
           { name: "price / seat", type: "$5" },
-          { name: "AI / seat", type: "$5 included" },
+          {
+            name: t("landing.preview.plansCatalog.aiPerSeat"),
+            type: t("landing.preview.plansCatalog.included"),
+          },
         ]}
       />
       <TableCard
@@ -1078,7 +1087,10 @@ export function PlansCatalog() {
         columns={[
           { name: "maxSeats", type: "10" },
           { name: "price / seat", type: "$5" },
-          { name: "AI / seat", type: "$5 included" },
+          {
+            name: t("landing.preview.plansCatalog.aiPerSeat"),
+            type: t("landing.preview.plansCatalog.included"),
+          },
         ]}
       />
       <TableCard
@@ -1086,7 +1098,10 @@ export function PlansCatalog() {
         columns={[
           { name: "maxSeats", type: "∞" },
           { name: "price / seat", type: "$10" },
-          { name: "AI / seat", type: "passthrough" },
+          {
+            name: t("landing.preview.plansCatalog.aiPerSeat"),
+            type: t("landing.preview.plansCatalog.passthrough"),
+          },
         ]}
       />
     </SchemaWindow>
@@ -1183,7 +1198,7 @@ export function EnvMock() {
     {
       key: "RESEND_API_KEY",
       value: "re_…",
-      note: "no key → emails log to console",
+      note: t("landing.preview.env.noResendNote"),
       optional: true,
     },
     { key: "MAIL_FROM", value: "App Base <onboarding@resend.dev>", optional: true },
@@ -1196,7 +1211,7 @@ export function EnvMock() {
     {
       key: "R2_PUBLIC_BASE_URL",
       value: "https://pub-….r2.dev",
-      note: "no URL → images saved to local disk instead",
+      note: t("landing.preview.env.noR2Note"),
       optional: true,
     },
     { key: "SELF_SIGNUP_ENABLED", value: "true", optional: true },
@@ -1216,7 +1231,9 @@ export function EnvMock() {
                   row.optional ? "bg-muted text-muted-foreground" : "bg-primary/15 text-primary"
                 }`}
               >
-                {row.optional ? t("landing.preview.env.optional") : "required"}
+                {row.optional
+                  ? t("landing.preview.env.optional")
+                  : t("landing.preview.env.required")}
               </span>
             </div>
             {row.note && <p className="pl-0 text-[10px] text-muted-foreground/70"># {row.note}</p>}
@@ -1258,6 +1275,7 @@ export function TerminalMock() {
 
 /** A stylized Render dashboard: the two services the blueprint provisions. */
 export function RenderMock() {
+  const { t } = useTranslation();
   return (
     <Window label="dashboard.render.com">
       <div className="space-y-3 bg-muted/30 p-4">
@@ -1266,11 +1284,13 @@ export function RenderMock() {
             <ServerIcon className="size-4 text-primary" />
             <div>
               <p className="text-xs font-semibold">app</p>
-              <p className="text-[10px] text-muted-foreground">Web service · Node · API + SPA</p>
+              <p className="text-[10px] text-muted-foreground">
+                {t("landing.preview.render.webService")}
+              </p>
             </div>
           </div>
           <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
-            <span className="size-1.5 rounded-full bg-primary" /> Live
+            <span className="size-1.5 rounded-full bg-primary" /> {t("landing.preview.render.live")}
           </span>
         </div>
 
@@ -1279,19 +1299,22 @@ export function RenderMock() {
             <DatabaseIcon className="size-4 text-primary" />
             <div>
               <p className="text-xs font-semibold">app-db</p>
-              <p className="text-[10px] text-muted-foreground">PostgreSQL 16 · basic-256mb</p>
+              <p className="text-[10px] text-muted-foreground">
+                {t("landing.preview.render.postgres")}
+              </p>
             </div>
           </div>
           <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
-            <span className="size-1.5 rounded-full bg-primary" /> Available
+            <span className="size-1.5 rounded-full bg-primary" />{" "}
+            {t("landing.preview.render.available")}
           </span>
         </div>
 
         <div className="rounded-lg border border-dashed px-3 py-2.5 text-[10px] text-muted-foreground">
           <p className="flex items-center gap-1.5 font-medium text-foreground">
-            <GitBranchIcon className="size-3" /> Auto-deploy on push to main
+            <GitBranchIcon className="size-3" /> {t("landing.preview.render.autoDeploy")}
           </p>
-          <p className="mt-1">Pre-deploy runs migrations · health check at /api/health</p>
+          <p className="mt-1">{t("landing.preview.render.preDeploy")}</p>
         </div>
       </div>
     </Window>

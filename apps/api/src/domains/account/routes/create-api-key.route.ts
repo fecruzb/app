@@ -1,7 +1,7 @@
 import { createApiKeySchema } from "@app/shared";
 import { HttpError, parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
-import { toCreatedApiKeyDto } from "@/domains/auth/dto";
+import { toCreatedApiKeyDto } from "../dto";
 import { createApiKey as createApiKeyForUser } from "@/domains/auth/service";
 import { tenantRepository } from "@/domains/tenant/repository";
 

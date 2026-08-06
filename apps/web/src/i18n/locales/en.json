@@ -24,7 +24,13 @@
     "changeTheme": "Change theme",
     "themeColor": "Theme color",
     "changeLanguage": "Change language",
-    "language": "Language"
+    "language": "Language",
+    "themes": {
+      "mono": "Mono",
+      "blue": "Blue",
+      "violet": "Violet",
+      "emerald": "Emerald"
+    }
   },
   "languages": {
     "en": "English",

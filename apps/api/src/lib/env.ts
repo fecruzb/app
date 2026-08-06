@@ -38,6 +38,11 @@ const schema = z.object({
    */
   PLATFORM_ADMIN_EMAILS: z.string().optional(),
   NODE_ENV: z.string().default("development"),
+  /**
+   * Tenant slug for the stdio MCP server (`npm run mcp`). When unset, the
+   * oldest tenant in the database is used.
+   */
+  MCP_TENANT_SLUG: z.string().optional(),
 
   // Image storage (R2, Cloudflare): without these four the API falls back to
   // writing images to the local filesystem (dev only — Render's disk is ephemeral).
@@ -79,6 +84,8 @@ export const env = {
       .filter(Boolean),
   ),
   isProduction: raw.NODE_ENV === "production",
+  /** Optional override for stdio MCP tenant resolution. */
+  mcpTenantSlug: raw.MCP_TENANT_SLUG?.trim() || null,
 
   r2: {
     endpoint: raw.CLOUDFLARE_S3_API?.trim() || null,

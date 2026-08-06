@@ -15,7 +15,7 @@
     "loading": "Carregando...",
     "minPassword": "Mínimo de 8 caracteres",
     "you": "(você)",
-    "tenant": "Tenant",
+    "tenant": "Workspace",
     "lessThanCent": "<US$ 0,01"
   },
   "theme": {
@@ -24,7 +24,13 @@
     "changeTheme": "Mudar tema",
     "themeColor": "Cor do tema",
     "changeLanguage": "Mudar idioma",
-    "language": "Idioma"
+    "language": "Idioma",
+    "themes": {
+      "mono": "Mono",
+      "blue": "Azul",
+      "violet": "Violeta",
+      "emerald": "Esmeralda"
+    }
   },
   "languages": {
     "en": "English",
@@ -34,13 +40,13 @@
     "home": "Início",
     "tasks": "Tarefas",
     "images": "Imagens",
-    "billing": "Billing",
+    "billing": "Cobrança",
     "integrations": "Integrações",
     "settings": "Configurações",
     "myAccount": "Minha conta",
     "admin": "Admin",
     "signOut": "Sair",
-    "yourTenants": "Seus tenants"
+    "yourTenants": "Seus workspaces"
   },
   "layout": {
     "verifyBanner": "Confirme seu e-mail para proteger sua conta.",
@@ -219,12 +225,12 @@
     "request_other": "{{count}} requisições",
     "changePlan": "Mudar plano",
     "planLabel": "Plano",
-    "changePlanCta": "Upgrade",
+    "changePlanCta": "Fazer upgrade",
     "changePlanHint": "Upgrade pelo app ainda não está habilitado. Só um admin da plataforma pode mudar o plano — pronto para ligar no Stripe ou qualquer meio de pagamento."
   },
   "plans": {
     "free": {
-      "name": "Free",
+      "name": "Grátis",
       "summary": "Workspace solo — sem convites, $5 de IA / mês"
     },
     "starter": {
@@ -260,7 +266,7 @@
   },
   "roles": {
     "owner": "proprietário",
-    "admin": "admin",
+    "admin": "administrador",
     "member": "membro"
   },
   "usage": {
@@ -304,14 +310,14 @@
     "nav": {
       "users": "Pessoas",
       "invites": "Convites",
-      "tenants": "Tenants",
+      "tenants": "Workspaces",
       "plans": "Planos"
     },
     "users": {
       "title": "Pessoas",
       "description": "Todas as contas da plataforma",
-      "tenants_one": "{{count}} tenant",
-      "tenants_other": "{{count}} tenants",
+      "tenants_one": "{{count}} workspace",
+      "tenants_other": "{{count}} workspaces",
       "verified": "verificado",
       "unverified": "não verificado",
       "platformAdmin": "admin da plataforma",
@@ -345,21 +351,21 @@
       "revokeDescription": "Revogar o convite para {{email}}?"
     },
     "tenants": {
-      "title": "Tenants",
+      "title": "Workspaces",
       "description": "Todos os workspaces da plataforma",
       "members_one": "{{count}} membro",
       "members_other": "{{count}} membros",
       "noMembers": "Nenhum membro",
-      "empty": "Nenhum tenant ainda",
+      "empty": "Nenhum workspace ainda",
       "edit": "Editar",
-      "editTitle": "Editar tenant",
+      "editTitle": "Editar workspace",
       "name": "Nome",
       "slug": "Slug",
       "plan": "Plano",
       "slugHint": "Só letras minúsculas, números e hífens (2–40 caracteres). Alterar muda as URLs do app.",
       "cancel": "Cancelar",
-      "updated": "Tenant atualizado",
-      "updateFailed": "Falha ao atualizar tenant"
+      "updated": "Workspace atualizado",
+      "updateFailed": "Falha ao atualizar workspace"
     },
     "plans": {
       "title": "Planos",

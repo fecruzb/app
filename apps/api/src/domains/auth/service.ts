@@ -6,10 +6,15 @@
  */
 import type { Context } from "hono";
 import { setCookie } from "hono/cookie";
+import type { MeDto } from "@app/shared";
 import { generateApiKey, generateToken, hashToken } from "@/lib/crypto";
 import { sendEmail } from "@/integrations/resend";
 import { env } from "@/lib/env";
+import { toTenantSummary } from "@/domains/tenant/dto";
+import { tenantRepository } from "@/domains/tenant/repository";
+import { toUserDto } from "./dto";
 import { verifyEmailTemplate } from "./emails";
+import { syncPlatformAdminFromEnv } from "./platform-admin";
 import { authRepository, type ApiKeyPrincipal } from "./repository";
 import type { ActionTokenPurpose, ApiKey, User } from "./schema";
 
@@ -25,6 +30,24 @@ const TOKEN_TTL: Record<ActionTokenPurpose, number> = {
   verify_email: 24 * 60 * 60 * 1000,
   reset_password: 60 * 60 * 1000,
 };
+
+/**
+ * Build me payload
+ *
+ * Standard session response: user + tenants they belong to. Syncs the env-based
+ * platform-admin flag before mapping.
+ *
+ * @param user - Authenticated user row
+ * @returns Shared me DTO
+ */
+export async function buildMe(user: User): Promise<MeDto> {
+  const synced = await syncPlatformAdminFromEnv(user);
+  const rows = await tenantRepository.getUserTenants(synced.id);
+  return {
+    user: toUserDto(synced),
+    tenants: rows.map((r) => toTenantSummary(r.tenant, r.role)),
+  };
+}
 
 /**
  * Create a session

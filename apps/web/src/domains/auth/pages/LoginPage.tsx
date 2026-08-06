@@ -1,12 +1,12 @@
 import { useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { Button } from "@app/ui/button";
 import { Input } from "@app/ui/input";
 import { Label } from "@app/ui/label";
 import { AuthLayout } from "@/layouts/AuthLayout";
-import { ApiError } from "@/lib/api";
+import { showApiError } from "@/lib/api";
 import { useAppConfig } from "@/app/config";
 import { authApi } from "../api";
 import { useAuth } from "../context/auth-provider";
@@ -19,21 +19,20 @@ export function LoginPage() {
   const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [submitting, setSubmitting] = useState(false);
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    try {
-      const me = await authApi.login({ email, password });
+  const loginMutation = useMutation({
+    mutationFn: () => authApi.login({ email, password }),
+    onSuccess: (me) => {
       setMe(me);
       const from = (location.state as { from?: string } | null)?.from;
       navigate(from ?? "/app", { replace: true });
-    } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : t("auth.signInFailed"));
-    } finally {
-      setSubmitting(false);
-    }
+    },
+    onError: (err) => showApiError(err, t("auth.signInFailed")),
+  });
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    loginMutation.mutate();
   }
 
   return (
@@ -79,8 +78,8 @@ export function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <Button type="submit" disabled={submitting}>
-          {submitting ? t("auth.signingIn") : t("auth.signIn")}
+        <Button type="submit" disabled={loginMutation.isPending}>
+          {loginMutation.isPending ? t("auth.signingIn") : t("auth.signIn")}
         </Button>
       </form>
     </AuthLayout>

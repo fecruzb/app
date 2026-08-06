@@ -1,5 +1,5 @@
 import type { AppContext } from "@/context";
-import { toApiKeyDto } from "@/domains/auth/dto";
+import { toApiKeyDto } from "../dto";
 import { authRepository } from "@/domains/auth/repository";
 
 /**

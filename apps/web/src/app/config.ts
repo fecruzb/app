@@ -1,10 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import type { AppConfig } from "@app/shared";
 import { api } from "@/lib/api";
-
-type AppConfig = {
-  selfSignupEnabled: boolean;
-  aiEnabled: boolean;
-};
 
 export function useAppConfig() {
   const { data } = useQuery({

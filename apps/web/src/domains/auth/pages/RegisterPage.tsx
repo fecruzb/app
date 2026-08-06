@@ -1,12 +1,13 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button } from "@app/ui/button";
 import { Input } from "@app/ui/input";
 import { Label } from "@app/ui/label";
 import { AuthLayout } from "@/layouts/AuthLayout";
-import { ApiError } from "@/lib/api";
+import { showApiError } from "@/lib/api";
 import { useAppConfig } from "@/app/config";
 import { authApi } from "../api";
 import { useAuth } from "../context/auth-provider";
@@ -19,21 +20,20 @@ export function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [submitting, setSubmitting] = useState(false);
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    try {
-      const me = await authApi.register({ name, email, password });
+  const registerMutation = useMutation({
+    mutationFn: () => authApi.register({ name, email, password }),
+    onSuccess: (me) => {
       setMe(me);
       toast.success(t("auth.accountCreated"));
       navigate("/app", { replace: true });
-    } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : t("auth.createFailed"));
-    } finally {
-      setSubmitting(false);
-    }
+    },
+    onError: (err) => showApiError(err, t("auth.createFailed")),
+  });
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    registerMutation.mutate();
   }
 
   if (!selfSignupEnabled) {
@@ -101,8 +101,8 @@ export function RegisterPage() {
           />
           <p className="text-xs text-muted-foreground">{t("common.minPassword")}</p>
         </div>
-        <Button type="submit" disabled={submitting}>
-          {submitting ? t("common.creating") : t("auth.createAccount")}
+        <Button type="submit" disabled={registerMutation.isPending}>
+          {registerMutation.isPending ? t("common.creating") : t("auth.createAccount")}
         </Button>
       </form>
     </AuthLayout>

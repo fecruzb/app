@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "app-base": {
+      "command": "npm",
+      "args": ["run", "mcp", "--silent"]
+    }
+  }
+}

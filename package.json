@@ -2,7 +2,7 @@
   "name": "app-base",
   "private": true,
   "version": "0.1.0",
-  "description": "Template de app SaaS multi-tenant: React + Hono + Drizzle + Postgres",
+  "description": "Multi-tenant SaaS app template: React + Hono + Drizzle + Postgres",
   "type": "module",
   "workspaces": [
     "apps/*",

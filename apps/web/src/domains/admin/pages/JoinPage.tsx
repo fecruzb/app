@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
@@ -8,7 +8,7 @@ import { Button } from "@app/ui/button";
 import { Input } from "@app/ui/input";
 import { Label } from "@app/ui/label";
 import { AuthLayout } from "@/layouts/AuthLayout";
-import { ApiError } from "@/lib/api";
+import { showApiError } from "@/lib/api";
 import { useAuth } from "@/domains/auth/context/auth-provider";
 import { adminApi } from "../api";
 
@@ -19,7 +19,6 @@ export function JoinPage() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [submitting, setSubmitting] = useState(false);
 
   const {
     data: invite,
@@ -32,19 +31,19 @@ export function JoinPage() {
     retry: false,
   });
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    try {
-      const next = await adminApi.acceptJoinInvite(token!, { name, password });
+  const acceptMutation = useMutation({
+    mutationFn: () => adminApi.acceptJoinInvite(token!, { name, password }),
+    onSuccess: (next) => {
       setMe(next);
       toast.success(t("join.welcome"));
       navigate("/app", { replace: true });
-    } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : t("join.acceptFailed"));
-    } finally {
-      setSubmitting(false);
-    }
+    },
+    onError: (err) => showApiError(err, t("join.acceptFailed")),
+  });
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    acceptMutation.mutate();
   }
 
   if (isLoading || authLoading) {
@@ -126,8 +125,8 @@ export function JoinPage() {
           />
           <p className="text-xs text-muted-foreground">{t("common.minPassword")}</p>
         </div>
-        <Button type="submit" disabled={submitting}>
-          {submitting ? t("common.creating") : t("join.createAndContinue")}
+        <Button type="submit" disabled={acceptMutation.isPending}>
+          {acceptMutation.isPending ? t("common.creating") : t("join.createAndContinue")}
         </Button>
       </form>
     </AuthLayout>

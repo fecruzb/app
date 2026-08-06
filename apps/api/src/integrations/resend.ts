@@ -13,7 +13,8 @@ type EmailPayload = {
 /** Fire-and-forget: use `void sendEmail(...)` to avoid blocking the HTTP response. */
 export async function sendEmail({ to, subject, html }: EmailPayload): Promise<void> {
   if (!env.resendApiKey) {
-    logger.info(`\n[email] (dev, not sent) to: ${to}\n[email] subject: ${subject}\n${html}\n`);
+    // Never log HTML — invite/reset/verify links embed raw tokens.
+    logger.info(`[email] (dev, not sent) to: ${to} · subject: ${subject} · ${html.length} bytes`);
     return;
   }
   try {

@@ -1,31 +1,28 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import { Trans, useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { Button } from "@app/ui/button";
 import { Input } from "@app/ui/input";
 import { Label } from "@app/ui/label";
 import { AuthLayout } from "@/layouts/AuthLayout";
-import { ApiError } from "@/lib/api";
+import { showApiError } from "@/lib/api";
 import { authApi } from "../api";
 
 export function ForgotPasswordPage() {
   const { t } = useTranslation();
   const [email, setEmail] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
 
-  async function handleSubmit(e: FormEvent) {
+  const forgotMutation = useMutation({
+    mutationFn: () => authApi.forgotPassword({ email }),
+    onSuccess: () => setSent(true),
+    onError: (err) => showApiError(err, t("auth.sendFailed")),
+  });
+
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setSubmitting(true);
-    try {
-      await authApi.forgotPassword({ email });
-      setSent(true);
-    } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : t("auth.sendFailed"));
-    } finally {
-      setSubmitting(false);
-    }
+    forgotMutation.mutate();
   }
 
   return (
@@ -59,8 +56,8 @@ export function ForgotPasswordPage() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <Button type="submit" disabled={submitting}>
-            {submitting ? t("common.sending") : t("auth.sendLink")}
+          <Button type="submit" disabled={forgotMutation.isPending}>
+            {forgotMutation.isPending ? t("common.sending") : t("auth.sendLink")}
           </Button>
         </form>
       )}
