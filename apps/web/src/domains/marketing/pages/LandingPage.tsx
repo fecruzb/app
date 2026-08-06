@@ -5,7 +5,6 @@ import {
   BoxIcon,
   CheckIcon,
   EraserIcon,
-  FlagIcon,
   MoonIcon,
   PaletteIcon,
   PenLineIcon,
@@ -46,8 +45,6 @@ type Step = {
   body: string;
   /** Concrete technical points shown below the copy. */
   points: string[];
-  /** Something the reader can do or verify right now — keeps the guided tone. */
-  checkpoint: string;
   filename: string;
   code: string;
   lang?: "ts" | "json" | "text";
@@ -80,8 +77,6 @@ const journey: Phase[] = [
           "Optional keys degrade: email → console, agent → hidden",
           "Code reads a typed env, never raw process.env",
         ],
-        checkpoint:
-          "Open localhost:3000 and sign in as demo@example.com / demo1234 — you're inside the seeded demo workspace.",
         filename: "terminal",
         lang: "text",
         code: `git clone <your-fork>/app-base && cd app-base
@@ -99,8 +94,6 @@ npm run dev      # API on :5000 · SPA on :3000`,
           "API serves the built SPA in prod — one origin, no CORS",
           "TypeScript everywhere, end to end",
         ],
-        checkpoint:
-          "Rename a field in packages/shared/src/task.ts and watch both apps go red — that's the contract doing its job. (Then undo it.)",
         filename: "repo",
         lang: "text",
         code: `app-base/
@@ -122,8 +115,6 @@ npm run dev      # API on :5000 · SPA on :3000`,
           "service.ts only when there's real logic — CRUD skips it",
           "Boundaries fail the lint, not just code review",
         ],
-        checkpoint:
-          "Read task/routes.ts top to bottom once — after that you can predict where any file in this repo lives.",
         filename: "apps/api/src/domains/task/",
         lang: "text",
         code: `domains/task/
@@ -154,8 +145,6 @@ npm run dev      # API on :5000 · SPA on :3000`,
           "One schema validates the request and types the client",
           "Both sides import it — drift is a compile error",
         ],
-        checkpoint:
-          "From this file on, the compiler tracks every place notes touch — a wrong field anywhere is a build error, not a runtime surprise.",
         filename: "packages/shared/src/note.ts",
         code: `export const noteInputSchema = z.object({
   title: z.string().trim().min(1).max(200),
@@ -176,8 +165,6 @@ export type NoteDto = {
           "tenant_id foreign key cascades on delete",
           "Reused id + timestamp columns from a helper",
         ],
-        checkpoint:
-          "Look inside apps/api/drizzle/ — the SQL migration was written for you, and it runs automatically on the next deploy.",
         filename: "domains/note/schema.ts",
         code: `export const notes = pgTable(
   "notes",
@@ -202,8 +189,6 @@ export type NoteDto = {
           "CRUD methods named list / find / insert / update / delete",
           "No query exists without a tenant filter",
         ],
-        checkpoint:
-          "Notice what doesn't exist: a way to query notes without a tenant. Leaking across workspaces takes effort here, not care.",
         filename: "domains/note/repository.ts",
         code: `export const noteRepository = {
   async list(tenantId: string): Promise<Note[]> {
@@ -228,8 +213,6 @@ export type NoteDto = {
           "Handler stays thin: validate → repository → DTO",
           "Tenant comes from context — one tenant can't touch another",
         ],
-        checkpoint:
-          "POST a title to /api/tenants/<id>/notes and the note comes back as JSON — validated, tenant-scoped, typed.",
         filename: "domains/note/endpoints/create-note.endpoint.ts",
         code: `export async function createNote(c: AppContext) {
   const data = await parseBody(c, noteInputSchema);
@@ -255,8 +238,6 @@ export const noteRoutes = new Hono<AppEnv>()
           "summarize marks writes — it becomes a chip in the chat",
           "Tools never import MCP or OpenAI — the lint blocks it",
         ],
-        checkpoint:
-          "Open the floating chat and type “create a note called hello” — the agent finds the new tool on its own and shows the write as a chip.",
         filename: "domains/note/tools/create-note.tool.ts",
         code: `export const createNoteTool = defineTool({
   name: "create_note",
@@ -277,8 +258,6 @@ export const noteRoutes = new Hono<AppEnv>()
           "Network only through the domain api.ts — never raw fetch",
           "Reads are queries, writes invalidate — no manual loading state",
         ],
-        checkpoint:
-          "Register the page in routes.tsx and it shows up in the app shell — create a note in the UI and watch the list refresh itself.",
         filename: "apps/web/src/domains/note/",
         code: `// api.ts — typed calls, the only network boundary
 export const noteApi = {
@@ -312,8 +291,6 @@ const notes = useQuery({
           "Migrations run on pre-deploy, not by hand",
           "Secrets stay out of the repo with sync: false",
         ],
-        checkpoint:
-          "Watch the deploy on the Render dashboard: pre-deploy applies your migration, /api/health goes green, notes are live.",
         filename: "render.yaml",
         lang: "text",
         code: `services:
@@ -339,8 +316,6 @@ databases:
           "web-structure — folders, imports, the network boundary",
           "agent-tools — the transport-neutral tool contract",
         ],
-        checkpoint:
-          "Ask Cursor to “add a comments resource like notes” and review the diff — it lands on the same six files you just wrote.",
         filename: ".cursor/rules/",
         lang: "text",
         code: `.cursor/rules/
@@ -861,13 +836,6 @@ function StepItem({ step, number }: { step: Step; number: number }) {
               </li>
             ))}
           </ul>
-          <div className="mt-5 flex gap-2.5 rounded-lg border bg-muted/40 p-3.5 text-sm">
-            <FlagIcon className="mt-0.5 size-4 shrink-0 text-primary" />
-            <p className="text-pretty">
-              <span className="font-semibold">Checkpoint · </span>
-              <span className="text-muted-foreground">{step.checkpoint}</span>
-            </p>
-          </div>
         </div>
         <div className="reveal reveal-delay min-w-0">
           <CodeBlock filename={step.filename} code={step.code} lang={step.lang} />

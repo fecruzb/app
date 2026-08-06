@@ -282,6 +282,17 @@ function VerifyEmailBody() {
   );
 }
 
+function ResetEmailBody() {
+  return (
+    <EmailBody
+      subject="Reset your password"
+      heading="Reset your password"
+      body="We got a request to reset your password. This link is single-use and expires in 1 hour. If it wasn't you, ignore this email."
+      cta="Reset password"
+    />
+  );
+}
+
 export function VerifyEmailMock() {
   return (
     <Window label="inbox">
@@ -592,6 +603,7 @@ export const flows = {
   ],
   recovery: [
     { label: "/forgot-password", Body: ForgotPasswordBody },
+    { label: "inbox", Body: ResetEmailBody },
     { label: "/reset-password", Body: ResetPasswordBody },
   ],
   invite: [
