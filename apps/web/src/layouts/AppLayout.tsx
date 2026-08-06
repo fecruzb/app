@@ -6,6 +6,7 @@ import {
   CheckSquareIcon,
   ChevronsUpDownIcon,
   HomeIcon,
+  ImageIcon,
   LogOutIcon,
   MailWarningIcon,
   SettingsIcon,
@@ -141,6 +142,7 @@ function navItems(slug: string) {
   return [
     { to: `/app/${slug}`, end: true, icon: HomeIcon, label: "Home" },
     { to: `/app/${slug}/tasks`, end: false, icon: CheckSquareIcon, label: "Tasks" },
+    { to: `/app/${slug}/images`, end: false, icon: ImageIcon, label: "Images" },
     { to: `/app/${slug}/settings`, end: false, icon: SettingsIcon, label: "Settings" },
   ];
 }

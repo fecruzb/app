@@ -123,6 +123,74 @@ export async function transcribeAudio(opts: {
   };
 }
 
+// -- image generation -----------------------------------------------------------
+
+export type ImageSize = "1024x1024" | "1024x1536" | "1536x1024";
+export type ImageQuality = "low" | "medium" | "high";
+
+/** USD per image. Keep in sync with https://openai.com/api/pricing/ (GPT image models). */
+type ImagePricing = Record<ImageQuality, Record<ImageSize, number>>;
+
+const IMAGE_PRICING: Record<string, ImagePricing> = {
+  "gpt-image-1-mini": {
+    low: { "1024x1024": 0.005, "1024x1536": 0.006, "1536x1024": 0.006 },
+    medium: { "1024x1024": 0.011, "1024x1536": 0.015, "1536x1024": 0.015 },
+    high: { "1024x1024": 0.036, "1024x1536": 0.052, "1536x1024": 0.052 },
+  },
+  "gpt-image-1": {
+    low: { "1024x1024": 0.011, "1024x1536": 0.016, "1536x1024": 0.016 },
+    medium: { "1024x1024": 0.042, "1024x1536": 0.063, "1536x1024": 0.063 },
+    high: { "1024x1024": 0.167, "1024x1536": 0.25, "1536x1024": 0.25 },
+  },
+};
+
+/** Unknown model bills at a conservative flat estimate so a wrong config never underbills. */
+const FALLBACK_IMAGE_PRICE_USD = 0.05;
+
+function imagePriceUsd(model: string, quality: ImageQuality, size: ImageSize): number {
+  return IMAGE_PRICING[model]?.[quality]?.[size] ?? FALLBACK_IMAGE_PRICE_USD;
+}
+
+/**
+ * Generates an image from a text prompt. Billed per image (not per token like
+ * chat), so the usage this returns has zeroed token counts — only costMicros
+ * matters, but it still fits the same `AiUsage` shape the ledger expects.
+ */
+export async function generateImage(opts: {
+  model: string;
+  prompt: string;
+  size?: ImageSize;
+  quality?: ImageQuality;
+}): Promise<{ data: Buffer; usage: AiUsage }> {
+  const openai = getOpenAI();
+  const size = opts.size ?? "1024x1024";
+  const quality = opts.quality ?? "medium";
+
+  const response = await openai.images.generate({
+    model: opts.model,
+    prompt: opts.prompt,
+    size,
+    quality,
+    background: "opaque",
+    output_format: "png",
+    n: 1,
+  });
+  const b64 = response.data?.[0]?.b64_json;
+  if (!b64) throw new Error("The API did not return an image");
+
+  return {
+    data: Buffer.from(b64, "base64"),
+    usage: {
+      model: opts.model,
+      inputTokens: 0,
+      cachedInputTokens: 0,
+      outputTokens: 0,
+      rounds: 1,
+      costMicros: Math.round(imagePriceUsd(opts.model, quality, size) * 1_000_000),
+    },
+  };
+}
+
 // -- tool-calling loop ---------------------------------------------------------
 
 export type LoopTool = {

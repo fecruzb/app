@@ -30,10 +30,23 @@ services:
         value: gpt-4o-mini
       - key: TRANSCRIBE_MODEL
         value: gpt-4o-mini-transcribe
+      - key: IMAGE_MODEL
+        value: gpt-image-1-mini
       - key: AI_MONTHLY_BUDGET_USD
         value: "10"
       - key: SELF_SIGNUP_ENABLED
         value: "true"
+      # Image storage (R2, Cloudflare) — same account/credentials as the cookbook.
+      - key: CLOUDFLARE_ACCESS_KEY_ID
+        sync: false
+      - key: CLOUDFLARE_SECRET_ACCESS_KEY
+        sync: false
+      - key: CLOUDFLARE_S3_API
+        value: https://284c6858f001f4b66fca4ef0ed2ee4ae.r2.cloudflarestorage.com
+      - key: CLOUDFLARE_MEDIA_BUCKET
+        value: app
+      - key: R2_PUBLIC_BASE_URL
+        value: https://pub-d10da37e3ba9454b8c90e6345f47d90b.r2.dev
 
 databases:
   - name: app-db

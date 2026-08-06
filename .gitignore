@@ -5,3 +5,6 @@ dist/
 .turbo/
 *.log
 .DS_Store
+
+# Local media fallback (only used when R2 isn't configured) — dev-only, never committed.
+/apps/web/public/

@@ -13,6 +13,8 @@ import { mcpHttp } from "@/agent/mcp-http";
 import { agentRoutes } from "@/agent/routes";
 import { accountRoutes } from "@/domains/account/routes";
 import { authRoutes } from "@/domains/auth/routes";
+import { imageRoutes } from "@/domains/images/routes";
+import { MEDIA_DIR, mediaPublicUrl, mediaStore, usingR2 } from "@/domains/images/media";
 import { taskRoutes } from "@/domains/task/routes";
 import { inviteRoutes, tenantRoutes } from "@/domains/tenant/routes";
 import { usageRoutes } from "@/domains/usage/routes";
@@ -37,8 +39,29 @@ app.route("/api/account", accountRoutes);
 app.route("/api/usage", usageRoutes);
 app.route("/api/tenants", tenantRoutes);
 app.route("/api/tenants/:tenantId/tasks", taskRoutes);
+app.route("/api/tenants/:tenantId/images", imageRoutes);
 app.route("/api/tenants/:tenantId/agent", agentRoutes);
 app.route("/api/invites", inviteRoutes);
+
+// Uploaded images. R2 is checked first: an image regenerated in production
+// must resolve to the bucket, not a stale local copy. Falls through to the
+// local folder when the key isn't in the bucket (or R2 is off).
+if (usingR2) {
+  app.get("/media/*", async (c, next) => {
+    const key = c.req.path.replace(/^\/media\//, "");
+    const url = mediaPublicUrl(`/${key}`);
+    if (url && (await mediaStore.has(key))) return c.redirect(url, 302);
+    return next();
+  });
+}
+app.use(
+  "/media/*",
+  serveStatic({
+    root: path.relative(process.cwd(), MEDIA_DIR),
+    rewriteRequestPath: (p) => p.replace(/^\/media/, ""),
+  }),
+);
+app.get("/media/*", (c) => c.notFound());
 
 // In production the API serves the built SPA (single origin → simple cookies).
 // In dev, Vite runs separately and proxies /api here.

@@ -14,10 +14,27 @@ import { useTenant } from "./tenant-provider";
 const SUGGESTIONS = [
   "who belongs to this tenant?",
   "add a task to prepare tomorrow's meeting",
-  "what tasks are still open?",
+  "generate an image of a lighthouse at sunset",
 ];
 
 type ChatMessage = AgentMessage & { actions?: AgentAction[] };
+
+/** Matches the /media/... urls generate_image mentions in its reply. */
+const MEDIA_URL_RE = /\/media\/\S+\.(?:webp|png|jpe?g)/g;
+
+/** Renders the reply text with any generated-image url shown inline, not as a bare path. */
+function renderContent(content: string) {
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  for (const match of content.matchAll(MEDIA_URL_RE)) {
+    const index = match.index ?? 0;
+    if (index > lastIndex) parts.push(content.slice(lastIndex, index));
+    parts.push(<img key={index} src={match[0]} alt="" className="mt-2 max-w-full rounded-md" />);
+    lastIndex = index + match[0].length;
+  }
+  if (lastIndex < content.length) parts.push(content.slice(lastIndex));
+  return parts;
+}
 
 /**
  * Floating agent button: fixed in the corner, opens a chat backed by
@@ -168,7 +185,7 @@ export function AgentFab() {
                 message.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted",
               )}
             >
-              {message.content}
+              {renderContent(message.content)}
               {message.actions && message.actions.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-1">
                   {message.actions.map((action, j) => (

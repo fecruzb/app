@@ -3,6 +3,7 @@ import { Route } from "react-router-dom";
 import { AppLayout } from "@/layouts/AppLayout";
 import { RequireAuth } from "@/layouts/RequireAuth";
 import { accountRoutes } from "@/domains/account/routes";
+import { imageRoutes } from "@/domains/images/routes";
 import { taskRoutes } from "@/domains/task/routes";
 import { AcceptInvitePage } from "./pages/AcceptInvitePage";
 import { AppIndexRedirect } from "./pages/AppIndexRedirect";
@@ -20,6 +21,7 @@ export const tenantRoutes = (
         <Route index element={<DashboardPage />} />
         <Route path="settings" element={<TenantSettingsPage />} />
         {taskRoutes}
+        {imageRoutes}
         {accountRoutes}
       </Route>
     </Route>

@@ -15,6 +15,13 @@
       "when": 1785987213547,
       "tag": "0001_fat_ted_forrester",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1785989300224,
+      "tag": "0002_flawless_lifeguard",
+      "breakpoints": true
     }
   ]
 }
