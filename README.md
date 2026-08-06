@@ -26,7 +26,7 @@ npm run setup   # starts Postgres (Docker), runs migrations and seed
 npm run dev     # API on :5000 + web on :3000 (proxies /api)
 ```
 
-Open http://localhost:3000 and sign in with the demo user: `demo@example.com` / `demo1234`.
+Open http://localhost:3000 and sign in with `demo@example.com`. The password is printed by `npm run db:seed` (or set `SEED_DEMO_PASSWORD` in your `.env` before seeding).
 
 Without `RESEND_API_KEY`, emails (verification, password reset, invites) are logged to the API console — copy the link from there to test the flows.
 

@@ -67,7 +67,7 @@ Only add a `service.ts` when there is real business logic; plain CRUD calls the 
 
 ## Verify
 
-**11.** `npm run lint` and `npm run typecheck` must pass. Run `npm run dev` and exercise the flow (login: `demo@example.com` / `demo1234`).
+**11.** `npm run lint` and `npm run typecheck` must pass. Run `npm run dev` and exercise the flow (login: `demo@example.com` + the password printed by `db:seed`).
 
 ## Replacing the example (`task`)
 

@@ -1,7 +1,10 @@
-// In-app assistant: takes the floating-button conversation and answers using
-// the registry tools (the same ones exposed via MCP). This is the product
-// "policy" — who the agent is and how it acts; the tool-calling loop lives in
-// integrations/openai.
+/**
+ * In-app assistant
+ *
+ * Takes the floating-button conversation and answers using the registry tools
+ * (the same ones exposed via MCP). This is the product policy — who the agent
+ * is and how it acts; the tool-calling loop lives in integrations/openai.
+ */
 import { z } from "zod";
 import type { AgentMessage, AgentResult } from "@app/shared";
 import { runToolLoop, type AiUsage, type LoopTool } from "@/integrations/openai";
@@ -28,6 +31,16 @@ How to act:
 Final answer: short and direct, without repeating technical ids.`;
 }
 
+/**
+ * Run the assistant
+ *
+ * Executes the tool loop for the given conversation and returns the reply,
+ * action chips, and token usage.
+ *
+ * @param ctx - Tenant and actor identity
+ * @param messages - Conversation so far
+ * @returns Reply, UI action chips, and usage for metering
+ */
 export async function runAssistant(
   ctx: AgentContext,
   messages: AgentMessage[],

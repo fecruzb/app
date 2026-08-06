@@ -1,15 +1,17 @@
-// Storage for uploaded images. Two backends, chosen by environment:
-//
-//   local (default) — writes under env.mediaDir (apps/web/public/ by default),
-//     fine for dev where the filesystem persists across requests.
-//
-//   R2 (production) — Render's filesystem is ephemeral, so anything written
-//     there goes to the Cloudflare bucket instead.
-//
-// Either way the database stores the same relative path
-// ("<tenantId>/uploads/<uuid>.webp"). Requests for a path not in the build
-// are redirected to R2 in app.ts, so switching backends never requires
-// touching stored data.
+/**
+ * Image media storage
+ *
+ * Two backends, chosen by environment:
+ * - local (default) — writes under `env.mediaDir` (apps/web/public/ by default),
+ *   fine for dev where the filesystem persists across requests.
+ * - R2 (production) — Render's filesystem is ephemeral, so anything written
+ *   there goes to the Cloudflare bucket instead.
+ *
+ * Either way the database stores the same relative path
+ * (`<tenantId>/uploads/<uuid>.webp`). Requests for a path not in the build
+ * are redirected to R2 in `app.ts`, so switching backends never requires
+ * touching stored data.
+ */
 import { randomUUID } from "node:crypto";
 import { existsSync, mkdirSync } from "node:fs";
 import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";

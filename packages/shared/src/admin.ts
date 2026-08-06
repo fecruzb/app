@@ -1,15 +1,6 @@
 import { z } from "zod";
 import { planIdSchema, type PlanId } from "./billing";
-import type { MemberDto } from "./tenant";
-
-/** URL-safe tenant slug (matches slugify rules). */
-export const tenantSlugSchema = z
-  .string()
-  .trim()
-  .toLowerCase()
-  .min(2)
-  .max(40)
-  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Invalid slug");
+import { tenantSlugSchema, type MemberDto } from "./tenant";
 
 // -- schemas -------------------------------------------------------------------
 

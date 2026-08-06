@@ -46,6 +46,7 @@ export function AdminUsersPage() {
         ? t("admin.users.grantAdminDescription", { name: user.name })
         : t("admin.users.revokeAdminDescription", { name: user.name }),
       confirmLabel: next ? t("admin.users.grantAdmin") : t("admin.users.revokeAdmin"),
+      cancelLabel: t("common.cancel"),
       destructive: !next,
     });
     if (ok) toggleMutation.mutate({ user, next });

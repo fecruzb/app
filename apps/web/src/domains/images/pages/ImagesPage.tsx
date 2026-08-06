@@ -49,6 +49,7 @@ export function ImagesPage() {
       title: t("images.deleteTitle"),
       description: t("images.deleteDescription"),
       confirmLabel: t("common.delete"),
+      cancelLabel: t("common.cancel"),
       destructive: true,
     });
     if (ok) deleteMutation.mutate(image.id);

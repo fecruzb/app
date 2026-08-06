@@ -65,6 +65,7 @@ export function TasksPage() {
       title: t("tasks.deleteTitle"),
       description: t("tasks.deleteDescription", { title: task.title }),
       confirmLabel: t("common.delete"),
+      cancelLabel: t("common.cancel"),
       destructive: true,
     });
     if (ok) deleteMutation.mutate(task.id);

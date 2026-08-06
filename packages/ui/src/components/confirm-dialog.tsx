@@ -12,7 +12,10 @@ import {
 type ConfirmOptions = {
   title: string;
   description?: string;
-  confirmLabel?: string;
+  /** Confirm button label — caller supplies i18n (no product copy in @app/ui). */
+  confirmLabel: string;
+  /** Cancel button label — caller supplies i18n. */
+  cancelLabel: string;
   destructive?: boolean;
 };
 
@@ -20,7 +23,7 @@ const ConfirmContext = createContext<((options: ConfirmOptions) => Promise<boole
 
 /**
  * Replaces window.confirm with a styled dialog. Wrap the app once, then call
- * `const confirm = useConfirm()` and `if (await confirm({ title })) { ... }`.
+ * `const confirm = useConfirm()` and `if (await confirm({ title, confirmLabel, cancelLabel })) { ... }`.
  */
 export function ConfirmProvider({ children }: { children: React.ReactNode }) {
   const [options, setOptions] = useState<ConfirmOptions | null>(null);
@@ -50,13 +53,13 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
             </DialogHeader>
             <DialogFooter>
               <Button variant="outline" onClick={() => settle(false)}>
-                Cancel
+                {options.cancelLabel}
               </Button>
               <Button
                 variant={options.destructive ? "destructive" : "default"}
                 onClick={() => settle(true)}
               >
-                {options.confirmLabel ?? "Confirm"}
+                {options.confirmLabel}
               </Button>
             </DialogFooter>
           </DialogContent>

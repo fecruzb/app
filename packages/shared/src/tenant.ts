@@ -6,6 +6,15 @@ export type TenantRole = (typeof tenantRoles)[number];
 /** Roles that can manage the tenant (rename, members, invites). */
 export const managerRoles: TenantRole[] = ["owner", "admin"];
 
+/** URL-safe tenant slug (matches slugify rules). */
+export const tenantSlugSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .min(2)
+  .max(40)
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Invalid slug");
+
 // -- schemas -------------------------------------------------------------------
 
 export const updateTenantSchema = z.object({

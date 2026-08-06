@@ -1,13 +1,23 @@
+/**
+ * Demo seed
+ *
+ * Idempotent seed with a demo user for development. Password comes from
+ * `SEED_DEMO_PASSWORD` when set; otherwise a random one is generated and
+ * printed once (never hardcoded in the repo).
+ */
+import { randomBytes } from "node:crypto";
 import { hashPassword } from "@/lib/crypto";
+import { env } from "@/lib/env";
 import { sql } from "./client";
 import { authRepository } from "@/domains/auth/repository";
 import { taskRepository } from "@/domains/task/repository";
 import { createTenantWithOwner } from "@/domains/tenant/service";
 
-// Idempotent seed with a demo user for development.
-// Login: demo@example.com / demo1234 (platform admin) — see README.
-
 const DEMO_EMAIL = "demo@example.com";
+
+function demoPassword(): string {
+  return env.seedDemoPassword ?? randomBytes(12).toString("base64url");
+}
 
 async function seed() {
   const existing = await authRepository.findUserByEmail(DEMO_EMAIL);
@@ -21,10 +31,11 @@ async function seed() {
     return;
   }
 
+  const password = demoPassword();
   const user = await authRepository.insertUser({
     name: "Demo User",
     email: DEMO_EMAIL,
-    passwordHash: hashPassword("demo1234"),
+    passwordHash: hashPassword(password),
     emailVerifiedAt: new Date(),
     isPlatformAdmin: true,
   });
@@ -48,6 +59,7 @@ async function seed() {
   }
 
   console.log(`[seed] created demo user ${DEMO_EMAIL} (tenant "${tenant.name}", platform admin)`);
+  console.log(`[seed] password: ${password}`);
 }
 
 seed()

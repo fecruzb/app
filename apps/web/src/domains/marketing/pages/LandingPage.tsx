@@ -200,14 +200,15 @@ export const taskTools: AgentTool[] = [
 export const allTools = [...tenantTools, ...taskTools, ...imageTools, ...agentTools];`;
 
 const webApiFile = `// apps/web/src/domains/task/api.ts — the only network boundary
-import type { TaskDto } from "@app/shared";
+import type { z } from "zod";
+import { taskInputSchema, type TaskDto } from "@app/shared";
 import { api } from "@/lib/api"; // raw HTTP — never called from a page
 
 export const taskApi = {
   list: (tenantId: string) => api.get<TaskDto[]>(\`/tenants/\${tenantId}/tasks\`),
-  create: (tenantId: string, body: { title: string; completed?: boolean }) =>
+  create: (tenantId: string, body: z.infer<typeof taskInputSchema>) =>
     api.post<TaskDto>(\`/tenants/\${tenantId}/tasks\`, body),
-  update: (tenantId: string, id: string, body: { title: string; completed?: boolean }) =>
+  update: (tenantId: string, id: string, body: z.infer<typeof taskInputSchema>) =>
     api.patch<TaskDto>(\`/tenants/\${tenantId}/tasks/\${id}\`, body),
   delete: (tenantId: string, id: string) =>
     api.delete(\`/tenants/\${tenantId}/tasks/\${id}\`),
@@ -218,19 +219,25 @@ export const taskRoutes = <Route path="tasks" element={<TasksPage />} />;`;
 
 const webRouteMapFile = `// domains/tenant/routes.tsx — composes every domain under :tenantSlug
 export const tenantRoutes = (
-  <Route path="/app" element={<RequireAuth />}>
-    <Route path=":tenantSlug" element={<AppLayout />}>
-      <Route index element={<DashboardPage />} />
-      {taskRoutes}      {/* ← drop a new domain's routes here */}
-      {imageRoutes}
-      {billingRoutes}
-      {accountRoutes}
+  <Fragment>
+    <Route path="/invite/:token" element={<AcceptInvitePage />} />
+    <Route path="/app" element={<RequireAuth />}>
+      <Route index element={<AppIndexRedirect />} />
+      <Route path=":tenantSlug" element={<AppLayout />}>
+        <Route index element={<DashboardPage />} />
+        <Route path="settings" element={<TenantSettingsPage />} />
+        {taskRoutes}      {/* ← drop a new domain's routes here */}
+        {imageRoutes}
+        {billingRoutes}
+        {accountRoutes}
+      </Route>
     </Route>
-  </Route>
+  </Fragment>
 );`;
 
 const pageFile = `// pages/TasksPage.tsx — the canonical page template (copy this shape)
 export function TasksPage() {
+  const { t } = useTranslation();
   // Tenant comes from context (TenantProvider), never from parsing the URL here.
   const { tenant } = useTenant();
   const queryClient = useQueryClient();
@@ -246,13 +253,13 @@ export function TasksPage() {
   const create = useMutation({
     mutationFn: (title: string) => taskApi.create(tenant.id, { title }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks", tenant.id] }),
-    onError: (err) => showApiError(err, "Failed to add task"),
+    onError: (err) => showApiError(err, t("tasks.addFailed")),
   });
 
   if (isLoading) return <PageLoading />;
-  if (!tasks?.length) return <EmptyState>No tasks yet</EmptyState>;
-  // …list UI from @app/ui; delete goes through useConfirm()
-  return <PageHeader title="Tasks" description="Example resource" />;
+  if (!tasks?.length) return <EmptyState>{t("tasks.empty")}</EmptyState>;
+  // …list UI from @app/ui; delete goes through useConfirm() with confirmLabel + cancelLabel
+  return <PageHeader title={t("tasks.title")} description={t("tasks.description")} />;
 }`;
 
 const webTreeFile = `// Same domain name on the web — fixed roles, optional folders.
@@ -356,7 +363,7 @@ const themeFile = `// src/theme/themes.ts — add your brand in one block
 export const themes: Theme[] = [
   {
     id: "violet",
-    label: "Violet",
+    // Display name comes from i18n: theme.themes.violet
     swatch: "oklch(0.55 0.22 295)",
     light: {
       ...lightBase,                        // neutral surfaces

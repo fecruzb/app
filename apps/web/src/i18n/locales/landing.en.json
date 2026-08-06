@@ -422,6 +422,25 @@
     "password": "Password",
     "name": "Name",
     "now": "now",
+    "sample": {
+      "tenant": "Acme Inc",
+      "adaWorkspace": "Ada's Workspace",
+      "ada": "Ada Lovelace",
+      "adaEmail": "ada@acme.com",
+      "adaEmailAlt": "ada@example.com",
+      "adaInitials": "AD",
+      "adaFirst": "Ada",
+      "alan": "Alan Turing",
+      "alanEmail": "alan@acme.com",
+      "grace": "Grace Hopper",
+      "graceEmail": "grace@acme.com",
+      "samEmail": "sam@example.com",
+      "samAcmeEmail": "sam@acme.com",
+      "youEmail": "you@example.com",
+      "cursor": "Cursor",
+      "serviceApp": "app",
+      "serviceDb": "app-db"
+    },
     "login": {
       "title": "Welcome back",
       "description": "Sign in to continue.",
@@ -451,7 +470,7 @@
     "verifyEmail": {
       "subject": "Confirm your email",
       "heading": "Confirm your email",
-      "body": "Hi Ada! Confirm your email address to finish signing up. This link expires in 24 hours.",
+      "body": "Hi {{name}}! Confirm your email address to finish signing up. This link expires in 24 hours.",
       "cta": "Confirm email"
     },
     "resetEmail": {
@@ -461,16 +480,16 @@
       "cta": "Reset password"
     },
     "inviteEmail": {
-      "subject": "Invitation to Acme Inc",
-      "heading": "Invitation to Acme Inc",
-      "bodyBefore": "Ada Lovelace invited you to join ",
+      "subject": "Invitation to {{tenant}}",
+      "heading": "Invitation to {{tenant}}",
+      "bodyBefore": "{{name}} invited you to join ",
       "bodyAfter": ". This invite expires in 7 days.",
       "cta": "Accept invite"
     },
     "platformInviteEmail": {
       "subject": "You're invited to App Base",
       "heading": "You're invited to App Base",
-      "bodyBefore": "Ada Lovelace invited you to create an account and try the app. This invite expires in 7 days.",
+      "bodyBefore": "{{name}} invited you to create an account and try the app. This invite expires in 7 days.",
       "cta": "Create your account"
     },
     "admin": {
@@ -527,7 +546,7 @@
     },
     "shell": {
       "exampleResource": "Example resource",
-      "hi": "Hi, Ada",
+      "hi": "Hi, {{name}}",
       "youreIn": "You're in",
       "members": "3 members",
       "peopleAccess": "People with access",

@@ -422,6 +422,25 @@
     "password": "Senha",
     "name": "Nome",
     "now": "agora",
+    "sample": {
+      "tenant": "Acme Inc",
+      "adaWorkspace": "Workspace da Ada",
+      "ada": "Ada Lovelace",
+      "adaEmail": "ada@acme.com",
+      "adaEmailAlt": "ada@example.com",
+      "adaInitials": "AD",
+      "adaFirst": "Ada",
+      "alan": "Alan Turing",
+      "alanEmail": "alan@acme.com",
+      "grace": "Grace Hopper",
+      "graceEmail": "grace@acme.com",
+      "samEmail": "sam@example.com",
+      "samAcmeEmail": "sam@acme.com",
+      "youEmail": "you@example.com",
+      "cursor": "Cursor",
+      "serviceApp": "app",
+      "serviceDb": "app-db"
+    },
     "login": {
       "title": "Bem-vindo de volta",
       "description": "Entre para continuar.",
@@ -451,7 +470,7 @@
     "verifyEmail": {
       "subject": "Confirme seu e-mail",
       "heading": "Confirme seu e-mail",
-      "body": "Oi, Ada! Confirme seu endereço de e-mail para terminar o cadastro. Este link expira em 24 horas.",
+      "body": "Oi, {{name}}! Confirme seu endereço de e-mail para terminar o cadastro. Este link expira em 24 horas.",
       "cta": "Confirmar e-mail"
     },
     "resetEmail": {
@@ -461,16 +480,16 @@
       "cta": "Redefinir senha"
     },
     "inviteEmail": {
-      "subject": "Convite para Acme Inc",
-      "heading": "Convite para Acme Inc",
-      "bodyBefore": "Ada Lovelace convidou você para entrar em ",
+      "subject": "Convite para {{tenant}}",
+      "heading": "Convite para {{tenant}}",
+      "bodyBefore": "{{name}} convidou você para entrar em ",
       "bodyAfter": ". Este convite expira em 7 dias.",
       "cta": "Aceitar convite"
     },
     "platformInviteEmail": {
       "subject": "Você foi convidado(a) para o App Base",
       "heading": "Você foi convidado(a) para o App Base",
-      "bodyBefore": "Ada Lovelace convidou você a criar uma conta e conhecer o app. Este convite expira em 7 dias.",
+      "bodyBefore": "{{name}} convidou você a criar uma conta e conhecer o app. Este convite expira em 7 dias.",
       "cta": "Criar sua conta"
     },
     "admin": {
@@ -527,7 +546,7 @@
     },
     "shell": {
       "exampleResource": "Recurso de exemplo",
-      "hi": "Olá, Ada",
+      "hi": "Olá, {{name}}",
       "youreIn": "Você está em",
       "members": "3 membros",
       "peopleAccess": "Pessoas com acesso",

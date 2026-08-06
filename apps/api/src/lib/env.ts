@@ -49,6 +49,11 @@ const schema = z.object({
   R2_PUBLIC_BASE_URL: z.string().default(""),
   /** Local media root when R2 is off. Defaults to the web app's public/ folder. */
   MEDIA_DIR: z.string().optional(),
+  /**
+   * Demo user password for `db:seed`. When unset, seed generates a random
+   * password and prints it once. Local-only — never set on Render.
+   */
+  SEED_DEMO_PASSWORD: z.string().optional(),
 });
 
 const parsed = schema.safeParse(process.env);
@@ -92,4 +97,6 @@ export const env = {
    * folder (gitignored — local-only media, never committed).
    */
   mediaDir: raw.MEDIA_DIR ? resolve(raw.MEDIA_DIR) : resolve(moduleDir, "../../../web/public"),
+  /** Demo password for seed; null means seed generates and prints one. */
+  seedDemoPassword: raw.SEED_DEMO_PASSWORD?.trim() || null,
 };

@@ -146,6 +146,7 @@ function ApiKeysSection() {
       title: t("integrations.revokeKeyTitle"),
       description: t("integrations.revokeKeyDescription", { name: keyName }),
       confirmLabel: t("common.revoke"),
+      cancelLabel: t("common.cancel"),
       destructive: true,
     });
     if (ok) revokeMutation.mutate(id);

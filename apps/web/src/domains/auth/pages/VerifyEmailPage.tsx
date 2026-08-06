@@ -16,6 +16,7 @@ export function VerifyEmailPage() {
   const { isLoading, error } = useQuery({
     queryKey: ["verify-email", token],
     queryFn: async () => {
+      if (!token) throw new Error("Missing token");
       const result = await authApi.verifyEmail({ token });
       await refresh();
       return result;

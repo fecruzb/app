@@ -52,6 +52,7 @@ export function AdminInvitesPage() {
       title: t("admin.invites.revokeTitle"),
       description: t("admin.invites.revokeDescription", { email: inviteEmail }),
       confirmLabel: t("common.revoke"),
+      cancelLabel: t("common.cancel"),
       destructive: true,
     });
     if (ok) revokeMutation.mutate(inviteId);

@@ -19,7 +19,10 @@ export function ResetPasswordPage() {
   const [password, setPassword] = useState("");
 
   const resetMutation = useMutation({
-    mutationFn: () => authApi.resetPassword({ token, password }),
+    mutationFn: () => {
+      if (!token) throw new Error("Missing token");
+      return authApi.resetPassword({ token, password });
+    },
     onSuccess: (me) => {
       setMe(me);
       toast.success(t("auth.passwordReset"));

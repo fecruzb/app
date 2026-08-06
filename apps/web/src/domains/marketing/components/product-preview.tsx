@@ -161,7 +161,7 @@ export function LoginMock() {
       description={t("landing.preview.login.description")}
       footer={t("landing.preview.login.footer")}
     >
-      <Field label={t("landing.preview.email")} value="you@example.com" />
+      <Field label={t("landing.preview.email")} value={t("landing.preview.sample.youEmail")} />
       <Field label={t("landing.preview.password")} value="••••••••" mono />
       <SubmitButton label={t("landing.preview.login.submit")} />
     </AuthScreen>
@@ -176,8 +176,8 @@ function RegisterBody() {
       description={t("landing.preview.register.description")}
       footer={t("landing.preview.register.footer")}
     >
-      <Field label={t("landing.preview.name")} value="Ada Lovelace" />
-      <Field label={t("landing.preview.email")} value="you@example.com" />
+      <Field label={t("landing.preview.name")} value={t("landing.preview.sample.ada")} />
+      <Field label={t("landing.preview.email")} value={t("landing.preview.sample.youEmail")} />
       <Field label={t("landing.preview.password")} value="••••••••" mono />
       <SubmitButton label={t("landing.preview.register.submit")} />
     </AuthBody>
@@ -192,7 +192,7 @@ function ForgotPasswordBody() {
       description={t("landing.preview.forgot.description")}
       footer={t("landing.preview.forgot.footer")}
     >
-      <Field label={t("landing.preview.email")} value="you@example.com" />
+      <Field label={t("landing.preview.email")} value={t("landing.preview.sample.youEmail")} />
       <SubmitButton label={t("landing.preview.forgot.submit")} />
     </AuthBody>
   );
@@ -235,7 +235,7 @@ function EmailBody({
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold">{subject}</p>
           <p className="truncate text-xs text-muted-foreground">
-            {t("brand")} &lt;no-reply@appbase.dev&gt; → you@example.com
+            {t("brand")} &lt;no-reply@appbase.dev&gt; → {t("landing.preview.sample.youEmail")}
           </p>
         </div>
         <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
@@ -265,7 +265,9 @@ function VerifyEmailBody() {
     <EmailBody
       subject={t("landing.preview.verifyEmail.subject")}
       heading={t("landing.preview.verifyEmail.heading")}
-      body={t("landing.preview.verifyEmail.body")}
+      body={t("landing.preview.verifyEmail.body", {
+        name: t("landing.preview.sample.adaFirst"),
+      })}
       cta={t("landing.preview.verifyEmail.cta")}
     />
   );
@@ -287,14 +289,14 @@ function InviteMembersBody() {
   const { t } = useTranslation();
   const members = [
     {
-      name: "Ada Lovelace",
-      email: "ada@acme.com",
+      name: t("landing.preview.sample.ada"),
+      email: t("landing.preview.sample.adaEmail"),
       role: t("landing.preview.roles.owner"),
       self: true,
     },
     {
-      name: "Alan Turing",
-      email: "alan@acme.com",
+      name: t("landing.preview.sample.alan"),
+      email: t("landing.preview.sample.alanEmail"),
       role: t("landing.preview.roles.admin"),
       self: false,
     },
@@ -312,7 +314,7 @@ function InviteMembersBody() {
           <div className="flex-1">
             <p className="mb-1 text-xs font-medium">{t("landing.preview.invites.email")}</p>
             <div className="flex h-9 items-center rounded-md border px-3 text-sm text-muted-foreground">
-              sam@acme.com
+              {t("landing.preview.sample.samAcmeEmail")}
             </div>
           </div>
           <div className="flex h-9 items-center gap-1 rounded-md border px-3 text-sm text-muted-foreground">
@@ -366,14 +368,16 @@ function InviteMembersBody() {
 
 function InviteEmailBody() {
   const { t } = useTranslation();
+  const tenant = t("landing.preview.sample.tenant");
+  const name = t("landing.preview.sample.ada");
   return (
     <EmailBody
-      subject={t("landing.preview.inviteEmail.subject")}
-      heading={t("landing.preview.inviteEmail.heading")}
+      subject={t("landing.preview.inviteEmail.subject", { tenant })}
+      heading={t("landing.preview.inviteEmail.heading", { tenant })}
       body={
         <>
-          {t("landing.preview.inviteEmail.bodyBefore")}
-          <span className="font-medium text-foreground">Acme Inc</span>
+          {t("landing.preview.inviteEmail.bodyBefore", { name })}
+          <span className="font-medium text-foreground">{tenant}</span>
           {t("landing.preview.inviteEmail.bodyAfter")}
         </>
       }
@@ -430,14 +434,14 @@ function AdminPeopleBody() {
   const { t } = useTranslation();
   const people = [
     {
-      name: "Ada Lovelace",
-      email: "ada@acme.com",
+      name: t("landing.preview.sample.ada"),
+      email: t("landing.preview.sample.adaEmail"),
       admin: true,
       self: true,
     },
     {
-      name: "Alan Turing",
-      email: "alan@acme.com",
+      name: t("landing.preview.sample.alan"),
+      email: t("landing.preview.sample.alanEmail"),
       admin: false,
       self: false,
     },
@@ -498,7 +502,7 @@ function AdminInvitesBody() {
             <div className="flex-1">
               <p className="mb-1 text-xs font-medium">{t("landing.preview.email")}</p>
               <div className="flex h-9 items-center rounded-md border px-3 text-sm text-muted-foreground">
-                sam@example.com
+                {t("landing.preview.sample.samEmail")}
               </div>
             </div>
             <div className="flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">
@@ -512,7 +516,7 @@ function AdminInvitesBody() {
           </div>
           <div className="flex items-center gap-2 px-3 py-2.5 text-sm">
             <MailIcon className="size-3.5 text-muted-foreground" />
-            <span className="min-w-0 flex-1 truncate">sam@example.com</span>
+            <span className="min-w-0 flex-1 truncate">{t("landing.preview.sample.samEmail")}</span>
             <span className="text-[10px] text-muted-foreground">
               {t("landing.preview.admin.expires")}
             </span>
@@ -529,7 +533,9 @@ function PlatformInviteEmailBody() {
     <EmailBody
       subject={t("landing.preview.platformInviteEmail.subject")}
       heading={t("landing.preview.platformInviteEmail.heading")}
-      body={t("landing.preview.platformInviteEmail.bodyBefore")}
+      body={t("landing.preview.platformInviteEmail.bodyBefore", {
+        name: t("landing.preview.sample.ada"),
+      })}
       cta={t("landing.preview.platformInviteEmail.cta")}
     />
   );
@@ -587,21 +593,37 @@ function AdminTenantsPlanBody() {
   const { t } = useTranslation();
   const tenants = [
     {
-      name: "Acme Inc",
+      name: t("landing.preview.sample.tenant"),
       slug: "acme",
       plan: t("landing.preview.plans.starterName"),
       members: [
-        { name: "Ada Lovelace", email: "ada@acme.com", role: t("landing.preview.roles.owner") },
-        { name: "Grace Hopper", email: "grace@acme.com", role: t("landing.preview.roles.admin") },
-        { name: "Alan Turing", email: "alan@acme.com", role: t("landing.preview.roles.member") },
+        {
+          name: t("landing.preview.sample.ada"),
+          email: t("landing.preview.sample.adaEmail"),
+          role: t("landing.preview.roles.owner"),
+        },
+        {
+          name: t("landing.preview.sample.grace"),
+          email: t("landing.preview.sample.graceEmail"),
+          role: t("landing.preview.roles.admin"),
+        },
+        {
+          name: t("landing.preview.sample.alan"),
+          email: t("landing.preview.sample.alanEmail"),
+          role: t("landing.preview.roles.member"),
+        },
       ],
     },
     {
-      name: "Ada's Workspace",
+      name: t("landing.preview.sample.adaWorkspace"),
       slug: "ada",
       plan: t("landing.preview.plans.freeName"),
       members: [
-        { name: "Ada Lovelace", email: "ada@example.com", role: t("landing.preview.roles.owner") },
+        {
+          name: t("landing.preview.sample.ada"),
+          email: t("landing.preview.sample.adaEmailAlt"),
+          role: t("landing.preview.roles.owner"),
+        },
       ],
     },
   ];
@@ -679,11 +701,11 @@ export function McpKeysMock() {
             <div className="flex-1">
               <p className="mb-1 text-xs font-medium">{t("landing.preview.name")}</p>
               <div className="flex h-9 items-center rounded-md border px-3 text-sm text-muted-foreground">
-                Cursor
+                {t("landing.preview.sample.cursor")}
               </div>
             </div>
             <div className="flex h-9 items-center gap-1 rounded-md border px-3 text-sm text-muted-foreground">
-              Acme Inc
+              {t("landing.preview.sample.tenant")}
               <ChevronsUpDownIcon className="size-3.5" />
             </div>
             <div className="flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">
@@ -724,7 +746,7 @@ export function ShellMock() {
             {t("brand")}
           </div>
           <div className="flex items-center justify-between rounded-md border px-3 py-1.5 text-xs">
-            <span className="truncate">Acme Inc</span>
+            <span className="truncate">{t("landing.preview.sample.tenant")}</span>
             <ChevronsUpDownIcon className="size-3.5 text-muted-foreground" />
           </div>
           <nav className="flex flex-1 flex-col gap-1">
@@ -742,19 +764,25 @@ export function ShellMock() {
           </nav>
           <div className="flex items-center gap-2 rounded-md p-2">
             <div className="flex size-7 items-center justify-center rounded-full bg-muted text-xs font-medium">
-              AD
+              {t("landing.preview.sample.adaInitials")}
             </div>
             <div className="min-w-0">
-              <p className="truncate text-xs font-medium">Ada Lovelace</p>
-              <p className="truncate text-[10px] text-muted-foreground">ada@acme.com</p>
+              <p className="truncate text-xs font-medium">{t("landing.preview.sample.ada")}</p>
+              <p className="truncate text-[10px] text-muted-foreground">
+                {t("landing.preview.sample.adaEmail")}
+              </p>
             </div>
           </div>
         </aside>
         <div className="flex-1 p-5">
-          <p className="text-base font-semibold">{t("landing.preview.shell.hi")}</p>
+          <p className="text-base font-semibold">
+            {t("landing.preview.shell.hi", { name: t("landing.preview.sample.adaFirst") })}
+          </p>
           <p className="text-xs text-muted-foreground">
             {t("landing.preview.shell.youreIn")}{" "}
-            <span className="font-medium text-foreground">Acme Inc</span>
+            <span className="font-medium text-foreground">
+              {t("landing.preview.sample.tenant")}
+            </span>
             <span className="ml-1 rounded bg-muted px-1.5 py-0.5 text-[10px]">
               {t("landing.preview.roles.owner")}
             </span>
@@ -852,9 +880,9 @@ export function AccountMock() {
           <div className="mb-3 flex items-center gap-2 text-xs font-semibold">
             <UserIcon className="size-3.5" /> {t("landing.preview.account.profile")}
           </div>
-          <Field label={t("landing.preview.name")} value="Ada Lovelace" />
+          <Field label={t("landing.preview.name")} value={t("landing.preview.sample.ada")} />
           <div className="h-2" />
-          <Field label={t("landing.preview.email")} value="ada@acme.com" />
+          <Field label={t("landing.preview.email")} value={t("landing.preview.sample.adaEmail")} />
         </div>
         <div className="rounded-lg border p-4">
           <div className="mb-3 flex items-center gap-2 text-xs font-semibold">
@@ -1165,7 +1193,7 @@ export function EnvMock() {
       optional: true,
     },
     { key: "SELF_SIGNUP_ENABLED", value: "true", optional: true },
-    { key: "PLATFORM_ADMIN_EMAILS", value: "you@example.com", optional: true },
+    { key: "PLATFORM_ADMIN_EMAILS", value: t("landing.preview.sample.youEmail"), optional: true },
   ];
   return (
     <Window label=".env">
@@ -1233,7 +1261,7 @@ export function RenderMock() {
           <div className="flex items-center gap-2.5">
             <ServerIcon className="size-4 text-primary" />
             <div>
-              <p className="text-xs font-semibold">app</p>
+              <p className="text-xs font-semibold">{t("landing.preview.sample.serviceApp")}</p>
               <p className="text-[10px] text-muted-foreground">
                 {t("landing.preview.render.webService")}
               </p>
@@ -1248,7 +1276,7 @@ export function RenderMock() {
           <div className="flex items-center gap-2.5">
             <DatabaseIcon className="size-4 text-primary" />
             <div>
-              <p className="text-xs font-semibold">app-db</p>
+              <p className="text-xs font-semibold">{t("landing.preview.sample.serviceDb")}</p>
               <p className="text-[10px] text-muted-foreground">
                 {t("landing.preview.render.postgres")}
               </p>

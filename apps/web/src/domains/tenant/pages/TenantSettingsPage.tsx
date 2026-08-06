@@ -58,6 +58,7 @@ function GeneralSection() {
       title: t("settings.leaveTitle"),
       description: t("settings.leaveDescription", { name: tenant.name }),
       confirmLabel: t("common.leave"),
+      cancelLabel: t("common.cancel"),
       destructive: true,
     });
     if (ok) leaveMutation.mutate();
@@ -143,6 +144,7 @@ function MembersSection() {
       title: t("settings.removeTitle"),
       description: t("settings.removeDescription", { name }),
       confirmLabel: t("common.remove"),
+      cancelLabel: t("common.cancel"),
       destructive: true,
     });
     if (ok) removeMutation.mutate(userId);
@@ -241,6 +243,7 @@ function InvitesSection() {
       title: t("settings.revokeInviteTitle"),
       description: t("settings.revokeInviteDescription", { email: inviteEmail }),
       confirmLabel: t("common.revoke"),
+      cancelLabel: t("common.cancel"),
       destructive: true,
     });
     if (ok) revokeMutation.mutate(inviteId);

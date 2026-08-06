@@ -10,8 +10,7 @@ import { env } from "@/lib/env";
 import { errorHandler } from "@/lib/errors";
 import { hasOpenAiKey } from "@/integrations/openai";
 import type { AppConfig } from "@app/shared";
-import { mcpHttp } from "@/agent/mcp-http";
-import { agentRoutes } from "@/agent/routes";
+import { agentRoutes, mcpRoutes } from "@/agent/routes";
 import { accountRoutes } from "@/domains/account/routes";
 import { adminRoutes, joinRoutes } from "@/domains/admin/routes";
 import { authRoutes } from "@/domains/auth/routes";
@@ -36,9 +35,7 @@ app.get("/api/config", (c) =>
   } satisfies AppConfig),
 );
 
-// Remote MCP over HTTP, authenticated by a personal API key (Bearer token).
-app.all("/api/mcp", mcpHttp);
-
+app.route("/api/mcp", mcpRoutes);
 app.route("/api/auth", authRoutes);
 app.route("/api/account", accountRoutes);
 app.route("/api/admin", adminRoutes);

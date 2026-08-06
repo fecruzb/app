@@ -1,6 +1,10 @@
-// Central registry: joins the tools declared by each domain, plus the
-// agent-owned tools that call OpenAI directly (agent/tools).
-// When creating a new domain, add its array here.
+/**
+ * Agent tool registry
+ *
+ * Joins the tools declared by each domain, plus the agent-owned tools that
+ * call OpenAI directly (`agent/tools`). When creating a new domain, add its
+ * array here.
+ */
 import { imageTools } from "@/domains/images/tools";
 import { taskTools } from "@/domains/task/tools";
 import { tenantTools } from "@/domains/tenant/tools";
