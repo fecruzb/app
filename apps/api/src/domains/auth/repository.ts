@@ -1,4 +1,11 @@
-// All auth data access goes through here — endpoints and service never write SQL.
+/**
+ * Auth repository
+ *
+ * Owns every SQL touch of users, sessions, action tokens and API keys.
+ * Endpoints and services never write SQL here. Entity-prefixed methods;
+ * queries are written inline. Returns rows / join shapes — map to DTOs in
+ * `dto.ts` when exposing over HTTP.
+ */
 import { and, desc, eq, gt, ne } from "drizzle-orm";
 import { db } from "@/db/client";
 import { tenants } from "@/domains/tenant/schema";
@@ -12,6 +19,7 @@ import {
   type User,
 } from "./schema";
 
+/** Resolved API key principal (user + tenant) for request auth. */
 export type ApiKeyPrincipal = {
   keyId: string;
   userId: string;
@@ -21,6 +29,7 @@ export type ApiKeyPrincipal = {
   tenantSlug: string;
 };
 
+/** API key row with the owning tenant's name joined in. */
 export type ApiKeyWithTenant = {
   id: string;
   name: string;
@@ -32,18 +41,44 @@ export type ApiKeyWithTenant = {
 };
 
 export const authRepository = {
-  // -- users ---------------------------------------------------------------
-
+  /**
+   * Find a user by email
+   *
+   * Returns null if no user matches.
+   *
+   * @param email - User email
+   * @returns The user row, or null
+   */
   async findUserByEmail(email: string): Promise<User | null> {
     const [user] = await db.select().from(users).where(eq(users.email, email));
     return user ?? null;
   },
 
+  /**
+   * Find a user by id
+   *
+   * Returns null if no user matches.
+   *
+   * @param id - User id
+   * @returns The user row, or null
+   */
   async findUserById(id: string): Promise<User | null> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user ?? null;
   },
 
+  /**
+   * Insert a user
+   *
+   * Returns the new row.
+   *
+   * @param values - New user fields
+   * @param values.name - Display name
+   * @param values.email - Unique email
+   * @param values.passwordHash - Hashed password
+   * @param values.emailVerifiedAt - Optional verification timestamp
+   * @returns The inserted user row
+   */
   async insertUser(values: {
     name: string;
     email: string;
@@ -54,6 +89,18 @@ export const authRepository = {
     return user;
   },
 
+  /**
+   * Update a user
+   *
+   * Patches the given fields and returns the row.
+   *
+   * @param id - User id
+   * @param patch - Fields to update
+   * @param patch.name - Display name
+   * @param patch.passwordHash - Hashed password
+   * @param patch.emailVerifiedAt - Verification timestamp
+   * @returns The updated user row
+   */
   async updateUser(
     id: string,
     patch: Partial<Pick<User, "name" | "passwordHash" | "emailVerifiedAt">>,
@@ -66,8 +113,16 @@ export const authRepository = {
     return user;
   },
 
-  // -- sessions ------------------------------------------------------------
-
+  /**
+   * Insert a session
+   *
+   * Persists the token hash; no row returned.
+   *
+   * @param values - New session fields
+   * @param values.tokenHash - Hashed session token
+   * @param values.userId - Session owner
+   * @param values.expiresAt - Expiry timestamp
+   */
   async insertSession(values: {
     tokenHash: string;
     userId: string;
@@ -76,6 +131,14 @@ export const authRepository = {
     await db.insert(sessions).values(values);
   },
 
+  /**
+   * Find the user for a session
+   *
+   * Resolves a live session hash to its user, or null if expired / missing.
+   *
+   * @param tokenHash - Hashed session token
+   * @returns The session user, or null
+   */
   async findSessionUser(tokenHash: string): Promise<User | null> {
     const [row] = await db
       .select({ user: users })
@@ -85,11 +148,25 @@ export const authRepository = {
     return row?.user ?? null;
   },
 
+  /**
+   * Delete a session
+   *
+   * Removes the row matching the token hash.
+   *
+   * @param tokenHash - Hashed session token
+   */
   async deleteSessionByTokenHash(tokenHash: string): Promise<void> {
     await db.delete(sessions).where(eq(sessions.tokenHash, tokenHash));
   },
 
-  /** Deletes the user's sessions; exceptTokenHash keeps the current one. */
+  /**
+   * Delete a user's sessions
+   *
+   * `exceptTokenHash` keeps the current session when provided.
+   *
+   * @param userId - User whose sessions to clear
+   * @param exceptTokenHash - Optional session hash to keep
+   */
   async deleteUserSessions(userId: string, exceptTokenHash?: string): Promise<void> {
     const where = exceptTokenHash
       ? and(eq(sessions.userId, userId), ne(sessions.tokenHash, exceptTokenHash))
@@ -97,22 +174,38 @@ export const authRepository = {
     await db.delete(sessions).where(where);
   },
 
-  // -- action tokens (email verification / password reset) ------------------
-
+  /**
+   * Replace an action token
+   *
+   * Keeps one valid token per user/purpose (delete then insert).
+   *
+   * @param values - New action token fields
+   * @param values.userId - Token owner
+   * @param values.purpose - Verification or password-reset purpose
+   * @param values.tokenHash - Hashed action token
+   * @param values.expiresAt - Expiry timestamp
+   */
   async replaceActionToken(values: {
     userId: string;
     purpose: ActionTokenPurpose;
     tokenHash: string;
     expiresAt: Date;
   }): Promise<void> {
-    // One valid token per user/purpose at a time
     await db
       .delete(actionTokens)
       .where(and(eq(actionTokens.userId, values.userId), eq(actionTokens.purpose, values.purpose)));
     await db.insert(actionTokens).values(values);
   },
 
-  /** Validates and consumes (deletes) the token; returns the userId or null. */
+  /**
+   * Consume an action token
+   *
+   * Validates and deletes it; returns the userId or null.
+   *
+   * @param tokenHash - Hashed action token
+   * @param purpose - Expected purpose
+   * @returns The owning user id, or null if invalid / expired
+   */
   async consumeActionToken(tokenHash: string, purpose: ActionTokenPurpose): Promise<string | null> {
     const [row] = await db
       .select()
@@ -129,8 +222,19 @@ export const authRepository = {
     return row.userId;
   },
 
-  // -- api keys ------------------------------------------------------------
-
+  /**
+   * Insert an API key
+   *
+   * Returns the new row.
+   *
+   * @param values - New API key fields
+   * @param values.userId - Key owner
+   * @param values.tenantId - Tenant the key is scoped to
+   * @param values.name - Display name
+   * @param values.tokenHash - Hashed secret
+   * @param values.prefix - Public prefix shown in the UI
+   * @returns The inserted API key row
+   */
   async insertApiKey(values: {
     userId: string;
     tenantId: string;
@@ -142,6 +246,14 @@ export const authRepository = {
     return key;
   },
 
+  /**
+   * List API keys
+   *
+   * Newest first for the user, with tenant name joined.
+   *
+   * @param userId - Key owner
+   * @returns API keys with tenant names, newest first
+   */
   async listApiKeys(userId: string): Promise<ApiKeyWithTenant[]> {
     return db
       .select({
@@ -159,11 +271,26 @@ export const authRepository = {
       .orderBy(desc(apiKeys.createdAt));
   },
 
+  /**
+   * Delete an API key
+   *
+   * Only removes a key owned by the given user.
+   *
+   * @param userId - Key owner
+   * @param keyId - API key id
+   */
   async deleteApiKey(userId: string, keyId: string): Promise<void> {
     await db.delete(apiKeys).where(and(eq(apiKeys.id, keyId), eq(apiKeys.userId, userId)));
   },
 
-  /** Resolves a key hash to its principal (user + tenant), or null. */
+  /**
+   * Find an API key principal
+   *
+   * Resolves a key hash to user + tenant, or null.
+   *
+   * @param tokenHash - Hashed API key secret
+   * @returns Principal fields, or null
+   */
   async findApiKeyPrincipal(tokenHash: string): Promise<ApiKeyPrincipal | null> {
     const [row] = await db
       .select({
@@ -181,6 +308,13 @@ export const authRepository = {
     return row ?? null;
   },
 
+  /**
+   * Touch an API key
+   *
+   * Bumps `lastUsedAt` for the key.
+   *
+   * @param keyId - API key id
+   */
   async touchApiKey(keyId: string): Promise<void> {
     await db.update(apiKeys).set({ lastUsedAt: new Date() }).where(eq(apiKeys.id, keyId));
   },

@@ -32,8 +32,8 @@ Rules:
 - Validate input with `parseBody(c, schema)` (schema from `@app/shared`); read UUID route params with `uuidParam(c, "name")`; throw `HttpError(status, message)`; return with `c.json(...)`
 - Map rows to DTOs in `dto.ts` (`toXxxDto`), never inline inside an endpoint or repository
 - All SQL lives in `repository.ts` as an exported object of async methods. Two shapes (copy the matching one):
-  - **Resource repo** (canonical: `task`, also `images`): one primary table, tenant-scoped. CRUD names are fixed: `list` / `find` / `insert` / `update` / `delete`. Every method takes `tenantId` and filters by it. Use a local `baseQuery()` only when `list`/`find` share a select+join. Mutations use `db.insert` / `db.update` / `db.delete` (+ `.returning()` when the row is needed). Annotate returns (`Promise<T>`, `Promise<T | null>`, `Promise<void>`).
-  - **Platform repo** (`auth`, `tenant`, `usage`): owns several tables or non-CRUD access. Prefix methods by entity (`insertUser`, `listMembers`, `sumUserSpendSince`). Section comments are fine. No forced `baseQuery` or short CRUD names.
+  - **Resource repo** (canonical: `task`, also `images`): one primary table, tenant-scoped. CRUD names are fixed: `list` / `find` / `insert` / `update` / `delete`. Every method takes `tenantId` and filters by it. Write each query inline in the method (no shared query helpers). Mutations use `.returning()` when the row is needed. Annotate returns. File header is title + module description (official tone, not "template"). Each method: title, blank line, description, then `@param` / `@returns`. Prefer `/** */` over `//`.
+  - **Platform repo** (`auth`, `tenant`, `usage`): owns several tables or non-CRUD access. Prefix methods by entity (`insertUser`, `listMembers`, `sumUserSpendSince`). Same JSDoc habit as resource repos.
 - Repository returns DB rows / join shapes — never `@app/shared` DTOs. Map in `dto.ts`.
 - `service.ts` only when there's real business logic; plain CRUD calls the repository straight from the endpoint/tool
 - Tenant routes: `routes.ts` applies `requireAuth`/`requireTenant` once via `.use`

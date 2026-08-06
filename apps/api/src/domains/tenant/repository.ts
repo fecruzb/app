@@ -1,4 +1,10 @@
-// All tenant data access (tenants, members, invites) goes through here.
+/**
+ * Tenant repository
+ *
+ * Owns every SQL touch of tenants, members and invites. Entity-prefixed
+ * methods; queries are written inline. Returns rows / join shapes — map to
+ * DTOs in `dto.ts`.
+ */
 import { and, asc, desc, eq, gt } from "drizzle-orm";
 import { db } from "@/db/client";
 import { users, type User } from "@/domains/auth/schema";
@@ -11,28 +17,62 @@ import {
   type TenantMember,
 } from "./schema";
 
+/** Membership row with the joined user. */
 export type MemberWithUser = { member: TenantMember; user: User };
+
+/** Tenant plus the user's role in it. */
 export type TenantWithRole = { tenant: Tenant; role: TenantMember["role"] };
 
 export const tenantRepository = {
-  // -- tenants ---------------------------------------------------------------
-
+  /**
+   * Find a tenant by slug
+   *
+   * Returns null if no tenant matches.
+   *
+   * @param slug - Tenant slug
+   * @returns The tenant row, or null
+   */
   async findBySlug(slug: string): Promise<Tenant | null> {
     const [tenant] = await db.select().from(tenants).where(eq(tenants.slug, slug));
     return tenant ?? null;
   },
 
-  /** Oldest tenant in the database (MCP stdio fallback). */
+  /**
+   * Find the oldest tenant
+   *
+   * Used as the MCP stdio fallback when no tenant is specified.
+   *
+   * @returns The oldest tenant row, or null
+   */
   async findOldest(): Promise<Tenant | null> {
     const [tenant] = await db.select().from(tenants).orderBy(asc(tenants.createdAt)).limit(1);
     return tenant ?? null;
   },
 
+  /**
+   * Insert a tenant
+   *
+   * Returns the new row.
+   *
+   * @param values - New tenant fields
+   * @param values.name - Display name
+   * @param values.slug - Unique slug
+   * @returns The inserted tenant row
+   */
   async insertTenant(values: { name: string; slug: string }): Promise<Tenant> {
     const [tenant] = await db.insert(tenants).values(values).returning();
     return tenant;
   },
 
+  /**
+   * Update a tenant's name
+   *
+   * Returns the updated row.
+   *
+   * @param tenantId - Tenant id
+   * @param name - New display name
+   * @returns The updated tenant row
+   */
   async updateTenantName(tenantId: string, name: string): Promise<Tenant> {
     const [tenant] = await db
       .update(tenants)
@@ -42,8 +82,14 @@ export const tenantRepository = {
     return tenant;
   },
 
-  // -- members -----------------------------------------------------------------
-
+  /**
+   * List a user's tenants
+   *
+   * Each row includes the tenant and the user's role.
+   *
+   * @param userId - User id
+   * @returns Tenants with the user's role in each
+   */
   async getUserTenants(userId: string): Promise<TenantWithRole[]> {
     return db
       .select({ tenant: tenants, role: tenantMembers.role })
@@ -53,7 +99,15 @@ export const tenantRepository = {
       .orderBy(asc(tenants.createdAt));
   },
 
-  /** Tenant + user membership in a single round-trip (used by the middleware). */
+  /**
+   * Find a tenant with membership
+   *
+   * Single round-trip for middleware; null if the user is not a member.
+   *
+   * @param tenantId - Tenant id
+   * @param userId - User id
+   * @returns Tenant and membership, or null
+   */
   async findTenantWithMembership(
     tenantId: string,
     userId: string,
@@ -66,6 +120,14 @@ export const tenantRepository = {
     return row ?? null;
   },
 
+  /**
+   * List members
+   *
+   * Returns membership rows with joined user data.
+   *
+   * @param tenantId - Tenant id
+   * @returns Members with user rows
+   */
   async listMembers(tenantId: string): Promise<MemberWithUser[]> {
     return db
       .select({ member: tenantMembers, user: users })
@@ -75,6 +137,15 @@ export const tenantRepository = {
       .orderBy(tenantMembers.createdAt);
   },
 
+  /**
+   * Find a member
+   *
+   * By tenant and user id, or null.
+   *
+   * @param tenantId - Tenant id
+   * @param userId - User id
+   * @returns The membership row, or null
+   */
   async findMember(tenantId: string, userId: string): Promise<TenantMember | null> {
     const [member] = await db
       .select()
@@ -83,6 +154,15 @@ export const tenantRepository = {
     return member ?? null;
   },
 
+  /**
+   * Find a member by email
+   *
+   * Looks up membership within the tenant via the users join.
+   *
+   * @param tenantId - Tenant id
+   * @param email - User email
+   * @returns The membership row, or null
+   */
   async findMemberByEmail(tenantId: string, email: string): Promise<TenantMember | null> {
     const [row] = await db
       .select({ member: tenantMembers })
@@ -92,7 +172,14 @@ export const tenantRepository = {
     return row?.member ?? null;
   },
 
-  /** First owner of the tenant (author of MCP stdio writes). */
+  /**
+   * Find the first owner
+   *
+   * Oldest owner of the tenant; author of MCP stdio writes.
+   *
+   * @param tenantId - Tenant id
+   * @returns The owner user, or null
+   */
   async findFirstOwner(tenantId: string): Promise<User | null> {
     const [row] = await db
       .select({ user: users })
@@ -104,6 +191,14 @@ export const tenantRepository = {
     return row?.user ?? null;
   },
 
+  /**
+   * Count owners
+   *
+   * How many owners the tenant currently has.
+   *
+   * @param tenantId - Tenant id
+   * @returns Number of owner memberships
+   */
   async countOwners(tenantId: string): Promise<number> {
     const rows = await db
       .select()
@@ -112,6 +207,16 @@ export const tenantRepository = {
     return rows.length;
   },
 
+  /**
+   * Insert a member
+   *
+   * No row returned.
+   *
+   * @param values - New membership fields
+   * @param values.tenantId - Tenant id
+   * @param values.userId - User id
+   * @param values.role - Membership role
+   */
   async insertMember(values: {
     tenantId: string;
     userId: string;
@@ -120,6 +225,15 @@ export const tenantRepository = {
     await db.insert(tenantMembers).values(values);
   },
 
+  /**
+   * Update a member's role
+   *
+   * Scoped to the tenant and user.
+   *
+   * @param tenantId - Tenant id
+   * @param userId - User id
+   * @param role - New membership role
+   */
   async updateMemberRole(
     tenantId: string,
     userId: string,
@@ -131,14 +245,28 @@ export const tenantRepository = {
       .where(and(eq(tenantMembers.tenantId, tenantId), eq(tenantMembers.userId, userId)));
   },
 
+  /**
+   * Delete a member
+   *
+   * Removes the membership for the user in the tenant.
+   *
+   * @param tenantId - Tenant id
+   * @param userId - User id
+   */
   async deleteMember(tenantId: string, userId: string): Promise<void> {
     await db
       .delete(tenantMembers)
       .where(and(eq(tenantMembers.tenantId, tenantId), eq(tenantMembers.userId, userId)));
   },
 
-  // -- invites -----------------------------------------------------------------
-
+  /**
+   * List pending invites
+   *
+   * Non-expired invites for the tenant, newest first.
+   *
+   * @param tenantId - Tenant id
+   * @returns Pending invites with inviter name
+   */
   async listPendingInvites(
     tenantId: string,
   ): Promise<{ invite: TenantInvite; inviterName: string | null }[]> {
@@ -150,13 +278,34 @@ export const tenantRepository = {
       .orderBy(desc(tenantInvites.createdAt));
   },
 
-  /** Remove pending invites for the email (one active invite per email). */
+  /**
+   * Delete invites by email
+   *
+   * Clears pending invites so there is one active invite per email.
+   *
+   * @param tenantId - Tenant id
+   * @param email - Invitee email
+   */
   async deleteInvitesByEmail(tenantId: string, email: string): Promise<void> {
     await db
       .delete(tenantInvites)
       .where(and(eq(tenantInvites.tenantId, tenantId), eq(tenantInvites.email, email)));
   },
 
+  /**
+   * Insert an invite
+   *
+   * Returns the new row.
+   *
+   * @param values - New invite fields
+   * @param values.tenantId - Tenant id
+   * @param values.email - Invitee email
+   * @param values.role - Role granted on accept
+   * @param values.tokenHash - Hashed invite token
+   * @param values.invitedBy - Inviter user id
+   * @param values.expiresAt - Expiry timestamp
+   * @returns The inserted invite row
+   */
   async insertInvite(values: {
     tenantId: string;
     email: string;
@@ -169,16 +318,39 @@ export const tenantRepository = {
     return invite;
   },
 
+  /**
+   * Delete an invite
+   *
+   * Scoped to the tenant.
+   *
+   * @param tenantId - Tenant id
+   * @param inviteId - Invite id
+   */
   async deleteInvite(tenantId: string, inviteId: string): Promise<void> {
     await db
       .delete(tenantInvites)
       .where(and(eq(tenantInvites.tenantId, tenantId), eq(tenantInvites.id, inviteId)));
   },
 
+  /**
+   * Delete an invite by id
+   *
+   * Used after accept, when tenant scope is already known.
+   *
+   * @param inviteId - Invite id
+   */
   async deleteInviteById(inviteId: string): Promise<void> {
     await db.delete(tenantInvites).where(eq(tenantInvites.id, inviteId));
   },
 
+  /**
+   * Find a valid invite by token
+   *
+   * Non-expired invite with its tenant, or null.
+   *
+   * @param tokenHash - Hashed invite token
+   * @returns Invite and tenant, or null
+   */
   async findValidInviteByTokenHash(
     tokenHash: string,
   ): Promise<{ invite: TenantInvite; tenant: Tenant } | null> {

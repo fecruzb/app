@@ -61,22 +61,27 @@ type Slice = {
   visual: ReactNode;
 };
 
-const repositoryFile = `// domains/task/repository.ts — all SQL, scoped by tenantId
-const baseQuery = () =>
-  db
-    .select({ task: tasks, authorName: users.name })
-    .from(tasks)
-    .leftJoin(users, eq(users.id, tasks.authorId));
-
+const repositoryFile = `/** domains/task/repository.ts — each method owns its full query */
 export const taskRepository = {
-  // Shared select+join — list/find reuse baseQuery()
+  /**
+   * List tasks
+   *
+   * Newest first for the tenant.
+   */
   async list(tenantId: string): Promise<TaskWithAuthor[]> {
-    return baseQuery()
+    return db
+      .select({ task: tasks, authorName: users.name })
+      .from(tasks)
+      .leftJoin(users, eq(users.id, tasks.authorId))
       .where(eq(tasks.tenantId, tenantId))
       .orderBy(desc(tasks.createdAt));
   },
 
-  // Mutations are a different SQL verb — db.insert / update / delete
+  /**
+   * Insert a task
+   *
+   * Returns the new row.
+   */
   async insert(values: {
     tenantId: string;
     authorId: string | null;
@@ -218,11 +223,11 @@ const resourceSlices: Slice[] = [
     id: "repository",
     eyebrow: "The queries",
     title: "All SQL lives in one repository",
-    body: "Every method takes a tenantId and filters by it — isolation isn't a reminder here, it's the only way the data can be reached at all. For a tenant-scoped resource, stick to list / find / insert / update / delete. Reads that share a join go through a local baseQuery(); mutations use db.insert / update / delete and return the row — DTO mapping stays in dto.ts.",
+    body: "Every method takes a tenantId and filters by it — isolation isn't a reminder here, it's the only way the data can be reached at all. For a tenant-scoped resource, stick to list / find / insert / update / delete. Each method writes its query in full — no shared helpers — and returns the row; DTO mapping stays in dto.ts.",
     points: [
       "No query exists without a tenant filter",
       "CRUD is named list / find / insert / update / delete",
-      "baseQuery() for shared joins; db.insert / update / delete for mutations",
+      "Each method owns its query end to end — readable without jumping around",
       "Returns rows — dto.ts maps to the API shape; endpoints never write SQL",
     ],
     visual: <CodeBlock filename="domains/task/repository.ts" code={repositoryFile} lang="ts" />,
