@@ -1,4 +1,10 @@
-import type { InviteDto, MemberDto, TenantRole, TenantSummaryDto } from "@app/shared";
+import type {
+  InviteDto,
+  MemberDto,
+  PublicInviteDto,
+  TenantRole,
+  TenantSummaryDto,
+} from "@app/shared";
 import type { MemberWithUser } from "./repository";
 import type { Tenant, TenantInvite } from "./schema";
 
@@ -24,5 +30,19 @@ export function toInviteDto(invite: TenantInvite, invitedByName: string | null):
     invitedByName,
     createdAt: invite.createdAt.toISOString(),
     expiresAt: invite.expiresAt.toISOString(),
+  };
+}
+
+/** Public accept-invite screen shape (no invite id / token). */
+export function toPublicInviteDto(
+  invite: TenantInvite,
+  tenant: Tenant,
+  userExists: boolean,
+): PublicInviteDto {
+  return {
+    tenantName: tenant.name,
+    email: invite.email,
+    role: invite.role,
+    userExists,
   };
 }

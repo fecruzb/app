@@ -47,6 +47,10 @@
     "verificationResent": "E-mail de verificação reenviado",
     "resendFailed": "Falha ao reenviar"
   },
+  "appIndex": {
+    "noTenantTitle": "Nenhum ambiente disponível",
+    "noTenantDescription": "Você não pertence a nenhum tenant. Peça um convite a um administrador para acessar o app de novo."
+  },
   "auth": {
     "signIn": "Entrar",
     "signInDescription": "Acesse sua conta com e-mail e senha",
@@ -174,7 +178,6 @@
     "leaveFailed": "Falha ao sair do tenant",
     "members": "Membros",
     "membersDescription": "Quem tem acesso a este tenant",
-    "loadingMembers": "Carregando membros...",
     "roleUpdated": "Função atualizada",
     "roleUpdateFailed": "Falha ao atualizar função",
     "memberRemoved": "Membro removido",
@@ -188,6 +191,8 @@
     "inviteFailed": "Falha ao convidar",
     "inviteRevoked": "Convite revogado",
     "revokeInviteFailed": "Falha ao revogar convite",
+    "revokeInviteTitle": "Revogar convite",
+    "revokeInviteDescription": "Revogar o convite para {{email}}?",
     "expires": "expira em {{date}}"
   },
   "billing": {
@@ -311,6 +316,11 @@
       "platformAdmin": "admin da plataforma",
       "grantAdmin": "Tornar admin",
       "revokeAdmin": "Remover admin",
+      "grantAdminTitle": "Conceder admin da plataforma",
+      "grantAdminDescription": "Tornar {{name}} admin da plataforma?",
+      "revokeAdminTitle": "Remover admin da plataforma",
+      "revokeAdminDescription": "Remover admin da plataforma de {{name}}?",
+      "empty": "Nenhum usuário ainda",
       "updated": "Usuário atualizado",
       "updateFailed": "Falha ao atualizar usuário"
     },
@@ -329,7 +339,9 @@
       "invitedByUnknown": "convidado",
       "expires": "expira em {{date}}",
       "revoked": "Convite revogado",
-      "revokeFailed": "Falha ao revogar convite"
+      "revokeFailed": "Falha ao revogar convite",
+      "revokeTitle": "Revogar convite",
+      "revokeDescription": "Revogar o convite para {{email}}?"
     },
     "tenants": {
       "title": "Tenants",

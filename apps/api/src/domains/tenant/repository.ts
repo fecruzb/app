@@ -30,7 +30,7 @@ export const tenantRepository = {
    * @param tenantId - Tenant id
    * @returns The tenant row, or null
    */
-  async findById(tenantId: string): Promise<Tenant | null> {
+  async findTenantById(tenantId: string): Promise<Tenant | null> {
     const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tenantId));
     return tenant ?? null;
   },
@@ -43,7 +43,7 @@ export const tenantRepository = {
    * @param slug - Tenant slug
    * @returns The tenant row, or null
    */
-  async findBySlug(slug: string): Promise<Tenant | null> {
+  async findTenantBySlug(slug: string): Promise<Tenant | null> {
     const [tenant] = await db.select().from(tenants).where(eq(tenants.slug, slug));
     return tenant ?? null;
   },
@@ -85,7 +85,7 @@ export const tenantRepository = {
    *
    * @returns The oldest tenant row, or null
    */
-  async findOldest(): Promise<Tenant | null> {
+  async findOldestTenant(): Promise<Tenant | null> {
     const [tenant] = await db.select().from(tenants).orderBy(asc(tenants.createdAt)).limit(1);
     return tenant ?? null;
   },

@@ -147,7 +147,7 @@ function VerifyEmailBanner() {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2 border-b bg-amber-50 px-4 py-2 text-sm text-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
+    <div className="flex flex-wrap items-center gap-2 border-b bg-muted px-4 py-2 text-sm text-foreground">
       <MailWarningIcon className="size-4 shrink-0" />
       <span className="flex-1">{t("layout.verifyBanner")}</span>
       {!sent && (

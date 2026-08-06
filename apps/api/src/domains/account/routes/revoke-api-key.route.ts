@@ -1,6 +1,6 @@
 import { uuidParam } from "@/lib/errors";
 import type { AppContext } from "@/context";
-import { revokeApiKey as revokeApiKeyForUser } from "@/domains/auth/service";
+import { authRepository } from "@/domains/auth/repository";
 
 /**
  * Revoke an API key
@@ -18,7 +18,7 @@ export async function revokeApiKey(c: AppContext) {
   const keyId = uuidParam(c, "keyId");
 
   // -- Processing ------------------------------------------------------------
-  await revokeApiKeyForUser(userId, keyId);
+  await authRepository.deleteApiKey(userId, keyId);
 
   // -- Output ----------------------------------------------------------------
   return c.json({ ok: true });

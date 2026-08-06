@@ -1,6 +1,6 @@
 import type { AppContext } from "@/context";
 import { toApiKeyDto } from "@/domains/auth/dto";
-import { listApiKeys as listApiKeysForUser } from "@/domains/auth/service";
+import { authRepository } from "@/domains/auth/repository";
 
 /**
  * List API keys
@@ -17,7 +17,7 @@ export async function listApiKeys(c: AppContext) {
   const userId = c.get("user").id;
 
   // -- Processing ------------------------------------------------------------
-  const keys = await listApiKeysForUser(userId);
+  const keys = await authRepository.listApiKeys(userId);
 
   // -- Output ----------------------------------------------------------------
   return c.json(keys.map(toApiKeyDto));

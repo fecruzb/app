@@ -13,7 +13,7 @@ import { acceptPlatformInvite } from "./accept-platform-invite.route";
 import { createPlatformInvite } from "./create-platform-invite.route";
 import { getPlatformInvite } from "./get-platform-invite.route";
 import { listPlatformInvites } from "./list-platform-invites.route";
-import { listPlansRoute } from "./list-plans.route";
+import { listPlans } from "./list-plans.route";
 import { listTenants } from "./list-tenants.route";
 import { listUsers } from "./list-users.route";
 import { revokePlatformInvite } from "./revoke-platform-invite.route";
@@ -31,7 +31,7 @@ export const adminRoutes = new Hono<AppEnv>()
   .patch("/users/:userId", updateUser)
   .get("/tenants", listTenants)
   .patch("/tenants/:tenantId", updateTenant)
-  .get("/plans", listPlansRoute)
+  .get("/plans", listPlans)
   .get("/invites", listPlatformInvites)
   .post("/invites", createPlatformInvite)
   .delete("/invites/:inviteId", revokePlatformInvite);

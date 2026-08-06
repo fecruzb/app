@@ -1,8 +1,8 @@
-import type { PublicPlatformInviteDto } from "@app/shared";
 import { hashToken } from "@/lib/crypto";
 import { HttpError } from "@/lib/errors";
 import type { AppContext } from "@/context";
 import { authRepository } from "@/domains/auth/repository";
+import { toPublicPlatformInviteDto } from "../dto";
 import { adminRepository } from "../repository";
 
 /**
@@ -27,10 +27,5 @@ export async function getPlatformInvite(c: AppContext) {
   const existingUser = await authRepository.findUserByEmail(row.invite.email);
 
   // -- Output ----------------------------------------------------------------
-  const dto: PublicPlatformInviteDto = {
-    email: row.invite.email,
-    inviterName: row.inviterName,
-    userExists: existingUser !== null,
-  };
-  return c.json(dto);
+  return c.json(toPublicPlatformInviteDto(row.invite, row.inviterName, existingUser !== null));
 }

@@ -1,7 +1,7 @@
 import type { AppContext } from "@/context";
 import { hasOpenAiKey, transcribeAudio } from "@/integrations/openai";
 import { usageRepository } from "@/domains/usage/repository";
-import { assertAiBudget } from "@/domains/usage/service";
+import { assertAiBudget } from "@/domains/billing/service";
 import { env } from "@/lib/env";
 import { HttpError } from "@/lib/errors";
 

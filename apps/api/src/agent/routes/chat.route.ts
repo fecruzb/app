@@ -3,7 +3,7 @@ import { HttpError, parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
 import { hasOpenAiKey } from "@/integrations/openai";
 import { usageRepository } from "@/domains/usage/repository";
-import { assertAiBudget } from "@/domains/usage/service";
+import { assertAiBudget } from "@/domains/billing/service";
 import { runAssistant } from "../assistant";
 
 /**

@@ -13,6 +13,7 @@ import { Input } from "@app/ui/input";
 import { Label } from "@app/ui/label";
 import { useConfirm } from "@app/ui/confirm-dialog";
 import { PageHeader } from "@app/ui/page-header";
+import { PageLoading } from "@app/ui/page-loading";
 import { RoleSelect } from "@/components/role-select";
 import { showApiError } from "@/lib/api";
 import { initials } from "@/lib/utils";
@@ -154,46 +155,47 @@ function MembersSection() {
         <CardDescription>{t("settings.membersDescription")}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-3">
-        {isLoading && (
-          <p className="text-sm text-muted-foreground">{t("settings.loadingMembers")}</p>
-        )}
-        {members?.map((member) => {
-          const isSelf = member.userId === me?.user.id;
-          return (
-            <div key={member.userId} className="flex items-center gap-3">
-              <Avatar>
-                <AvatarFallback>{initials(member.name)}</AvatarFallback>
-              </Avatar>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">
-                  {member.name}
-                  {isSelf && <span className="text-muted-foreground"> {t("common.you")}</span>}
-                </p>
-                <p className="truncate text-xs text-muted-foreground">{member.email}</p>
+        {isLoading ? (
+          <PageLoading />
+        ) : (
+          members?.map((member) => {
+            const isSelf = member.userId === me?.user.id;
+            return (
+              <div key={member.userId} className="flex items-center gap-3">
+                <Avatar>
+                  <AvatarFallback>{initials(member.name)}</AvatarFallback>
+                </Avatar>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">
+                    {member.name}
+                    {isSelf && <span className="text-muted-foreground"> {t("common.you")}</span>}
+                  </p>
+                  <p className="truncate text-xs text-muted-foreground">{member.email}</p>
+                </div>
+                {isManager && !isSelf ? (
+                  <>
+                    <RoleSelect
+                      className="h-8"
+                      includeOwner={member.role === "owner"}
+                      value={member.role}
+                      onChange={(role) => roleMutation.mutate({ userId: member.userId, role })}
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => void handleRemove(member.userId, member.name)}
+                    >
+                      <Trash2Icon />
+                      <span className="sr-only">{t("common.remove")}</span>
+                    </Button>
+                  </>
+                ) : (
+                  <Badge variant="secondary">{t(`roles.${member.role}`)}</Badge>
+                )}
               </div>
-              {isManager && !isSelf ? (
-                <>
-                  <RoleSelect
-                    className="h-8"
-                    includeOwner={member.role === "owner"}
-                    value={member.role}
-                    onChange={(role) => roleMutation.mutate({ userId: member.userId, role })}
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => void handleRemove(member.userId, member.name)}
-                  >
-                    <Trash2Icon />
-                    <span className="sr-only">{t("common.remove")}</span>
-                  </Button>
-                </>
-              ) : (
-                <Badge variant="secondary">{t(`roles.${member.role}`)}</Badge>
-              )}
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </CardContent>
     </Card>
   );
@@ -203,6 +205,7 @@ function InvitesSection() {
   const { t, i18n } = useTranslation();
   const { tenant } = useTenant();
   const queryClient = useQueryClient();
+  const confirm = useConfirm();
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<TenantRole>("member");
 
@@ -232,6 +235,16 @@ function InvitesSection() {
     },
     onError: (err) => showApiError(err, t("settings.revokeInviteFailed")),
   });
+
+  async function handleRevoke(inviteId: string, inviteEmail: string) {
+    const ok = await confirm({
+      title: t("settings.revokeInviteTitle"),
+      description: t("settings.revokeInviteDescription", { email: inviteEmail }),
+      confirmLabel: t("common.revoke"),
+      destructive: true,
+    });
+    if (ok) revokeMutation.mutate(inviteId);
+  }
 
   return (
     <Card>
@@ -277,7 +290,7 @@ function InvitesSection() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => revokeMutation.mutate(invite.id)}
+                  onClick={() => void handleRevoke(invite.id, invite.email)}
                 >
                   <Trash2Icon />
                   <span className="sr-only">{t("common.revoke")}</span>

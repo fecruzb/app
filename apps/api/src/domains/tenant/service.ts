@@ -39,7 +39,7 @@ async function uniqueSlug(name: string): Promise<string> {
   const base = slugify(name);
   let candidate = base;
   for (;;) {
-    if (!(await tenantRepository.findBySlug(candidate))) return candidate;
+    if (!(await tenantRepository.findTenantBySlug(candidate))) return candidate;
     candidate = `${base}-${Math.random().toString(36).slice(2, 6)}`;
   }
 }

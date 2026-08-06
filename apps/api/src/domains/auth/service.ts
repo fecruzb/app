@@ -10,7 +10,7 @@ import { generateApiKey, generateToken, hashToken } from "@/lib/crypto";
 import { sendEmail } from "@/integrations/resend";
 import { env } from "@/lib/env";
 import { verifyEmailTemplate } from "./emails";
-import { authRepository, type ApiKeyPrincipal, type ApiKeyWithTenant } from "./repository";
+import { authRepository, type ApiKeyPrincipal } from "./repository";
 import type { ActionTokenPurpose, ApiKey, User } from "./schema";
 
 export { hashPassword, verifyPassword } from "@/lib/crypto";
@@ -174,30 +174,6 @@ export async function createApiKey(
     prefix,
   });
   return { apiKey, key };
-}
-
-/**
- * List API keys
- *
- * Newest first for the user, with tenant name joined.
- *
- * @param userId - Key owner
- * @returns API keys with tenant names
- */
-export async function listApiKeys(userId: string): Promise<ApiKeyWithTenant[]> {
-  return authRepository.listApiKeys(userId);
-}
-
-/**
- * Revoke an API key
- *
- * Deletes a key owned by the given user.
- *
- * @param userId - Key owner
- * @param keyId - API key id
- */
-export async function revokeApiKey(userId: string, keyId: string): Promise<void> {
-  await authRepository.deleteApiKey(userId, keyId);
 }
 
 /**

@@ -3,13 +3,19 @@
  *
  * Maps admin repository shapes to shared admin DTOs.
  */
-import type { AdminPlatformInviteDto, AdminTenantDto, AdminUserDto } from "@app/shared";
+import type {
+  AdminPlatformInviteDto,
+  AdminTenantDto,
+  AdminUserDto,
+  PublicPlatformInviteDto,
+} from "@app/shared";
 import { isEffectivePlatformAdmin } from "@/domains/auth/platform-admin";
 import type {
   PlatformInviteWithInviter,
   TenantWithMemberCount,
   UserWithTenantCount,
 } from "./repository";
+import type { PlatformInvite } from "./schema";
 
 export function toAdminUserDto(row: UserWithTenantCount): AdminUserDto {
   return {
@@ -48,5 +54,18 @@ export function toAdminPlatformInviteDto(row: PlatformInviteWithInviter): AdminP
     invitedByName: row.inviterName,
     createdAt: row.invite.createdAt.toISOString(),
     expiresAt: row.invite.expiresAt.toISOString(),
+  };
+}
+
+/** Public join screen shape (no invite id / token). */
+export function toPublicPlatformInviteDto(
+  invite: PlatformInvite,
+  inviterName: string | null,
+  userExists: boolean,
+): PublicPlatformInviteDto {
+  return {
+    email: invite.email,
+    inviterName,
+    userExists,
   };
 }

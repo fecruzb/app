@@ -1,8 +1,8 @@
-import type { PublicInviteDto } from "@app/shared";
 import { hashToken } from "@/lib/crypto";
 import { HttpError } from "@/lib/errors";
 import type { AppContext } from "@/context";
 import { authRepository } from "@/domains/auth/repository";
+import { toPublicInviteDto } from "../dto";
 import { tenantRepository } from "../repository";
 
 /**
@@ -27,11 +27,5 @@ export async function getInvite(c: AppContext) {
   const existingUser = await authRepository.findUserByEmail(row.invite.email);
 
   // -- Output ----------------------------------------------------------------
-  const dto: PublicInviteDto = {
-    tenantName: row.tenant.name,
-    email: row.invite.email,
-    role: row.invite.role,
-    userExists: existingUser !== null,
-  };
-  return c.json(dto);
+  return c.json(toPublicInviteDto(row.invite, row.tenant, existingUser !== null));
 }

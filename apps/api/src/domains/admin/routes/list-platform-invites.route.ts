@@ -13,6 +13,8 @@ import { adminRepository } from "../repository";
  * @returns 200 with an array of admin platform invite DTOs
  */
 export async function listPlatformInvites(c: AppContext) {
+  // -- Input -----------------------------------------------------------------
+
   // -- Processing ------------------------------------------------------------
   const rows = await adminRepository.listPendingPlatformInvites();
 

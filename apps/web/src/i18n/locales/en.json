@@ -47,6 +47,10 @@
     "verificationResent": "Verification email resent",
     "resendFailed": "Failed to resend"
   },
+  "appIndex": {
+    "noTenantTitle": "No environment available",
+    "noTenantDescription": "You don't belong to any tenant. Ask an administrator for an invite to access the app again."
+  },
   "auth": {
     "signIn": "Sign in",
     "signInDescription": "Access your account with email and password",
@@ -174,7 +178,6 @@
     "leaveFailed": "Failed to leave tenant",
     "members": "Members",
     "membersDescription": "Who has access to this tenant",
-    "loadingMembers": "Loading members...",
     "roleUpdated": "Role updated",
     "roleUpdateFailed": "Failed to update role",
     "memberRemoved": "Member removed",
@@ -188,6 +191,8 @@
     "inviteFailed": "Failed to invite",
     "inviteRevoked": "Invite revoked",
     "revokeInviteFailed": "Failed to revoke invite",
+    "revokeInviteTitle": "Revoke invite",
+    "revokeInviteDescription": "Revoke the invite to {{email}}?",
     "expires": "expires {{date}}"
   },
   "billing": {
@@ -311,6 +316,11 @@
       "platformAdmin": "platform admin",
       "grantAdmin": "Make admin",
       "revokeAdmin": "Remove admin",
+      "grantAdminTitle": "Grant platform admin",
+      "grantAdminDescription": "Make {{name}} a platform admin?",
+      "revokeAdminTitle": "Revoke platform admin",
+      "revokeAdminDescription": "Remove platform admin from {{name}}?",
+      "empty": "No users yet",
       "updated": "User updated",
       "updateFailed": "Failed to update user"
     },
@@ -329,7 +339,9 @@
       "invitedByUnknown": "invited",
       "expires": "expires {{date}}",
       "revoked": "Invite revoked",
-      "revokeFailed": "Failed to revoke invite"
+      "revokeFailed": "Failed to revoke invite",
+      "revokeTitle": "Revoke invite",
+      "revokeDescription": "Revoke the invite to {{email}}?"
     },
     "tenants": {
       "title": "Tenants",

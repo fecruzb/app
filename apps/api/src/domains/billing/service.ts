@@ -50,7 +50,7 @@ function formatUsd(micros: number): string {
  * @throws {HttpError} 403 when the plan seat cap is reached
  */
 export async function assertSeatAvailableForInvite(tenantId: string): Promise<void> {
-  const tenant = await tenantRepository.findById(tenantId);
+  const tenant = await tenantRepository.findTenantById(tenantId);
   if (!tenant) throw new HttpError(404, "Tenant not found");
 
   const plan = getPlan(tenant.planId);
@@ -79,7 +79,7 @@ export async function assertSeatAvailableForInvite(tenantId: string): Promise<vo
  * @throws {HttpError} 403 when the plan seat cap is reached
  */
 export async function assertSeatAvailableForAccept(tenantId: string): Promise<void> {
-  const tenant = await tenantRepository.findById(tenantId);
+  const tenant = await tenantRepository.findTenantById(tenantId);
   if (!tenant) throw new HttpError(404, "Tenant not found");
 
   const plan = getPlan(tenant.planId);
@@ -105,7 +105,7 @@ export async function getTenantBilling(
   tenantId: string,
   userId: string,
 ): Promise<TenantBillingDto> {
-  const tenant = await tenantRepository.findById(tenantId);
+  const tenant = await tenantRepository.findTenantById(tenantId);
   if (!tenant) throw new HttpError(404, "Tenant not found");
 
   const plan = getPlan(tenant.planId);
@@ -179,7 +179,7 @@ export async function getTenantBilling(
  * @throws {HttpError} 402 when the monthly per-seat limit is reached
  */
 export async function assertAiBudget(userId: string, tenantId: string): Promise<void> {
-  const tenant = await tenantRepository.findById(tenantId);
+  const tenant = await tenantRepository.findTenantById(tenantId);
   if (!tenant) throw new HttpError(404, "Tenant not found");
 
   const plan = getPlan(tenant.planId);

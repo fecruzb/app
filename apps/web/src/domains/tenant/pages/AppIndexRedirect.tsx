@@ -1,4 +1,5 @@
 import { Navigate, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@app/ui/card";
 import { Button } from "@app/ui/button";
 import { useAuth } from "@/domains/auth/auth-provider";
@@ -6,6 +7,7 @@ import { getLastTenantSlug } from "../tenant-provider";
 
 /** /app → redirects to the last used tenant (or the first). */
 export function AppIndexRedirect() {
+  const { t } = useTranslation();
   const { me, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -22,11 +24,8 @@ export function AppIndexRedirect() {
     <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>No environment available</CardTitle>
-          <CardDescription>
-            You don't belong to any tenant. Ask an administrator for an invite to access the app
-            again.
-          </CardDescription>
+          <CardTitle>{t("appIndex.noTenantTitle")}</CardTitle>
+          <CardDescription>{t("appIndex.noTenantDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Button
@@ -35,7 +34,7 @@ export function AppIndexRedirect() {
               void logout().then(() => navigate("/"));
             }}
           >
-            Sign out
+            {t("nav.signOut")}
           </Button>
         </CardContent>
       </Card>

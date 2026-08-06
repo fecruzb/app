@@ -1,4 +1,4 @@
-import type { ApiKeyDto, MeDto, UserDto } from "@app/shared";
+import type { ApiKeyDto, CreatedApiKeyDto, MeDto, UserDto } from "@app/shared";
 import { toTenantSummary } from "@/domains/tenant/dto";
 import { tenantRepository } from "@/domains/tenant/repository";
 import { isEffectivePlatformAdmin, syncPlatformAdminFromEnv } from "./platform-admin";
@@ -26,6 +26,11 @@ export function toApiKeyDto(key: ApiKeyWithTenant): ApiKeyDto {
     lastUsedAt: key.lastUsedAt?.toISOString() ?? null,
     createdAt: key.createdAt.toISOString(),
   };
+}
+
+/** Creation response — includes the raw key (shown once). */
+export function toCreatedApiKeyDto(key: ApiKeyWithTenant, rawKey: string): CreatedApiKeyDto {
+  return { ...toApiKeyDto(key), key: rawKey };
 }
 
 /** Standard session response: user + tenants they belong to. */

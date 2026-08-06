@@ -10,7 +10,7 @@ import { tenantRepository } from "@/domains/tenant/repository";
 import { createMcpServer } from "./mcp-server";
 
 const slug = process.env.MCP_TENANT_SLUG;
-const tenant = slug ? await tenantRepository.findBySlug(slug) : await tenantRepository.findOldest();
+const tenant = slug ? await tenantRepository.findTenantBySlug(slug) : await tenantRepository.findOldestTenant();
 
 if (!tenant) {
   console.error(

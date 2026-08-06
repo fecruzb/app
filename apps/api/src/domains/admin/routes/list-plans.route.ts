@@ -1,5 +1,5 @@
 import type { AppContext } from "@/context";
-import { listPlans } from "@/domains/billing/plans";
+import { listPlans as planCatalog } from "@/domains/billing/plans";
 
 /**
  * List plans
@@ -11,11 +11,11 @@ import { listPlans } from "@/domains/billing/plans";
  * @param c - Platform admin request context
  * @returns 200 with the plan DTO list
  */
-export async function listPlansRoute(c: AppContext) {
+export async function listPlans(c: AppContext) {
   // -- Input -----------------------------------------------------------------
 
   // -- Processing ------------------------------------------------------------
-  const plans = listPlans();
+  const plans = planCatalog();
 
   // -- Output ----------------------------------------------------------------
   return c.json(plans);

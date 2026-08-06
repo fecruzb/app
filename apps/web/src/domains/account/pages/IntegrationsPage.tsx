@@ -10,6 +10,7 @@ import { Input } from "@app/ui/input";
 import { Label } from "@app/ui/label";
 import { useConfirm } from "@app/ui/confirm-dialog";
 import { PageHeader } from "@app/ui/page-header";
+import { PageLoading } from "@app/ui/page-loading";
 import { showApiError } from "@/lib/api";
 import { dateLocale } from "@/i18n";
 import { useAuth } from "@/domains/auth/auth-provider";
@@ -109,7 +110,7 @@ function ApiKeysSection() {
   const [tenantId, setTenantId] = useState(tenants[0]?.id ?? "");
   const [created, setCreated] = useState<CreatedApiKeyDto | null>(null);
 
-  const { data: keys } = useQuery({
+  const { data: keys, isLoading } = useQuery({
     queryKey: ["api-keys"],
     queryFn: accountApi.listApiKeys,
   });
@@ -191,34 +192,39 @@ function ApiKeysSection() {
 
         {created && <CreatedKeyPanel created={created} />}
 
-        {keys && keys.length > 0 && (
-          <div className="grid gap-2 border-t pt-4">
-            {keys.map((key) => (
-              <div key={key.id} className="flex items-center gap-3 text-sm">
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium">{key.name}</p>
-                  <p className="truncate text-xs text-muted-foreground">
-                    <code className="font-mono">{key.prefix}…</code> · {key.tenantName} ·{" "}
-                    {key.lastUsedAt
-                      ? t("integrations.used", {
-                          date: new Date(key.lastUsedAt).toLocaleDateString(
-                            dateLocale(i18n.language),
-                          ),
-                        })
-                      : t("integrations.neverUsed")}
-                  </p>
+        {isLoading ? (
+          <PageLoading />
+        ) : (
+          keys &&
+          keys.length > 0 && (
+            <div className="grid gap-2 border-t pt-4">
+              {keys.map((key) => (
+                <div key={key.id} className="flex items-center gap-3 text-sm">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium">{key.name}</p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      <code className="font-mono">{key.prefix}…</code> · {key.tenantName} ·{" "}
+                      {key.lastUsedAt
+                        ? t("integrations.used", {
+                            date: new Date(key.lastUsedAt).toLocaleDateString(
+                              dateLocale(i18n.language),
+                            ),
+                          })
+                        : t("integrations.neverUsed")}
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => void handleRevoke(key.id, key.name)}
+                  >
+                    <Trash2Icon />
+                    <span className="sr-only">{t("common.revoke")}</span>
+                  </Button>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => void handleRevoke(key.id, key.name)}
-                >
-                  <Trash2Icon />
-                  <span className="sr-only">{t("common.revoke")}</span>
-                </Button>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )
         )}
       </CardContent>
     </Card>

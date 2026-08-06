@@ -42,7 +42,7 @@ export function VerifyEmailPage() {
       ) : (
         <div className="grid gap-4">
           <div className="flex items-start gap-2 text-sm">
-            <CheckCircle2Icon className="mt-0.5 size-4 shrink-0 text-green-600" />
+            <CheckCircle2Icon className="mt-0.5 size-4 shrink-0 text-primary" />
             <span>{t("auth.verifySuccess")}</span>
           </div>
           <Button asChild>

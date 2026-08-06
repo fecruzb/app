@@ -11,7 +11,7 @@ import { env } from "@/lib/env";
 import { newUploadKey, writeMedia } from "@/domains/images/media";
 import { imageRepository } from "@/domains/images/repository";
 import { usageRepository } from "@/domains/usage/repository";
-import { assertAiBudget } from "@/domains/usage/service";
+import { assertAiBudget } from "@/domains/billing/service";
 import { defineTool } from "../tool";
 
 const SIZE_BY_ORIENTATION = {

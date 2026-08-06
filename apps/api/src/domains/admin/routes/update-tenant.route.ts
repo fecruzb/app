@@ -25,7 +25,7 @@ export async function updateTenant(c: AppContext) {
   if (!existing) throw new HttpError(404, "Tenant not found");
 
   if (data.slug && data.slug !== existing.slug) {
-    const taken = await tenantRepository.findBySlug(data.slug);
+    const taken = await tenantRepository.findTenantBySlug(data.slug);
     if (taken) throw new HttpError(409, "Slug already in use");
   }
 
