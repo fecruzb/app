@@ -214,9 +214,9 @@ export const taskApi = {
 };`;
 
 const webRoutesFile = `// domains/task/routes.tsx — the domain owns its <Route>
-export const taskRoutes = <Route path="tasks" element={<TasksPage />} />;
+export const taskRoutes = <Route path="tasks" element={<TasksPage />} />;`;
 
-// domains/tenant/routes.tsx — composes every domain under :tenantSlug
+const webRouteMapFile = `// domains/tenant/routes.tsx — composes every domain under :tenantSlug
 export const tenantRoutes = (
   <Route path="/app" element={<RequireAuth />}>
     <Route path=":tenantSlug" element={<AppLayout />}>
@@ -385,6 +385,7 @@ type SliceLocaleKey =
   | "webConvention"
   | "api"
   | "webRoutes"
+  | "webRouteMap"
   | "page"
   | "screen";
 
@@ -521,6 +522,17 @@ function buildResourceSlices(t: TFunction): Slice[] {
       ...sliceCopy("webRoutes", t),
       visual: (
         <CodeBlock filename="apps/web/src/domains/task/routes.tsx" code={webRoutesFile} lang="ts" />
+      ),
+    },
+    {
+      id: "web-route-map",
+      ...sliceCopy("webRouteMap", t),
+      visual: (
+        <CodeBlock
+          filename="apps/web/src/domains/tenant/routes.tsx"
+          code={webRouteMapFile}
+          lang="ts"
+        />
       ),
     },
     {

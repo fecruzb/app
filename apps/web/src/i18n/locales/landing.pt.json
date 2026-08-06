@@ -261,13 +261,23 @@
       ]
     },
     "webRoutes": {
-      "eyebrow": "As rotas",
-      "title": "Seja dono do Route, compose sob o tenant",
-      "body": "Cada domínio exporta seu <Route> de routes.tsx — uma linha para tasks, o mesmo padrão para images, billing, account. Esses fragmentos são compostos em tenant/routes.tsx sob :tenantSlug e AppLayout, então uma feature nova monta exportando as rotas e encaixando nessa composição (mais um item de nav). Auth e o context de tenant já envolvem o shell — as pages não rechecam a sessão.",
+      "eyebrow": "As rotas do domínio",
+      "title": "Seja dono do Route num arquivo",
+      "body": "Cada domínio exporta seu <Route> de routes.tsx — uma linha para tasks, o mesmo padrão para images, billing, account. O domínio decide o path e a page; ele não conhece o shell.",
       "points": [
-        "O domínio é dono de routes.tsx; tenant/routes.tsx compõe sob :tenantSlug",
+        "export const taskRoutes = <Route path=\"tasks\" element={<TasksPage />} />",
+        "O mesmo papel de arquivo em todo domínio de feature",
+        "Sem checagem de auth aqui — o shell já envolveu a árvore"
+      ]
+    },
+    "webRouteMap": {
+      "eyebrow": "O mapa de rotas",
+      "title": "Compose sob o tenant",
+      "body": "tenant/routes.tsx monta cada domínio sob :tenantSlug e AppLayout. Encaixe as rotas de um domínio novo nessa composição, adicione um item de nav, pronto. RequireAuth e TenantProvider ficam no shell — as pages não rechecam a sessão.",
+      "points": [
+        "Compose {taskRoutes}, {imageRoutes}, … sob :tenantSlug",
         "Adicionar uma feature = exportar routes + compor + link na nav",
-        "RequireAuth e TenantProvider ficam no shell, não dentro de cada page"
+        "RequireAuth e TenantProvider envolvem o shell, não cada page"
       ]
     },
     "page": {

@@ -261,13 +261,23 @@
       ]
     },
     "webRoutes": {
-      "eyebrow": "The routes",
-      "title": "Own your Route, compose under the tenant",
-      "body": "Each domain exports its <Route> from routes.tsx — one line for tasks, same pattern for images, billing, account. Those fragments are composed inside tenant/routes.tsx under :tenantSlug and AppLayout, so a new feature mounts by exporting routes and dropping them into that composition (plus a nav item). Auth and tenant context already wrap the shell — pages don't re-check the session.",
+      "eyebrow": "The domain routes",
+      "title": "Own your Route in one file",
+      "body": "Each domain exports its <Route> from routes.tsx — one line for tasks, same pattern for images, billing, account. The domain decides the path and the page; it doesn't know about the shell.",
       "points": [
-        "Domain owns routes.tsx; tenant/routes.tsx composes them under :tenantSlug",
+        "export const taskRoutes = <Route path=\"tasks\" element={<TasksPage />} />",
+        "Same file role on every feature domain",
+        "No auth checks here — the shell already wrapped the tree"
+      ]
+    },
+    "webRouteMap": {
+      "eyebrow": "The route map",
+      "title": "Compose under the tenant",
+      "body": "tenant/routes.tsx mounts every domain under :tenantSlug and AppLayout. Drop a new domain's routes into that composition, add a nav item, done. RequireAuth and TenantProvider sit on the shell — pages don't re-check the session.",
+      "points": [
+        "Compose {taskRoutes}, {imageRoutes}, … under :tenantSlug",
         "Adding a feature = export routes + compose + nav link",
-        "RequireAuth and TenantProvider sit on the shell, not inside each page"
+        "RequireAuth and TenantProvider wrap the shell, not each page"
       ]
     },
     "page": {
