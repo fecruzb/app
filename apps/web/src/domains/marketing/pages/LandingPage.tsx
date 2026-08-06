@@ -73,10 +73,19 @@ type Slice = {
 const repositoryOutlineFile = `// domains/task/repository.ts — one object, fixed CRUD names
 export const taskRepository = {
   async list(tenantId: string, search?: string): Promise<TaskWithAuthor[]> { /* … */ },
-  async find(tenantId: string, id: string): Promise<TaskWithAuthor | null> { /* … */ },
-  async insert(values: InsertTask): Promise<Task> { /* … */ },
-  async update(tenantId: string, id: string, values: UpdateTask): Promise<Task | null> { /* … */ },
-  async delete(tenantId: string, id: string): Promise<boolean> { /* … */ },
+  async find(tenantId: string, taskId: string): Promise<TaskWithAuthor | null> { /* … */ },
+  async insert(values: {
+    tenantId: string;
+    authorId: string | null;
+    title: string;
+    completed: boolean;
+  }): Promise<Task> { /* … */ },
+  async update(
+    tenantId: string,
+    taskId: string,
+    values: { title: string; completed: boolean },
+  ): Promise<Task | null> { /* … */ },
+  async delete(tenantId: string, taskId: string): Promise<Task | null> { /* … */ },
 };`;
 
 const schemaFile = `/**
@@ -260,16 +269,42 @@ export function TasksPage() {
   });
 
   // Writes are mutations that invalidate on success — no manual loading flags.
-  const create = useMutation({
+  const createMutation = useMutation({
     mutationFn: (title: string) => taskApi.create(tenant.id, { title }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks", tenant.id] }),
     onError: (err) => showApiError(err, t("tasks.addFailed")),
   });
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => taskApi.delete(tenant.id, id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks", tenant.id] }),
+    onError: (err) => showApiError(err, t("tasks.deleteFailed")),
+  });
 
-  if (isLoading) return <PageLoading />;
-  if (!tasks?.length) return <EmptyState>{t("tasks.empty")}</EmptyState>;
-  // …list UI from @app/ui; delete goes through useConfirm() with confirmLabel + cancelLabel
-  return <PageHeader title={t("tasks.title")} description={t("tasks.description")} />;
+  async function handleDelete(task: TaskDto) {
+    const ok = await confirm({
+      title: t("tasks.deleteTitle"),
+      confirmLabel: t("common.delete"),
+      cancelLabel: t("common.cancel"),
+      destructive: true,
+    });
+    if (ok) deleteMutation.mutate(task.id);
+  }
+
+  // Header + form always render; loading / list / empty swap in the body.
+  return (
+    <div className="grid gap-6">
+      <PageHeader title={t("tasks.title")} description={t("tasks.description")} />
+      {/* …add form wired to createMutation… */}
+      {isLoading ? (
+        <PageLoading />
+      ) : tasks && tasks.length > 0 ? (
+        /* …list UI; delete goes through handleDelete… */
+        null
+      ) : (
+        <EmptyState>{t("tasks.empty")}</EmptyState>
+      )}
+    </div>
+  );
 }`;
 
 const webTreeFile = `// Same domain name on the web — fixed roles, optional folders.
@@ -382,11 +417,13 @@ export const themes: Theme[] = [
       ...lightBase,                        // neutral surfaces
       "--primary": "oklch(0.55 0.22 295)", // buttons, highlights
       "--primary-foreground": "oklch(0.985 0 0)",
+      "--ring": "oklch(0.55 0.22 295)",
     },
     dark: {
       ...darkBase,
       "--primary": "oklch(0.68 0.19 295)", // lifted for dark bg
       "--primary-foreground": "oklch(0.145 0 0)",
+      "--ring": "oklch(0.68 0.19 295)",
     },
   },
 ];`;
