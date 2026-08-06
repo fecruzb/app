@@ -167,21 +167,41 @@ export const createTaskTool = defineTool({
 });`;
 
 const webApiFile = `// apps/web/src/domains/task/api.ts — the only network boundary
-import { api } from "@/lib/api"; // raw HTTP client — never called from a page
+import type { TaskDto } from "@app/shared";
+import { api } from "@/lib/api"; // raw HTTP — never called from a page
 
 export const taskApi = {
   list: (tenantId: string) => api.get<TaskDto[]>(\`/tenants/\${tenantId}/tasks\`),
-  create: (tenantId: string, body: { title: string }) =>
+  create: (tenantId: string, body: { title: string; completed?: boolean }) =>
     api.post<TaskDto>(\`/tenants/\${tenantId}/tasks\`, body),
-  update: (tenantId: string, id: string, body: { completed: boolean }) =>
+  update: (tenantId: string, id: string, body: { title: string; completed?: boolean }) =>
     api.patch<TaskDto>(\`/tenants/\${tenantId}/tasks/\${id}\`, body),
-  delete: (tenantId: string, id: string) => api.delete(\`/tenants/\${tenantId}/tasks/\${id}\`),
+  delete: (tenantId: string, id: string) =>
+    api.delete(\`/tenants/\${tenantId}/tasks/\${id}\`),
 };`;
+
+const webRoutesFile = `// domains/task/routes.tsx — the domain owns its <Route>
+export const taskRoutes = <Route path="tasks" element={<TasksPage />} />;
+
+// domains/tenant/routes.tsx — composes every domain under :tenantSlug
+export const tenantRoutes = (
+  <Route path="/app" element={<RequireAuth />}>
+    <Route path=":tenantSlug" element={<AppLayout />}>
+      <Route index element={<DashboardPage />} />
+      {taskRoutes}      {/* ← drop a new domain's routes here */}
+      {imageRoutes}
+      {billingRoutes}
+      {accountRoutes}
+    </Route>
+  </Route>
+);`;
 
 const pageFile = `// pages/TasksPage.tsx — the canonical page template (copy this shape)
 export function TasksPage() {
+  // Tenant comes from context (TenantProvider), never from parsing the URL here.
   const { tenant } = useTenant();
   const queryClient = useQueryClient();
+  const confirm = useConfirm();
 
   // Reads are queries, keyed by the tenant.
   const { data: tasks, isLoading } = useQuery({
@@ -197,42 +217,48 @@ export function TasksPage() {
   });
 
   if (isLoading) return <PageLoading />;
+  if (!tasks?.length) return <EmptyState>No tasks yet</EmptyState>;
+  // …list UI from @app/ui; delete goes through useConfirm()
   return <PageHeader title="Tasks" description="Example resource" />;
-  // …list, EmptyState when empty, useConfirm() for destructive actions
 }`;
 
-const apiTreeFile = `// A feature is a folder — the same shape every API domain follows.
-apps/api/src/domains/task/
-├── schema.ts        Drizzle table
-├── repository.ts    all SQL (scoped by tenantId)
-├── dto.ts           row → API shape
-├── routes/          handlers + index.ts (route map)
-└── tools/           agent tools + index.ts (registry)
+const webTreeFile = `// Same domain name on the web — fixed roles, optional folders.
+apps/web/src/domains/task/
+├── api.ts           typed HTTP — the only network boundary
+├── pages/           route screens (TasksPage.tsx, PascalCase)
+├── routes.tsx       the domain's <Route>; composed under :tenantSlug
+└── components/      domain UI (kebab-case) — add with the first one
 
-// service.ts is added only when a domain grows real business logic.`;
+// When the domain needs shared React state:
+//   context/<name>-provider.tsx   Provider + useX (auth, tenant, …)
+//   hooks/                        reusable hooks that aren't just useX
 
-const webTreeFile = `// The frontend mirrors the API, one domain at a time.
-apps/web/src/
-├── domains/task/
-│   ├── api.ts            typed calls — the only network boundary
-│   ├── pages/            route screens: TasksPage.tsx (PascalCase)
-│   ├── routes.tsx        the domain's <Route> element
-│   └── components/       domain UI (kebab-case) — add when needed
-├── domains/auth/
-│   └── context/          <name>-provider.tsx (Provider + useAuth)
-├── domains/tenant/
-│   ├── context/          TenantProvider + useTenant
-│   └── components/       role-select, agent-fab, …
-├── domains/marketing/
-│   └── components/       brand-icon, code-block, product-preview, …
-├── app/                  App.tsx (route map), config.ts
-├── layouts/              AppLayout, AuthLayout, RequireAuth
-└── lib/                  api.ts (HTTP client), utils.ts — no domain knowledge
+// Outside domains (shared shell, not product features):
+//   app/          App.tsx route map, config.ts
+//   layouts/      AppLayout, AuthLayout, RequireAuth
+//   theme/ · i18n/ · lib/
+//
+// Base UI is @app/ui (Button, Card, PageHeader, EmptyState, useConfirm).
+// No top-level src/components/ — product UI stays in the owning domain.`;
 
-// hooks/ appears with the first non-context domain hook.
-// No top-level src/components/ — product UI stays in the owning domain.
-// @app/ui (packages/ui) — tenant-agnostic base UI:
-//   Button, Card, Input, Dialog · PageHeader · EmptyState · useConfirm`;
+const domainMapFile = `// Domain-driven: one feature = one folder on BOTH sides.
+// Same name. Fixed roles. Shared contract in packages/shared.
+
+apps/api/src/domains/task/              apps/web/src/domains/task/
+├── schema.ts        table              ├── api.ts        typed HTTP
+├── repository.ts    all SQL            ├── pages/        route screens
+├── dto.ts           row → DTO          ├── routes.tsx    <Route> element
+├── routes/          HTTP handlers      └── components/   domain UI (as needed)
+└── tools/           agent tools
+
+packages/shared/src/task.ts
+└── Zod input schema + TaskDto — imported by API and web
+
+// Cross-cutting React state (not every domain needs this):
+//   auth/context/     AuthProvider + useAuth
+//   tenant/context/   TenantProvider + useTenant  ← pages read tenant here
+//
+// Base UI (@app/ui) is tenant-agnostic. Domains compose it; they don't reinvent it.`;
 
 type Chapter = {
   id: string;
@@ -312,7 +338,7 @@ export const themes: Theme[] = [
   },
 ];`;
 
-/** Locale key under `landing.slices.*` (camelCase for webConvention). */
+/** Locale key under `landing.slices.*` (camelCase for multi-word keys). */
 type SliceLocaleKey =
   | "convention"
   | "schema"
@@ -321,6 +347,7 @@ type SliceLocaleKey =
   | "tool"
   | "webConvention"
   | "api"
+  | "webRoutes"
   | "page"
   | "screen";
 
@@ -372,14 +399,14 @@ function chapterCopy(
   };
 }
 
-// One visual per step so nothing stacks: the folder convention first, then the
-// files — table, queries, route, tool, screen — the repo's real task domain.
+// One visual per step: domain map → API files → web files → the screen.
+// tasks is the placeholder resource you'd copy end to end for your own.
 function buildResourceSlices(t: TFunction): Slice[] {
   return [
     {
       id: "convention",
       ...sliceCopy("convention", t),
-      visual: <CodeBlock filename="apps/api/src/domains/task/" code={apiTreeFile} lang="text" />,
+      visual: <CodeBlock filename="domains/task/" code={domainMapFile} lang="text" />,
     },
     {
       id: "schema",
@@ -408,12 +435,21 @@ function buildResourceSlices(t: TFunction): Slice[] {
     {
       id: "web-convention",
       ...sliceCopy("webConvention", t),
-      visual: <CodeBlock filename="apps/web/src/" code={webTreeFile} lang="text" />,
+      visual: (
+        <CodeBlock filename="apps/web/src/domains/task/" code={webTreeFile} lang="text" />
+      ),
     },
     {
       id: "api",
       ...sliceCopy("api", t),
       visual: <CodeBlock filename="apps/web/src/domains/task/api.ts" code={webApiFile} lang="ts" />,
+    },
+    {
+      id: "web-routes",
+      ...sliceCopy("webRoutes", t),
+      visual: (
+        <CodeBlock filename="apps/web/src/domains/task/routes.tsx" code={webRoutesFile} lang="ts" />
+      ),
     },
     {
       id: "page",

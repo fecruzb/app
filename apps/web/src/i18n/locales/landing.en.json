@@ -75,7 +75,7 @@
     "title": "One resource, top to bottom",
     "bodyBefore": "",
     "bodyCode": "tasks",
-    "bodyAfter": " is the one placeholder resource. First the convention — a feature is a folder — then the whole slice: the table, the queries, the route and the agent tool on the API, then the React domain, its api.ts and page, and the screen. This is the exact shape you'd copy for your own."
+    "bodyAfter": " is the placeholder domain. Same name on API and web, fixed roles on each side, one shared contract in packages/shared. Walk the API (schema → repository → route → tool), then the React domain (folder → api.ts → routes → page), and land on the screen. Copy that folder pair for your own resource."
   },
   "showScreen": "Show screen {{n}}",
   "monorepo": {
@@ -149,13 +149,13 @@
   "slices": {
     "convention": {
       "eyebrow": "The convention",
-      "title": "A feature is a folder",
-      "body": "Before the files, the shape. On the API, every feature is a domain — a single folder that owns its slice top to bottom, and each file has one fixed role, so you always know where a thing lives (and where to add the next one). Import directions are enforced by lint, so the structure can't quietly rot as the app grows.",
+      "title": "A feature is a folder on both sides",
+      "body": "Domain-driven development here is literal: one feature = one folder named the same on the API and on the web, each with fixed roles — not a grab-bag of files. The API owns schema, repository, dto, routes and tools; the web owns api.ts, pages, routes.tsx and components (plus context/hooks when it needs shared React state). Both import the same Zod schema and DTO from packages/shared, so a shape change breaks the side you forgot to update.",
       "points": [
-        "One folder per feature — schema, repository, dto, routes, tools",
-        "Fixed roles, never a grab-bag file; service.ts only when there's real logic",
-        "The repository owns the SQL; every query filters by tenantId",
-        "DTO mapping lives in dto.ts — never inline in the repository or route",
+        "Same domain name on apps/api and apps/web — never scatter a feature",
+        "API roles: schema → repository → dto → routes → tools",
+        "Web roles: api.ts → pages/ → routes.tsx → components/ (context/hooks as needed)",
+        "packages/shared is the contract both sides compile against",
         "Boundaries fail the lint, not just code review"
       ]
     },
@@ -201,40 +201,50 @@
       ]
     },
     "webConvention": {
-      "eyebrow": "The frontend",
-      "title": "React, organized by the same domains",
-      "body": "The web app mirrors the API: one folder per feature under domains/, and everything else is shared shell. A domain holds its typed api.ts, route-level pages/, routes.tsx, and — when needed — components/, context/ and hooks/. There is no top-level src/components/: product UI lives in the owning domain. Generic, tenant-agnostic UI lives in @app/ui; app shell and layouts sit outside the domains.",
+      "eyebrow": "The React domain",
+      "title": "Same name, different roles",
+      "body": "After the API half, the web domain for the same feature. api.ts is the network boundary; pages/ are route screens; routes.tsx exports the domain's <Route>; components/ holds product UI for that domain only. context/ and hooks/ appear when the domain needs shared React state — auth and tenant already do. Base UI (Button, PageHeader, EmptyState, useConfirm…) comes from @app/ui; there is no top-level src/components/ dump.",
       "points": [
-        "domains/<feature>/ — api.ts, pages/, routes.tsx; add components/, context/, hooks/ when needed",
-        "Product UI stays in the domain — never a shared src/components/ dump",
-        "app/ holds App.tsx + config; layouts/ holds AppLayout, AuthLayout, RequireAuth",
-        "Base UI (Button, Card, PageHeader, EmptyState…) is imported from @app/ui"
+        "domains/<feature>/ — api.ts, pages/, routes.tsx; components/ with the first UI piece",
+        "context/<name>-provider.tsx co-locates Provider + useX; hooks/ for the rest",
+        "Product UI stays in the owning domain — never a shared components dump",
+        "@app/ui is tenant-agnostic; app/, layouts/, theme/, i18n/, lib/ are shell"
       ]
     },
     "api": {
       "eyebrow": "The network boundary",
       "title": "One api.ts wraps every call",
-      "body": "The only file that touches the network is the domain's api.ts — a thin object over the shared HTTP client, returning the same DTO the API sends. Pages never call fetch or the raw client directly, so every request for a resource has exactly one place to change.",
+      "body": "The only file that touches the network is the domain's api.ts — a thin object over the shared HTTP client, returning the same DTO the API sends. Pages never call fetch or the raw client directly, so every request for a resource has exactly one place to change. The tenant id is part of the path, mirroring /api/tenants/:tenantId/… on the server.",
       "points": [
         "Network only through the domain api.ts — never a raw fetch in a page",
-        "Returns the shared DTO type — the client is typed end to end",
-        "The tenant id is part of the path, mirroring the API's routes"
+        "Returns the shared DTO type — typed end to end with packages/shared",
+        "Path mirrors the API: /tenants/:tenantId/<plural>"
+      ]
+    },
+    "webRoutes": {
+      "eyebrow": "The routes",
+      "title": "Own your Route, compose under the tenant",
+      "body": "Each domain exports its <Route> from routes.tsx — one line for tasks, same pattern for images, billing, account. Those fragments are composed inside tenant/routes.tsx under :tenantSlug and AppLayout, so a new feature mounts by exporting routes and dropping them into that composition (plus a nav item). Auth and tenant context already wrap the shell — pages don't re-check the session.",
+      "points": [
+        "Domain owns routes.tsx; tenant/routes.tsx composes them under :tenantSlug",
+        "Adding a feature = export routes + compose + nav link",
+        "RequireAuth and TenantProvider sit on the shell, not inside each page"
       ]
     },
     "page": {
       "eyebrow": "The page",
-      "title": "Reads are queries, writes invalidate",
-      "body": "Every page follows the same TanStack Query template: reads are a useQuery keyed by the tenant, writes are a useMutation that invalidates on success — so you never hand-manage a loading flag or a refresh. Shared pieces from @app/ui — PageHeader, PageLoading, EmptyState and useConfirm — cover the states so pages stay about the feature.",
+      "title": "Reads are queries, tenant comes from context",
+      "body": "Every internal page follows the same TanStack Query template: useTenant() for the workspace (from TenantProvider — the React parallel to API middleware), useQuery keyed by the tenant for reads, useMutation that invalidates on success for writes. @app/ui covers PageHeader, PageLoading, EmptyState and useConfirm so the page stays about the feature. Errors go through showApiError().",
       "points": [
+        "useTenant() — tenant from context, never parsed ad hoc in the page",
         "useQuery for reads, useMutation + invalidate for writes",
-        "PageLoading while loading, EmptyState when a list is empty",
-        "Destructive actions go through useConfirm(); errors through showApiError()"
+        "PageLoading / EmptyState / useConfirm from @app/ui; errors via showApiError()"
       ]
     },
     "screen": {
       "eyebrow": "The screen",
       "title": "The result: a full CRUD feature",
-      "body": "That's the whole slice, top to bottom — and this is the screen it powers. Per-tenant create, list, toggle and delete, wired end to end. Copy the folder, rename it, and your own resource lands exactly here.",
+      "body": "That's the whole slice — API and web — and this is the screen it powers. Per-tenant create, list, toggle and delete, wired end to end through the shared DTO. Copy both domain folders, rename them, register the routes and tools, and your resource lands exactly here.",
       "points": [
         "Per-tenant create, list, toggle and delete out of the box",
         "The exact shape you'll clone for your product's resources",

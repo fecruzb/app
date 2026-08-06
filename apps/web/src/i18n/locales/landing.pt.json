@@ -75,7 +75,7 @@
     "title": "Um recurso, de ponta a ponta",
     "bodyBefore": "",
     "bodyCode": "tasks",
-    "bodyAfter": " é o único recurso placeholder. Primeiro a convenção — uma feature é uma pasta — depois o slice inteiro: a tabela, as queries, a rota e a tool do agente na API, então o domínio React, seu api.ts e page, e a tela. Este é exatamente o formato que você copiaria para o seu."
+    "bodyAfter": " é o domínio placeholder. Mesmo nome na API e no web, papéis fixos de cada lado, um contrato compartilhado em packages/shared. Percorra a API (schema → repository → rota → tool), depois o domínio React (pasta → api.ts → routes → page), e chegue na tela. Copie esse par de pastas para o seu recurso."
   },
   "showScreen": "Mostrar tela {{n}}",
   "monorepo": {
@@ -149,14 +149,14 @@
   "slices": {
     "convention": {
       "eyebrow": "A convenção",
-      "title": "Uma feature é uma pasta",
-      "body": "Antes dos arquivos, a forma. Na API, cada feature é um domínio — uma única pasta que possui seu slice de cima a baixo, e cada arquivo tem um papel fixo, então você sempre sabe onde algo mora (e onde colocar o próximo). Direções de import são reforçadas pelo lint, então a estrutura não apodrece em silêncio conforme o app cresce.",
+      "title": "Uma feature é uma pasta nos dois lados",
+      "body": "Domain-driven development aqui é literal: uma feature = uma pasta com o mesmo nome na API e no web, cada uma com papéis fixos — não um saco de arquivos. A API é dona de schema, repository, dto, routes e tools; o web é dono de api.ts, pages, routes.tsx e components (mais context/hooks quando precisa de estado React compartilhado). Os dois importam o mesmo schema Zod e DTO de packages/shared, então mudar um formato quebra o lado que você esqueceu de atualizar.",
       "points": [
-        "Uma pasta por feature — schema, repository, dto, routes, tools",
-        "Papéis fixos, nunca um arquivo-canguru; service.ts só quando há lógica de verdade",
-        "O repository é dono do SQL; toda query filtra por tenantId",
-        "O mapeamento de DTO mora em dto.ts — nunca inline no repository ou na rota",
-        "As fronteiras falham no lint, não só no code review"
+        "Mesmo nome de domínio em apps/api e apps/web — nunca espalhe uma feature",
+        "Papéis na API: schema → repository → dto → routes → tools",
+        "Papéis no web: api.ts → pages/ → routes.tsx → components/ (context/hooks se precisar)",
+        "packages/shared é o contrato contra o qual os dois lados compilam",
+        "Fronteiras falham no lint, não só no code review"
       ]
     },
     "schema": {
@@ -201,40 +201,50 @@
       ]
     },
     "webConvention": {
-      "eyebrow": "O frontend",
-      "title": "React, organizado pelos mesmos domínios",
-      "body": "O web app espelha a API: uma pasta por feature em domains/, e o resto é shell compartilhado. Um domínio guarda seu api.ts tipado, pages/ de rota, routes.tsx e — quando precisar — components/, context/ e hooks/. Não existe src/components/ no topo: UI de produto mora no domínio dono. UI genérica e agnóstica de tenant mora em @app/ui; shell e layouts ficam fora dos domínios.",
+      "eyebrow": "O domínio React",
+      "title": "Mesmo nome, papéis diferentes",
+      "body": "Depois da metade da API, o domínio web da mesma feature. api.ts é a fronteira de rede; pages/ são as telas de rota; routes.tsx exporta o <Route> do domínio; components/ guarda UI de produto só daquele domínio. context/ e hooks/ aparecem quando o domínio precisa de estado React compartilhado — auth e tenant já usam. UI base (Button, PageHeader, EmptyState, useConfirm…) vem de @app/ui; não existe dump em src/components/ no topo.",
       "points": [
-        "domains/<feature>/ — api.ts, pages/, routes.tsx; components/, context/, hooks/ sob demanda",
-        "UI de produto fica no domínio — nunca um dump em src/components/",
-        "app/ guarda App.tsx + config; layouts/ guarda AppLayout, AuthLayout, RequireAuth",
-        "UI base (Button, Card, PageHeader, EmptyState…) é importada de @app/ui"
+        "domains/<feature>/ — api.ts, pages/, routes.tsx; components/ com a primeira peça de UI",
+        "context/<name>-provider.tsx junta Provider + useX; hooks/ para o resto",
+        "UI de produto fica no domínio dono — nunca um dump compartilhado de components",
+        "@app/ui é agnóstico de tenant; app/, layouts/, theme/, i18n/, lib/ são shell"
       ]
     },
     "api": {
       "eyebrow": "A fronteira de rede",
       "title": "Um api.ts envolve cada chamada",
-      "body": "O único arquivo que toca a rede é o api.ts do domínio — um objeto fino sobre o cliente HTTP compartilhado, devolvendo o mesmo DTO que a API envia. Pages nunca chamam fetch ou o cliente cru diretamente, então cada request de um recurso tem exatamente um lugar para mudar.",
+      "body": "O único arquivo que toca a rede é o api.ts do domínio — um objeto fino sobre o cliente HTTP compartilhado, devolvendo o mesmo DTO que a API envia. Pages nunca chamam fetch ou o cliente cru diretamente, então cada request de um recurso tem exatamente um lugar para mudar. O id do tenant faz parte do path, espelhando /api/tenants/:tenantId/… no servidor.",
       "points": [
         "Rede só pelo api.ts do domínio — nunca um fetch cru numa page",
-        "Devolve o tipo DTO compartilhado — o client é tipado de ponta a ponta",
-        "O id do tenant faz parte do path, espelhando as rotas da API"
+        "Devolve o tipo DTO compartilhado — tipado de ponta a ponta com packages/shared",
+        "O path espelha a API: /tenants/:tenantId/<plural>"
+      ]
+    },
+    "webRoutes": {
+      "eyebrow": "As rotas",
+      "title": "Seja dono do Route, compose sob o tenant",
+      "body": "Cada domínio exporta seu <Route> de routes.tsx — uma linha para tasks, o mesmo padrão para images, billing, account. Esses fragmentos são compostos em tenant/routes.tsx sob :tenantSlug e AppLayout, então uma feature nova monta exportando as rotas e encaixando nessa composição (mais um item de nav). Auth e o context de tenant já envolvem o shell — as pages não rechecam a sessão.",
+      "points": [
+        "O domínio é dono de routes.tsx; tenant/routes.tsx compõe sob :tenantSlug",
+        "Adicionar uma feature = exportar routes + compor + link na nav",
+        "RequireAuth e TenantProvider ficam no shell, não dentro de cada page"
       ]
     },
     "page": {
       "eyebrow": "A page",
-      "title": "Leituras são queries, escritas invalidam",
-      "body": "Toda page segue o mesmo template TanStack Query: leituras são um useQuery com chave no tenant, escritas são um useMutation que invalida no sucesso — então você nunca gerencia na mão um loading flag ou um refresh. Peças compartilhadas de @app/ui — PageHeader, PageLoading, EmptyState e useConfirm — cobrem os estados para a page ficar sobre a feature.",
+      "title": "Leituras são queries, o tenant vem do context",
+      "body": "Toda page interna segue o mesmo template TanStack Query: useTenant() para o workspace (do TenantProvider — o paralelo React ao middleware da API), useQuery com chave no tenant para leituras, useMutation que invalida no sucesso para escritas. @app/ui cobre PageHeader, PageLoading, EmptyState e useConfirm para a page ficar sobre a feature. Erros passam por showApiError().",
       "points": [
+        "useTenant() — tenant do context, nunca parseado na mão na page",
         "useQuery para leituras, useMutation + invalidate para escritas",
-        "PageLoading enquanto carrega, EmptyState quando a lista está vazia",
-        "Ações destrutivas passam por useConfirm(); erros por showApiError()"
+        "PageLoading / EmptyState / useConfirm de @app/ui; erros via showApiError()"
       ]
     },
     "screen": {
       "eyebrow": "A tela",
       "title": "O resultado: uma feature CRUD completa",
-      "body": "Esse é o slice inteiro, de cima a baixo — e esta é a tela que ele alimenta. Create, list, toggle e delete por tenant, ligados de ponta a ponta. Copie a pasta, renomeie, e o seu recurso pousa exatamente aqui.",
+      "body": "Esse é o slice inteiro — API e web — e esta é a tela que ele alimenta. Create, list, toggle e delete por tenant, ligados de ponta a ponta pelo DTO compartilhado. Copie as duas pastas de domínio, renomeie, registre as rotas e tools, e o seu recurso pousa exatamente aqui.",
       "points": [
         "Create, list, toggle e delete por tenant de fábrica",
         "O formato exato que você vai clonar para os recursos do produto",
