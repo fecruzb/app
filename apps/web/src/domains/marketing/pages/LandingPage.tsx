@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAppConfig } from "@/app/config";
 import { useAuth } from "@/domains/auth/auth-provider";
+import { CodeBlock } from "../code-block";
 
 type Included = {
   icon: ComponentType<{ className?: string }>;
@@ -68,6 +69,7 @@ type Showcase = {
   body: string;
   filename: string;
   code: string;
+  lang?: "ts" | "json" | "text";
 };
 
 const showcases: Showcase[] = [
@@ -102,6 +104,7 @@ const showcases: Showcase[] = [
     title: "A place for everything, enforced by lint",
     body: "Features live in domains/. Pure helpers in lib/, external services in integrations/, the agent surface in agent/. The frontend mirrors it. These aren't just conventions — oxlint rules stop lib/ from importing a domain, or a domain from importing OpenAI directly.",
     filename: "apps/",
+    lang: "text",
     code: `apps/
 ├── api/src/
 │   ├── domains/{auth,tenant,note}/
@@ -138,6 +141,7 @@ const showcases: Showcase[] = [
     title: "Commit the Blueprint, push, done",
     body: "The whole app is one Render web service plus a Postgres database, described in render.yaml. Migrations run on pre-deploy, health checks are wired, and secrets stay out of the repo. Point it at your repo and the first deploy just works.",
     filename: "render.yaml",
+    lang: "text",
     code: `services:
   - type: web
     name: app
@@ -313,27 +317,10 @@ function ShowcaseSection({ showcase, flip }: { showcase: Showcase; flip: boolean
         </div>
 
         <div className={`reveal reveal-delay ${flip ? "lg:order-1" : ""}`}>
-          <CodeWindow filename={showcase.filename} code={showcase.code} />
+          <CodeBlock filename={showcase.filename} code={showcase.code} lang={showcase.lang} />
         </div>
       </div>
     </section>
-  );
-}
-
-/** A tiny editor-like frame around a real snippet. */
-function CodeWindow({ filename, code }: { filename: string; code: string }) {
-  return (
-    <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
-      <div className="flex items-center gap-2 border-b bg-muted/50 px-4 py-2.5">
-        <span className="size-2.5 rounded-full bg-muted-foreground/25" />
-        <span className="size-2.5 rounded-full bg-muted-foreground/25" />
-        <span className="size-2.5 rounded-full bg-muted-foreground/25" />
-        <span className="ml-2 truncate font-mono text-xs text-muted-foreground">{filename}</span>
-      </div>
-      <pre className="overflow-x-auto p-4 text-xs leading-relaxed sm:text-[13px]">
-        <code>{code}</code>
-      </pre>
-    </div>
   );
 }
 

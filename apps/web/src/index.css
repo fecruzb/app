@@ -86,4 +86,10 @@
       transition: none;
     }
   }
+
+  /* Let Shiki keep its token colors but blend the frame into the card. */
+  .code-block pre.shiki {
+    margin: 0;
+    background-color: transparent !important;
+  }
 }
