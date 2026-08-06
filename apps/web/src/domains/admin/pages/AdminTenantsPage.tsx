@@ -6,6 +6,7 @@ import type { AdminTenantDto } from "@app/shared";
 import { Button } from "@app/ui/button";
 import { Card, CardContent } from "@app/ui/card";
 import { Input } from "@app/ui/input";
+import { Label } from "@app/ui/label";
 import { PageHeader } from "@app/ui/page-header";
 import { PageLoading } from "@app/ui/page-loading";
 import { showApiError } from "@/lib/api";
@@ -17,50 +18,78 @@ function TenantRow({ tenant }: { tenant: AdminTenantDto }) {
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(tenant.name);
+  const [slug, setSlug] = useState(tenant.slug);
 
-  const renameMutation = useMutation({
-    mutationFn: () => adminApi.updateTenant(tenant.id, { name }),
+  const updateMutation = useMutation({
+    mutationFn: () => {
+      const body: { name?: string; slug?: string } = {};
+      if (name.trim() !== tenant.name) body.name = name.trim();
+      if (slug.trim().toLowerCase() !== tenant.slug) body.slug = slug.trim().toLowerCase();
+      return adminApi.updateTenant(tenant.id, body);
+    },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin-tenants"] });
       setEditing(false);
-      toast.success(t("admin.tenants.renamed"));
+      toast.success(t("admin.tenants.updated"));
     },
-    onError: (err) => showApiError(err, t("admin.tenants.renameFailed")),
+    onError: (err) => showApiError(err, t("admin.tenants.updateFailed")),
   });
 
+  function reset() {
+    setName(tenant.name);
+    setSlug(tenant.slug);
+    setEditing(false);
+  }
+
   return (
-    <div className="flex flex-wrap items-center gap-3 px-4 py-3">
+    <div className="flex flex-wrap items-start gap-3 px-4 py-3">
       <div className="min-w-0 flex-1">
         {editing ? (
           <form
-            className="flex flex-wrap items-center gap-2"
+            className="grid max-w-md gap-3"
             onSubmit={(e) => {
               e.preventDefault();
-              if (name.trim() && name !== tenant.name) renameMutation.mutate();
-              else setEditing(false);
+              const nameChanged = name.trim() !== tenant.name;
+              const slugChanged = slug.trim().toLowerCase() !== tenant.slug;
+              if (!nameChanged && !slugChanged) {
+                setEditing(false);
+                return;
+              }
+              updateMutation.mutate();
             }}
           >
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              minLength={2}
-              className="max-w-xs"
-            />
-            <Button type="submit" size="sm" disabled={renameMutation.isPending}>
-              {renameMutation.isPending ? t("common.saving") : t("common.save")}
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant="ghost"
-              onClick={() => {
-                setName(tenant.name);
-                setEditing(false);
-              }}
-            >
-              {t("admin.tenants.cancel")}
-            </Button>
+            <div className="grid gap-1.5">
+              <Label htmlFor={`tenant-name-${tenant.id}`}>{t("admin.tenants.name")}</Label>
+              <Input
+                id={`tenant-name-${tenant.id}`}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                minLength={2}
+              />
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor={`tenant-slug-${tenant.id}`}>{t("admin.tenants.slug")}</Label>
+              <Input
+                id={`tenant-slug-${tenant.id}`}
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+                required
+                minLength={2}
+                maxLength={40}
+                pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+                title={t("admin.tenants.slugHint")}
+              />
+              <p className="text-xs text-muted-foreground">{t("admin.tenants.slugHint")}</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button type="submit" size="sm" disabled={updateMutation.isPending}>
+                {updateMutation.isPending ? t("common.saving") : t("common.save")}
+              </Button>
+              <Button type="button" size="sm" variant="ghost" onClick={reset}>
+                {t("admin.tenants.cancel")}
+              </Button>
+            </div>
           </form>
         ) : (
           <>
@@ -73,8 +102,16 @@ function TenantRow({ tenant }: { tenant: AdminTenantDto }) {
         )}
       </div>
       {!editing && (
-        <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
-          {t("admin.tenants.rename")}
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            setName(tenant.name);
+            setSlug(tenant.slug);
+            setEditing(true);
+          }}
+        >
+          {t("admin.tenants.edit")}
         </Button>
       )}
     </div>

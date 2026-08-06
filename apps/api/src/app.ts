@@ -12,7 +12,7 @@ import { hasOpenAiKey } from "@/integrations/openai";
 import { mcpHttp } from "@/agent/mcp-http";
 import { agentRoutes } from "@/agent/routes";
 import { accountRoutes } from "@/domains/account/routes";
-import { adminRoutes } from "@/domains/admin/routes";
+import { adminRoutes, joinRoutes } from "@/domains/admin/routes";
 import { authRoutes } from "@/domains/auth/routes";
 import { imageRoutes } from "@/domains/images/routes";
 import { MEDIA_DIR, mediaPublicUrl, mediaStore, usingR2 } from "@/domains/images/media";
@@ -44,6 +44,7 @@ app.route("/api/tenants/:tenantId/tasks", taskRoutes);
 app.route("/api/tenants/:tenantId/images", imageRoutes);
 app.route("/api/tenants/:tenantId/agent", agentRoutes);
 app.route("/api/invites", inviteRoutes);
+app.route("/api/join", joinRoutes);
 
 // Uploaded images. R2 is checked first: an image regenerated in production
 // must resolve to the bucket, not a stale local copy. Falls through to the

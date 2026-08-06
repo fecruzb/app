@@ -1,6 +1,13 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowLeftIcon, BoxIcon, Building2Icon, CreditCardIcon, UsersIcon } from "lucide-react";
+import {
+  ArrowLeftIcon,
+  BoxIcon,
+  Building2Icon,
+  CreditCardIcon,
+  MailIcon,
+  UsersIcon,
+} from "lucide-react";
 import { cn } from "@app/ui/lib/utils";
 import { ThemeControls } from "@/theme/theme-controls";
 
@@ -9,6 +16,7 @@ export function AdminLayout() {
 
   const items = [
     { to: "/admin/users", end: true, icon: UsersIcon, label: t("admin.nav.users") },
+    { to: "/admin/invites", end: false, icon: MailIcon, label: t("admin.nav.invites") },
     { to: "/admin/tenants", end: false, icon: Building2Icon, label: t("admin.nav.tenants") },
     { to: "/admin/plans", end: false, icon: CreditCardIcon, label: t("admin.nav.plans") },
   ];

@@ -5,3 +5,4 @@ export * from "@/domains/tenant/schema";
 export * from "@/domains/task/schema";
 export * from "@/domains/usage/schema";
 export * from "@/domains/images/schema";
+export * from "@/domains/admin/schema";

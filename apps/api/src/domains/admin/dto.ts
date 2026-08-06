@@ -3,9 +3,13 @@
  *
  * Maps admin repository shapes to shared admin DTOs.
  */
-import type { AdminTenantDto, AdminUserDto } from "@app/shared";
+import type { AdminPlatformInviteDto, AdminTenantDto, AdminUserDto } from "@app/shared";
 import { isEffectivePlatformAdmin } from "@/domains/auth/platform-admin";
-import type { TenantWithMemberCount, UserWithTenantCount } from "./repository";
+import type {
+  PlatformInviteWithInviter,
+  TenantWithMemberCount,
+  UserWithTenantCount,
+} from "./repository";
 
 export function toAdminUserDto(row: UserWithTenantCount): AdminUserDto {
   return {
@@ -26,5 +30,15 @@ export function toAdminTenantDto(row: TenantWithMemberCount): AdminTenantDto {
     slug: row.tenant.slug,
     memberCount: row.memberCount,
     createdAt: row.tenant.createdAt.toISOString(),
+  };
+}
+
+export function toAdminPlatformInviteDto(row: PlatformInviteWithInviter): AdminPlatformInviteDto {
+  return {
+    id: row.invite.id,
+    email: row.invite.email,
+    invitedByName: row.inviterName,
+    createdAt: row.invite.createdAt.toISOString(),
+    expiresAt: row.invite.expiresAt.toISOString(),
   };
 }

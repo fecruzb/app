@@ -1,6 +1,7 @@
 import { updateAdminTenantSchema } from "@app/shared";
 import { HttpError, parseBody, uuidParam } from "@/lib/errors";
 import type { AppContext } from "@/context";
+import { tenantRepository } from "@/domains/tenant/repository";
 import { toAdminTenantDto } from "../dto";
 import { adminRepository } from "../repository";
 
@@ -9,7 +10,7 @@ import { adminRepository } from "../repository";
  *
  * `PATCH /api/admin/tenants/:tenantId`
  *
- * Renames a tenant from the platform admin area.
+ * Updates name and/or slug from the platform admin area.
  *
  * @param c - Platform admin request context
  * @returns 200 with the updated admin tenant DTO
@@ -23,7 +24,16 @@ export async function updateTenant(c: AppContext) {
   const existing = await adminRepository.findTenant(tenantId);
   if (!existing) throw new HttpError(404, "Tenant not found");
 
-  const tenant = await adminRepository.renameTenant(tenantId, data.name);
+  if (data.slug && data.slug !== existing.slug) {
+    const taken = await tenantRepository.findBySlug(data.slug);
+    if (taken) throw new HttpError(409, "Slug already in use");
+  }
+
+  const patch: { name?: string; slug?: string } = {};
+  if (data.name !== undefined) patch.name = data.name;
+  if (data.slug !== undefined) patch.slug = data.slug;
+
+  const tenant = await adminRepository.updateTenant(tenantId, patch);
   if (!tenant) throw new HttpError(404, "Tenant not found");
 
   const rows = await adminRepository.listTenants();

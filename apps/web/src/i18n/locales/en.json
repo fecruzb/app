@@ -247,6 +247,7 @@
     "backToApp": "Back to app",
     "nav": {
       "users": "People",
+      "invites": "Invites",
       "tenants": "Tenants",
       "plans": "Plans"
     },
@@ -263,20 +264,57 @@
       "updated": "User updated",
       "updateFailed": "Failed to update user"
     },
+    "invites": {
+      "title": "Invites",
+      "description": "Invite people to create an account and try the app",
+      "sendTitle": "Send invite",
+      "sendDescription": "They get an email with a link to sign up. They won't join your tenants — they get their own workspace.",
+      "send": "Send invite",
+      "sent": "Invite sent by email",
+      "sendFailed": "Failed to send invite",
+      "pendingTitle": "Pending invites",
+      "pendingDescription": "Invites that haven't been used yet",
+      "empty": "No pending invites",
+      "invitedBy": "invited by {{name}}",
+      "invitedByUnknown": "invited",
+      "expires": "expires {{date}}",
+      "revoked": "Invite revoked",
+      "revokeFailed": "Failed to revoke invite"
+    },
     "tenants": {
       "title": "Tenants",
       "description": "Every workspace on the platform",
       "members_one": "{{count}} member",
       "members_other": "{{count}} members",
-      "rename": "Rename",
+      "edit": "Edit",
+      "name": "Name",
+      "slug": "Slug",
+      "slugHint": "Lowercase letters, numbers, and hyphens only (2–40 chars). Changing it updates app URLs.",
       "cancel": "Cancel",
-      "renamed": "Tenant renamed",
-      "renameFailed": "Failed to rename tenant"
+      "updated": "Tenant updated",
+      "updateFailed": "Failed to update tenant"
     },
     "plans": {
       "title": "Plans",
       "description": "Product plans and billing",
       "empty": "Plans aren't modeled yet — this is a placeholder for when you add billing."
     }
+  },
+  "join": {
+    "title": "You're invited",
+    "loading": "Loading invite...",
+    "invalidTitle": "Invalid invite",
+    "invalidDescription": "This invite doesn't exist or has expired.",
+    "goHome": "Go home",
+    "createAccount": "Create your account",
+    "invitedBy": "{{name}} invited you to join. You'll sign up as {{email}}.",
+    "invited": "You've been invited to join. You'll sign up as {{email}}.",
+    "createAndContinue": "Create account",
+    "welcome": "Welcome — your workspace is ready",
+    "acceptFailed": "Failed to create account",
+    "alreadySignedIn": "You're already signed in. Sign out to accept this invite with a new account.",
+    "goToApp": "Go to app",
+    "signOutToAccept": "Sign out",
+    "signInInstead": "An account already exists for {{email}}. Sign in instead."
   }
 }

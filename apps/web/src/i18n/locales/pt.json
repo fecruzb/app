@@ -247,6 +247,7 @@
     "backToApp": "Voltar ao app",
     "nav": {
       "users": "Pessoas",
+      "invites": "Convites",
       "tenants": "Tenants",
       "plans": "Planos"
     },
@@ -263,20 +264,57 @@
       "updated": "Usuário atualizado",
       "updateFailed": "Falha ao atualizar usuário"
     },
+    "invites": {
+      "title": "Convites",
+      "description": "Convide pessoas para criar uma conta e conhecer o app",
+      "sendTitle": "Enviar convite",
+      "sendDescription": "Elas recebem um e-mail com link para se cadastrar. Não entram nos seus tenants — ganham o próprio workspace.",
+      "send": "Enviar convite",
+      "sent": "Convite enviado por e-mail",
+      "sendFailed": "Falha ao enviar convite",
+      "pendingTitle": "Convites pendentes",
+      "pendingDescription": "Convites que ainda não foram usados",
+      "empty": "Nenhum convite pendente",
+      "invitedBy": "convidado por {{name}}",
+      "invitedByUnknown": "convidado",
+      "expires": "expira em {{date}}",
+      "revoked": "Convite revogado",
+      "revokeFailed": "Falha ao revogar convite"
+    },
     "tenants": {
       "title": "Tenants",
       "description": "Todos os workspaces da plataforma",
       "members_one": "{{count}} membro",
       "members_other": "{{count}} membros",
-      "rename": "Renomear",
+      "edit": "Editar",
+      "name": "Nome",
+      "slug": "Slug",
+      "slugHint": "Só letras minúsculas, números e hífens (2–40 caracteres). Alterar muda as URLs do app.",
       "cancel": "Cancelar",
-      "renamed": "Tenant renomeado",
-      "renameFailed": "Falha ao renomear tenant"
+      "updated": "Tenant atualizado",
+      "updateFailed": "Falha ao atualizar tenant"
     },
     "plans": {
       "title": "Planos",
       "description": "Planos e cobrança do produto",
       "empty": "Planos ainda não estão modelados — este é um placeholder para quando você adicionar billing."
     }
+  },
+  "join": {
+    "title": "Você foi convidado(a)",
+    "loading": "Carregando convite...",
+    "invalidTitle": "Convite inválido",
+    "invalidDescription": "Este convite não existe ou expirou.",
+    "goHome": "Ir para o início",
+    "createAccount": "Crie sua conta",
+    "invitedBy": "{{name}} convidou você. Você vai se cadastrar como {{email}}.",
+    "invited": "Você foi convidado(a). Você vai se cadastrar como {{email}}.",
+    "createAndContinue": "Criar conta",
+    "welcome": "Bem-vindo(a) — seu workspace está pronto",
+    "acceptFailed": "Falha ao criar conta",
+    "alreadySignedIn": "Você já está logado(a). Saia da conta para aceitar este convite com uma conta nova.",
+    "goToApp": "Ir para o app",
+    "signOutToAccept": "Sair",
+    "signInInstead": "Já existe uma conta para {{email}}. Entre com ela."
   }
 }

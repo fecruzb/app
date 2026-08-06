@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { adminRoutes } from "@/domains/admin/routes";
+import { adminRoutes, joinRoutes } from "@/domains/admin/routes";
 import { authRoutes } from "@/domains/auth/routes";
 import { marketingRoutes } from "@/domains/marketing/routes";
 import { tenantRoutes } from "@/domains/tenant/routes";
@@ -10,6 +10,7 @@ export function App() {
     <Routes>
       {marketingRoutes}
       {authRoutes}
+      {joinRoutes}
       {adminRoutes}
       {tenantRoutes}
       <Route path="*" element={<NotFoundPage />} />
