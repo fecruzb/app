@@ -66,27 +66,33 @@ type Slice = {
   visual: ReactNode;
 };
 
-const repositoryFile = `// domains/task/repository.ts — each method owns its full query
+const repositoryOutlineFile = `// domains/task/repository.ts — one object, fixed CRUD names
 export const taskRepository = {
-  async list(tenantId: string): Promise<TaskWithAuthor[]> {
-    return db
-      .select({ task: tasks, authorName: users.name })
-      .from(tasks)
-      .leftJoin(users, eq(users.id, tasks.authorId))
-      .where(eq(tasks.tenantId, tenantId))
-      .orderBy(desc(tasks.createdAt));
-  },
-
+  async list(tenantId: string): Promise<TaskWithAuthor[]> { /* … */ },
+  async find(tenantId: string, id: string): Promise<TaskWithAuthor | null> { /* … */ },
   async insert(values: {
     tenantId: string;
     authorId: string | null;
     title: string;
     completed: boolean;
-  }): Promise<Task> {
-    const [task] = await db.insert(tasks).values(values).returning();
-    return task;
-  },
+  }): Promise<Task> { /* … */ },
+  async update(
+    tenantId: string,
+    id: string,
+    values: { title?: string; completed?: boolean },
+  ): Promise<Task | null> { /* … */ },
+  async delete(tenantId: string, id: string): Promise<boolean> { /* … */ },
 };`;
+
+const repositoryMethodFile = `// list — full query inline; always filters by tenantId
+async list(tenantId: string): Promise<TaskWithAuthor[]> {
+  return db
+    .select({ task: tasks, authorName: users.name })
+    .from(tasks)
+    .leftJoin(users, eq(users.id, tasks.authorId))
+    .where(eq(tasks.tenantId, tenantId))
+    .orderBy(desc(tasks.createdAt));
+}`;
 
 const routeFile = `// POST /api/tenants/:tenantId/tasks
 export async function createTask(c: AppContext) {
@@ -316,6 +322,7 @@ type SliceLocaleKey =
   | "convention"
   | "schema"
   | "repository"
+  | "repositoryMethod"
   | "route"
   | "tool"
   | "webConvention"
@@ -389,7 +396,24 @@ function buildResourceSlices(t: TFunction): Slice[] {
     {
       id: "repository",
       ...sliceCopy("repository", t),
-      visual: <CodeBlock filename="domains/task/repository.ts" code={repositoryFile} lang="ts" />,
+      visual: (
+        <CodeBlock
+          filename="domains/task/repository.ts"
+          code={repositoryOutlineFile}
+          lang="ts"
+        />
+      ),
+    },
+    {
+      id: "repository-method",
+      ...sliceCopy("repositoryMethod", t),
+      visual: (
+        <CodeBlock
+          filename="domains/task/repository.ts → list"
+          code={repositoryMethodFile}
+          lang="ts"
+        />
+      ),
     },
     {
       id: "route",

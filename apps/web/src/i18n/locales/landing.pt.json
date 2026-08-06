@@ -170,14 +170,23 @@
       ]
     },
     "repository": {
-      "eyebrow": "As queries",
-      "title": "Todo o SQL mora num único repository",
-      "body": "Todo método recebe um tenantId e filtra por ele — isolamento não é um lembrete aqui, é a única forma de alcançar os dados. Para um recurso com escopo de tenant, fique em list / find / insert / update / delete. Cada método escreve sua query por completo — sem helpers compartilhados — e devolve a row; o mapeamento de DTO fica em dto.ts.",
+      "eyebrow": "O repository",
+      "title": "Todo o SQL mora num único objeto",
+      "body": "Para um recurso com escopo de tenant o formato é fixo: list / find / insert / update / delete num único objeto exportado. Todo método recebe um tenantId. Routes, tools e services chamam esses métodos — nunca escrevem SQL. O mapeamento de DTO fica em dto.ts.",
+      "points": [
+        "O CRUD se chama list / find / insert / update / delete",
+        "Todo método recebe tenantId — isolamento é a única porta de entrada",
+        "Devolve rows — dto.ts mapeia para o formato da API; rotas nunca escrevem SQL"
+      ]
+    },
+    "repositoryMethod": {
+      "eyebrow": "Um método",
+      "title": "Cada query é escrita por completo",
+      "body": "Abra qualquer método e você lê a query inteira sem saltar de arquivo — sem helpers compartilhados que escondem o filtro de tenant. list faz join no author, filtra por tenantId e ordena do mais novo. A mesma regra vale para find, insert, update e delete.",
       "points": [
         "Nenhuma query existe sem filtro de tenant",
-        "O CRUD se chama list / find / insert / update / delete",
-        "Cada método é dono da sua query de ponta a ponta — legível sem saltar de arquivo",
-        "Devolve rows — dto.ts mapeia para o formato da API; rotas nunca escrevem SQL"
+        "Cada método é dono da sua query de ponta a ponta",
+        "Legível no lugar — copie o formato para o próximo recurso"
       ]
     },
     "route": {

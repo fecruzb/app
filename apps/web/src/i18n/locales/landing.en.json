@@ -170,14 +170,23 @@
       ]
     },
     "repository": {
-      "eyebrow": "The queries",
-      "title": "All SQL lives in one repository",
-      "body": "Every method takes a tenantId and filters by it — isolation isn't a reminder here, it's the only way the data can be reached at all. For a tenant-scoped resource, stick to list / find / insert / update / delete. Each method writes its query in full — no shared helpers — and returns the row; DTO mapping stays in dto.ts.",
+      "eyebrow": "The repository",
+      "title": "All SQL lives in one object",
+      "body": "For a tenant-scoped resource the shape is fixed: list / find / insert / update / delete on a single exported object. Every method takes a tenantId. Routes, tools and services call these methods — they never write SQL. DTO mapping stays in dto.ts.",
+      "points": [
+        "CRUD is named list / find / insert / update / delete",
+        "Every method takes tenantId — isolation is the only entry point",
+        "Returns rows — dto.ts maps to the API shape; routes never write SQL"
+      ]
+    },
+    "repositoryMethod": {
+      "eyebrow": "One method",
+      "title": "Each query is written in full",
+      "body": "Open any method and you can read the whole query without jumping around — no shared helpers that hide the tenant filter. list joins the author, filters by tenantId and orders newest first. The same rule applies to find, insert, update and delete.",
       "points": [
         "No query exists without a tenant filter",
-        "CRUD is named list / find / insert / update / delete",
-        "Each method owns its query end to end — readable without jumping around",
-        "Returns rows — dto.ts maps to the API shape; routes never write SQL"
+        "Each method owns its query end to end",
+        "Readable in place — copy the shape for the next resource"
       ]
     },
     "route": {
