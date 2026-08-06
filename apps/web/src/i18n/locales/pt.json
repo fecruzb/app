@@ -15,7 +15,8 @@
     "loading": "Carregando...",
     "minPassword": "Mínimo de 8 caracteres",
     "you": "(você)",
-    "tenant": "Tenant"
+    "tenant": "Tenant",
+    "lessThanCent": "<US$ 0,01"
   },
   "theme": {
     "switchToLight": "Mudar para modo claro",

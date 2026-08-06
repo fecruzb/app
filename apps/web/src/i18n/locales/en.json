@@ -15,7 +15,8 @@
     "loading": "Loading...",
     "minPassword": "Minimum of 8 characters",
     "you": "(you)",
-    "tenant": "Tenant"
+    "tenant": "Tenant",
+    "lessThanCent": "<$0.01"
   },
   "theme": {
     "switchToLight": "Switch to light mode",

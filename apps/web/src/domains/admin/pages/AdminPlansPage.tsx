@@ -5,17 +5,17 @@ import { Badge } from "@app/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@app/ui/card";
 import { PageHeader } from "@app/ui/page-header";
 import { PageLoading } from "@app/ui/page-loading";
+import { dateLocale } from "@/i18n";
+import { formatUsdMicros } from "@/lib/utils";
 import { adminApi } from "../api";
 
-/** Amounts travel as micro-dollars (USD * 1_000_000). */
-function formatUsd(micros: number): string {
-  if (micros === 0) return "$0";
-  if (micros > 0 && micros < 10_000) return "<$0.01";
-  return `$${(micros / 1_000_000).toFixed(0)}`;
-}
-
 function PlanCard({ plan }: { plan: PlanDto }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const money = (micros: number) =>
+    formatUsdMicros(micros, dateLocale(i18n.language), {
+      fractionDigits: 0,
+      lessThanCent: t("common.lessThanCent"),
+    });
 
   const seats =
     plan.maxSeats === null
@@ -25,7 +25,7 @@ function PlanCard({ plan }: { plan: PlanDto }) {
   const ai =
     plan.aiBilling === "passthrough"
       ? t("admin.plans.aiPassthrough")
-      : t("admin.plans.aiIncluded", { amount: formatUsd(plan.aiPerSeatMicros) });
+      : t("admin.plans.aiIncluded", { amount: money(plan.aiPerSeatMicros) });
 
   return (
     <Card>
@@ -42,7 +42,7 @@ function PlanCard({ plan }: { plan: PlanDto }) {
         <p>{seats}</p>
         <p>
           {plan.pricePerSeatMicros > 0
-            ? t("admin.plans.seatPrice", { price: formatUsd(plan.pricePerSeatMicros) })
+            ? t("admin.plans.seatPrice", { price: money(plan.pricePerSeatMicros) })
             : t("admin.plans.seatFree")}
         </p>
         <p>{ai}</p>

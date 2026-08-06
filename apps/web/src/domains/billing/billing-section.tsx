@@ -8,18 +8,13 @@ import { Label } from "@app/ui/label";
 import { PageLoading } from "@app/ui/page-loading";
 import { cn } from "@app/ui/lib/utils";
 import { dateLocale } from "@/i18n";
+import { formatUsdMicros } from "@/lib/utils";
 import { useAuth } from "@/domains/auth/auth-provider";
 import { useTenant } from "@/domains/tenant/tenant-provider";
 import { billingApi } from "./api";
 
 const selectClass =
   "h-9 w-full max-w-sm rounded-md border border-input bg-transparent px-2 text-sm opacity-60";
-
-/** Amounts travel as micro-dollars (USD * 1_000_000). */
-function formatUsd(micros: number): string {
-  if (micros > 0 && micros < 10_000) return "<$0.01";
-  return `$${(micros / 1_000_000).toFixed(2)}`;
-}
 
 function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
@@ -33,13 +28,16 @@ function Stat({ label, value, hint }: { label: string; value: string; hint?: str
 
 function PlanOverview({ billing }: { billing: TenantBillingDto }) {
   const { t, i18n } = useTranslation();
+  const locale = dateLocale(i18n.language);
+  const money = (micros: number) =>
+    formatUsdMicros(micros, locale, { lessThanCent: t("common.lessThanCent") });
 
   const seatsValue =
     billing.maxSeats === null
       ? t("billing.seatsUnlimited", { used: billing.seatsUsed })
       : t("billing.seatsUsed", { used: billing.seatsUsed, max: billing.maxSeats });
 
-  const periodEnd = new Date(billing.periodEnd).toLocaleDateString(dateLocale(i18n.language), {
+  const periodEnd = new Date(billing.periodEnd).toLocaleDateString(locale, {
     month: "short",
     day: "numeric",
     timeZone: "UTC",
@@ -47,17 +45,17 @@ function PlanOverview({ billing }: { billing: TenantBillingDto }) {
 
   const aiValue =
     billing.aiBilling === "passthrough"
-      ? formatUsd(billing.tenantSpentMicros)
-      : `${formatUsd(billing.tenantSpentMicros)} / ${
+      ? money(billing.tenantSpentMicros)
+      : `${money(billing.tenantSpentMicros)} / ${
           billing.aiTenantCeilingMicros !== null
-            ? formatUsd(billing.aiTenantCeilingMicros)
+            ? money(billing.aiTenantCeilingMicros)
             : t("billing.noCap")
         }`;
 
   const aiHint =
     billing.aiBilling === "passthrough"
       ? t("billing.aiPassthrough")
-      : t("billing.aiIncluded", { amount: formatUsd(billing.aiPerSeatMicros) });
+      : t("billing.aiIncluded", { amount: money(billing.aiPerSeatMicros) });
 
   return (
     <Card>
@@ -67,7 +65,7 @@ function PlanOverview({ billing }: { billing: TenantBillingDto }) {
           <Badge variant="secondary">{t(`plans.${billing.planId}.name`)}</Badge>
           {billing.pricePerSeatMicros > 0 && (
             <span className="text-xs text-muted-foreground">
-              {t("billing.seatPrice", { price: formatUsd(billing.pricePerSeatMicros) })}
+              {t("billing.seatPrice", { price: money(billing.pricePerSeatMicros) })}
             </span>
           )}
         </div>
@@ -90,11 +88,15 @@ function PlanOverview({ billing }: { billing: TenantBillingDto }) {
 }
 
 function MemberUsage({ billing }: { billing: TenantBillingDto }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { me } = useAuth();
+  const money = (micros: number) =>
+    formatUsdMicros(micros, dateLocale(i18n.language), {
+      lessThanCent: t("common.lessThanCent"),
+    });
 
   const limitLabel =
-    billing.aiPerSeatMicros > 0 ? formatUsd(billing.aiPerSeatMicros) : t("billing.noCap");
+    billing.aiPerSeatMicros > 0 ? money(billing.aiPerSeatMicros) : t("billing.noCap");
 
   return (
     <Card>
@@ -124,11 +126,11 @@ function MemberUsage({ billing }: { billing: TenantBillingDto }) {
                   </div>
                   <div className="text-right text-xs">
                     <p className={cn("font-medium", member.overLimit && "text-destructive")}>
-                      {formatUsd(member.spentMicros)}
+                      {money(member.spentMicros)}
                       {billing.aiPerSeatMicros > 0 && (
                         <span className="text-muted-foreground">
                           {" "}
-                          {t("billing.of", { limit: formatUsd(billing.aiPerSeatMicros) })}
+                          {t("billing.of", { limit: money(billing.aiPerSeatMicros) })}
                         </span>
                       )}
                     </p>
