@@ -68,7 +68,7 @@
     "title": "Postgres, modeled in plain TypeScript",
     "bodyBefore": "Persistence is Postgres with Drizzle as the ORM — no separate schema language, no ORM console. A table is a ",
     "bodyCode": "pgTable",
-    "bodyAfter": " in the domain that owns it. Here are the models the boilerplate already ships, one group at a time."
+    "bodyAfter": " in the domain that owns it. Identity, tenancy, the plan catalog, AI usage, images, platform invites — then tasks as the example resource you copy."
   },
   "resourceIntro": {
     "eyebrow": "Example resource",
@@ -363,6 +363,46 @@
         "role is an enum — owner, admin, member — enforced at the type level",
         "plan_id selects Free / Starter / Pro / usage entitlements (no Stripe required yet)",
         "Invites expire and carry the role the person will get on accept"
+      ]
+    },
+    "billing": {
+      "eyebrow": "Plans",
+      "title": "Entitlements live in a code catalog",
+      "body": "There is no plans table. domains/billing/plans.ts exports PLAN_CATALOG — Free, Starter, Pro, and Pay as you go — with seat caps and per-member AI allowances. Tenants only store plan_id; platform admin assigns it. Wire Stripe later by writing the same field.",
+      "points": [
+        "Four plans in code — edit the catalog when you fork",
+        "Seats + AI included vs passthrough, resolved by getPlan(planId)",
+        "Billing page reads the catalog + live usage — no payment provider yet"
+      ]
+    },
+    "usage": {
+      "eyebrow": "AI cost",
+      "title": "An append-only spend ledger",
+      "body": "ai_usage_events records one row per assistant request: model, tokens, rounds, and cost in micro-dollars (USD × 1_000_000 — integers only). Spend aggregates per (userId, tenantId) against the tenant plan. The usage domain is ledger-only; the Billing UI is the face of it.",
+      "points": [
+        "cost_micros never uses floats — micros keep money as integers",
+        "Scoped by user + tenant so seats and AI limits stay honest",
+        "No HTTP routes here — billing service reads the repository"
+      ]
+    },
+    "images": {
+      "eyebrow": "Media",
+      "title": "Image metadata, bytes elsewhere",
+      "body": "The images table stores path, content type and size for tenant-scoped uploads and agent-generated art. The file itself lives in object storage (local disk in dev, R2 in production) — the row is just provenance.",
+      "points": [
+        "tenant_id cascade; author_id set null on user delete",
+        "path is the storage key, e.g. <tenantId>/uploads/<uuid>.webp",
+        "Same CRUD shape as tasks — copy when you add another media type"
+      ]
+    },
+    "platform": {
+      "eyebrow": "Platform",
+      "title": "Signup invites outside any tenant",
+      "body": "platform_invites belongs to the admin domain: email + hashed token + expiry, with no tenant_id. Accepting creates a personal workspace. Orthogonal to tenant_invites — those bring people into an existing workspace.",
+      "points": [
+        "Invite-only mode when SELF_SIGNUP_ENABLED is false",
+        "Token stored hashed; single-use with a TTL",
+        "Platform admin creates these under /admin/invites"
       ]
     }
   },

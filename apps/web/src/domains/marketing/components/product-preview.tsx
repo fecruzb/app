@@ -1050,6 +1050,108 @@ export function TenantTables() {
   );
 }
 
+/**
+ * Plan catalog lives in code — tenants only store plan_id.
+ * Shown with the same table-card chrome so it reads next to real schemas.
+ */
+export function PlansCatalog() {
+  return (
+    <SchemaWindow label="domains/billing/plans.ts">
+      <TableCard
+        name="free"
+        columns={[
+          { name: "maxSeats", type: "1" },
+          { name: "price / seat", type: "$0" },
+          { name: "AI / seat", type: "$5 included" },
+        ]}
+      />
+      <TableCard
+        name="starter"
+        columns={[
+          { name: "maxSeats", type: "3" },
+          { name: "price / seat", type: "$5" },
+          { name: "AI / seat", type: "$5 included" },
+        ]}
+      />
+      <TableCard
+        name="pro"
+        columns={[
+          { name: "maxSeats", type: "10" },
+          { name: "price / seat", type: "$5" },
+          { name: "AI / seat", type: "$5 included" },
+        ]}
+      />
+      <TableCard
+        name="usage"
+        columns={[
+          { name: "maxSeats", type: "∞" },
+          { name: "price / seat", type: "$10" },
+          { name: "AI / seat", type: "passthrough" },
+        ]}
+      />
+    </SchemaWindow>
+  );
+}
+
+/** AI spend ledger — append-only events per assistant request. */
+export function UsageTables() {
+  return (
+    <SchemaWindow label="domains/usage/schema.ts">
+      <TableCard
+        name="ai_usage_events"
+        accent
+        columns={[
+          { name: "id", type: "uuid", badge: "PK" },
+          { name: "user_id", type: "uuid", badge: "FK" },
+          { name: "tenant_id", type: "uuid", badge: "FK" },
+          { name: "model", type: "text" },
+          { name: "input_tokens", type: "int" },
+          { name: "output_tokens", type: "int" },
+          { name: "cost_micros", type: "int" },
+          { name: "created_at", type: "timestamptz" },
+        ]}
+      />
+    </SchemaWindow>
+  );
+}
+
+/** Media metadata — bytes live in object storage. */
+export function ImageTables() {
+  return (
+    <SchemaWindow label="domains/images/schema.ts">
+      <TableCard
+        name="images"
+        columns={[
+          { name: "id", type: "uuid", badge: "PK" },
+          { name: "tenant_id", type: "uuid", badge: "FK" },
+          { name: "author_id", type: "uuid", badge: "FK" },
+          { name: "path", type: "text" },
+          { name: "content_type", type: "text" },
+          { name: "size_bytes", type: "int" },
+        ]}
+      />
+    </SchemaWindow>
+  );
+}
+
+/** Platform signup invites — orthogonal to tenant invites. */
+export function PlatformTables() {
+  return (
+    <SchemaWindow label="domains/admin/schema.ts">
+      <TableCard
+        name="platform_invites"
+        columns={[
+          { name: "id", type: "uuid", badge: "PK" },
+          { name: "email", type: "text" },
+          { name: "token_hash", type: "text", badge: "UQ" },
+          { name: "invited_by", type: "uuid", badge: "FK" },
+          { name: "expires_at", type: "timestamptz" },
+        ]}
+      />
+    </SchemaWindow>
+  );
+}
+
 /** The example resource — the exact shape you copy for your own domains. */
 export function TaskTable() {
   return (

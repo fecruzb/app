@@ -68,7 +68,7 @@
     "title": "Postgres, modelado em TypeScript puro",
     "bodyBefore": "A persistência é Postgres com Drizzle como ORM — sem linguagem de schema separada, sem console de ORM. Uma tabela é um ",
     "bodyCode": "pgTable",
-    "bodyAfter": " no domínio que a possui. Aqui estão os modelos que o boilerplate já traz, um grupo de cada vez."
+    "bodyAfter": " no domínio que a possui. Identidade, tenancy, catálogo de planos, usage de IA, images, convites de plataforma — depois tasks como o recurso de exemplo que você copia."
   },
   "resourceIntro": {
     "eyebrow": "Recurso de exemplo",
@@ -363,6 +363,46 @@
         "role é um enum — owner, admin, member — reforçado no nível de tipo",
         "plan_id seleciona entitlements Free / Starter / Pro / usage (ainda sem Stripe)",
         "Convites expiram e carregam o role que a pessoa terá ao aceitar"
+      ]
+    },
+    "billing": {
+      "eyebrow": "Planos",
+      "title": "Entitlements moram num catálogo em código",
+      "body": "Não existe tabela de plans. domains/billing/plans.ts exporta PLAN_CATALOG — Free, Starter, Pro e Pay as you go — com limites de assentos e allowance de IA por membro. Tenants só guardam plan_id; o platform admin atribui. Depois, ligue o Stripe gravando o mesmo campo.",
+      "points": [
+        "Quatro planos em código — edite o catálogo ao fazer o fork",
+        "Assentos + IA included vs passthrough, resolvidos por getPlan(planId)",
+        "A página de Billing lê o catálogo + usage ao vivo — ainda sem provedor de pagamento"
+      ]
+    },
+    "usage": {
+      "eyebrow": "Custo de IA",
+      "title": "Um ledger de gasto append-only",
+      "body": "ai_usage_events registra uma linha por request do assistente: model, tokens, rounds e custo em microdólares (USD × 1_000_000 — só inteiros). O gasto agrega por (userId, tenantId) contra o plano do tenant. O domínio usage é só o ledger; a UI de Billing é a face dele.",
+      "points": [
+        "cost_micros nunca usa float — micros mantêm dinheiro como inteiro",
+        "Escopo por user + tenant para assentos e limites de IA ficarem honestos",
+        "Sem rotas HTTP aqui — o billing service lê o repository"
+      ]
+    },
+    "images": {
+      "eyebrow": "Mídia",
+      "title": "Metadados de imagem, bytes em outro lugar",
+      "body": "A tabela images guarda path, content type e size de uploads e arte gerada pelo agente, com escopo de tenant. O arquivo em si mora em object storage (disco local no dev, R2 em produção) — a row é só a proveniência.",
+      "points": [
+        "tenant_id com cascade; author_id set null no delete do user",
+        "path é a chave de storage, ex. <tenantId>/uploads/<uuid>.webp",
+        "Mesmo formato CRUD de tasks — copie ao adicionar outro tipo de mídia"
+      ]
+    },
+    "platform": {
+      "eyebrow": "Plataforma",
+      "title": "Convites de signup fora de qualquer tenant",
+      "body": "platform_invites pertence ao domínio admin: e-mail + token hasheado + expiry, sem tenant_id. Aceitar cria um workspace pessoal. Ortogonal a tenant_invites — esses trazem pessoas para um workspace que já existe.",
+      "points": [
+        "Modo só por convite quando SELF_SIGNUP_ENABLED é false",
+        "Token guardado hasheado; uso único com TTL",
+        "Platform admin cria esses em /admin/invites"
       ]
     }
   },

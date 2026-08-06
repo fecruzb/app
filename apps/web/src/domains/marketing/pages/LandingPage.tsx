@@ -36,14 +36,18 @@ import {
   AuthTables,
   EnvMock,
   flows,
+  ImageTables,
   LoginMock,
   McpKeysMock,
+  PlansCatalog,
+  PlatformTables,
   RenderMock,
   ShellMock,
   TaskTable,
   TasksMock,
   TenantTables,
   TerminalMock,
+  UsageTables,
   WindowBar,
   type Screen,
 } from "../components/product-preview";
@@ -402,7 +406,10 @@ function pillarCopy(key: "monorepo" | "config" | "storage" | "localRun" | "rende
   };
 }
 
-function dbGroupCopy(key: "identity" | "tenancy", t: TFunction) {
+function dbGroupCopy(
+  key: "identity" | "tenancy" | "billing" | "usage" | "images" | "platform",
+  t: TFunction,
+) {
   return {
     eyebrow: t(`landing.db.${key}.eyebrow`),
     title: t(`landing.db.${key}.title`),
@@ -564,6 +571,26 @@ function buildDbGroups(t: TFunction): DbGroup[] {
       id: "tenancy",
       ...dbGroupCopy("tenancy", t),
       visual: <TenantTables />,
+    },
+    {
+      id: "billing",
+      ...dbGroupCopy("billing", t),
+      visual: <PlansCatalog />,
+    },
+    {
+      id: "usage",
+      ...dbGroupCopy("usage", t),
+      visual: <UsageTables />,
+    },
+    {
+      id: "images",
+      ...dbGroupCopy("images", t),
+      visual: <ImageTables />,
+    },
+    {
+      id: "platform",
+      ...dbGroupCopy("platform", t),
+      visual: <PlatformTables />,
     },
   ];
 }
