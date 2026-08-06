@@ -237,6 +237,38 @@ export function setSessionCookie(c: Context, token: string): void {
     └── domains/{auth,tenant,note,marketing}/`,
   },
   {
+    id: "env",
+    eyebrow: "Configuration",
+    title: "Environment variables, typed and validated",
+    body: [
+      "Configuration is small and honest. A single .env at the repo root drives local development, and a Zod schema in lib/env.ts validates it at boot — a missing or malformed variable kills the process with a readable message instead of failing deep inside a request.",
+      "Optional keys degrade gracefully: no RESEND_API_KEY sends emails to the console, no OPENAI_API_KEY hides the agent, and SELF_SIGNUP_ENABLED flips the app to invite-only. The rest of the code reads a typed env object, never process.env directly.",
+    ],
+    highlights: [
+      "Validated once at boot, fails fast with a clear error",
+      "Sensible local defaults — clone and run, no setup",
+      "Optional keys degrade instead of crashing",
+      "Code reads a typed env, never raw process.env",
+    ],
+    filename: ".env.example",
+    lang: "text",
+    code: `# API
+PORT=5000
+DATABASE_URL=postgres://app:app@localhost:5442/app_base
+APP_URL=http://localhost:3000
+
+# Email (without RESEND_API_KEY, emails are logged to the console)
+RESEND_API_KEY=
+MAIL_FROM=App Base <onboarding@resend.dev>
+
+# Agent (without OPENAI_API_KEY the assistant button disappears)
+OPENAI_API_KEY=
+ASSISTANT_MODEL=gpt-4o-mini
+
+# Turn off to operate invite-only
+SELF_SIGNUP_ENABLED=true`,
+  },
+  {
     id: "deploy",
     eyebrow: "The deploy",
     title: "Commit the Blueprint, push, done",
