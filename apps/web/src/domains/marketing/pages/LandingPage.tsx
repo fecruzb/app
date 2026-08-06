@@ -114,7 +114,7 @@ async list(tenantId: string): Promise<TaskWithAuthor[]> {
     .orderBy(desc(tasks.createdAt));
 }`;
 
-const routeFile = `// POST /api/tenants/:tenantId/tasks
+const routeHandlerFile = `// POST /api/tenants/:tenantId/tasks
 export async function createTask(c: AppContext) {
   // -- Input -----------------------------------------------------------------
   const data = await parseBody(c, taskInputSchema);
@@ -131,9 +131,9 @@ export async function createTask(c: AppContext) {
 
   // -- Output ----------------------------------------------------------------
   return c.json(toTaskDto({ task, authorName: user.name }), 201);
-}
+}`;
 
-// routes/index.ts — auth + tenant middleware once for the group
+const routeMapFile = `// routes/index.ts — auth + tenant middleware once for the group
 export const taskRoutes = new Hono<AppEnv>()
   .use("*", requireAuth, requireTenant)
   .get("/", listTasks)
@@ -345,6 +345,7 @@ type SliceLocaleKey =
   | "repository"
   | "repositoryMethod"
   | "route"
+  | "routeMap"
   | "tool"
   | "webConvention"
   | "api"
@@ -417,9 +418,7 @@ function buildResourceSlices(t: TFunction): Slice[] {
     {
       id: "schema-file",
       ...sliceCopy("schemaFile", t),
-      visual: (
-        <CodeBlock filename="domains/task/schema.ts" code={schemaFile} lang="ts" />
-      ),
+      visual: <CodeBlock filename="domains/task/schema.ts" code={schemaFile} lang="ts" />,
     },
     {
       id: "repository",
@@ -443,7 +442,18 @@ function buildResourceSlices(t: TFunction): Slice[] {
       id: "route",
       ...sliceCopy("route", t),
       visual: (
-        <CodeBlock filename="domains/task/routes/create-task.route.ts" code={routeFile} lang="ts" />
+        <CodeBlock
+          filename="domains/task/routes/create-task.route.ts"
+          code={routeHandlerFile}
+          lang="ts"
+        />
+      ),
+    },
+    {
+      id: "route-map",
+      ...sliceCopy("routeMap", t),
+      visual: (
+        <CodeBlock filename="domains/task/routes/index.ts" code={routeMapFile} lang="ts" />
       ),
     },
     {

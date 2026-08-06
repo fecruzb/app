@@ -200,13 +200,23 @@
       ]
     },
     "route": {
-      "eyebrow": "The route",
-      "title": "A thin handler, wired in one line",
-      "body": "The handler is structured as Input → Processing → Output: validate with the shared schema, call the repository, map through the DTO. It gets one line in routes/index.ts, where auth and tenant middleware already run for the whole group — so the handler never checks a session or resolves a tenant itself.",
+      "eyebrow": "The handler",
+      "title": "A thin handler: Input → Processing → Output",
+      "body": "One file per action. Validate with the shared schema, read tenant and user from middleware context, call the repository, map through the DTO. The handler never checks a session or resolves a tenant itself — that already ran on the route group.",
       "points": [
         "Handler sections: Input → Processing → Output",
         "The tenant comes from context, never a request param",
-        "Middleware is applied once via .use — new routes are isolated by default"
+        "parseBody + repository + toXxxDto — no SQL in the route"
+      ]
+    },
+    "routeMap": {
+      "eyebrow": "The route map",
+      "title": "Wire handlers in one place",
+      "body": "routes/index.ts exports the Hono group: apply requireAuth and requireTenant once with .use, then hang each handler on a line. New actions stay isolated by default — add the file, import it here, done.",
+      "points": [
+        "Middleware once via .use — every route inherits auth + tenant",
+        "One line per handler: .get(\"/\", listTasks), .post(\"/\", createTask)",
+        "Mount the group in app.ts under /api/tenants/:tenantId/tasks"
       ]
     },
     "tool": {

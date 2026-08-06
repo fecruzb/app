@@ -200,13 +200,23 @@
       ]
     },
     "route": {
-      "eyebrow": "A rota",
-      "title": "Um handler fino, plugado numa linha",
-      "body": "O handler é estruturado como Input → Processing → Output: valida com o schema compartilhado, chama o repository, mapeia pelo DTO. Ganha uma linha em routes/index.ts, onde o middleware de auth e tenant já roda para o grupo inteiro — então o handler nunca checa sessão nem resolve um tenant sozinho.",
+      "eyebrow": "O handler",
+      "title": "Um handler fino: Input → Processing → Output",
+      "body": "Um arquivo por ação. Valida com o schema compartilhado, lê tenant e user do context do middleware, chama o repository, mapeia pelo DTO. O handler nunca checa sessão nem resolve um tenant sozinho — isso já rodou no grupo de rotas.",
       "points": [
         "Seções do handler: Input → Processing → Output",
         "O tenant vem do context, nunca de um param da request",
-        "Middleware é aplicado uma vez via .use — rotas novas já nascem isoladas"
+        "parseBody + repository + toXxxDto — sem SQL na rota"
+      ]
+    },
+    "routeMap": {
+      "eyebrow": "O mapa de rotas",
+      "title": "Plugue os handlers num só lugar",
+      "body": "routes/index.ts exporta o grupo Hono: aplica requireAuth e requireTenant uma vez com .use, depois pendura cada handler numa linha. Ações novas já nascem isoladas — adicione o arquivo, importe aqui, pronto.",
+      "points": [
+        "Middleware uma vez via .use — toda rota herda auth + tenant",
+        "Uma linha por handler: .get(\"/\", listTasks), .post(\"/\", createTask)",
+        "Monte o grupo em app.ts sob /api/tenants/:tenantId/tasks"
       ]
     },
     "tool": {
