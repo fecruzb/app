@@ -503,9 +503,7 @@ function buildResourceSlices(t: TFunction): Slice[] {
     {
       id: "tool-map",
       ...sliceCopy("toolMap", t),
-      visual: (
-        <CodeBlock filename="domains/task/tools/index.ts" code={toolMapFile} lang="ts" />
-      ),
+      visual: <CodeBlock filename="domains/task/tools/index.ts" code={toolMapFile} lang="ts" />,
     },
     {
       id: "web-convention",
