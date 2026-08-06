@@ -10,25 +10,26 @@ alwaysApply: true
 - NEVER read, print, log or paste the contents of `.env` / `.env.local` or the value of any secret env var — not in chat, code, comments, tests, terminal commands (`echo $KEY`, `cat .env`) or commit messages
 - NEVER commit `.env` or any credential file. They are gitignored — keep it that way; never loosen `.gitignore`
 - NEVER hardcode an API key, token or password anywhere in the repo, including examples and seeds
-- A new secret has exactly three homes: an **empty** placeholder in `.env.example`, the Zod schema in `apps/api/src/lib/env.ts`, and `render.yaml` with `sync: false` (value set only in the Render dashboard). The real value lives only in the local `.env`
+- A new **secret** has exactly three homes: an **empty** placeholder in `.env.example`, the Zod schema in `apps/api/src/lib/env.ts`, and `render.yaml` with `sync: false` (value set only in the Render dashboard). The real value lives only in the local `.env`. Non-secret knobs (defaults, optional local overrides like `MEDIA_DIR`) still belong in `env.ts` + a commented line in `.env.example`; `render.yaml` only when production needs them
 - If a secret ever lands in code, logs or git history, stop and tell the user to rotate it — removing the text is not enough
 
 ## Tokens and credentials in code
 
 - The database stores only hashes: passwords via scrypt (`hashPassword`), sessions/action tokens/API keys via `hashToken` — all from `@/lib/crypto`. Never store or compare a raw token
 - Raw values exist only at the edge: session token in the httpOnly cookie, action tokens inside the email link, API keys shown once at creation. Never log them, never put them in a DTO or error message
-- DTOs map fields explicitly in `dto.ts` — never spread a DB row into a response (that's how `passwordHash`/`tokenHash` leak)
+- DTOs map fields explicitly in `dto.ts` (or a service-assembled aggregate DTO) — never spread a DB row into a response (that's how `passwordHash`/`tokenHash` leak)
 - Don't roll your own crypto and don't add auth vendors — extend `@/lib/crypto` and the existing session model
 
 ## Tenant and auth boundaries
 
-- `tenantId`, `userId` and `role` come ONLY from middleware context (`c.get("tenant")`, `c.get("user")`) — never from the request body, query or an agent tool argument
+- On **tenant-mounted resources** (`/api/tenants/:tenantId/...` and agent tools), `tenantId`, `userId` and `role` come ONLY from middleware context (`c.get("tenant")`, `c.get("user")`) — never from the request body, query or an agent tool argument
+- Account/platform surfaces outside that mount may accept a `tenantId` in the body/query **only** after an explicit membership (or platform-admin) check — e.g. creating an API key for a chosen tenant
 - Every new tenant route group keeps `.use("*", requireAuth, requireTenant)`; role checks happen server-side, never trust the client's UI state
-- Every repository query filters by `tenantId` — a missing filter is a cross-tenant data leak
+- **Tenant-scoped resource repositories** always filter by `tenantId` — a missing filter is a cross-tenant data leak. Platform repos (`auth`, `admin`, …) are the intentional exception
 
 ## Input and errors
 
-- Every body goes through `parseBody(c, schema)` (Zod, from `@app/shared`); UUID params through `uuidParam`
+- JSON bodies go through `parseBody(c, schema)` (Zod, from `@app/shared`); UUID params through `uuidParam`. Multipart / binary uploads (images, audio transcription) validate fields in-route instead
 - Client-facing errors stay generic: throw `HttpError(status, message)` with safe messages; unexpected errors already return a plain 500 via `errorHandler` — never surface stack traces, SQL or internal paths
 
 ## Git hygiene

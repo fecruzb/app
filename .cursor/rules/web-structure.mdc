@@ -8,10 +8,10 @@ alwaysApply: false
 
 Mirror the API: features live in `domains/<domain>/`, everything else is shared shell.
 
-- `domains/<domain>/` — one folder per feature (auth, tenant, account, task, marketing, admin):
+- `domains/<domain>/` — one folder per feature (auth, tenant, account, task, images, billing, marketing, admin):
   - `api.ts` — typed calls for this domain (wraps `@/lib/api`); the only place that builds this domain's routes
   - `<name>-provider.tsx` — domain context/state when needed (e.g. auth, tenant)
-  - `pages/XxxPage.tsx` — route-level screens (PascalCase, one per file)
+  - `pages/XxxPage.tsx` — route-level screens (PascalCase, one per file). Non-page route elements (e.g. redirects) may omit the `Page` suffix
   - `routes.tsx` — the domain's routes; **every domain with pages has one** (see routing below)
   - domain-specific components live here too (kebab-case)
   - A domain may import another domain's `api`/provider, but keep it minimal
@@ -19,10 +19,11 @@ Mirror the API: features live in `domains/<domain>/`, everything else is shared 
     (`LandingPage.tsx`) embeds code snippets that mirror the repo's real conventions (repository,
     route, tool, page template) — if a convention changes, update those snippets too
   - Platform admin (`domains/admin/`) mounts at `/admin` outside `:tenantSlug` — gated by `me.user.isPlatformAdmin`
+  - AI spend UI lives under Billing; the API `usage` domain is ledger-only (no web mirror)
 - `app/` — application shell: `App.tsx` (route map), `config.ts` (`useAppConfig()` → `selfSignupEnabled`, `aiEnabled` — the server-driven flags), `NotFoundPage.tsx`
-- `layouts/` — AppLayout (sidebar shell + `navItems()` — add a nav link there for each new domain page), AuthLayout, RequireAuth
+- `layouts/` — AppLayout (`Shell()` sidebar `items` for primary nav; account/billing/integrations live in the user-menu dropdown), AuthLayout, RequireAuth
 - `theme/` — the theming system: `themes.ts` (each theme = light + dark token sets; add a brand by copying a block and changing `--primary`), `theme-provider.tsx`, `theme-controls.tsx` (includes the language picker). Components never hardcode colors — they use the CSS variables
-- `i18n/` — UI locales: `index.ts` (i18next init), `locales/en.json` + `pt.json`, `locale-controls.tsx`. User-facing copy goes through `t("…")` — add keys to both locale files
+- `i18n/` — UI locales: `index.ts` (i18next init), `locales/en.json` + `pt.json` (app shell) and `landing.en.json` + `landing.pt.json` (public landing). User-facing copy goes through `t("…")` — add keys to both locale files of the matching pair
 - `components/` — app-specific shared components that carry product copy/logic (e.g. `role-select`); reusable base UI lives in `@app/ui` (see below)
 - `lib/` — pure infra: `api.ts` (raw HTTP client + `ApiError` + `showApiError`), `utils.ts` (`initials`); no domain knowledge
 - Network calls go through a domain `api.ts`, never `fetch`/`@/lib/api` directly from a page
@@ -62,6 +63,7 @@ shape repeats across pages, add it to `@app/ui`; if it carries product copy/logi
 
 ## Routing
 
-Each domain exports its routes from `routes.tsx`. Top-level route groups (auth, marketing, tenant)
-are composed in `app/App.tsx`. Domains rendered **inside the tenant app shell** (task, account)
+Each domain exports its routes from `routes.tsx`. Top-level route groups (auth, marketing, tenant, admin)
+are composed in `app/App.tsx`. Domains rendered **inside the tenant app shell** (task, images, billing, account)
 export their `<Route>` and are composed inside `tenant/routes.tsx` under the `:tenantSlug` layout.
+Sidebar nav is the `items` array in `Shell()` (`layouts/AppLayout.tsx`); account/billing go in the user menu.

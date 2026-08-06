@@ -62,7 +62,7 @@ Only add a `service.ts` when there is real business logic; plain CRUD calls the 
 
 - `routes.tsx`: `export const xxxRoutes = <Route path="<plural>" element={<XxxPage />} />;`
 - Compose it inside `apps/web/src/domains/tenant/routes.tsx` under the `:tenantSlug` layout
-- Add a nav item in `navItems()` in `apps/web/src/layouts/AppLayout.tsx`
+- Add a sidebar item to the `items` array in `Shell()` (`apps/web/src/layouts/AppLayout.tsx`), or a user-menu entry for account-style pages (billing, integrations)
 
 ## Verify
 

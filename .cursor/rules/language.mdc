@@ -7,6 +7,6 @@ alwaysApply: true
 
 Code, comments, identifiers, docs, rules, commits, logs, API messages, emails and agent text stay in English. Chat with the user may be in any language.
 
-**UI copy** lives in `apps/web/src/i18n/locales/` (`en.json` is the source of truth, `pt.json` is Brazilian Portuguese). Components use `useTranslation()` / `t("…")` — never hardcode user-facing strings in JSX. When you add a string, add it to both locale files.
+**UI copy** lives in `apps/web/src/i18n/locales/`: `en.json` / `pt.json` for the app shell (`en.json` is the source of truth, `pt.json` is Brazilian Portuguese), plus `landing.en.json` / `landing.pt.json` for the public landing. Components use `useTranslation()` / `t("…")` — never hardcode user-facing strings in JSX. When you add a string, add it to both locale files of the matching pair.
 
 Keep comments minimal and direct — explain non-obvious intent, not what the code already says.

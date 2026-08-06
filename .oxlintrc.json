@@ -80,8 +80,8 @@
           {
             "patterns": [
               {
-                "group": ["@/domains/**", "@/app/**", "@/layouts/**", "@/pages/**"],
-                "message": "lib/ is pure infra — it can't depend on domains, app, layouts or pages."
+                "group": ["@/domains/**", "@/app/**", "@/layouts/**"],
+                "message": "lib/ is pure infra — it can't depend on domains, app or layouts."
               }
             ]
           }

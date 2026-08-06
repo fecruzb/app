@@ -82,7 +82,7 @@ export function AgentFab() {
       setText(content);
     } finally {
       setBusy(false);
-      void queryClient.invalidateQueries({ queryKey: ["ai-usage"] });
+      void queryClient.invalidateQueries({ queryKey: ["billing"] });
     }
   }
 
@@ -97,8 +97,8 @@ export function AgentFab() {
       return;
     } finally {
       setTranscribing(false);
-      // Transcription is billed too — keep the usage card honest.
-      void queryClient.invalidateQueries({ queryKey: ["ai-usage"] });
+      // Transcription is billed too — keep the billing page honest.
+      void queryClient.invalidateQueries({ queryKey: ["billing"] });
     }
 
     if (!transcript) {

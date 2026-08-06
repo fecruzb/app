@@ -16,18 +16,20 @@ Monorepo (npm workspaces + Turborepo):
 
 ## The golden path
 
-**A feature is a domain folder on both sides.** Never scatter a feature across shared files: it gets its own `apps/api/src/domains/<domain>/` and `apps/web/src/domains/<domain>/`, with its contract in `packages/shared/src/<domain>.ts`. The `task` domain is the canonical example to copy on both sides.
+**A tenant resource is a domain folder on both sides.** Never scatter it across shared files: it gets its own `apps/api/src/domains/<domain>/` and `apps/web/src/domains/<domain>/`, with its contract in `packages/shared/src/<domain>.ts`. The `task` domain is the canonical example to copy on both sides.
+
+Not every domain mirrors 1:1: `marketing` is web-only; `agent` is an API surface (chat UI under tenant); `usage` is API-only spend ledger (Billing page is the UI). Prefer a dedicated shared file per domain with an API surface (`account.ts`, not parked in `auth.ts`).
 
 To add a feature/resource end to end, follow the checklist in the `add-feature` skill (`.cursor/skills/add-feature/SKILL.md`).
 
 ## Invariants — never break these
 
-- **Tenant isolation**: every resource query filters by `tenantId`. The tenant comes from middleware context (`requireAuth`/`requireTenant`), never from user input. Cross-tenant platform admin queries live only under `/api/admin` gated by `requirePlatformAdmin` — never as a bypass of tenant routes
+- **Tenant isolation**: every tenant-scoped resource query filters by `tenantId`. On tenant-mounted routes and agent tools, the tenant comes from middleware context (`requireAuth`/`requireTenant`), never from user input. Cross-tenant platform admin queries live only under `/api/admin` gated by `requirePlatformAdmin` — never as a bypass of tenant routes
 - **Contracts live in `packages/shared`**: request schemas and DTO types are imported by both API and web — never duplicated on either side
-- **Layer boundaries are lint-enforced** (`.oxlintrc.json`): `lib/` imports nothing from the app, `integrations/` only uses `lib/`, domains only know `@/agent/tool` and never import MCP/OpenAI
+- **Layer boundaries are lint-enforced** (`.oxlintrc.json`): `lib/` imports nothing from the app, `integrations/` only uses `lib/`, domains only know `@/agent/tool` and never import the MCP/OpenAI SDK packages (agent-owned tools in `agent/tools/` may use `@/integrations/openai`)
 - **Migrations are generated** from the Drizzle schema (`npm run db:generate`), never hand-written
-- **New env var** = add to the Zod schema in `apps/api/src/lib/env.ts` + `.env.example` + `render.yaml`; optional vars must degrade gracefully (like `RESEND_API_KEY` / `OPENAI_API_KEY` do)
-- **File naming is fixed**: `<action>.route.ts`, `<action>.tool.ts`, `PascalCasePage.tsx`, kebab-case components; single-role domain files keep the role name (`repository.ts`, `service.ts`); folders own their index (`routes/index.ts` route map, `tools/index.ts` tool list)
+- **New env var** = add to the Zod schema in `apps/api/src/lib/env.ts` + `.env.example` (+ `render.yaml` when production needs it); secrets use `sync: false` on Render. Optional vars must degrade gracefully (like `RESEND_API_KEY` / `OPENAI_API_KEY` do)
+- **File naming is fixed**: `<action>.route.ts`, `<action>.tool.ts`, `PascalCasePage.tsx`, kebab-case components; single-role domain files keep the role name (`repository.ts`, `service.ts`); folders own their index (`routes/index.ts` route map, `tools/index.ts` tool list). Domain folder names are usually singular (`task`); URLs are plural (`/tasks`) — `images` is the plural-folder exception
 
 ## Before finishing any change
 

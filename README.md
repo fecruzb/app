@@ -45,7 +45,7 @@ Without `RESEND_API_KEY`, emails (verification, password reset, invites) are log
 
 ## Structure
 
-The API is organized by **domain**: each domain groups its database schema, repository (all SQL), business rules, one file per route and the agent tools.
+The API is organized by **domain**. Resource domains (copy `task`) typically group schema, repository, DTO, routes and agent tools; platform domains vary (e.g. `account` is routes-only, `billing` has no tools, `usage` is a spend ledger without HTTP routes).
 
 ```
 apps/api/src/
@@ -54,10 +54,10 @@ apps/api/src/
 ├── context.ts            # typed request context (user/tenant/membership from middlewares)
 ├── agent/                # agent surface (not a domain): assistant (policy), registry,
 │                         # mcp-server (adapter), tool (contract), mcp (stdio entry),
-│                         # mcp-http (remote MCP over HTTP, API-key auth), routes/
-├── lib/                  # pure utilities (no app dependency): env (validated at boot),
-│                         # crypto, logger, errors, email layout
-├── integrations/         # external service wrappers: openai (client + tool loop), resend, r2/media
+│                         # mcp-http (remote MCP over HTTP, API-key auth), tools/, routes/
+├── lib/                  # pure utilities (no app dependency): env, crypto, logger, errors,
+│                         # email layout, media-store, image-compress
+├── integrations/         # external service wrappers: openai (client + tool loop), resend, r2
 ├── domains/
 │   ├── auth/             # schema, repository, service, dto, emails, middleware, routes/
 │   ├── account/          # routes/ (profile, password, API keys)
@@ -65,30 +65,30 @@ apps/api/src/
 │   ├── billing/          # plan catalog + tenant billing snapshot + seat/AI asserts
 │   ├── tenant/           # tenants + members + invites: schema, repository, service,
 │   │                     # emails, middleware, routes/, tools/
-│   ├── usage/            # AI spend tracking (per user × tenant × month)
+│   ├── usage/            # AI spend ledger (per user × tenant × month); no HTTP routes
 │   ├── task/             # example resource (to-do list): schema, repository, dto, routes/, tools/
-│   └── images/           # example uploads via MediaStore
+│   └── images/           # example uploads: schema, repository, dto, routes/, tools/, media.ts
 └── db/                   # client, schema.ts (barrel for drizzle-kit), columns (audit), seed
 
 apps/web                  # React SPA (public pages + logged-in area)
-packages/shared           # Zod schemas and DTOs per domain (auth, tenant, billing, task, …)
+packages/shared           # Zod schemas and DTOs per domain (auth, account, tenant, billing, task, …)
 packages/ui               # app-neutral base UI (shadcn), imported per subpath
 ```
 
 Conventions:
 
 - **One route per file** in `domains/<domain>/routes/`, named `<action>.route.ts` (e.g. `create-task.route.ts`); `routes/index.ts` is the method + path + middlewares map (same role as `tools/index.ts`).
-- **One tool per file** in `domains/<domain>/tools/`, named `<action>.tool.ts` (e.g. `create-task.tool.ts`); the tool is self-describing (`summarize` marks a write and becomes a chip in the chat UI). Register the domain's array in `agent/registry.ts`.
-- **Tools are transport-neutral**: they return JSON-serializable data and throw `Error` for expected failures. `agent/mcp-server.ts` translates to MCP; `agent/assistant.ts` translates to the OpenAI loop. Domains never import MCP/OpenAI (lint blocks it).
+- **One tool per file** in `domains/<domain>/tools/`, named `<action>.tool.ts` (e.g. `create-task.tool.ts`); the tool is self-describing (`summarize` marks a write and becomes a chip in the chat UI). Register the domain's array in `agent/registry.ts`. Agent-owned OpenAI tools live in `agent/tools/`.
+- **Tools are transport-neutral**: they return JSON-serializable data and throw `Error` for expected failures. `agent/mcp-server.ts` translates to MCP; `agent/assistant.ts` translates to the OpenAI loop. Domains never import the MCP/OpenAI SDK packages (lint blocks it); agent-owned tools may use `@/integrations/openai`.
 - **Name suffix = file role.** Single-role domain files keep the role name (`repository.ts`, `service.ts`, `schema.ts`); folders own their index (`routes/index.ts`, `tools/index.ts`); action files carry the `.route.ts` / `.tool.ts` suffix.
-- **The repository owns the SQL** — routes and services don't write queries. Every resource query filters by `tenantId`.
+- **The repository owns the SQL** — routes and services don't write queries. Every tenant-scoped resource query filters by `tenantId`.
 - **Service only when there's real business logic** (sessions, tokens, invites, seat/AI gates…). Plain CRUD calls the repository straight from the route/tool — that's why `task` has no `service.ts` while `auth`/`tenant`/`billing` do. Once an operation gains a rule, create the service and route the HTTP handler and tool through it.
 - **Tenant isolation is safe by default** — each tenant-scoped domain's `routes/index.ts` applies `requireAuth`/`requireTenant` once (via `.use`), so every new route is isolated from the start.
 - **New table?** Export the domain schema in `db/schema.ts` (the barrel drizzle-kit reads) and run `db:generate`.
-- **Env is validated at boot** (`lib/env.ts`, Zod): a missing required variable kills the process with a clear message instead of breaking on a query. Add new vars to that schema, `.env.example`, and `render.yaml`.
+- **Env is validated at boot** (`lib/env.ts`, Zod): a missing required variable kills the process with a clear message instead of breaking on a query. Add new vars to that schema, `.env.example`, and `render.yaml` when production needs them.
 - **Imports use the `@/` alias** (→ `apps/api/src/`): anything crossing a boundary uses the alias — `@/lib/*`, `@/integrations/*`, `@/db/*`, `@/domains/<other>/*`. Only imports within the same domain stay relative (`./repository`, `../service`). This way moving files doesn't break imports and `../../../` disappears.
-- **Boundaries are enforced by lint** (`.oxlintrc.json`, `no-restricted-imports`): `lib/` can't depend on anything in the app; `integrations/` only on `lib/`; domains only know the agent contract (`@/agent/tool`) and never MCP/OpenAI directly. Cross the line and `npm run lint` flags it.
-- **The agent is its own surface** (`agent/`), not a domain: it _consumes_ the domains via `registry.ts` (which joins each domain's `tools/`). It has two layers: the _policy_ (`agent/assistant.ts` — who the agent is and how it acts) and the _mechanics_ (`integrations/openai.ts` — OpenAI client + the tool-calling loop). The same registry is exposed three ways from one place: the in-app chat (OpenAI loop), stdio (`agent/mcp.ts`, local Cursor) and HTTP (`agent/mcp-http.ts`, remote clients authenticated by an API key).
+- **Boundaries are enforced by lint** (`.oxlintrc.json`, `no-restricted-imports`): `lib/` can't depend on anything in the app; `integrations/` only on `lib/`; domains only know the agent contract (`@/agent/tool`) and never the MCP/OpenAI SDK packages directly. Cross the line and `npm run lint` flags it.
+- **The agent is its own surface** (`agent/`), not a domain: it _consumes_ the domains via `registry.ts` (which joins each domain's `tools/` plus `agent/tools/`). It has two layers: the _policy_ (`agent/assistant.ts` — who the agent is and how it acts) and the _mechanics_ (`integrations/openai.ts` — OpenAI client + the tool-calling loop). The same registry is exposed three ways from one place: the in-app chat (OpenAI loop), stdio (`agent/mcp.ts`, local Cursor) and HTTP (`agent/mcp-http.ts`, remote clients authenticated by an API key).
 
 Useful entry points:
 
@@ -104,24 +104,33 @@ Useful entry points:
 1. Clone/copy this repo and rename it (`package.json`, `index.html`, "App Base" text, `render.yaml`)
 2. Replace the `tasks` resource with your domain: copy `apps/api/src/domains/task/` (schema → repository → routes → tools), export the schema in `db/schema.ts`, run `db:generate`, add the schemas to `packages/shared` and the page in web
 3. Adjust the plan catalog in `apps/api/src/domains/billing/plans.ts` and shared `packages/shared/src/billing.ts` if your pricing differs
-4. Adjust the landing (`apps/web/src/domains/marketing/pages/LandingPage.tsx` + `landing.*.json`)
-5. Set `RESEND_API_KEY` and `MAIL_FROM` for real emails
+4. Adjust the landing (`apps/web/src/domains/marketing/pages/LandingPage.tsx` + `apps/web/src/i18n/locales/landing.*.json`)
+5. Set `RESEND_API_KEY` and `MAIL_FROM` for real emails; configure Cloudflare R2 (`CLOUDFLARE_*` / `R2_PUBLIC_BASE_URL`) if you need durable image storage on Render (otherwise media stays on the ephemeral local disk)
 6. Deploy: push the repo to GitHub and create a Blueprint on Render pointing to `render.yaml`
 
 ## Environment variables
 
 Copy `.env.example` to `.env` at the root (in production Render injects everything):
 
-| Var                     | Description                                                                    |
-| ----------------------- | ------------------------------------------------------------------------------ |
-| `DATABASE_URL`          | Postgres (default points to the local Docker)                                  |
-| `APP_URL`               | Public URL used in email links (falls back to `RENDER_EXTERNAL_URL` on Render) |
-| `RESEND_API_KEY`        | Optional — without it, emails are logged to the console                        |
-| `MAIL_FROM`             | Sender, e.g. `My App <no-reply@myapp.com>`                                     |
-| `OPENAI_API_KEY`        | Optional — without it the agent is disabled                                    |
-| `ASSISTANT_MODEL`       | Agent model (default `gpt-4o-mini`)                                            |
-| `SELF_SIGNUP_ENABLED`   | `false` to turn off public sign-up                                             |
-| `PLATFORM_ADMIN_EMAILS` | Comma-separated emails always treated as platform admins once verified         |
+| Var                            | Description                                                                    |
+| ------------------------------ | ------------------------------------------------------------------------------ |
+| `PORT`                         | API listen port (default `5000`; Render injects `PORT`)                        |
+| `DATABASE_URL`                 | Postgres (default points to the local Docker)                                  |
+| `APP_URL`                      | Public URL used in email links (falls back to `RENDER_EXTERNAL_URL` on Render) |
+| `RESEND_API_KEY`               | Optional — without it, emails are logged to the console                        |
+| `MAIL_FROM`                    | Sender, e.g. `My App <no-reply@myapp.com>`                                     |
+| `OPENAI_API_KEY`               | Optional — without it the agent is disabled                                    |
+| `ASSISTANT_MODEL`              | Agent chat model (default `gpt-4o-mini`)                                       |
+| `TRANSCRIBE_MODEL`             | Voice transcription model (default `gpt-4o-mini-transcribe`)                   |
+| `IMAGE_MODEL`                  | Image generation model (default `gpt-image-1-mini`)                            |
+| `SELF_SIGNUP_ENABLED`          | `false` to turn off public sign-up                                             |
+| `PLATFORM_ADMIN_EMAILS`        | Comma-separated emails always treated as platform admins once verified         |
+| `CLOUDFLARE_S3_API`            | Optional R2 S3 API endpoint — without R2, images write to local disk           |
+| `CLOUDFLARE_ACCESS_KEY_ID`     | Optional R2 access key                                                         |
+| `CLOUDFLARE_SECRET_ACCESS_KEY` | Optional R2 secret                                                             |
+| `CLOUDFLARE_MEDIA_BUCKET`      | R2 bucket name (default `app`)                                                 |
+| `R2_PUBLIC_BASE_URL`           | Public base URL for R2 objects                                                 |
+| `MEDIA_DIR`                    | Optional local filesystem root for media when R2 is unset                      |
 
 AI spend limits come from the tenant's plan in the billing catalog — there is no separate `AI_MONTHLY_BUDGET_USD` env var.
 
@@ -144,12 +153,15 @@ The client gets the same tools as the in-app agent, acting on that key's tenant.
 
 ## Scripts
 
-| Command                                 | Does                           |
-| --------------------------------------- | ------------------------------ |
-| `npm run dev`                           | API + web in watch             |
-| `npm run build`                         | Production build (web)         |
-| `npm start`                             | API in production (serves SPA) |
-| `npm run db:generate`                   | Generate migration from schema |
-| `npm run db:migrate`                    | Apply migrations               |
-| `npm run db:seed`                       | Demo user                      |
-| `npm run lint` / `format` / `typecheck` | Quality                        |
+| Command                                 | Does                                 |
+| --------------------------------------- | ------------------------------------ |
+| `npm run setup`                         | Postgres up + migrate + seed         |
+| `npm run dev`                           | API + web in watch                   |
+| `npm run build`                         | Production build (web)               |
+| `npm start`                             | API in production (serves SPA)       |
+| `npm run mcp`                           | Local MCP stdio server               |
+| `npm run db:up` / `db:down`             | Start / stop local Postgres (Docker) |
+| `npm run db:generate`                   | Generate migration from schema       |
+| `npm run db:migrate`                    | Apply migrations                     |
+| `npm run db:seed`                       | Demo user + tenant + sample tasks    |
+| `npm run lint` / `format` / `typecheck` | Quality                              |

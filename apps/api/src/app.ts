@@ -19,7 +19,6 @@ import { imageRoutes } from "@/domains/images/routes";
 import { MEDIA_DIR, mediaPublicUrl, mediaStore, usingR2 } from "@/domains/images/media";
 import { taskRoutes } from "@/domains/task/routes";
 import { inviteRoutes, tenantRoutes } from "@/domains/tenant/routes";
-import { usageRoutes } from "@/domains/usage/routes";
 
 export const app = new Hono();
 
@@ -39,7 +38,6 @@ app.all("/api/mcp", mcpHttp);
 app.route("/api/auth", authRoutes);
 app.route("/api/account", accountRoutes);
 app.route("/api/admin", adminRoutes);
-app.route("/api/usage", usageRoutes);
 app.route("/api/tenants", tenantRoutes);
 app.route("/api/tenants/:tenantId/billing", billingRoutes);
 app.route("/api/tenants/:tenantId/tasks", taskRoutes);
