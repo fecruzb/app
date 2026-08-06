@@ -764,14 +764,14 @@ function MockCarousel({ chapter }: { chapter: Chapter }) {
       <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
         <WindowBar label={screens[index].label} />
         {/* Bodies share one grid cell: the tallest sets a fixed height, they crossfade in place. */}
-        <div className="grid">
+        <div className="grid w-full grid-cols-1">
           {screens.map((screen, i) => {
             const Body = screen.Body;
             return (
               <div
                 key={i}
                 aria-hidden={i !== index}
-                className={`col-start-1 row-start-1 transition-opacity duration-500 ${
+                className={`col-start-1 row-start-1 min-w-0 transition-opacity duration-500 ${
                   i === index ? "opacity-100" : "pointer-events-none opacity-0"
                 }`}
               >

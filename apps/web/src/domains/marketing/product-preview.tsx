@@ -112,12 +112,12 @@ function AuthBody({
   footer: string;
 }) {
   return (
-    <div className="flex flex-col items-center gap-5 bg-muted/40 p-8">
+    <div className="flex flex-col items-center gap-5 bg-muted/40 p-4 sm:p-8">
       <div className="flex items-center gap-2 font-semibold">
         <BoxIcon className="size-5" />
         App Base
       </div>
-      <div className="w-full max-w-xs rounded-xl border bg-card p-6 text-left shadow-sm">
+      <div className="w-full max-w-xs rounded-xl border bg-card p-5 text-left shadow-sm sm:p-6">
         <p className="text-lg font-semibold">{title}</p>
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
         <div className="mt-5 space-y-3">{children}</div>
@@ -254,8 +254,8 @@ function EmailBody({
           now
         </span>
       </div>
-      <div className="bg-muted/40 p-6">
-        <div className="mx-auto max-w-sm rounded-xl border bg-card p-6 text-center shadow-sm">
+      <div className="bg-muted/40 p-4 sm:p-6">
+        <div className="mx-auto max-w-sm rounded-xl border bg-card p-5 text-center shadow-sm sm:p-6">
           <div className="mb-4 flex items-center justify-center gap-2 font-semibold">
             <BoxIcon className="size-5" />
             App Base
