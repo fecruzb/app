@@ -1,13 +1,16 @@
-import { useEffect, useState, type ComponentType } from "react";
+import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRightIcon,
   BoxIcon,
   CheckIcon,
+  DatabaseIcon,
   EraserIcon,
   MoonIcon,
   PaletteIcon,
   PenLineIcon,
+  RocketIcon,
+  SlidersIcon,
   SunIcon,
   TerminalIcon,
   UnlockIcon,
@@ -23,11 +26,17 @@ import { CodeBlock } from "../code-block";
 import {
   AccountMock,
   AgentChatMock,
+  AuthTables,
+  EnvMock,
   flows,
   LoginMock,
   McpKeysMock,
+  RenderMock,
   ShellMock,
+  TaskTable,
   TasksMock,
+  TenantTables,
+  TerminalMock,
   WindowBar,
   type Screen,
 } from "../product-preview";
@@ -340,6 +349,16 @@ type Chapter = {
   flow?: Screen[];
 };
 
+type Foundation = {
+  icon: ComponentType<{ className?: string }>;
+  eyebrow: string;
+  title: string;
+  body: string;
+  points: string[];
+  /** The evidence for this pillar: a schema map, a terminal, a Render panel. */
+  visual: ReactNode;
+};
+
 // The product tour as a flow: land, sign up, recover, then step into the
 // workspace and each thing it ships with. Emails hang off the flow that sends
 // them rather than standing alone.
@@ -399,6 +418,119 @@ const chapters: Chapter[] = [
     mock: McpKeysMock,
   },
 ];
+
+const schemaFile = `// domains/task/schema.ts — the shape every table follows
+export const tasks = pgTable(
+  "tasks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => tenants.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    completed: boolean("completed").notNull().default(false),
+    ...timestamps, // created_at / updated_at helper
+  },
+  (t) => [index("tasks_tenant_idx").on(t.tenantId)],
+);
+
+// npm run db:generate → SQL migration derived from this file`;
+
+// The database, explained one domain at a time: each group gets its own copy
+// and just its tables, so the models read as a story instead of a wall of cards.
+type DbGroup = {
+  eyebrow: string;
+  title: string;
+  body: string;
+  points: string[];
+  visual: ReactNode;
+};
+
+const dbGroups: DbGroup[] = [
+  {
+    eyebrow: "Identity",
+    title: "Users, sessions and tokens",
+    body: "The auth domain owns everything about a person: their credentials, the sessions that keep them signed in, and the single-use tokens emailed for verification and password resets. Passwords are scrypt hashes; sessions and tokens store only a hash, never the raw value.",
+    points: [
+      "users holds the account; a unique email is the login",
+      "sessions and action_tokens reference user_id and cascade on delete",
+      "api_keys are personal and scoped to one tenant for MCP access",
+    ],
+    visual: <AuthTables />,
+  },
+  {
+    eyebrow: "Tenancy",
+    title: "Workspaces and who belongs to them",
+    body: "Every account works inside a tenant. tenant_members is the join table between users and tenants with a role, and tenant_invites carries pending invitations by email. This is the backbone that makes the whole app multi-tenant.",
+    points: [
+      "tenant_members has a composite key of (tenant_id, user_id)",
+      "role is an enum — owner, admin, member — enforced at the type level",
+      "Invites expire and carry the role the person will get on accept",
+    ],
+    visual: <TenantTables />,
+  },
+  {
+    eyebrow: "Your resources",
+    title: "The example table you'll copy",
+    body: "tasks is the one placeholder resource, and it shows the exact shape every table you add will follow: a uuid primary key, a tenant_id foreign key that scopes it to a workspace, the timestamps helper, and an index on the tenant. Copy it, rename it, delete it — your domains slot in the same way.",
+    points: [
+      "tenant_id ties every row to a workspace and cascades on delete",
+      "author_id references the user but is nullable — set null on delete",
+      "Shared timestamps + a tenant index come from reusable helpers",
+    ],
+    visual: (
+      <div className="space-y-4">
+        <TaskTable />
+        <CodeBlock filename="domains/task/schema.ts" code={schemaFile} lang="ts" />
+      </div>
+    ),
+  },
+];
+
+// The foundations that follow the data model: configuration, then running it.
+const foundations: Foundation[] = [
+  {
+    icon: SlidersIcon,
+    eyebrow: "Configuration",
+    title: "One .env, validated at boot",
+    body: "Everything the app reads comes from a single .env, checked by Zod when the process starts — a missing or malformed var fails fast with a clear message. Only two things matter to run locally, and they already have working defaults; the rest are optional and degrade gracefully.",
+    points: [
+      "DATABASE_URL and APP_URL are all you need — both default for local dev",
+      "No RESEND_API_KEY? Emails print to the console instead of sending",
+      "No OPENAI_API_KEY? The AI agent is simply hidden — nothing breaks",
+      "SELF_SIGNUP_ENABLED flips the app between open signup and invite-only",
+    ],
+    visual: <EnvMock />,
+  },
+  {
+    icon: TerminalIcon,
+    eyebrow: "Run it locally",
+    title: "One command, the whole stack up",
+    body: "No local Postgres to install: npm run setup uses Docker to boot Postgres 16, applies the migrations and seeds a demo workspace. npm run dev then starts the API and the SPA together — you're clicking a real app in under a minute.",
+    points: [
+      "Docker Compose runs Postgres on :5442 — nothing to install by hand",
+      "setup migrates and seeds a demo tenant and user for you",
+      "npm run dev boots the API (:5000) and the SPA (:3000) at once",
+      "The .env ships with working local defaults, validated at boot",
+    ],
+    visual: <TerminalMock />,
+  },
+];
+
+// Deploy lives at the end of the story, next to the clone-to-production walkthrough.
+const renderPillar: Foundation = {
+  icon: RocketIcon,
+  eyebrow: "Ship to production",
+  title: "Deploys to Render from one YAML",
+  body: "Production is described once in render.yaml: a single web service that runs the API and serves the built SPA, plus a managed Postgres. Push to main and Render builds, runs migrations on pre-deploy, and health-checks before going live — no deploy scripts to write.",
+  points: [
+    "One web service (API + SPA, one origin) and one managed Postgres",
+    "Migrations run automatically on pre-deploy, before traffic shifts",
+    "Auto-deploy on push to main, gated by a /api/health check",
+    "Secrets stay out of the repo with sync: false",
+  ],
+  visual: <RenderMock />,
+};
 
 // The closing argument: this is owned code, not a dependency.
 const ownership: Included[] = [
@@ -544,6 +676,27 @@ export function LandingPage() {
           </div>
         </section>
 
+        <section className="border-t bg-muted/40 px-4 pt-20 pb-4">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-medium text-primary">What's under the hood</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+              The foundations, already wired
+            </h2>
+            <p className="mx-auto mt-3 text-pretty text-muted-foreground">
+              Before any of your product exists, these pieces are in place and connected: where the
+              data lives, how it's configured, and how the whole stack runs on your machine.
+            </p>
+          </div>
+        </section>
+
+        <div className="bg-muted/40">
+          <DatabaseFoundation />
+          {foundations.map((pillar, i) => (
+            <FoundationSection key={pillar.title} pillar={pillar} flip={i % 2 === 1} />
+          ))}
+          <ThemingSection />
+        </div>
+
         <section className="border-t px-4 pt-20 pb-4">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-medium text-primary">The product tour</p>
@@ -551,21 +704,14 @@ export function LandingPage() {
               An app that's already assembled
             </h2>
             <p className="mx-auto mt-3 text-pretty text-muted-foreground">
-              Not a pile of endpoints — a running app with a database, a themeable UI and the
-              screens a real product needs. Here's the tour, in the order you'd meet them: sign in,
-              get set up, then step into the workspace and everything it ships with.
+              Those foundations, rendered as real screens. Here's the tour, in the order you'd meet
+              them: sign in, get set up, then step into the workspace and everything it ships with.
             </p>
           </div>
         </section>
 
-        {chapters.slice(0, 4).map((chapter, i) => (
+        {chapters.map((chapter, i) => (
           <ChapterSection key={chapter.title} chapter={chapter} flip={i % 2 === 1} />
-        ))}
-
-        <ThemingSection />
-
-        {chapters.slice(4).map((chapter, i) => (
-          <ChapterSection key={chapter.title} chapter={chapter} flip={i % 2 === 0} />
         ))}
 
         <section id="build" className="scroll-mt-16 border-t px-4 pt-20 pb-8">
@@ -586,6 +732,8 @@ export function LandingPage() {
             startAt={journey.slice(0, phaseIndex).reduce((n, p) => n + p.steps.length, 0)}
           />
         ))}
+
+        <FoundationSection pillar={renderPillar} flip={false} />
 
         <section className="border-t px-4 py-24">
           <div className="mx-auto max-w-3xl text-center">
@@ -712,6 +860,101 @@ function ThemingSection() {
 
         <div className="reveal reveal-delay min-w-0">
           <CodeBlock filename="src/theme/themes.ts" code={themeFile} lang="ts" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * One foundation pillar: copy + bullets on one side, a faithful visual on the
+ * other, alternating sides down the page. No sticky columns — both sides are
+ * equal-weight and top-aligned so the rhythm reads as a single narrative.
+ */
+function FoundationSection({ pillar, flip }: { pillar: Foundation; flip: boolean }) {
+  const Icon = pillar.icon;
+  return (
+    <section className="border-t px-4 py-16 sm:py-20">
+      <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
+        <div className={`reveal min-w-0 ${flip ? "lg:order-2" : ""}`}>
+          <p className="flex items-center gap-2 text-sm font-medium text-primary">
+            <Icon className="size-4" /> {pillar.eyebrow}
+          </p>
+          <h3 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+            {pillar.title}
+          </h3>
+          <p className="mt-4 text-pretty text-muted-foreground">{pillar.body}</p>
+          <ul className="mt-6 space-y-3 text-sm">
+            {pillar.points.map((point) => (
+              <li key={point} className="flex gap-2.5">
+                <CheckIcon className="mt-0.5 size-4 shrink-0 text-primary" />
+                <span className="text-muted-foreground">{point}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className={`reveal reveal-delay min-w-0 ${flip ? "lg:order-1" : ""}`}>
+          {pillar.visual}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * The database pillar, told one domain at a time: an intro, then a subsection
+ * per group (identity, tenancy, your resources) that explains its tables while
+ * showing only those tables. Alternating sides keep it from feeling like a wall.
+ */
+function DatabaseFoundation() {
+  return (
+    <>
+      <section className="border-t px-4 pt-16 pb-4 sm:pt-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="flex items-center justify-center gap-2 text-sm font-medium text-primary">
+            <DatabaseIcon className="size-4" /> The database
+          </p>
+          <h3 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+            Postgres, modeled in plain TypeScript
+          </h3>
+          <p className="mx-auto mt-3 text-pretty text-muted-foreground">
+            Persistence is Postgres with Drizzle as the ORM — no separate schema language, no ORM
+            console. A table is a <code className="font-mono text-xs">pgTable</code> in the domain
+            that owns it. Here are the models the boilerplate already ships, one group at a time.
+          </p>
+        </div>
+      </section>
+
+      {dbGroups.map((group, i) => (
+        <DbGroupSection key={group.title} group={group} flip={i % 2 === 1} />
+      ))}
+    </>
+  );
+}
+
+function DbGroupSection({ group, flip }: { group: DbGroup; flip: boolean }) {
+  return (
+    <section className="px-4 py-8 sm:py-10">
+      <div className="mx-auto grid max-w-5xl items-center gap-8 lg:grid-cols-2 lg:gap-14">
+        <div className={`reveal min-w-0 ${flip ? "lg:order-2" : ""}`}>
+          <p className="text-sm font-medium text-primary">{group.eyebrow}</p>
+          <h4 className="mt-1.5 text-xl font-semibold tracking-tight text-balance sm:text-2xl">
+            {group.title}
+          </h4>
+          <p className="mt-3 text-pretty text-muted-foreground">{group.body}</p>
+          <ul className="mt-5 space-y-2.5 text-sm">
+            {group.points.map((point) => (
+              <li key={point} className="flex gap-2.5">
+                <CheckIcon className="mt-0.5 size-4 shrink-0 text-primary" />
+                <span className="text-muted-foreground">{point}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className={`reveal reveal-delay min-w-0 ${flip ? "lg:order-1" : ""}`}>
+          {group.visual}
         </div>
       </div>
     </section>

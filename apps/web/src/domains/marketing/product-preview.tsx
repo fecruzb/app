@@ -4,13 +4,17 @@ import {
   CheckIcon,
   CheckSquareIcon,
   ChevronsUpDownIcon,
+  DatabaseIcon,
+  GitBranchIcon,
   HomeIcon,
   KeyRoundIcon,
   MailIcon,
   PlusIcon,
   SendIcon,
+  ServerIcon,
   SettingsIcon,
   SparklesIcon,
+  TableIcon,
   Trash2Icon,
   UserIcon,
 } from "lucide-react";
@@ -583,6 +587,273 @@ export function AccountMock() {
             <KeyRoundIcon className="size-3.5" /> Password
           </div>
           <Field label="New password" value="••••••••" mono />
+        </div>
+      </div>
+    </Window>
+  );
+}
+
+/** A single column row inside a schema-map table card. */
+export type Column = { name: string; type: string; badge?: "PK" | "FK" | "UQ" };
+
+export function TableCard({
+  name,
+  columns,
+  accent,
+}: {
+  name: string;
+  columns: Column[];
+  accent?: boolean;
+}) {
+  return (
+    <div className="overflow-hidden rounded-lg border bg-card">
+      <div
+        className={`flex items-center gap-1.5 border-b px-3 py-1.5 font-mono text-[11px] font-semibold ${
+          accent ? "bg-primary/10 text-primary" : "bg-muted/50"
+        }`}
+      >
+        <TableIcon className="size-3" />
+        {name}
+      </div>
+      <div className="divide-y">
+        {columns.map((col) => (
+          <div key={col.name} className="flex items-center gap-2 px-3 py-1 font-mono text-[10px]">
+            <span className={col.badge === "PK" ? "font-medium" : "text-muted-foreground"}>
+              {col.name}
+            </span>
+            <span className="ml-auto text-muted-foreground/60">{col.type}</span>
+            {col.badge && (
+              <span
+                className={`rounded px-1 text-[9px] font-semibold ${
+                  col.badge === "FK"
+                    ? "bg-primary/15 text-primary"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {col.badge}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Frame wrapper for a single domain's tables, labelled with its schema file. */
+function SchemaWindow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <Window label={label}>
+      <div className="grid gap-2 bg-muted/30 p-4 sm:grid-cols-2">{children}</div>
+    </Window>
+  );
+}
+
+/** Auth domain: identity, sessions, single-use tokens and personal API keys. */
+export function AuthTables() {
+  return (
+    <SchemaWindow label="domains/auth/schema.ts">
+      <TableCard
+        name="users"
+        columns={[
+          { name: "id", type: "uuid", badge: "PK" },
+          { name: "name", type: "text" },
+          { name: "email", type: "text", badge: "UQ" },
+          { name: "password_hash", type: "text" },
+          { name: "email_verified_at", type: "timestamptz" },
+        ]}
+      />
+      <TableCard
+        name="sessions"
+        columns={[
+          { name: "id", type: "uuid", badge: "PK" },
+          { name: "user_id", type: "uuid", badge: "FK" },
+          { name: "token_hash", type: "text", badge: "UQ" },
+          { name: "expires_at", type: "timestamptz" },
+        ]}
+      />
+      <TableCard
+        name="action_tokens"
+        columns={[
+          { name: "id", type: "uuid", badge: "PK" },
+          { name: "user_id", type: "uuid", badge: "FK" },
+          { name: "purpose", type: "enum" },
+          { name: "token_hash", type: "text", badge: "UQ" },
+        ]}
+      />
+      <TableCard
+        name="api_keys"
+        columns={[
+          { name: "id", type: "uuid", badge: "PK" },
+          { name: "user_id", type: "uuid", badge: "FK" },
+          { name: "tenant_id", type: "uuid", badge: "FK" },
+          { name: "prefix", type: "text" },
+        ]}
+      />
+    </SchemaWindow>
+  );
+}
+
+/** Tenant domain: the workspaces, their membership join table and invites. */
+export function TenantTables() {
+  return (
+    <SchemaWindow label="domains/tenant/schema.ts">
+      <TableCard
+        name="tenants"
+        columns={[
+          { name: "id", type: "uuid", badge: "PK" },
+          { name: "name", type: "text" },
+          { name: "slug", type: "text", badge: "UQ" },
+        ]}
+      />
+      <TableCard
+        name="tenant_members"
+        columns={[
+          { name: "tenant_id", type: "uuid", badge: "FK" },
+          { name: "user_id", type: "uuid", badge: "FK" },
+          { name: "role", type: "enum" },
+        ]}
+      />
+      <TableCard
+        name="tenant_invites"
+        columns={[
+          { name: "id", type: "uuid", badge: "PK" },
+          { name: "tenant_id", type: "uuid", badge: "FK" },
+          { name: "email", type: "text" },
+          { name: "role", type: "enum" },
+        ]}
+      />
+    </SchemaWindow>
+  );
+}
+
+/** The example resource — the exact shape you copy for your own domains. */
+export function TaskTable() {
+  return (
+    <Window label="domains/task/schema.ts">
+      <div className="bg-muted/30 p-4">
+        <TableCard
+          name="tasks"
+          accent
+          columns={[
+            { name: "id", type: "uuid", badge: "PK" },
+            { name: "tenant_id", type: "uuid", badge: "FK" },
+            { name: "author_id", type: "uuid", badge: "FK" },
+            { name: "title", type: "text" },
+            { name: "completed", type: "bool" },
+            { name: "created_at", type: "timestamptz" },
+          ]}
+        />
+      </div>
+    </Window>
+  );
+}
+
+/** A .env file: the variables the app reads, with which are required vs optional. */
+export function EnvMock() {
+  const rows: { key: string; value: string; note?: string; optional?: boolean }[] = [
+    { key: "DATABASE_URL", value: "postgres://app:app@localhost:5442/app_base" },
+    { key: "APP_URL", value: "http://localhost:3000" },
+    {
+      key: "RESEND_API_KEY",
+      value: "re_…",
+      note: "no key → emails log to console",
+      optional: true,
+    },
+    { key: "MAIL_FROM", value: "App Base <onboarding@resend.dev>", optional: true },
+    { key: "OPENAI_API_KEY", value: "sk-…", note: "no key → agent hidden", optional: true },
+    { key: "SELF_SIGNUP_ENABLED", value: "true", optional: true },
+  ];
+  return (
+    <Window label=".env">
+      <div className="space-y-2 bg-card p-4 font-mono text-[11px] leading-relaxed">
+        {rows.map((row) => (
+          <div key={row.key}>
+            <div className="flex flex-wrap items-baseline gap-x-1">
+              <span className="text-primary">{row.key}</span>
+              <span className="text-muted-foreground/50">=</span>
+              <span className="break-all text-muted-foreground">{row.value}</span>
+              <span
+                className={`ml-1 rounded px-1 text-[9px] ${
+                  row.optional ? "bg-muted text-muted-foreground" : "bg-primary/15 text-primary"
+                }`}
+              >
+                {row.optional ? "optional" : "required"}
+              </span>
+            </div>
+            {row.note && <p className="pl-0 text-[10px] text-muted-foreground/70"># {row.note}</p>}
+          </div>
+        ))}
+      </div>
+    </Window>
+  );
+}
+
+/** A terminal window running the two commands that boot the whole stack locally. */
+export function TerminalMock() {
+  const lines: { prompt?: boolean; text: string; muted?: boolean }[] = [
+    { prompt: true, text: "npm run setup" },
+    { text: "✔ docker compose up — postgres:16 on :5442", muted: true },
+    { text: "✔ migrations applied — 7 tables", muted: true },
+    { text: "✔ seed — demo workspace + user", muted: true },
+    { prompt: true, text: "npm run dev" },
+    { text: "› api    http://localhost:5000", muted: true },
+    { text: "› web    http://localhost:3000", muted: true },
+  ];
+  return (
+    <Window label="bash — app-base">
+      <div className="space-y-1 bg-card p-4 font-mono text-xs leading-relaxed">
+        {lines.map((line, i) => (
+          <div key={i} className="flex gap-2">
+            {line.prompt ? (
+              <span className="shrink-0 text-primary">$</span>
+            ) : (
+              <span className="shrink-0 text-transparent">$</span>
+            )}
+            <span className={line.muted ? "text-muted-foreground" : ""}>{line.text}</span>
+          </div>
+        ))}
+      </div>
+    </Window>
+  );
+}
+
+/** A stylized Render dashboard: the two services the blueprint provisions. */
+export function RenderMock() {
+  return (
+    <Window label="dashboard.render.com">
+      <div className="space-y-3 bg-muted/30 p-4">
+        <div className="flex items-center justify-between rounded-lg border bg-card px-3 py-2.5">
+          <div className="flex items-center gap-2.5">
+            <ServerIcon className="size-4 text-primary" />
+            <div>
+              <p className="text-xs font-semibold">app</p>
+              <p className="text-[10px] text-muted-foreground">Web service · Node · API + SPA</p>
+            </div>
+          </div>
+          <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+            <span className="size-1.5 rounded-full bg-primary" /> Live
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between rounded-lg border bg-card px-3 py-2.5">
+          <div className="flex items-center gap-2.5">
+            <DatabaseIcon className="size-4 text-primary" />
+            <div>
+              <p className="text-xs font-semibold">app-db</p>
+              <p className="text-[10px] text-muted-foreground">PostgreSQL 16 · basic-256mb</p>
+            </div>
+          </div>
+          <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+            <span className="size-1.5 rounded-full bg-primary" /> Available
+          </span>
+        </div>
+
+        <div className="rounded-lg border border-dashed px-3 py-2.5 text-[10px] text-muted-foreground">
+          <p className="flex items-center gap-1.5 font-medium text-foreground">
+            <GitBranchIcon className="size-3" /> Auto-deploy on push to main
+          </p>
+          <p className="mt-1">Pre-deploy runs migrations · health check at /api/health</p>
         </div>
       </div>
     </Window>
