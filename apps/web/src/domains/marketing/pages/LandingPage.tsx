@@ -66,13 +66,8 @@ type Slice = {
   visual: ReactNode;
 };
 
-const repositoryFile = `/** domains/task/repository.ts — each method owns its full query */
+const repositoryFile = `// domains/task/repository.ts — each method owns its full query
 export const taskRepository = {
-  /**
-   * List tasks
-   *
-   * Newest first for the tenant.
-   */
   async list(tenantId: string): Promise<TaskWithAuthor[]> {
     return db
       .select({ task: tasks, authorName: users.name })
@@ -82,11 +77,6 @@ export const taskRepository = {
       .orderBy(desc(tasks.createdAt));
   },
 
-  /**
-   * Insert a task
-   *
-   * Returns the new row.
-   */
   async insert(values: {
     tenantId: string;
     authorId: string | null;
@@ -98,16 +88,7 @@ export const taskRepository = {
   },
 };`;
 
-const routeFile = `/**
- * Create a task
- *
- * \`POST /api/tenants/:tenantId/tasks\`
- *
- * Inserts a task for the current tenant, attributed to the authenticated user.
- *
- * @param c - Authenticated tenant request context
- * @returns 201 with the created task DTO
- */
+const routeFile = `// POST /api/tenants/:tenantId/tasks
 export async function createTask(c: AppContext) {
   // -- Input -----------------------------------------------------------------
   const data = await parseBody(c, taskInputSchema);
@@ -126,21 +107,13 @@ export async function createTask(c: AppContext) {
   return c.json(toTaskDto({ task, authorName: user.name }), 201);
 }
 
-// routes/index.ts — wires handlers; auth + tenant middleware once for the group
+// routes/index.ts — auth + tenant middleware once for the group
 export const taskRoutes = new Hono<AppEnv>()
   .use("*", requireAuth, requireTenant)
   .get("/", listTasks)
   .post("/", createTask);`;
 
-const toolFile = `/**
- * Create a task
- *
- * \`create_task\`
- *
- * Creates a task in the current tenant for the acting user.
- *
- * @returns \`{ id, title }\` of the created task
- */
+const toolFile = `// create_task — same repository the HTTP route uses
 export const createTaskTool = defineTool({
   name: "create_task",
   description: "Creates a task in the tenant.",
@@ -435,9 +408,7 @@ function buildResourceSlices(t: TFunction): Slice[] {
     {
       id: "web-convention",
       ...sliceCopy("webConvention", t),
-      visual: (
-        <CodeBlock filename="apps/web/src/domains/task/" code={webTreeFile} lang="text" />
-      ),
+      visual: <CodeBlock filename="apps/web/src/domains/task/" code={webTreeFile} lang="text" />,
     },
     {
       id: "api",
