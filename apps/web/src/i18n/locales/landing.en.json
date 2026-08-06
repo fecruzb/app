@@ -220,13 +220,23 @@
       ]
     },
     "tool": {
-      "eyebrow": "The agent",
+      "eyebrow": "The tool",
       "title": "One file teaches the assistant",
       "body": "The same resource becomes an agent tool with a single defineTool — a name, a Zod input and an execute that reuses the repository you already wrote. That one definition drives the in-app chat, local Cursor over stdio and the remote MCP server, with zero extra glue.",
       "points": [
         "Same definition drives the chat, stdio and the remote MCP server",
         "summarize marks a write — it shows up as a chip in the chat",
         "Tools never import MCP or OpenAI — the lint blocks it"
+      ]
+    },
+    "toolMap": {
+      "eyebrow": "The tool map",
+      "title": "Collect tools, register once",
+      "body": "tools/index.ts exports the domain's AgentTool[] — same role as routes/index.ts for HTTP. Drop that array into agent/registry.ts allTools and every surface (chat, stdio MCP, HTTP MCP) picks it up. Add a tool file, push it onto the array, done.",
+      "points": [
+        "One array per domain: export const taskTools: AgentTool[] = […]",
+        "Spread into allTools in agent/registry.ts",
+        "Mirrors routes/index.ts — folder owns its index"
       ]
     },
     "webConvention": {

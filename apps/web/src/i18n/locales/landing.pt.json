@@ -220,13 +220,23 @@
       ]
     },
     "tool": {
-      "eyebrow": "O agente",
+      "eyebrow": "A tool",
       "title": "Um arquivo ensina o assistente",
       "body": "O mesmo recurso vira uma tool do agente com um único defineTool — um nome, um input Zod e um execute que reusa o repository que você já escreveu. Essa definição única dirige o chat in-app, o Cursor local via stdio e o servidor MCP remoto, sem cola extra.",
       "points": [
         "A mesma definição dirige o chat, o stdio e o servidor MCP remoto",
         "summarize marca uma escrita — aparece como chip no chat",
         "Tools nunca importam MCP ou OpenAI — o lint bloqueia"
+      ]
+    },
+    "toolMap": {
+      "eyebrow": "O mapa de tools",
+      "title": "Colete as tools, registre uma vez",
+      "body": "tools/index.ts exporta o AgentTool[] do domínio — o mesmo papel de routes/index.ts no HTTP. Espalhe esse array em allTools em agent/registry.ts e toda superfície (chat, MCP stdio, MCP HTTP) passa a vê-lo. Adicione o arquivo da tool, empurre no array, pronto.",
+      "points": [
+        "Um array por domínio: export const taskTools: AgentTool[] = […]",
+        "Spread em allTools em agent/registry.ts",
+        "Espelha routes/index.ts — a pasta é dona do seu index"
       ]
     },
     "webConvention": {

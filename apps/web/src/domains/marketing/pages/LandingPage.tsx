@@ -114,7 +114,16 @@ async list(tenantId: string): Promise<TaskWithAuthor[]> {
     .orderBy(desc(tasks.createdAt));
 }`;
 
-const routeHandlerFile = `// POST /api/tenants/:tenantId/tasks
+const routeHandlerFile = `/**
+ * Create a task
+ *
+ * \`POST /api/tenants/:tenantId/tasks\`
+ *
+ * Inserts a task for the current tenant, attributed to the authenticated user.
+ *
+ * @param c - Authenticated tenant request context
+ * @returns 201 with the created task DTO
+ */
 export async function createTask(c: AppContext) {
   // -- Input -----------------------------------------------------------------
   const data = await parseBody(c, taskInputSchema);
@@ -139,7 +148,15 @@ export const taskRoutes = new Hono<AppEnv>()
   .get("/", listTasks)
   .post("/", createTask);`;
 
-const toolFile = `// create_task — same repository the HTTP route uses
+const toolFile = `/**
+ * Create a task
+ *
+ * \`create_task\`
+ *
+ * Creates a task in the current tenant for the acting user.
+ *
+ * @returns \`{ id, title }\` of the created task
+ */
 export const createTaskTool = defineTool({
   name: "create_task",
   description: "Creates a task in the tenant.",
@@ -164,6 +181,19 @@ export const createTaskTool = defineTool({
     return { id: task.id, title: task.title };
   },
 });`;
+
+const toolMapFile = `// tools/index.ts — collect the domain's tools for the agent registry
+export const taskTools: AgentTool[] = [
+  listTasksTool,
+  getTaskTool,
+  createTaskTool,
+  updateTaskTool,
+  setTaskCompletedTool,
+  deleteTaskTool,
+];
+
+// agent/registry.ts
+export const allTools = [...tenantTools, ...taskTools, ...imageTools, ...agentTools];`;
 
 const webApiFile = `// apps/web/src/domains/task/api.ts — the only network boundary
 import type { TaskDto } from "@app/shared";
@@ -347,6 +377,7 @@ type SliceLocaleKey =
   | "route"
   | "routeMap"
   | "tool"
+  | "toolMap"
   | "webConvention"
   | "api"
   | "webRoutes"
@@ -459,6 +490,13 @@ function buildResourceSlices(t: TFunction): Slice[] {
       ...sliceCopy("tool", t),
       visual: (
         <CodeBlock filename="domains/task/tools/create-task.tool.ts" code={toolFile} lang="ts" />
+      ),
+    },
+    {
+      id: "tool-map",
+      ...sliceCopy("toolMap", t),
+      visual: (
+        <CodeBlock filename="domains/task/tools/index.ts" code={toolMapFile} lang="ts" />
       ),
     },
     {
