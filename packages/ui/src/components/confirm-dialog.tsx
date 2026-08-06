@@ -46,7 +46,7 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
       {children}
       <Dialog open={options !== null} onOpenChange={(open) => !open && settle(false)}>
         {options && (
-          <DialogContent className="max-w-sm">
+          <DialogContent className="max-w-sm" closeLabel={options.cancelLabel}>
             <DialogHeader>
               <DialogTitle>{options.title}</DialogTitle>
               {options.description && <DialogDescription>{options.description}</DialogDescription>}

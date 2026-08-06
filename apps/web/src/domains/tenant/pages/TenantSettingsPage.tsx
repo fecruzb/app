@@ -31,7 +31,7 @@ function GeneralSection() {
   const [name, setName] = useState(tenant.name);
 
   const renameMutation = useMutation({
-    mutationFn: () => tenantApi.rename(tenant.id, name),
+    mutationFn: () => tenantApi.rename(tenant.id, { name }),
     onSuccess: async () => {
       await refresh();
       toast.success(t("settings.renamed"));
@@ -119,7 +119,7 @@ function MembersSection() {
 
   const roleMutation = useMutation({
     mutationFn: ({ userId, role }: { userId: string; role: TenantRole }) =>
-      tenantApi.setMemberRole(tenant.id, userId, role),
+      tenantApi.setMemberRole(tenant.id, userId, { role }),
     onSuccess: () => {
       void invalidate();
       toast.success(t("settings.roleUpdated"));

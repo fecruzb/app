@@ -1,15 +1,3 @@
-/**
- * Remote MCP over HTTP
- *
- * `ALL /api/mcp`
- *
- * Exposes the registry tools over Streamable HTTP, authenticated by a personal
- * API key (`Authorization: Bearer abk_…`). Point Cursor (or any MCP client) here
- * to act on that key's tenant. Stateless: a fresh server + transport per request.
- *
- * @param c - Request context (API-key auth, not session)
- * @returns MCP protocol response
- */
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import type { AppContext } from "@/context";
 import { resolveApiKey } from "@/domains/auth/service";
@@ -22,6 +10,18 @@ function bearerToken(c: AppContext): string | null {
   return header.slice(7).trim() || null;
 }
 
+/**
+ * Remote MCP over HTTP
+ *
+ * `ALL /api/mcp`
+ *
+ * Exposes the registry tools over Streamable HTTP, authenticated by a personal
+ * API key (`Authorization: Bearer abk_…`). Point Cursor (or any MCP client) here
+ * to act on that key's tenant. Stateless: a fresh server + transport per request.
+ *
+ * @param c - Request context (API-key auth, not session)
+ * @returns MCP protocol response
+ */
 export async function mcp(c: AppContext): Promise<Response> {
   // -- Input -----------------------------------------------------------------
   const key = bearerToken(c);

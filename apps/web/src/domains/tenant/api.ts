@@ -2,13 +2,14 @@ import type { z } from "zod";
 import {
   acceptInviteNewAccountSchema,
   createInviteSchema,
+  updateMemberSchema,
+  updateTenantSchema,
   type AgentMessage,
   type AgentResult,
   type AgentTranscriptDto,
   type InviteDto,
   type MemberDto,
   type PublicInviteDto,
-  type TenantRole,
 } from "@app/shared";
 import { api } from "@/lib/api";
 
@@ -27,9 +28,10 @@ function audioExtension(mimeType: string): string {
 
 export const tenantApi = {
   members: (tenantId: string) => api.get<MemberDto[]>(`/tenants/${tenantId}/members`),
-  rename: (tenantId: string, name: string) => api.patch(`/tenants/${tenantId}`, { name }),
-  setMemberRole: (tenantId: string, userId: string, role: TenantRole) =>
-    api.patch(`/tenants/${tenantId}/members/${userId}`, { role }),
+  rename: (tenantId: string, body: z.infer<typeof updateTenantSchema>) =>
+    api.patch(`/tenants/${tenantId}`, body),
+  setMemberRole: (tenantId: string, userId: string, body: z.infer<typeof updateMemberSchema>) =>
+    api.patch(`/tenants/${tenantId}/members/${userId}`, body),
   removeMember: (tenantId: string, userId: string) =>
     api.delete(`/tenants/${tenantId}/members/${userId}`),
   invites: (tenantId: string) => api.get<InviteDto[]>(`/tenants/${tenantId}/invites`),

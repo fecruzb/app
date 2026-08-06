@@ -16,9 +16,9 @@
   "stack": {
     "frontend": "Frontend",
     "backend": "Backend",
-    "database": "Database",
-    "ai": "AI",
-    "tooling": "Tooling"
+    "database": "Banco de dados",
+    "ai": "IA",
+    "tooling": "Ferramentas"
   },
   "foundationsIntro": {
     "eyebrow": "Por baixo do capô",

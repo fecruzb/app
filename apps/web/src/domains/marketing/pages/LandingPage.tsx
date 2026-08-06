@@ -72,7 +72,7 @@ type Slice = {
 
 const repositoryOutlineFile = `// domains/task/repository.ts — one object, fixed CRUD names
 export const taskRepository = {
-  async list(tenantId: string): Promise<TaskWithAuthor[]> { /* … */ },
+  async list(tenantId: string, search?: string): Promise<TaskWithAuthor[]> { /* … */ },
   async find(tenantId: string, id: string): Promise<TaskWithAuthor | null> { /* … */ },
   async insert(values: InsertTask): Promise<Task> { /* … */ },
   async update(tenantId: string, id: string, values: UpdateTask): Promise<Task | null> { /* … */ },
@@ -104,17 +104,21 @@ export type Task = typeof tasks.$inferSelect;`;
 const repositoryMethodFile = `/**
  * List tasks
  *
- * Newest first for the tenant. Query written inline — no shared helpers.
+ * Newest first; optional case-insensitive title search.
  *
  * @param tenantId - Tenant that owns the tasks
+ * @param search - Optional case-insensitive title filter
  * @returns Tasks with author names, newest first
  */
-async list(tenantId: string): Promise<TaskWithAuthor[]> {
+async list(tenantId: string, search?: string): Promise<TaskWithAuthor[]> {
+  const where = search
+    ? and(eq(tasks.tenantId, tenantId), ilike(tasks.title, \`%\${search}%\`))
+    : eq(tasks.tenantId, tenantId);
   return db
     .select({ task: tasks, authorName: users.name })
     .from(tasks)
     .leftJoin(users, eq(users.id, tasks.authorId))
-    .where(eq(tasks.tenantId, tenantId))
+    .where(where)
     .orderBy(desc(tasks.createdAt));
 }`;
 
@@ -150,7 +154,10 @@ const routeMapFile = `// routes/index.ts — auth + tenant middleware once for t
 export const taskRoutes = new Hono<AppEnv>()
   .use("*", requireAuth, requireTenant)
   .get("/", listTasks)
-  .post("/", createTask);`;
+  .post("/", createTask)
+  .get("/:taskId", getTask)
+  .patch("/:taskId", updateTask)
+  .delete("/:taskId", deleteTask);`;
 
 const toolFile = `/**
  * Create a task
@@ -165,7 +172,7 @@ export const createTaskTool = defineTool({
   name: "create_task",
   description: "Creates a task in the tenant.",
   inputSchema: {
-    title: z.string().trim().min(1).max(200),
+    title: taskInputSchema.shape.title,
     completed: z.boolean().default(false),
   },
   summarize: (args) => \`Task created: \${args.title}\`,
@@ -205,7 +212,10 @@ import { taskInputSchema, type TaskDto } from "@app/shared";
 import { api } from "@/lib/api"; // raw HTTP — never called from a page
 
 export const taskApi = {
-  list: (tenantId: string) => api.get<TaskDto[]>(\`/tenants/\${tenantId}/tasks\`),
+  list: (tenantId: string, search?: string) => {
+    const q = search?.trim() ? \`?search=\${encodeURIComponent(search.trim())}\` : "";
+    return api.get<TaskDto[]>(\`/tenants/\${tenantId}/tasks\${q}\`);
+  },
   create: (tenantId: string, body: z.infer<typeof taskInputSchema>) =>
     api.post<TaskDto>(\`/tenants/\${tenantId}/tasks\`, body),
   update: (tenantId: string, id: string, body: z.infer<typeof taskInputSchema>) =>
@@ -350,13 +360,16 @@ export interface MediaStore {
 }
 
 // domains/images/media.ts — the backend is picked once, at boot
-export const mediaStore: MediaStore = env.r2.endpoint
+export const usingR2 = isR2Configured();
+export const mediaStore: MediaStore = usingR2
   ? r2Store    // integrations/r2.ts — Cloudflare R2, public URL
   : localStore; // disk — dev only, Render's disk is ephemeral
 
 export async function writeMedia(key: string, data: Buffer) {
+  const target = withCompressedExt(key);
   const compressed = await compressImage(data); // sharp → WebP
-  await mediaStore.put(key, compressed);
+  await mediaStore.put(target, compressed);
+  return { path: \`/\${target}\`, sizeBytes: compressed.byteLength };
 }`;
 
 const themeFile = `// src/theme/themes.ts — add your brand in one block

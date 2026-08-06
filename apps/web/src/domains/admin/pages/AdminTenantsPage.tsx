@@ -74,7 +74,7 @@ function EditTenantDialog({
         if (!next) updateMutation.reset();
       }}
     >
-      <DialogContent>
+      <DialogContent closeLabel={t("common.close")}>
         <DialogHeader>
           <DialogTitle>{t("admin.tenants.editTitle")}</DialogTitle>
           <DialogDescription>{tenant.name}</DialogDescription>
