@@ -79,18 +79,6 @@ export const tenantRepository = {
   },
 
   /**
-   * Find the oldest tenant
-   *
-   * Used as the MCP stdio fallback when no tenant is specified.
-   *
-   * @returns The oldest tenant row, or null
-   */
-  async findOldestTenant(): Promise<Tenant | null> {
-    const [tenant] = await db.select().from(tenants).orderBy(asc(tenants.createdAt)).limit(1);
-    return tenant ?? null;
-  },
-
-  /**
    * Insert a tenant
    *
    * Returns the new row.
@@ -211,25 +199,6 @@ export const tenantRepository = {
       .innerJoin(users, eq(users.id, tenantMembers.userId))
       .where(and(eq(tenantMembers.tenantId, tenantId), eq(users.email, email)));
     return row?.member ?? null;
-  },
-
-  /**
-   * Find the first owner
-   *
-   * Oldest owner of the tenant; author of MCP stdio writes.
-   *
-   * @param tenantId - Tenant id
-   * @returns The owner user, or null
-   */
-  async findFirstOwner(tenantId: string): Promise<User | null> {
-    const [row] = await db
-      .select({ user: users })
-      .from(tenantMembers)
-      .innerJoin(users, eq(users.id, tenantMembers.userId))
-      .where(and(eq(tenantMembers.tenantId, tenantId), eq(tenantMembers.role, "owner")))
-      .orderBy(asc(tenantMembers.createdAt))
-      .limit(1);
-    return row?.user ?? null;
   },
 
   /**

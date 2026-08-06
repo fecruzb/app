@@ -1,8 +1,10 @@
 {
   "mcpServers": {
     "app-base": {
-      "command": "npm",
-      "args": ["run", "mcp", "--silent"]
+      "url": "https://your-app.onrender.com/api/mcp",
+      "headers": {
+        "Authorization": "Bearer abk_..."
+      }
     }
   }
 }

@@ -20,7 +20,7 @@ export type AgentContext = {
   tenantId: string;
   tenantName: string;
   tenantSlug: string;
-  /** Null when running via stdio without a user (e.g. Cursor in dev). */
+  /** Acting user (from session chat or API-key MCP). */
   userId: string | null;
   userName: string;
   role: TenantRole;

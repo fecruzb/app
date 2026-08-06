@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Shared contracts (`@app/shared` → `packages/shared`)
 
-One file per domain, re-exported from `src/index.ts`. Current modules: `auth`, `account`, `tenant`,
+One file per domain, re-exported from `src/index.ts`. Current modules: `app`, `auth`, `account`, `tenant`,
 `task`, `images`, `billing`, `admin`, `agent`. Both API and web import from `@app/shared` —
 this package is the single source of truth for request/response shapes. Change a shape here and
 whichever side you forgot stops compiling; that's the point.

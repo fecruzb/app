@@ -8,7 +8,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@app/ui/dropdown-menu";
-import { cn } from "@app/ui/lib/utils";
 import i18n, { LANG_KEY, LOCALES, type Locale } from "./index";
 
 /** Persists the choice and switches the active language. */
@@ -56,14 +55,5 @@ export function LocalePicker({
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-}
-
-/** Language control alone — pair with ThemeControls in headers/sidebars. */
-export function LocaleControls({ className }: { className?: string }) {
-  return (
-    <div className={cn("flex items-center", className)}>
-      <LocalePicker />
-    </div>
   );
 }

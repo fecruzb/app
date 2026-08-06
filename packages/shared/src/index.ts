@@ -9,7 +9,7 @@ export * from "./images";
 export * from "./admin";
 export * from "./billing";
 
-/** Standard API error shape. */
-export type ApiError = {
+/** Standard API error body shape returned as JSON. */
+export type ApiErrorBody = {
   error: string;
 };

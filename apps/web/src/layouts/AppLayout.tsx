@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import {
   BoxIcon,
@@ -28,7 +29,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@app/ui/dropdown-menu";
-import { ApiError } from "@/lib/api";
+import { showApiError } from "@/lib/api";
 import { cn } from "@app/ui/lib/utils";
 import { initials } from "@/lib/utils";
 import { useAppConfig } from "@/app/config";
@@ -128,31 +129,31 @@ function UserMenu() {
 function VerifyEmailBanner() {
   const { t } = useTranslation();
   const { me } = useAuth();
-  const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
 
-  if (!me || me.user.emailVerified) return null;
-
-  async function resend() {
-    setSending(true);
-    try {
-      await authApi.resendVerification();
+  const resendMutation = useMutation({
+    mutationFn: () => authApi.resendVerification(),
+    onSuccess: () => {
       setSent(true);
       toast.success(t("layout.verificationResent"));
-    } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : t("layout.resendFailed"));
-    } finally {
-      setSending(false);
-    }
-  }
+    },
+    onError: (err) => showApiError(err, t("layout.resendFailed")),
+  });
+
+  if (!me || me.user.emailVerified) return null;
 
   return (
     <div className="flex flex-wrap items-center gap-2 border-b bg-muted px-4 py-2 text-sm text-foreground">
       <MailWarningIcon className="size-4 shrink-0" />
       <span className="flex-1">{t("layout.verifyBanner")}</span>
       {!sent && (
-        <Button size="sm" variant="outline" onClick={() => void resend()} disabled={sending}>
-          {sending ? t("common.sending") : t("layout.resendEmail")}
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => resendMutation.mutate()}
+          disabled={resendMutation.isPending}
+        >
+          {resendMutation.isPending ? t("common.sending") : t("layout.resendEmail")}
         </Button>
       )}
     </div>

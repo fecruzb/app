@@ -17,9 +17,9 @@ services:
         fromDatabase:
           name: app-db
           property: connectionString
-      # Public URL used in email links (must match the custom domain).
+      # Public URL used in email links (set in the Render dashboard).
       - key: APP_URL
-        value: https://app.fecruzb.com
+        sync: false
       - key: RESEND_API_KEY
         sync: false
       - key: MAIL_FROM
@@ -37,17 +37,17 @@ services:
       # Comma-separated emails always treated as platform admins once verified
       - key: PLATFORM_ADMIN_EMAILS
         sync: false
-      # Image storage (R2, Cloudflare) — same account/credentials as the cookbook.
+      # Image storage (Cloudflare R2) — set in the dashboard (not committed).
       - key: CLOUDFLARE_ACCESS_KEY_ID
         sync: false
       - key: CLOUDFLARE_SECRET_ACCESS_KEY
         sync: false
       - key: CLOUDFLARE_S3_API
-        value: https://284c6858f001f4b66fca4ef0ed2ee4ae.r2.cloudflarestorage.com
+        sync: false
       - key: CLOUDFLARE_MEDIA_BUCKET
         value: app
       - key: R2_PUBLIC_BASE_URL
-        value: https://pub-d10da37e3ba9454b8c90e6345f47d90b.r2.dev
+        sync: false
 
 databases:
   - name: app-db

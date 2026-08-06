@@ -9,6 +9,7 @@ import { secureHeaders } from "hono/secure-headers";
 import { env } from "@/lib/env";
 import { errorHandler } from "@/lib/errors";
 import { hasOpenAiKey } from "@/integrations/openai";
+import type { AppConfig } from "@app/shared";
 import { mcpHttp } from "@/agent/mcp-http";
 import { agentRoutes } from "@/agent/routes";
 import { accountRoutes } from "@/domains/account/routes";
@@ -29,7 +30,10 @@ if (!env.isProduction) app.use(honoLogger());
 // Unauthenticated utilities: health check and the public config the frontend reads on boot.
 app.get("/api/health", (c) => c.json({ ok: true }));
 app.get("/api/config", (c) =>
-  c.json({ selfSignupEnabled: env.selfSignupEnabled, aiEnabled: hasOpenAiKey() }),
+  c.json({
+    selfSignupEnabled: env.selfSignupEnabled,
+    aiEnabled: hasOpenAiKey(),
+  } satisfies AppConfig),
 );
 
 // Remote MCP over HTTP, authenticated by a personal API key (Bearer token).

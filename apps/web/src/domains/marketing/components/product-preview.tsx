@@ -184,14 +184,6 @@ function RegisterBody() {
   );
 }
 
-export function RegisterMock() {
-  return (
-    <Window label="/register">
-      <RegisterBody />
-    </Window>
-  );
-}
-
 function ForgotPasswordBody() {
   const { t } = useTranslation();
   return (
@@ -203,14 +195,6 @@ function ForgotPasswordBody() {
       <Field label={t("landing.preview.email")} value="you@example.com" />
       <SubmitButton label={t("landing.preview.forgot.submit")} />
     </AuthBody>
-  );
-}
-
-export function ForgotPasswordMock() {
-  return (
-    <Window label="/forgot-password">
-      <ForgotPasswordBody />
-    </Window>
   );
 }
 
@@ -226,14 +210,6 @@ function ResetPasswordBody() {
       <Field label={t("landing.preview.reset.confirmPassword")} value="••••••••" mono />
       <SubmitButton label={t("landing.preview.reset.submit")} />
     </AuthBody>
-  );
-}
-
-export function ResetPasswordMock() {
-  return (
-    <Window label="/reset-password">
-      <ResetPasswordBody />
-    </Window>
   );
 }
 
@@ -304,15 +280,6 @@ function ResetEmailBody() {
       body={t("landing.preview.resetEmail.body")}
       cta={t("landing.preview.resetEmail.cta")}
     />
-  );
-}
-
-export function VerifyEmailMock() {
-  const { t } = useTranslation();
-  return (
-    <Window label={t("landing.preview.window.inbox")}>
-      <VerifyEmailBody />
-    </Window>
   );
 }
 
@@ -397,14 +364,6 @@ function InviteMembersBody() {
   );
 }
 
-export function InviteMembersMock() {
-  return (
-    <Window label="/app/acme/settings">
-      <InviteMembersBody />
-    </Window>
-  );
-}
-
 function InviteEmailBody() {
   const { t } = useTranslation();
   return (
@@ -420,15 +379,6 @@ function InviteEmailBody() {
       }
       cta={t("landing.preview.inviteEmail.cta")}
     />
-  );
-}
-
-export function InviteEmailMock() {
-  const { t } = useTranslation();
-  return (
-    <Window label={t("landing.preview.window.inbox")}>
-      <InviteEmailBody />
-    </Window>
   );
 }
 

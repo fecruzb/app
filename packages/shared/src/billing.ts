@@ -21,12 +21,14 @@ export type PlanDto = {
   aiBilling: AiBillingMode;
 };
 
+import type { TenantRole } from "./tenant";
+
 /** One member's AI spend inside the tenant for the current period. */
 export type BillingMemberUsageDto = {
   userId: string;
   name: string;
   email: string;
-  role: "owner" | "admin" | "member";
+  role: TenantRole;
   spentMicros: number;
   requestCount: number;
   overLimit: boolean;

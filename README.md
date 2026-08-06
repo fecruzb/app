@@ -39,7 +39,7 @@ Without `RESEND_API_KEY`, emails (verification, password reset, invites) are log
 - **Platform admin** (`/admin`): people, platform signup invites, tenants (with members + plan edit modal), and the plans catalog. Bootstrap with `PLATFORM_ADMIN_EMAILS`
 - **Public site**: landing with CTAs + auth screens, separate from the logged-in area
 - **Example resources**: `tasks` (to-do list) and `images` (uploads via MediaStore) — per-tenant, end to end
-- **Agent + MCP**: a floating button in the app opens a chat with an assistant (OpenAI) that runs the MCP tools in the tenant context. The same tools are exposed two more ways: over stdio for local dev (`npm run mcp`, registered in `.cursor/mcp.json`) and over HTTP as a **remote MCP server** (`POST /api/mcp`) authenticated by a personal API key
+- **Agent + MCP**: a floating button in the app opens a chat with an assistant (OpenAI) that runs the MCP tools in the tenant context. The same tools are also exposed as a **remote MCP server** (`POST /api/mcp`) authenticated by a personal API key — plug Cursor (or any MCP client) into the published app
 - **API keys**: users mint tenant-scoped keys under _Integrations_ and plug the remote MCP server into Cursor (or any MCP client)
 - **`SELF_SIGNUP_ENABLED` flag**: turn off to operate invite-only
 
@@ -53,8 +53,8 @@ apps/api/src/
 ├── server.ts             # HTTP entrypoint: starts the server
 ├── context.ts            # typed request context (user/tenant/membership from middlewares)
 ├── agent/                # agent surface (not a domain): assistant (policy), registry,
-│                         # mcp-server (adapter), tool (contract), mcp (stdio entry),
-│                         # mcp-http (remote MCP over HTTP, API-key auth), tools/, routes/
+│                         # mcp-server (adapter), tool (contract), mcp-http (remote MCP
+│                         # over HTTP, API-key auth), tools/, routes/
 ├── lib/                  # pure utilities (no app dependency): env, crypto, logger, errors,
 │                         # email layout, media-store, image-compress
 ├── integrations/         # external service wrappers: openai (client + tool loop), resend, r2
@@ -88,7 +88,7 @@ Conventions:
 - **Env is validated at boot** (`lib/env.ts`, Zod): a missing required variable kills the process with a clear message instead of breaking on a query. Add new vars to that schema, `.env.example`, and `render.yaml` when production needs them.
 - **Imports use the `@/` alias** (→ `apps/api/src/`): anything crossing a boundary uses the alias — `@/lib/*`, `@/integrations/*`, `@/db/*`, `@/domains/<other>/*`. Only imports within the same domain stay relative (`./repository`, `../service`). This way moving files doesn't break imports and `../../../` disappears.
 - **Boundaries are enforced by lint** (`.oxlintrc.json`, `no-restricted-imports`): `lib/` can't depend on anything in the app; `integrations/` only on `lib/`; domains only know the agent contract (`@/agent/tool`) and never the MCP/OpenAI SDK packages directly. Cross the line and `npm run lint` flags it.
-- **The agent is its own surface** (`agent/`), not a domain: it _consumes_ the domains via `registry.ts` (which joins each domain's `tools/` plus `agent/tools/`). It has two layers: the _policy_ (`agent/assistant.ts` — who the agent is and how it acts) and the _mechanics_ (`integrations/openai.ts` — OpenAI client + the tool-calling loop). The same registry is exposed three ways from one place: the in-app chat (OpenAI loop), stdio (`agent/mcp.ts`, local Cursor) and HTTP (`agent/mcp-http.ts`, remote clients authenticated by an API key).
+- **The agent is its own surface** (`agent/`), not a domain: it _consumes_ the domains via `registry.ts` (which joins each domain's `tools/` plus `agent/tools/`). It has two layers: the _policy_ (`agent/assistant.ts` — who the agent is and how it acts) and the _mechanics_ (`integrations/openai.ts` — OpenAI client + the tool-calling loop). The same registry is exposed two ways from one place: the in-app chat (OpenAI loop) and HTTP MCP (`agent/mcp-http.ts`, remote clients authenticated by an API key).
 
 Useful entry points:
 
@@ -125,7 +125,6 @@ Copy `.env.example` to `.env` at the root (in production Render injects everythi
 | `IMAGE_MODEL`                  | Image generation model (default `gpt-image-1-mini`)                            |
 | `SELF_SIGNUP_ENABLED`          | `false` to turn off public sign-up                                             |
 | `PLATFORM_ADMIN_EMAILS`        | Comma-separated emails always treated as platform admins once verified         |
-| `MCP_TENANT_SLUG`              | Optional — pins the stdio MCP server (`npm run mcp`) to a tenant slug          |
 | `CLOUDFLARE_S3_API`            | Optional R2 S3 API endpoint — without R2, images write to local disk           |
 | `CLOUDFLARE_ACCESS_KEY_ID`     | Optional R2 access key                                                         |
 | `CLOUDFLARE_SECRET_ACCESS_KEY` | Optional R2 secret                                                             |
@@ -137,7 +136,7 @@ AI spend limits come from the tenant's plan in the billing catalog — there is 
 
 ## Connect an MCP client (remote)
 
-The API exposes a remote MCP server at `POST /api/mcp`, authenticated by a personal API key. Create a key in **Integrations** (it's scoped to one tenant and shown only once), then add it to your MCP client. Copy `.cursor/mcp.json.example` to `.cursor/mcp.json` (gitignored — never commit keys) and fill in your key:
+The API exposes a remote MCP server at `POST /api/mcp`, authenticated by a personal API key. Create a key in **Integrations** (it's scoped to one tenant and shown only once), then add it to your MCP client. Copy `.cursor/mcp.json.example` to `.cursor/mcp.json` (gitignored — never commit keys), set the published app URL, and fill in your key:
 
 ```json
 {
@@ -150,7 +149,7 @@ The API exposes a remote MCP server at `POST /api/mcp`, authenticated by a perso
 }
 ```
 
-The client gets the same tools as the in-app agent, acting on that key's tenant. Revoke a key from the same screen to cut access. (For local development against your own machine, `npm run mcp` runs the stdio server instead — no key needed. Optionally set `MCP_TENANT_SLUG` to pin a tenant.)
+The client gets the same tools as the in-app agent, acting on that key's tenant. Revoke a key from the same screen to cut access.
 
 ## Scripts
 
@@ -160,7 +159,6 @@ The client gets the same tools as the in-app agent, acting on that key's tenant.
 | `npm run dev`                           | API + web in watch                   |
 | `npm run build`                         | Production build (web)               |
 | `npm start`                             | API in production (serves SPA)       |
-| `npm run mcp`                           | Local MCP stdio server               |
 | `npm run db:up` / `db:down`             | Start / stop local Postgres (Docker) |
 | `npm run db:generate`                   | Generate migration from schema       |
 | `npm run db:migrate`                    | Apply migrations                     |

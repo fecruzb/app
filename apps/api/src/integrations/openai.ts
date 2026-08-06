@@ -268,7 +268,7 @@ export async function runToolLoop(opts: {
 
     const toolCalls = message.tool_calls ?? [];
     if (toolCalls.length === 0) {
-      return { reply: message.content?.trim() || "Feito.", calls, usage: usage() };
+      return { reply: message.content?.trim() || "Done.", calls, usage: usage() };
     }
 
     for (const call of toolCalls) {
@@ -281,10 +281,10 @@ export async function runToolLoop(opts: {
             text: err instanceof Error ? err.message : String(err),
             isError: true,
           }))
-        : { text: `Tool desconhecida: ${call.function.name}`, isError: true };
+        : { text: `Unknown tool: ${call.function.name}`, isError: true };
 
       calls.push({ name: call.function.name, args, text, isError });
-      chat.push({ role: "tool", tool_call_id: call.id, content: text || "(vazio)" });
+      chat.push({ role: "tool", tool_call_id: call.id, content: text || "(empty)" });
     }
   }
 

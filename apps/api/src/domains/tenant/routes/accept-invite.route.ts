@@ -1,18 +1,9 @@
 import { getCookie } from "hono/cookie";
 import { acceptInviteNewAccountSchema } from "@app/shared";
-import { hashPassword, hashToken } from "@/lib/crypto";
-import { HttpError, parseBody } from "@/lib/errors";
+import { parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
-import { isEnvPlatformAdminEmail } from "@/domains/auth/platform-admin";
-import { authRepository } from "@/domains/auth/repository";
-import {
-  createSession,
-  getSessionUser,
-  SESSION_COOKIE,
-  setSessionCookie,
-} from "@/domains/auth/service";
-import { assertSeatAvailableForAccept } from "@/domains/billing/service";
-import { tenantRepository } from "../repository";
+import { getSessionUser, SESSION_COOKIE, setSessionCookie } from "@/domains/auth/service";
+import { acceptTenantInvite } from "../service";
 
 /**
  * Accept an invite
@@ -30,59 +21,19 @@ export async function acceptInvite(c: AppContext) {
   // -- Input -----------------------------------------------------------------
   const token = c.req.param("token") ?? "";
   const sessionToken = getCookie(c, SESSION_COOKIE);
+  const sessionUser = sessionToken ? await getSessionUser(sessionToken) : null;
 
   // -- Processing ------------------------------------------------------------
-  const row = await tenantRepository.findValidInviteByTokenHash(hashToken(token));
-  if (!row) throw new HttpError(404, "Invalid or expired invite");
-  const { invite, tenant } = row;
-
-  const sessionUser = sessionToken ? await getSessionUser(sessionToken) : null;
-  let status: 200 | 201 = 200;
-  let sessionToSet: string | null = null;
-
-  if (sessionUser) {
-    if (sessionUser.email !== invite.email) {
-      throw new HttpError(
-        403,
-        `This invite is for ${invite.email} — sign out and sign in with that account`,
-      );
-    }
-    const existing = await tenantRepository.findMember(tenant.id, sessionUser.id);
-    if (!existing) {
-      await assertSeatAvailableForAccept(tenant.id);
-      await tenantRepository.insertMember({
-        tenantId: tenant.id,
-        userId: sessionUser.id,
-        role: invite.role,
-      });
-    }
-    await tenantRepository.deleteInviteById(invite.id);
-  } else {
-    if (await authRepository.findUserByEmail(invite.email)) {
-      throw new HttpError(401, "Sign in to accept the invite");
-    }
-
-    const data = await parseBody(c, acceptInviteNewAccountSchema);
-    await assertSeatAvailableForAccept(tenant.id);
-    const user = await authRepository.insertUser({
-      name: data.name,
-      email: invite.email,
-      passwordHash: hashPassword(data.password),
-      emailVerifiedAt: new Date(),
-      isPlatformAdmin: isEnvPlatformAdminEmail(invite.email),
-    });
-    await tenantRepository.insertMember({
-      tenantId: tenant.id,
-      userId: user.id,
-      role: invite.role,
-    });
-    await tenantRepository.deleteInviteById(invite.id);
-
-    sessionToSet = await createSession(user.id);
-    status = 201;
-  }
+  const result = await acceptTenantInvite({
+    rawToken: token,
+    sessionUserId: sessionUser?.id ?? null,
+    sessionUserEmail: sessionUser?.email ?? null,
+    loadNewAccount: sessionUser
+      ? undefined
+      : () => parseBody(c, acceptInviteNewAccountSchema),
+  });
 
   // -- Output ----------------------------------------------------------------
-  if (sessionToSet) setSessionCookie(c, sessionToSet);
-  return c.json({ tenantSlug: tenant.slug }, status);
+  if (result.sessionToken) setSessionCookie(c, result.sessionToken);
+  return c.json({ tenantSlug: result.tenantSlug }, result.status);
 }

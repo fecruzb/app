@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Project overview
 
-app-base is a multi-tenant SaaS **template** meant to become a new product: users, full auth (opaque DB session + httpOnly cookie), tenants with members/invites, transactional email, an AI agent (in-app chat + MCP over stdio and HTTP), a platform admin area (`users.isPlatformAdmin` / `PLATFORM_ADMIN_EMAILS` → `/admin`), a public landing page and a one-service deploy on Render (the API serves the built SPA — one origin, simple cookies). The `task` domain is the placeholder resource you copy or replace.
+app-base is a multi-tenant SaaS **template** meant to become a new product: users, full auth (opaque DB session + httpOnly cookie), tenants with members/invites, transactional email, an AI agent (in-app chat + MCP over HTTP with API-key auth), a platform admin area (`users.isPlatformAdmin` / `PLATFORM_ADMIN_EMAILS` → `/admin`), a public landing page and a one-service deploy on Render (the API serves the built SPA — one origin, simple cookies). The `task` domain is the placeholder resource you copy or replace.
 
 Monorepo (npm workspaces + Turborepo):
 

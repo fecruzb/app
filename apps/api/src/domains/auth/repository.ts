@@ -7,8 +7,9 @@
  * `dto.ts` when exposing over HTTP.
  */
 import { and, desc, eq, gt, ne } from "drizzle-orm";
+import type { TenantRole } from "@app/shared";
 import { db } from "@/db/client";
-import { tenants } from "@/domains/tenant/schema";
+import { tenantMembers, tenants } from "@/domains/tenant/schema";
 import {
   actionTokens,
   apiKeys,
@@ -19,7 +20,7 @@ import {
   type User,
 } from "./schema";
 
-/** Resolved API key principal (user + tenant) for request auth. */
+/** Resolved API key principal (user + tenant + active membership role). */
 export type ApiKeyPrincipal = {
   keyId: string;
   userId: string;
@@ -27,6 +28,7 @@ export type ApiKeyPrincipal = {
   tenantId: string;
   tenantName: string;
   tenantSlug: string;
+  role: TenantRole;
 };
 
 /** API key row with the owning tenant's name joined in. */
@@ -286,12 +288,27 @@ export const authRepository = {
   },
 
   /**
+   * Delete API keys for a user in a tenant
+   *
+   * Revokes every key the user issued for that tenant (e.g. after leaving).
+   *
+   * @param userId - Key owner
+   * @param tenantId - Tenant the keys were scoped to
+   */
+  async deleteApiKeysForTenantUser(userId: string, tenantId: string): Promise<void> {
+    await db
+      .delete(apiKeys)
+      .where(and(eq(apiKeys.userId, userId), eq(apiKeys.tenantId, tenantId)));
+  },
+
+  /**
    * Find an API key principal
    *
-   * Resolves a key hash to user + tenant, or null.
+   * Resolves a key hash to user + tenant only when the user still has an active
+   * membership in that tenant. Returns null otherwise.
    *
    * @param tokenHash - Hashed API key secret
-   * @returns Principal fields, or null
+   * @returns Principal fields including membership role, or null
    */
   async findApiKeyPrincipal(tokenHash: string): Promise<ApiKeyPrincipal | null> {
     const [row] = await db
@@ -302,10 +319,15 @@ export const authRepository = {
         tenantId: tenants.id,
         tenantName: tenants.name,
         tenantSlug: tenants.slug,
+        role: tenantMembers.role,
       })
       .from(apiKeys)
       .innerJoin(users, eq(users.id, apiKeys.userId))
       .innerJoin(tenants, eq(tenants.id, apiKeys.tenantId))
+      .innerJoin(
+        tenantMembers,
+        and(eq(tenantMembers.userId, apiKeys.userId), eq(tenantMembers.tenantId, apiKeys.tenantId)),
+      )
       .where(eq(apiKeys.tokenHash, tokenHash));
     return row ?? null;
   },

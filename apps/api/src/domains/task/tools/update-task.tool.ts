@@ -8,7 +8,7 @@ import { taskRepository } from "../repository";
  *
  * `update_task`
  *
- * Updates a task's title and completed state in the current tenant.
+ * Updates a task's title and optionally its completed state in the current tenant.
  *
  * @returns `{ id, title, completed }` of the updated task
  */
@@ -19,7 +19,7 @@ export const updateTaskTool = defineTool({
   inputSchema: {
     id: z.string().uuid(),
     title: taskInputSchema.shape.title,
-    completed: z.boolean(),
+    completed: taskInputSchema.shape.completed,
   },
   summarize: (args) => `Task updated: ${args.title}`,
   execute: async (ctx, { id, title, completed }) => {
@@ -27,7 +27,13 @@ export const updateTaskTool = defineTool({
     const { tenantId } = ctx;
 
     // -- Processing ------------------------------------------------------------
-    const task = await taskRepository.update(tenantId, id, { title, completed });
+    const current = await taskRepository.find(tenantId, id);
+    if (!current) throw new Error("Task not found — check the id with list_tasks");
+
+    const task = await taskRepository.update(tenantId, id, {
+      title,
+      completed: completed ?? current.task.completed,
+    });
     if (!task) throw new Error("Task not found — check the id with list_tasks");
 
     // -- Output ----------------------------------------------------------------

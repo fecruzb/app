@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Trans, useTranslation } from "react-i18next";
 import { Loader2Icon, MicIcon, SendIcon, SparklesIcon, SquareIcon, XIcon } from "lucide-react";
 import { toast } from "sonner";
@@ -44,79 +44,78 @@ export function AgentFab() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [transcribing, setTranscribing] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const suggestions = t("agent.suggestions", { returnObjects: true });
   const suggestionList = Array.isArray(suggestions) ? (suggestions as string[]) : [];
 
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, busy, transcribing]);
-
-  async function send(raw: string) {
-    const content = raw.trim();
-    if (!content || busy) return;
-    setText("");
-    const history = [...messages, { role: "user" as const, content }];
-    setMessages(history);
-    setBusy(true);
-    try {
-      const result = await agentApi.chat(
+  const chatMutation = useMutation({
+    mutationFn: (history: AgentMessage[]) =>
+      agentApi.chat(
         tenant.id,
         history.map(({ role, content }) => ({ role, content })),
-      );
+      ),
+    onSuccess: (result, history) => {
       setMessages([
         ...history,
         { role: "assistant", content: result.reply, actions: result.actions },
       ]);
-      // Write actions change tenant data — refresh whatever is on screen
       if (result.actions.some((a) => !a.isError)) {
         void queryClient.invalidateQueries();
       }
-    } catch (err) {
-      // The 402 from the monthly AI budget lands here and shows in the chat.
+    },
+    onError: (err, history) => {
       const message = err instanceof ApiError ? err.message : t("agent.reachFailed");
       setMessages([...history, { role: "assistant", content: `⚠ ${message}` }]);
-      setText(content);
-    } finally {
-      setBusy(false);
+      const lastUser = history[history.length - 1];
+      if (lastUser?.role === "user") setText(lastUser.content);
+    },
+    onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ["billing"] });
-    }
-  }
+    },
+  });
 
-  /** Dictated message: transcribe first, then send it like any other. */
-  async function handleAudio(audio: Blob) {
-    setTranscribing(true);
-    let transcript: string;
-    try {
-      transcript = (await agentApi.transcribe(tenant.id, audio)).text.trim();
-    } catch (err) {
-      showApiError(err, t("agent.transcribeFailed"));
-      return;
-    } finally {
-      setTranscribing(false);
-      // Transcription is billed too — keep the billing page honest.
+  const transcribeMutation = useMutation({
+    mutationFn: (audio: Blob) => agentApi.transcribe(tenant.id, audio),
+    onSuccess: (data) => {
+      const transcript = data.text.trim();
+      if (!transcript) {
+        toast.warning(t("agent.hearFailed"));
+        return;
+      }
+      send(transcript);
+    },
+    onError: (err) => showApiError(err, t("agent.transcribeFailed")),
+    onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ["billing"] });
-    }
+    },
+  });
 
-    if (!transcript) {
-      toast.warning(t("agent.hearFailed"));
-      return;
-    }
-    void send(transcript);
+  const busy = chatMutation.isPending;
+  const transcribing = transcribeMutation.isPending;
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+  }, [messages, busy, transcribing]);
+
+  function send(raw: string) {
+    const content = raw.trim();
+    if (!content || busy || transcribing) return;
+    setText("");
+    const history = [...messages, { role: "user" as const, content }];
+    setMessages(history);
+    chatMutation.mutate(history);
   }
 
   const recorder = useAudioRecorder({
-    onAudio: (audio) => void handleAudio(audio),
+    onAudio: (audio) => transcribeMutation.mutate(audio),
     onError: (kind) =>
       toast.error(kind === "permission" ? t("agent.micPermission") : t("agent.micUnsupported")),
   });
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    void send(text);
+    send(text);
   }
 
   function handleClose() {
@@ -168,7 +167,7 @@ export function AgentFab() {
                 key={s}
                 type="button"
                 className="rounded-md border px-3 py-2 text-left text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                onClick={() => void send(s)}
+                onClick={() => send(s)}
               >
                 {s}
               </button>
@@ -239,7 +238,7 @@ export function AgentFab() {
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                void send(text);
+                send(text);
               }
             }}
             placeholder={transcribing ? t("agent.transcribing") : t("agent.placeholder")}
@@ -249,7 +248,6 @@ export function AgentFab() {
           />
         )}
 
-        {/* One slot, three jobs: start the recording, stop it, or send the text. */}
         {recorder.recording ? (
           <Button type="button" size="icon" variant="destructive" onClick={recorder.stop}>
             <SquareIcon className="size-3 fill-current" />

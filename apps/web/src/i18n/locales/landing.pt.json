@@ -223,9 +223,9 @@
     "tool": {
       "eyebrow": "A tool",
       "title": "Um arquivo ensina o assistente",
-      "body": "O mesmo recurso vira uma tool do agente com um único defineTool — um nome, um input Zod e um execute que reusa o repository que você já escreveu. Essa definição única dirige o chat in-app, o Cursor local via stdio e o servidor MCP remoto, sem cola extra.",
+      "body": "O mesmo recurso vira uma tool do agente com um único defineTool — um nome, um input Zod e um execute que reusa o repository que você já escreveu. Essa definição única dirige o chat in-app e o servidor MCP remoto, sem cola extra.",
       "points": [
-        "A mesma definição dirige o chat, o stdio e o servidor MCP remoto",
+        "A mesma definição dirige o chat e o servidor MCP remoto",
         "summarize marca uma escrita — aparece como chip no chat",
         "Tools nunca importam MCP ou OpenAI — o lint bloqueia"
       ]
@@ -233,7 +233,7 @@
     "toolMap": {
       "eyebrow": "O mapa de tools",
       "title": "Colete as tools, registre uma vez",
-      "body": "tools/index.ts exporta o AgentTool[] do domínio — o mesmo papel de routes/index.ts no HTTP. Espalhe esse array em allTools em agent/registry.ts e toda superfície (chat, MCP stdio, MCP HTTP) passa a vê-lo. Adicione o arquivo da tool, empurre no array, pronto.",
+      "body": "tools/index.ts exporta o AgentTool[] do domínio — o mesmo papel de routes/index.ts no HTTP. Espalhe esse array em allTools em agent/registry.ts e toda superfície (chat, MCP HTTP) passa a vê-lo. Adicione o arquivo da tool, empurre no array, pronto.",
       "points": [
         "Um array por domínio: export const taskTools: AgentTool[] = […]",
         "Spread em allTools em agent/registry.ts",
@@ -366,7 +366,7 @@
       ]
     },
     "tenancy": {
-      "eyebrow": "Tenancy",
+      "eyebrow": "Tenancy / workspaces",
       "title": "Workspaces e quem faz parte",
       "body": "Toda conta trabalha dentro de um tenant. tenant_members é a tabela de junção entre users e tenants com um role, e tenant_invites carrega convites pendentes por e-mail. plan_id no tenant escolhe assentos e limites de IA no catálogo em código — essa é a espinha dorsal que torna o app multi-tenant.",
       "points": [
@@ -478,7 +478,7 @@
       "subtitle": "Administração da plataforma",
       "navPeople": "Pessoas",
       "navInvites": "Convites",
-      "navTenants": "Tenants",
+      "navTenants": "Workspaces",
       "navPlans": "Planos",
       "peopleTitle": "Pessoas",
       "peopleDescription": "Todas as contas da plataforma",
@@ -491,7 +491,7 @@
       "sendInvite": "Enviar convite",
       "pending": "Convites pendentes",
       "expires": "expira em 7 dias",
-      "tenantsTitle": "Tenants",
+      "tenantsTitle": "Workspaces",
       "tenantsDescription": "Cada workspace — pessoas, plano e edição no mesmo lugar",
       "edit": "Editar",
       "memberOne": "membro",
@@ -500,13 +500,13 @@
     "plans": {
       "title": "Planos",
       "description": "Catálogo no código — assentos e direitos de IA",
-      "freeName": "Free",
+      "freeName": "Grátis",
       "freeDetail": "1 assento · sem convites · $5 de IA / mês",
       "starterName": "Starter",
       "starterDetail": "3 assentos · $5 / assento · $5 de IA / membro",
       "proName": "Pro",
       "proDetail": "10 assentos · $5 / assento · $5 de IA / membro",
-      "usageName": "Pay as you go",
+      "usageName": "Sob demanda",
       "usageDetail": "$10 / assento · IA repassada",
       "changePlan": "Mudar plano",
       "pspHint": "Pronto para Stripe ou qualquer PSP — o checkout seta o planId"
@@ -522,7 +522,7 @@
     },
     "nav": {
       "home": "Início",
-      "tasks": "Tasks",
+      "tasks": "Tarefas",
       "settings": "Configurações"
     },
     "shell": {
@@ -536,9 +536,9 @@
       "viewTasks": "Ver tarefas"
     },
     "tasks": {
-      "title": "Tasks",
+      "title": "Tarefas",
       "description": "Recurso de exemplo",
-      "placeholder": "Adicionar uma task...",
+      "placeholder": "Adicionar uma tarefa...",
       "add": "Adicionar",
       "items": ["Desenhar o schema", "Ligar o repository", "Expor a rota", "Construir a tela"],
       "left": "Recurso de exemplo com CRUD por tenant · 2 de 4 restantes"
@@ -556,7 +556,7 @@
     "agent": {
       "title": "Assistente",
       "placeholder": "Fale com o assistente…",
-      "suggestion": "Adicione uma task para preparar o standup de amanhã",
+      "suggestion": "Adicione uma tarefa para preparar o standup de amanhã",
       "reply": "Claro — vou adicionar essa tarefa para você.",
       "chip": "Tarefa criada: Preparar standup"
     },

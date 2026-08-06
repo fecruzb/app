@@ -1,16 +1,8 @@
 import { createInviteSchema } from "@app/shared";
-import { generateToken, hashToken } from "@/lib/crypto";
-import { sendEmail } from "@/integrations/resend";
-import { env } from "@/lib/env";
-import { HttpError, parseBody } from "@/lib/errors";
+import { parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
-import { assertSeatAvailableForInvite } from "@/domains/billing/service";
 import { toInviteDto } from "../dto";
-import { inviteTemplate } from "../emails";
-import { tenantRepository } from "../repository";
-
-/** Invite link lifetime (7 days). */
-const INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+import { createTenantInvite } from "../service";
 
 /**
  * Create an invite
@@ -30,28 +22,15 @@ export async function createInvite(c: AppContext) {
   const user = c.get("user");
 
   // -- Processing ------------------------------------------------------------
-  if (await tenantRepository.findMemberByEmail(tenant.id, data.email)) {
-    throw new HttpError(409, "This person is already a member of the tenant");
-  }
-
-  // Drop any pending invite for this email first so a re-invite does not
-  // double-count against the seat cap.
-  await tenantRepository.deleteInvitesByEmail(tenant.id, data.email);
-  await assertSeatAvailableForInvite(tenant.id);
-
-  const token = generateToken();
-  const invite = await tenantRepository.insertInvite({
+  const { invite, inviterName } = await createTenantInvite({
     tenantId: tenant.id,
+    tenantName: tenant.name,
+    inviterId: user.id,
+    inviterName: user.name,
     email: data.email,
     role: data.role,
-    tokenHash: hashToken(token),
-    invitedBy: user.id,
-    expiresAt: new Date(Date.now() + INVITE_TTL_MS),
   });
 
-  const { subject, html } = inviteTemplate(tenant.name, user.name, `${env.appUrl}/invite/${token}`);
-  void sendEmail({ to: data.email, subject, html });
-
   // -- Output ----------------------------------------------------------------
-  return c.json(toInviteDto(invite, user.name), 201);
+  return c.json(toInviteDto(invite, inviterName), 201);
 }

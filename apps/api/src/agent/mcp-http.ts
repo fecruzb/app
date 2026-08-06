@@ -30,7 +30,7 @@ export async function mcpHttp(c: AppContext): Promise<Response> {
     tenantSlug: principal.tenantSlug,
     userId: principal.userId,
     userName: principal.userName,
-    role: "owner",
+    role: principal.role,
   });
 
   const transport = new WebStandardStreamableHTTPServerTransport({
