@@ -6,8 +6,8 @@ alwaysApply: false
 
 # Agent tools
 
-- One tool per file (`<action>.tool.ts`), built with `defineTool` from `@/agent/tool`; snake_case name (`create_note`)
+- One tool per file (`<action>.tool.ts`), built with `defineTool` from `@/agent/tool`; snake_case name (`create_task`)
 - Return JSON-serializable data; throw `Error` for expected failures — never format a protocol response
 - `summarize` only on write tools (becomes a chip in the chat UI); reads don't have it
 - Tools and domains NEVER import MCP/OpenAI: the MCP SDK only lives in `agent/mcp-server.ts`; OpenAI's only in `integrations/openai.ts`
-- Canonical example: `apps/api/src/domains/note/tools/get-note.tool.ts`
+- Canonical example: `apps/api/src/domains/task/tools/get-task.tool.ts`

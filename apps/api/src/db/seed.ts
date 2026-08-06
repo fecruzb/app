@@ -1,7 +1,7 @@
 import { hashPassword } from "@/lib/crypto";
 import { db, sql } from "./client";
 import { authRepository } from "@/domains/auth/repository";
-import { notes } from "@/domains/note/schema";
+import { tasks } from "@/domains/task/schema";
 import { createTenantWithOwner } from "@/domains/tenant/service";
 
 // Idempotent seed with a demo user for development.
@@ -24,20 +24,30 @@ async function seed() {
 
   const tenant = await createTenantWithOwner("Demo Company", user.id);
 
-  await db.insert(notes).values([
+  await db.insert(tasks).values([
     {
       tenantId: tenant.id,
       authorId: user.id,
-      title: "Welcome to app-base",
-      content:
-        "This is an example resource (notes) showing the per-tenant CRUD pattern. Replace it with your product's domain.",
+      title: "Rename the app in the README",
+      completed: true,
     },
     {
       tenantId: tenant.id,
       authorId: user.id,
-      title: "Next steps",
-      content:
-        "1. Rename the app in the README\n2. Replace notes with your domain\n3. Adjust the landing page\n4. Set RESEND_API_KEY for real emails",
+      title: "Replace tasks with your product's domain",
+      completed: false,
+    },
+    {
+      tenantId: tenant.id,
+      authorId: user.id,
+      title: "Adjust the landing page",
+      completed: false,
+    },
+    {
+      tenantId: tenant.id,
+      authorId: user.id,
+      title: "Set RESEND_API_KEY for real emails",
+      completed: false,
     },
   ]);
 

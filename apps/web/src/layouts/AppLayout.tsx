@@ -3,12 +3,12 @@ import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   BoxIcon,
   CheckIcon,
+  CheckSquareIcon,
   ChevronsUpDownIcon,
   HomeIcon,
   LogOutIcon,
   MailWarningIcon,
   SettingsIcon,
-  StickyNoteIcon,
   UserIcon,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -141,7 +141,7 @@ function VerifyEmailBanner() {
 function navItems(slug: string) {
   return [
     { to: `/app/${slug}`, end: true, icon: HomeIcon, label: "Home" },
-    { to: `/app/${slug}/notes`, end: false, icon: StickyNoteIcon, label: "Notes" },
+    { to: `/app/${slug}/tasks`, end: false, icon: CheckSquareIcon, label: "Tasks" },
     { to: `/app/${slug}/settings`, end: false, icon: SettingsIcon, label: "Settings" },
   ];
 }

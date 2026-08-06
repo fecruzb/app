@@ -1,15 +1,15 @@
 // Example resource — replace with your product's domain.
 import { z } from "zod";
 
-export const noteInputSchema = z.object({
+export const taskInputSchema = z.object({
   title: z.string().trim().min(1).max(200),
-  content: z.string().max(20000),
+  completed: z.boolean().optional(),
 });
 
-export type NoteDto = {
+export type TaskDto = {
   id: string;
   title: string;
-  content: string;
+  completed: boolean;
   authorId: string | null;
   authorName: string | null;
   createdAt: string;

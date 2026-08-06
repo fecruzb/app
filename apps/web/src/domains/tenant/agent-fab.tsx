@@ -11,8 +11,8 @@ import { useTenant } from "./tenant-provider";
 
 const SUGGESTIONS = [
   "who belongs to this tenant?",
-  "create a note with tomorrow's meeting agenda",
-  "summarize the notes we have",
+  "add a task to prepare tomorrow's meeting",
+  "what tasks are still open?",
 ];
 
 type ChatMessage = AgentMessage & { actions?: AgentAction[] };

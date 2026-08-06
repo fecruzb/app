@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRightIcon, StickyNoteIcon, UsersIcon } from "lucide-react";
+import { ArrowRightIcon, CheckSquareIcon, UsersIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/domains/auth/auth-provider";
-import { noteApi } from "@/domains/note/api";
+import { taskApi } from "@/domains/task/api";
 import { tenantApi } from "../api";
 import { useTenant } from "../tenant-provider";
 
@@ -16,9 +16,9 @@ export function DashboardPage() {
     queryKey: ["members", tenant.id],
     queryFn: () => tenantApi.members(tenant.id),
   });
-  const { data: notes } = useQuery({
-    queryKey: ["notes", tenant.id],
-    queryFn: () => noteApi.list(tenant.id),
+  const { data: tasks } = useQuery({
+    queryKey: ["tasks", tenant.id],
+    queryFn: () => taskApi.list(tenant.id),
   });
 
   return (
@@ -49,16 +49,16 @@ export function DashboardPage() {
         </Card>
         <Card>
           <CardHeader>
-            <StickyNoteIcon className="mb-2 size-5 text-muted-foreground" />
-            <CardTitle>{notes ? notes.length : "—"} note(s)</CardTitle>
+            <CheckSquareIcon className="mb-2 size-5 text-muted-foreground" />
+            <CardTitle>{tasks ? tasks.length : "—"} task(s)</CardTitle>
             <CardDescription>Example resource — replace with your domain</CardDescription>
           </CardHeader>
           <CardContent>
             <Link
-              to={`/app/${tenant.slug}/notes`}
+              to={`/app/${tenant.slug}/tasks`}
               className="inline-flex items-center gap-1 text-sm font-medium hover:underline"
             >
-              View notes <ArrowRightIcon className="size-3.5" />
+              View tasks <ArrowRightIcon className="size-3.5" />
             </Link>
           </CardContent>
         </Card>

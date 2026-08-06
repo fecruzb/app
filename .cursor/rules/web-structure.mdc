@@ -8,7 +8,7 @@ alwaysApply: false
 
 Mirror the API: features live in `domains/<domain>/`, everything else is shared shell.
 
-- `domains/<domain>/` — one folder per feature (auth, tenant, account, note, marketing):
+- `domains/<domain>/` — one folder per feature (auth, tenant, account, task, marketing):
   - `api.ts` — typed calls for this domain (wraps `@/lib/api`); the only place that builds this domain's endpoints
   - `<name>-provider.tsx` — domain context/state when needed (e.g. auth, tenant)
   - `pages/XxxPage.tsx` — route-level screens (PascalCase, one per file)

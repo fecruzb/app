@@ -1,11 +1,11 @@
 // Example resource — replace with your product's domain.
-import { index, pgTable, text, uuid } from "drizzle-orm/pg-core";
+import { boolean, index, pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { timestamps } from "@/db/columns";
 import { users } from "@/domains/auth/schema";
 import { tenants } from "@/domains/tenant/schema";
 
-export const notes = pgTable(
-  "notes",
+export const tasks = pgTable(
+  "tasks",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     tenantId: uuid("tenant_id")
@@ -13,10 +13,10 @@ export const notes = pgTable(
       .references(() => tenants.id, { onDelete: "cascade" }),
     authorId: uuid("author_id").references(() => users.id, { onDelete: "set null" }),
     title: text("title").notNull(),
-    content: text("content").notNull().default(""),
+    completed: boolean("completed").notNull().default(false),
     ...timestamps,
   },
-  (t) => [index("notes_tenant_idx").on(t.tenantId)],
+  (t) => [index("tasks_tenant_idx").on(t.tenantId)],
 );
 
-export type Note = typeof notes.$inferSelect;
+export type Task = typeof tasks.$inferSelect;
