@@ -4,10 +4,13 @@
 // integrations/openai.
 import { z } from "zod";
 import type { AgentMessage, AgentResult } from "@app/shared";
-import { runToolLoop, type LoopTool } from "@/integrations/openai";
+import { runToolLoop, type AiUsage, type LoopTool } from "@/integrations/openai";
 import { env } from "@/lib/env";
 import { allTools, getTool } from "./registry";
 import type { AgentContext } from "./tool";
+
+/** The wire contract plus the token spend, which the endpoint meters but never returns. */
+export type AssistantResult = AgentResult & { usage: AiUsage };
 
 function systemPrompt(ctx: AgentContext): string {
   return `You are the App Base assistant inside the tenant "${ctx.tenantName}". You are talking to ${ctx.userName} (role: ${ctx.role}).
@@ -27,7 +30,7 @@ Final answer: short and direct, without repeating technical ids.`;
 export async function runAssistant(
   ctx: AgentContext,
   messages: AgentMessage[],
-): Promise<AgentResult> {
+): Promise<AssistantResult> {
   const tools: LoopTool[] = allTools.map((tool) => ({
     name: tool.name,
     description: tool.description,
@@ -40,7 +43,7 @@ export async function runAssistant(
     },
   }));
 
-  const { reply, calls } = await runToolLoop({
+  const { reply, calls, usage } = await runToolLoop({
     model: env.assistantModel,
     system: systemPrompt(ctx),
     messages,
@@ -54,5 +57,5 @@ export async function runAssistant(
     return [{ tool: name, summary: isError ? text : (summarize?.(args) ?? name), isError }];
   });
 
-  return { reply, actions };
+  return { reply, actions, usage };
 }

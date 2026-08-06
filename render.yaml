@@ -28,6 +28,10 @@ services:
         sync: false
       - key: ASSISTANT_MODEL
         value: gpt-4o-mini
+      - key: TRANSCRIBE_MODEL
+        value: gpt-4o-mini-transcribe
+      - key: AI_MONTHLY_BUDGET_USD
+        value: "10"
       - key: SELF_SIGNUP_ENABLED
         value: "true"
 

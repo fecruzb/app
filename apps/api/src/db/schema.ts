@@ -3,3 +3,4 @@
 export * from "@/domains/auth/schema";
 export * from "@/domains/tenant/schema";
 export * from "@/domains/task/schema";
+export * from "@/domains/usage/schema";

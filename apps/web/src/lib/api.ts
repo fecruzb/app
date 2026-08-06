@@ -18,7 +18,8 @@ export function showApiError(err: unknown, fallback: string): void {
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(`/api${path}`, {
     credentials: "same-origin",
-    headers: options.body ? { "Content-Type": "application/json" } : undefined,
+    // FormData bodies need the browser to set their own multipart boundary.
+    headers: typeof options.body === "string" ? { "Content-Type": "application/json" } : undefined,
     ...options,
   });
 
@@ -36,6 +37,7 @@ export const api = {
       method: "POST",
       body: body !== undefined ? JSON.stringify(body) : undefined,
     }),
+  upload: <T>(path: string, form: FormData) => request<T>(path, { method: "POST", body: form }),
   patch: <T>(path: string, body: unknown) =>
     request<T>(path, { method: "PATCH", body: JSON.stringify(body) }),
   delete: <T>(path: string) => request<T>(path, { method: "DELETE" }),

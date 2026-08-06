@@ -15,6 +15,7 @@ import { accountRoutes } from "@/domains/account/routes";
 import { authRoutes } from "@/domains/auth/routes";
 import { taskRoutes } from "@/domains/task/routes";
 import { inviteRoutes, tenantRoutes } from "@/domains/tenant/routes";
+import { usageRoutes } from "@/domains/usage/routes";
 
 export const app = new Hono();
 
@@ -33,6 +34,7 @@ app.all("/api/mcp", mcpHttp);
 
 app.route("/api/auth", authRoutes);
 app.route("/api/account", accountRoutes);
+app.route("/api/usage", usageRoutes);
 app.route("/api/tenants", tenantRoutes);
 app.route("/api/tenants/:tenantId/tasks", taskRoutes);
 app.route("/api/tenants/:tenantId/agent", agentRoutes);

@@ -18,6 +18,10 @@ const schema = z.object({
   /** Without the key the agent is disabled (button hidden in the app). */
   OPENAI_API_KEY: z.string().optional(),
   ASSISTANT_MODEL: z.string().default("gpt-4o-mini"),
+  /** Speech-to-text model behind the assistant's voice input. */
+  TRANSCRIBE_MODEL: z.string().default("gpt-4o-mini-transcribe"),
+  /** Monthly AI spend cap per user. 0 keeps tracking but never blocks. */
+  AI_MONTHLY_BUDGET_USD: z.coerce.number().min(0).default(10),
   MAIL_FROM: z.string().default("App Base <onboarding@resend.dev>"),
   /** When "false", accounts can only be created via invite. */
   SELF_SIGNUP_ENABLED: z
@@ -43,6 +47,8 @@ export const env = {
   resendApiKey: raw.RESEND_API_KEY ?? null,
   openaiApiKey: raw.OPENAI_API_KEY ?? null,
   assistantModel: raw.ASSISTANT_MODEL,
+  transcribeModel: raw.TRANSCRIBE_MODEL,
+  aiMonthlyBudgetMicros: Math.round(raw.AI_MONTHLY_BUDGET_USD * 1_000_000),
   mailFrom: raw.MAIL_FROM,
   selfSignupEnabled: raw.SELF_SIGNUP_ENABLED,
   isProduction: raw.NODE_ENV === "production",

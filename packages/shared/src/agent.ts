@@ -22,3 +22,8 @@ export type AgentResult = {
   reply: string;
   actions: AgentAction[];
 };
+
+/** Voice input: what the user dictated, ready to be sent as a message. */
+export type AgentTranscriptDto = {
+  text: string;
+};

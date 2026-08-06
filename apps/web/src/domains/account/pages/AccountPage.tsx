@@ -11,7 +11,9 @@ import { Label } from "@app/ui/label";
 import { useConfirm } from "@app/ui/confirm-dialog";
 import { PageHeader } from "@app/ui/page-header";
 import { showApiError } from "@/lib/api";
+import { useAppConfig } from "@/app/config";
 import { useAuth } from "@/domains/auth/auth-provider";
+import { AiUsageCard } from "@/domains/usage/ai-usage-card";
 import { accountApi } from "../api";
 
 const selectClass =
@@ -313,10 +315,13 @@ function ApiKeysSection() {
 }
 
 export function AccountPage() {
+  const { aiEnabled } = useAppConfig();
+
   return (
     <div className="grid gap-6">
       <PageHeader title="My account" description="Profile and security" />
       <ProfileSection />
+      {aiEnabled && <AiUsageCard />}
       <PasswordSection />
       <ApiKeysSection />
     </div>

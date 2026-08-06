@@ -3,6 +3,7 @@ export * from "./auth";
 export * from "./tenant";
 export * from "./task";
 export * from "./agent";
+export * from "./usage";
 
 /** Standard API error shape. */
 export type ApiError = {

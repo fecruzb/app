@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Loader2Icon, SendIcon, SparklesIcon, XIcon } from "lucide-react";
+import { Loader2Icon, MicIcon, SendIcon, SparklesIcon, SquareIcon, XIcon } from "lucide-react";
+import { toast } from "sonner";
 import type { AgentAction, AgentMessage } from "@app/shared";
 import { Button } from "@app/ui/button";
 import { Textarea } from "@app/ui/textarea";
-import { ApiError } from "@/lib/api";
+import { ApiError, showApiError } from "@/lib/api";
+import { useAudioRecorder } from "@/lib/use-audio-recorder";
 import { cn } from "@app/ui/lib/utils";
 import { agentApi } from "./agent-api";
 import { useTenant } from "./tenant-provider";
@@ -21,6 +23,7 @@ type ChatMessage = AgentMessage & { actions?: AgentAction[] };
  * Floating agent button: fixed in the corner, opens a chat backed by
  * /api/tenants/:id/agent — the assistant runs tools in the tenant context and
  * returns the reply + actions. Write actions invalidate the app queries.
+ * Messages can be typed or dictated (recorded here, transcribed server-side).
  */
 export function AgentFab() {
   const { tenant } = useTenant();
@@ -29,11 +32,12 @@ export function AgentFab() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, busy]);
+  }, [messages, busy, transcribing]);
 
   async function send(raw: string) {
     const content = raw.trim();
@@ -56,17 +60,56 @@ export function AgentFab() {
         void queryClient.invalidateQueries();
       }
     } catch (err) {
+      // The 402 from the monthly AI budget lands here and shows in the chat.
       const message = err instanceof ApiError ? err.message : "Failed to reach the agent";
       setMessages([...history, { role: "assistant", content: `⚠ ${message}` }]);
       setText(content);
     } finally {
       setBusy(false);
+      void queryClient.invalidateQueries({ queryKey: ["ai-usage"] });
     }
   }
+
+  /** Dictated message: transcribe first, then send it like any other. */
+  async function handleAudio(audio: Blob) {
+    setTranscribing(true);
+    let transcript: string;
+    try {
+      transcript = (await agentApi.transcribe(tenant.id, audio)).text.trim();
+    } catch (err) {
+      showApiError(err, "Failed to transcribe the recording");
+      return;
+    } finally {
+      setTranscribing(false);
+      // Transcription is billed too — keep the usage card honest.
+      void queryClient.invalidateQueries({ queryKey: ["ai-usage"] });
+    }
+
+    if (!transcript) {
+      toast.warning("Couldn't hear that — try again");
+      return;
+    }
+    void send(transcript);
+  }
+
+  const recorder = useAudioRecorder({
+    onAudio: (audio) => void handleAudio(audio),
+    onError: (kind) =>
+      toast.error(
+        kind === "permission"
+          ? "I need permission to use the microphone"
+          : "This browser doesn't support audio recording",
+      ),
+  });
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     void send(text);
+  }
+
+  function handleClose() {
+    recorder.cancel();
+    setOpen(false);
   }
 
   if (!open) {
@@ -92,7 +135,7 @@ export function AgentFab() {
             Clear
           </Button>
         )}
-        <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
+        <Button variant="ghost" size="icon" onClick={handleClose}>
           <XIcon />
           <span className="sr-only">Close</span>
         </Button>
@@ -147,32 +190,72 @@ export function AgentFab() {
           </div>
         ))}
 
-        {busy && (
+        {(busy || transcribing) && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2Icon className="size-4 animate-spin" /> Thinking...
+            <Loader2Icon className="size-4 animate-spin" />
+            {transcribing ? "Transcribing..." : "Thinking..."}
           </div>
         )}
       </div>
 
       <form onSubmit={handleSubmit} className="flex items-end gap-2 border-t p-3">
-        <Textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              void send(text);
-            }
-          }}
-          placeholder="Talk to the assistant..."
-          rows={1}
-          className="min-h-9 resize-none"
-          disabled={busy}
-        />
-        <Button type="submit" size="icon" disabled={busy || !text.trim()}>
-          <SendIcon />
-          <span className="sr-only">Send</span>
-        </Button>
+        {recorder.recording ? (
+          <div className="flex h-9 flex-1 items-center gap-2 rounded-md border border-destructive/40 bg-destructive/5 pl-3 pr-1">
+            <span className="flex flex-1 items-center gap-2 text-sm text-muted-foreground">
+              <span className="size-2 animate-pulse rounded-full bg-destructive" />
+              Recording...
+            </span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              onClick={recorder.cancel}
+            >
+              <XIcon />
+              <span className="sr-only">Cancel recording</span>
+            </Button>
+          </div>
+        ) : (
+          <Textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                void send(text);
+              }
+            }}
+            placeholder={transcribing ? "Transcribing..." : "Talk to the assistant..."}
+            rows={1}
+            className="min-h-9 resize-none"
+            disabled={busy || transcribing}
+          />
+        )}
+
+        {/* One slot, three jobs: start the recording, stop it, or send the text. */}
+        {recorder.recording ? (
+          <Button type="button" size="icon" variant="destructive" onClick={recorder.stop}>
+            <SquareIcon className="size-3 fill-current" />
+            <span className="sr-only">Finish recording</span>
+          </Button>
+        ) : text.trim() ? (
+          <Button type="submit" size="icon" disabled={busy}>
+            <SendIcon />
+            <span className="sr-only">Send</span>
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            size="icon"
+            variant="outline"
+            disabled={busy || transcribing}
+            onClick={() => void recorder.start()}
+          >
+            {transcribing ? <Loader2Icon className="animate-spin" /> : <MicIcon />}
+            <span className="sr-only">Record a message</span>
+          </Button>
+        )}
       </form>
     </div>
   );
