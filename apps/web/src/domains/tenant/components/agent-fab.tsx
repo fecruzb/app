@@ -9,8 +9,8 @@ import { Textarea } from "@app/ui/textarea";
 import { ApiError, showApiError } from "@/lib/api";
 import { useAudioRecorder } from "@/lib/use-audio-recorder";
 import { cn } from "@app/ui/lib/utils";
-import { agentApi } from "./agent-api";
-import { useTenant } from "./tenant-provider";
+import { agentApi } from "../agent-api";
+import { useTenant } from "../context/tenant-provider";
 
 type ChatMessage = AgentMessage & { actions?: AgentAction[] };
 

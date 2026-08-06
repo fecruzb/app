@@ -14,13 +14,13 @@ import { Label } from "@app/ui/label";
 import { useConfirm } from "@app/ui/confirm-dialog";
 import { PageHeader } from "@app/ui/page-header";
 import { PageLoading } from "@app/ui/page-loading";
-import { RoleSelect } from "@/components/role-select";
 import { showApiError } from "@/lib/api";
 import { initials } from "@/lib/utils";
 import { dateLocale } from "@/i18n";
-import { useAuth } from "@/domains/auth/auth-provider";
+import { useAuth } from "@/domains/auth/context/auth-provider";
 import { tenantApi } from "../api";
-import { useTenant } from "../tenant-provider";
+import { RoleSelect } from "../components/role-select";
+import { useTenant } from "../context/tenant-provider";
 
 function GeneralSection() {
   const { t } = useTranslation();

@@ -9,7 +9,7 @@ import { Input } from "@app/ui/input";
 import { Label } from "@app/ui/label";
 import { PageHeader } from "@app/ui/page-header";
 import { showApiError } from "@/lib/api";
-import { useAuth } from "@/domains/auth/auth-provider";
+import { useAuth } from "@/domains/auth/context/auth-provider";
 import { accountApi } from "../api";
 
 function ProfileSection() {

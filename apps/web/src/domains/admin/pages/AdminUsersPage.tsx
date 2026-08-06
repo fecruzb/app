@@ -11,7 +11,7 @@ import { PageHeader } from "@app/ui/page-header";
 import { PageLoading } from "@app/ui/page-loading";
 import { showApiError } from "@/lib/api";
 import { dateLocale } from "@/i18n";
-import { useAuth } from "@/domains/auth/auth-provider";
+import { useAuth } from "@/domains/auth/context/auth-provider";
 import { adminApi } from "../api";
 
 export function AdminUsersPage() {

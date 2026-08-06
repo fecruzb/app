@@ -203,12 +203,12 @@
     "webConvention": {
       "eyebrow": "The frontend",
       "title": "React, organized by the same domains",
-      "body": "The web app mirrors the API: one folder per feature under domains/, and everything else is shared shell. A domain holds its typed api.ts, its route-level pages/, its routes.tsx and any domain-specific components. Generic, tenant-agnostic UI lives in the @app/ui package; app shell and layouts sit outside the domains.",
+      "body": "The web app mirrors the API: one folder per feature under domains/, and everything else is shared shell. A domain holds its typed api.ts, route-level pages/, routes.tsx, and — when needed — components/, context/ and hooks/. There is no top-level src/components/: product UI lives in the owning domain. Generic, tenant-agnostic UI lives in @app/ui; app shell and layouts sit outside the domains.",
       "points": [
-        "domains/<feature>/ mirrors the API — api.ts, pages/, routes.tsx, components",
+        "domains/<feature>/ — api.ts, pages/, routes.tsx; add components/, context/, hooks/ when needed",
+        "Product UI stays in the domain — never a shared src/components/ dump",
         "app/ holds App.tsx + config; layouts/ holds AppLayout, AuthLayout, RequireAuth",
-        "Base UI (Button, Card, PageHeader, EmptyState…) is imported from @app/ui",
-        "Imports use the @/ alias; @app/ui never reaches back into a domain"
+        "Base UI (Button, Card, PageHeader, EmptyState…) is imported from @app/ui"
       ]
     },
     "api": {

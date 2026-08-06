@@ -6,10 +6,10 @@ import { Badge } from "@app/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@app/ui/card";
 import { PageHeader } from "@app/ui/page-header";
 import { PageLoading } from "@app/ui/page-loading";
-import { useAuth } from "@/domains/auth/auth-provider";
+import { useAuth } from "@/domains/auth/context/auth-provider";
 import { taskApi } from "@/domains/task/api";
 import { tenantApi } from "../api";
-import { useTenant } from "../tenant-provider";
+import { useTenant } from "../context/tenant-provider";
 
 export function DashboardPage() {
   const { t } = useTranslation();

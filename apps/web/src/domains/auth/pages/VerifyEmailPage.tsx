@@ -6,7 +6,7 @@ import { Button } from "@app/ui/button";
 import { AuthLayout } from "@/layouts/AuthLayout";
 import { ApiError } from "@/lib/api";
 import { authApi } from "../api";
-import { useAuth } from "../auth-provider";
+import { useAuth } from "../context/auth-provider";
 
 export function VerifyEmailPage() {
   const { t } = useTranslation();

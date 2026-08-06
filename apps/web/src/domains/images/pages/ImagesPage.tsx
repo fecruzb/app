@@ -9,7 +9,7 @@ import { EmptyState } from "@app/ui/empty-state";
 import { PageHeader } from "@app/ui/page-header";
 import { PageLoading } from "@app/ui/page-loading";
 import { showApiError } from "@/lib/api";
-import { useTenant } from "@/domains/tenant/tenant-provider";
+import { useTenant } from "@/domains/tenant/context/tenant-provider";
 import { imageApi } from "../api";
 
 export function ImagesPage() {

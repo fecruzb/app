@@ -17,7 +17,7 @@ import {
   UserIcon,
 } from "lucide-react";
 import { toast } from "sonner";
-import { AgentFab } from "@/domains/tenant/agent-fab";
+import { AgentFab } from "@/domains/tenant/components/agent-fab";
 import { Avatar, AvatarFallback } from "@app/ui/avatar";
 import { Button } from "@app/ui/button";
 import {
@@ -34,8 +34,8 @@ import { initials } from "@/lib/utils";
 import { useAppConfig } from "@/app/config";
 import { ThemeControls } from "@/theme/theme-controls";
 import { authApi } from "@/domains/auth/api";
-import { useAuth } from "@/domains/auth/auth-provider";
-import { TenantProvider, useTenant } from "@/domains/tenant/tenant-provider";
+import { useAuth } from "@/domains/auth/context/auth-provider";
+import { TenantProvider, useTenant } from "@/domains/tenant/context/tenant-provider";
 
 /**
  * Only becomes a selector when the user belongs to 2+ tenants (was invited to

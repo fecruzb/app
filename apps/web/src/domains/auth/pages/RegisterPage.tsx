@@ -9,7 +9,7 @@ import { AuthLayout } from "@/layouts/AuthLayout";
 import { ApiError } from "@/lib/api";
 import { useAppConfig } from "@/app/config";
 import { authApi } from "../api";
-import { useAuth } from "../auth-provider";
+import { useAuth } from "../context/auth-provider";
 
 export function RegisterPage() {
   const { t } = useTranslation();

@@ -2,7 +2,7 @@ import { createContext, useContext, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { MeDto } from "@app/shared";
 import { ApiError } from "@/lib/api";
-import { authApi } from "./api";
+import { authApi } from "../api";
 
 type AuthContextValue = {
   /** null = logged out; undefined never reaches consumers (gated in the provider). */

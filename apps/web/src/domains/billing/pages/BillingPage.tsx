@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { PageHeader } from "@app/ui/page-header";
-import { BillingSection } from "../billing-section";
+import { BillingSection } from "../components/billing-section";
 
 export function BillingPage() {
   const { t } = useTranslation();

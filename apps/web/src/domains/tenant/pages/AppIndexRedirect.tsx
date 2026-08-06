@@ -2,8 +2,8 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@app/ui/card";
 import { Button } from "@app/ui/button";
-import { useAuth } from "@/domains/auth/auth-provider";
-import { getLastTenantSlug } from "../tenant-provider";
+import { useAuth } from "@/domains/auth/context/auth-provider";
+import { getLastTenantSlug } from "../context/tenant-provider";
 
 /** /app → redirects to the last used tenant (or the first). */
 export function AppIndexRedirect() {

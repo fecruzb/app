@@ -9,7 +9,7 @@ alwaysApply: false
 Base UI consumed per subpath: `import { Button } from "@app/ui/button"`.
 
 - Every new component file MUST be registered in `packages/ui/package.json` under `exports` — without that entry the subpath import fails
-- Keep it app-neutral: no `@/` imports, no product copy, no domain/tenant knowledge. A component that needs product copy or business logic belongs in `apps/web/src/components/` instead
+- Keep it app-neutral: no `@/` imports, no product copy, no domain/tenant knowledge. A component that needs product copy or business logic belongs in `apps/web/src/domains/<domain>/components/` instead
 - Primitives (`button`, `card`, `dialog`, `input`, …) are shadcn-generated — restyle through variants/tokens, don't hand-rewrite them. Composites (`confirm-dialog`, `empty-state`, `page-header`, `page-loading`) stay generic
 - Colors come only from the CSS variables (`--primary`, `--background`, …) that the web app's ThemeProvider writes — never hardcode a color, or theming breaks
 - `cn` lives at `packages/ui/src/lib/utils.ts` (`@app/ui/lib/utils`)

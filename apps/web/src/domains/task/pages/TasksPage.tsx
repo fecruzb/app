@@ -12,7 +12,7 @@ import { PageHeader } from "@app/ui/page-header";
 import { PageLoading } from "@app/ui/page-loading";
 import { showApiError } from "@/lib/api";
 import { cn } from "@app/ui/lib/utils";
-import { useTenant } from "@/domains/tenant/tenant-provider";
+import { useTenant } from "@/domains/tenant/context/tenant-provider";
 import { taskApi } from "../api";
 
 // Canonical internal page: a query for reads, mutations for writes, and the

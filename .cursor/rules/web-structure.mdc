@@ -10,11 +10,13 @@ Mirror the API: features live in `domains/<domain>/`, everything else is shared 
 
 - `domains/<domain>/` — one folder per feature (auth, tenant, account, task, images, billing, marketing, admin):
   - `api.ts` — typed calls for this domain (wraps `@/lib/api`); the only place that builds this domain's routes
-  - `<name>-provider.tsx` — domain context/state when needed (e.g. auth, tenant)
+  - `context/` — React context for this domain when needed (create with the first provider; e.g. auth, tenant). File: `context/<name>-provider.tsx` co-locates Provider + Context + `useX` hook
+  - `hooks/` — reusable domain hooks that are not just the context consumer (create with the first hook)
   - `pages/XxxPage.tsx` — route-level screens (PascalCase, one per file). Non-page route elements (e.g. redirects) may omit the `Page` suffix
   - `routes.tsx` — the domain's routes; **every domain with pages has one** (see routing below)
-  - domain-specific components live here too (kebab-case)
-  - A domain may import another domain's `api`/provider, but keep it minimal
+  - `components/` — domain UI (kebab-case): selects, FABs, layouts, marketing mocks… Create with the first non-page component; do not leave domain UI loose at the domain root
+  - A domain may import another domain's `api`/context/components, but keep it minimal
+  - Do not create empty `context/` / `hooks/` / `components/` folders — add the folder when the first file lands
   - Public marketing screens (landing, pricing…) live in `domains/marketing/`. The landing page
     (`LandingPage.tsx`) embeds code snippets that mirror the repo's real conventions (repository,
     route, tool, page template) — if a convention changes, update those snippets too
@@ -24,10 +26,9 @@ Mirror the API: features live in `domains/<domain>/`, everything else is shared 
 - `layouts/` — AppLayout (`Shell()` sidebar `items` for primary nav; account/billing/integrations live in the user-menu dropdown), AuthLayout, RequireAuth
 - `theme/` — the theming system: `themes.ts` (each theme = light + dark token sets; add a brand by copying a block and changing `--primary`), `theme-provider.tsx`, `theme-controls.tsx` (includes the language picker). Components never hardcode colors — they use the CSS variables
 - `i18n/` — UI locales: `index.ts` (i18next init), `locales/en.json` + `pt.json` (app shell) and `landing.en.json` + `landing.pt.json` (public landing). User-facing copy goes through `t("…")` — add keys to both locale files of the matching pair
-- `components/` — app-specific shared components that carry product copy/logic (e.g. `role-select`); reusable base UI lives in `@app/ui` (see below)
 - `lib/` — pure infra: `api.ts` (raw HTTP client + `ApiError` + `showApiError`), `utils.ts` (`initials`, `formatUsdMicros`); no domain knowledge
 - Network calls go through a domain `api.ts`, never `fetch` or the raw HTTP helpers on `@/lib/api` from a page. Pages may still import `ApiError` / `showApiError` from `@/lib/api`
-- Imports: `@/` for anything crossing a domain or into shell/`lib`/`components`/`theme`/`i18n`; relative (`./`, `../`) only within the same domain (same rule as the API). Import base UI from `@app/ui`
+- Imports: `@/` for anything crossing a domain or into shell/`lib`/`theme`/`i18n`; relative (`./`, `../`) only within the same domain (same rule as the API). Import base UI from `@app/ui`. There is no top-level `src/components/` — product UI lives in the owning domain's `components/`
 
 ## Shared UI package (`@app/ui` → `packages/ui`)
 
@@ -40,7 +41,7 @@ Framework-agnostic, tenant-agnostic base UI shared across web apps. Import per c
   `page-header`, `page-loading`
 - `cn` lives here: `import { cn } from "@app/ui/lib/utils"`
 - Nothing in `@app/ui` may import from `@/` or reference a domain — keep it app-neutral. Anything
-  with product copy or business logic stays in `apps/web/src/components/` instead.
+  with product copy or business logic stays in `domains/<domain>/components/` instead.
 
 ## Page template (follow it for every internal page)
 
@@ -57,9 +58,9 @@ loading flags for data. Copy `domains/task/pages/TasksPage.tsx` — it is the ca
 ## Reusing UI — reach for these before writing new UI
 
 From `@app/ui`: `PageHeader`, `PageLoading`, `EmptyState`, and `useConfirm`/`ConfirmProvider`
-(`@app/ui/confirm-dialog`). App-specific: `RoleSelect` (`@/components/role-select`). If a generic UI
-shape repeats across pages, add it to `@app/ui`; if it carries product copy/logic, keep it in
-`apps/web/src/components/`.
+(`@app/ui/confirm-dialog`). Domain UI: e.g. `RoleSelect` (`domains/tenant/components/role-select`).
+If a generic UI shape repeats across pages, add it to `@app/ui`; if it carries product copy/logic,
+keep it in the owning domain's `components/`.
 
 ## Routing
 

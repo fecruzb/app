@@ -8,7 +8,7 @@ import { Label } from "@app/ui/label";
 import { AuthLayout } from "@/layouts/AuthLayout";
 import { ApiError } from "@/lib/api";
 import { authApi } from "../api";
-import { useAuth } from "../auth-provider";
+import { useAuth } from "../context/auth-provider";
 
 export function ResetPasswordPage() {
   const { t } = useTranslation();

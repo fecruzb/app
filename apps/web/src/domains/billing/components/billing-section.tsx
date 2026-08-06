@@ -9,9 +9,9 @@ import { PageLoading } from "@app/ui/page-loading";
 import { cn } from "@app/ui/lib/utils";
 import { dateLocale } from "@/i18n";
 import { formatUsdMicros } from "@/lib/utils";
-import { useAuth } from "@/domains/auth/auth-provider";
-import { useTenant } from "@/domains/tenant/tenant-provider";
-import { billingApi } from "./api";
+import { useAuth } from "@/domains/auth/context/auth-provider";
+import { useTenant } from "@/domains/tenant/context/tenant-provider";
+import { billingApi } from "../api";
 
 const selectClass =
   "h-9 w-full max-w-sm rounded-md border border-input bg-transparent px-2 text-sm opacity-60";

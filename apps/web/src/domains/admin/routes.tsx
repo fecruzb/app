@@ -1,12 +1,12 @@
 import { Navigate, Route } from "react-router-dom";
 import { RequireAuth } from "@/layouts/RequireAuth";
-import { AdminLayout } from "./admin-layout";
+import { AdminLayout } from "./components/admin-layout";
+import { RequirePlatformAdmin } from "./components/require-platform-admin";
 import { AdminInvitesPage } from "./pages/AdminInvitesPage";
 import { AdminPlansPage } from "./pages/AdminPlansPage";
 import { AdminTenantsPage } from "./pages/AdminTenantsPage";
 import { AdminUsersPage } from "./pages/AdminUsersPage";
 import { JoinPage } from "./pages/JoinPage";
-import { RequirePlatformAdmin } from "./require-platform-admin";
 
 /** Platform admin area — outside the tenant slug layout. */
 export const adminRoutes = (

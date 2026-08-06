@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, type ReactNode } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import type { TenantSummaryDto } from "@app/shared";
 import { managerRoles } from "@app/shared";
-import { useAuth } from "@/domains/auth/auth-provider";
+import { useAuth } from "@/domains/auth/context/auth-provider";
 
 const LAST_TENANT_KEY = "app:lastTenant";
 

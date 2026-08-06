@@ -6,7 +6,7 @@ import { Toaster } from "sonner";
 import "@/i18n";
 import { App } from "@/app/App";
 import { ConfirmProvider } from "@app/ui/confirm-dialog";
-import { AuthProvider } from "@/domains/auth/auth-provider";
+import { AuthProvider } from "@/domains/auth/context/auth-provider";
 import { ThemeProvider, useTheme } from "@/theme/theme-provider";
 import "./index.css";
 

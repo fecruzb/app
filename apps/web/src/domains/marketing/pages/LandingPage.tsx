@@ -23,13 +23,13 @@ import {
 import { Button } from "@app/ui/button";
 import { Card, CardContent } from "@app/ui/card";
 import { useAppConfig } from "@/app/config";
-import { useAuth } from "@/domains/auth/auth-provider";
+import { useAuth } from "@/domains/auth/context/auth-provider";
 import { LOCALES, points, type Locale } from "@/i18n";
 import { setLocale } from "@/i18n/locale-controls";
 import { ThemeControls } from "@/theme/theme-controls";
 import { useTheme } from "@/theme/theme-provider";
-import { BrandIcon } from "../brand-icon";
-import { CodeBlock } from "../code-block";
+import { BrandIcon } from "../components/brand-icon";
+import { CodeBlock } from "../components/code-block";
 import {
   AccountMock,
   AgentChatMock,
@@ -46,7 +46,7 @@ import {
   TerminalMock,
   WindowBar,
   type Screen,
-} from "../product-preview";
+} from "../components/product-preview";
 
 type Included = {
   icon: ComponentType<{ className?: string }>;
@@ -217,13 +217,21 @@ apps/web/src/
 │   ├── api.ts            typed calls — the only network boundary
 │   ├── pages/            route screens: TasksPage.tsx (PascalCase)
 │   ├── routes.tsx        the domain's <Route> element
-│   └── task-card.tsx     domain components (kebab-case)
+│   └── components/       domain UI (kebab-case) — add when needed
+├── domains/auth/
+│   └── context/          <name>-provider.tsx (Provider + useAuth)
+├── domains/tenant/
+│   ├── context/          TenantProvider + useTenant
+│   └── components/       role-select, agent-fab, …
+├── domains/marketing/
+│   └── components/       brand-icon, code-block, product-preview, …
 ├── app/                  App.tsx (route map), config.ts
 ├── layouts/              AppLayout, AuthLayout, RequireAuth
-├── components/           app components with product copy (role-select)
 └── lib/                  api.ts (HTTP client), utils.ts — no domain knowledge
 
-// @app/ui (packages/ui) — the tenant-agnostic base UI:
+// hooks/ appears with the first non-context domain hook.
+// No top-level src/components/ — product UI stays in the owning domain.
+// @app/ui (packages/ui) — tenant-agnostic base UI:
 //   Button, Card, Input, Dialog · PageHeader · EmptyState · useConfirm`;
 
 type Chapter = {

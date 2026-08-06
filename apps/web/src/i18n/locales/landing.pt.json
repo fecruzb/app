@@ -203,12 +203,12 @@
     "webConvention": {
       "eyebrow": "O frontend",
       "title": "React, organizado pelos mesmos domínios",
-      "body": "O web app espelha a API: uma pasta por feature em domains/, e o resto é shell compartilhado. Um domínio guarda seu api.ts tipado, suas pages/ de rota, seu routes.tsx e quaisquer componentes específicos. UI genérica e agnóstica de tenant mora no pacote @app/ui; shell e layouts ficam fora dos domínios.",
+      "body": "O web app espelha a API: uma pasta por feature em domains/, e o resto é shell compartilhado. Um domínio guarda seu api.ts tipado, pages/ de rota, routes.tsx e — quando precisar — components/, context/ e hooks/. Não existe src/components/ no topo: UI de produto mora no domínio dono. UI genérica e agnóstica de tenant mora em @app/ui; shell e layouts ficam fora dos domínios.",
       "points": [
-        "domains/<feature>/ espelha a API — api.ts, pages/, routes.tsx, components",
+        "domains/<feature>/ — api.ts, pages/, routes.tsx; components/, context/, hooks/ sob demanda",
+        "UI de produto fica no domínio — nunca um dump em src/components/",
         "app/ guarda App.tsx + config; layouts/ guarda AppLayout, AuthLayout, RequireAuth",
-        "UI base (Button, Card, PageHeader, EmptyState…) é importada de @app/ui",
-        "Imports usam o alias @/; @app/ui nunca aponta de volta para um domínio"
+        "UI base (Button, Card, PageHeader, EmptyState…) é importada de @app/ui"
       ]
     },
     "api": {

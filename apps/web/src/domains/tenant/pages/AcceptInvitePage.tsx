@@ -9,7 +9,7 @@ import { Input } from "@app/ui/input";
 import { Label } from "@app/ui/label";
 import { AuthLayout } from "@/layouts/AuthLayout";
 import { ApiError } from "@/lib/api";
-import { useAuth } from "@/domains/auth/auth-provider";
+import { useAuth } from "@/domains/auth/context/auth-provider";
 import { tenantApi } from "../api";
 
 export function AcceptInvitePage() {

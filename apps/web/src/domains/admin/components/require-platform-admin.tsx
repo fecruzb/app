@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "@/domains/auth/auth-provider";
+import { useAuth } from "@/domains/auth/context/auth-provider";
 
 /** Client-side gate — API still enforces platform admin. */
 export function RequirePlatformAdmin() {
