@@ -9,12 +9,12 @@ export async function changePassword(c: AppContext) {
   const user = c.get("user");
 
   if (!verifyPassword(user.passwordHash, data.currentPassword)) {
-    throw new HttpError(400, "Senha atual incorreta");
+    throw new HttpError(400, "Current password is incorrect");
   }
 
   await authRepository.updateUser(user.id, { passwordHash: hashPassword(data.newPassword) });
 
-  // Invalidate other sessions, keeping the current one
+  // Invalidate other sessions, keeping the current one.
   await deleteUserSessions(user.id, c.get("sessionToken"));
   return c.json({ ok: true });
 }

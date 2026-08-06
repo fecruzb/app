@@ -12,16 +12,16 @@ export async function updateMemberRole(c: AppContext) {
   const target = await tenantRepository.findMember(tenant.id, targetUserId);
   if (!target) throw new HttpError(404, "Member not found");
 
-  // Only owners can change owner roles (promote or demote)
+  // Only owners can change owner roles (promote or demote).
   if ((target.role === "owner" || data.role === "owner") && actor.role !== "owner") {
-    throw new HttpError(403, "Apenas owners podem alterar roles de owner");
+    throw new HttpError(403, "Only owners can change owner roles");
   }
   if (
     target.role === "owner" &&
     data.role !== "owner" &&
     (await tenantRepository.countOwners(tenant.id)) <= 1
   ) {
-    throw new HttpError(400, "O tenant precisa de pelo menos um owner");
+    throw new HttpError(400, "The tenant needs at least one owner");
   }
 
   await tenantRepository.updateMemberRole(tenant.id, targetUserId, data.role);

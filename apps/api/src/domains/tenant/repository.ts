@@ -40,7 +40,7 @@ export const tenantRepository = {
     return tenant;
   },
 
-  // -- membros -----------------------------------------------------------------
+  // -- members -----------------------------------------------------------------
 
   async getUserTenants(userId: string): Promise<TenantSummaryDto[]> {
     const rows = await db
@@ -140,7 +140,7 @@ export const tenantRepository = {
       .where(and(eq(tenantMembers.tenantId, tenantId), eq(tenantMembers.userId, userId)));
   },
 
-  // -- convites -------------------------------------------------------------------
+  // -- invites -----------------------------------------------------------------
 
   async listPendingInvites(
     tenantId: string,
@@ -153,7 +153,7 @@ export const tenantRepository = {
       .orderBy(desc(tenantInvites.createdAt));
   },
 
-  /** Remove convites pendentes para o e-mail (um convite ativo por e-mail). */
+  /** Remove pending invites for the email (one active invite per email). */
   async deleteInvitesByEmail(tenantId: string, email: string) {
     await db
       .delete(tenantInvites)

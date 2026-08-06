@@ -9,7 +9,7 @@ export async function removeMember(c: AppContext) {
   const isSelf = targetUserId === c.get("user").id;
 
   if (!isSelf && actor.role !== "owner" && actor.role !== "admin") {
-    throw new HttpError(403, "Apenas administradores podem remover membros");
+    throw new HttpError(403, "Only administrators can remove members");
   }
 
   const target = await tenantRepository.findMember(tenant.id, targetUserId);
@@ -19,10 +19,10 @@ export async function removeMember(c: AppContext) {
     throw new HttpError(400, "The owner can't leave their own tenant");
   }
   if (!isSelf && target.role === "owner" && actor.role !== "owner") {
-    throw new HttpError(403, "Apenas owners podem remover um owner");
+    throw new HttpError(403, "Only owners can remove an owner");
   }
   if (target.role === "owner" && (await tenantRepository.countOwners(tenant.id)) <= 1) {
-    throw new HttpError(400, "O tenant precisa de pelo menos um owner");
+    throw new HttpError(400, "The tenant needs at least one owner");
   }
 
   await tenantRepository.deleteMember(tenant.id, targetUserId);

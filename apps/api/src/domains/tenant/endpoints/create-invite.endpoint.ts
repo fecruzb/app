@@ -1,13 +1,14 @@
-import { createInviteSchema, type InviteDto } from "@app/shared";
+import { createInviteSchema } from "@app/shared";
 import { generateToken, hashToken } from "@/lib/crypto";
 import { sendEmail } from "@/integrations/resend";
 import { env } from "@/lib/env";
 import { HttpError, parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
+import { toInviteDto } from "../dto";
 import { inviteTemplate } from "../emails";
 import { tenantRepository } from "../repository";
 
-const INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 dias
+const INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 export async function createInvite(c: AppContext) {
   const data = await parseBody(c, createInviteSchema);
@@ -34,13 +35,5 @@ export async function createInvite(c: AppContext) {
   const { subject, html } = inviteTemplate(tenant.name, user.name, `${env.appUrl}/invite/${token}`);
   void sendEmail({ to: data.email, subject, html });
 
-  const dto: InviteDto = {
-    id: invite.id,
-    email: invite.email,
-    role: invite.role,
-    invitedByName: user.name,
-    createdAt: invite.createdAt.toISOString(),
-    expiresAt: invite.expiresAt.toISOString(),
-  };
-  return c.json(dto, 201);
+  return c.json(toInviteDto(invite, user.name), 201);
 }

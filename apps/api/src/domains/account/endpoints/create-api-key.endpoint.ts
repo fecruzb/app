@@ -2,10 +2,10 @@ import { createApiKeySchema, type CreatedApiKeyDto } from "@app/shared";
 import { HttpError, parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
 import { toApiKeyDto } from "@/domains/auth/dto";
-import { createApiKey } from "@/domains/auth/service";
+import { createApiKey as createApiKeyForUser } from "@/domains/auth/service";
 import { tenantRepository } from "@/domains/tenant/repository";
 
-export async function createApiKeyEndpoint(c: AppContext) {
+export async function createApiKey(c: AppContext) {
   const { name, tenantId } = await parseBody(c, createApiKeySchema);
   const user = c.get("user");
 
@@ -13,7 +13,7 @@ export async function createApiKeyEndpoint(c: AppContext) {
   const membership = await tenantRepository.findTenantWithMembership(tenantId, user.id);
   if (!membership) throw new HttpError(404, "Tenant not found");
 
-  const { apiKey, key } = await createApiKey(user.id, tenantId, name);
+  const { apiKey, key } = await createApiKeyForUser(user.id, tenantId, name);
   const dto: CreatedApiKeyDto = {
     ...toApiKeyDto({
       id: apiKey.id,
