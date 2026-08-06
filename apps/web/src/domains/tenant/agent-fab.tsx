@@ -2,10 +2,10 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader2Icon, SendIcon, SparklesIcon, XIcon } from "lucide-react";
 import type { AgentAction, AgentMessage } from "@app/shared";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@app/ui/button";
+import { Textarea } from "@app/ui/textarea";
 import { ApiError } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { cn } from "@app/ui/lib/utils";
 import { agentApi } from "./agent-api";
 import { useTenant } from "./tenant-provider";
 

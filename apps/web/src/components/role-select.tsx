@@ -1,5 +1,5 @@
 import type { TenantRole } from "@app/shared";
-import { cn } from "@/lib/utils";
+import { cn } from "@app/ui/lib/utils";
 
 type Props = {
   value: TenantRole;

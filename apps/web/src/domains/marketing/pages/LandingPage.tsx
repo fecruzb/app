@@ -12,8 +12,8 @@ import {
   TerminalIcon,
   UsersIcon,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@app/ui/button";
+import { Card, CardContent } from "@app/ui/card";
 import { useAppConfig } from "@/app/config";
 import { useAuth } from "@/domains/auth/auth-provider";
 import { CodeBlock } from "../code-block";

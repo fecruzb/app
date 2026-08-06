@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRightIcon, CheckSquareIcon, UsersIcon } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@app/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@app/ui/card";
 import { useAuth } from "@/domains/auth/auth-provider";
 import { taskApi } from "@/domains/task/api";
 import { tenantApi } from "../api";

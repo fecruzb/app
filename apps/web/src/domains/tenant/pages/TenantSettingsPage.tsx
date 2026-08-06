@@ -4,14 +4,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
 import type { TenantRole } from "@app/shared";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useConfirm } from "@/components/confirm-dialog";
-import { PageHeader } from "@/components/page-header";
+import { Avatar, AvatarFallback } from "@app/ui/avatar";
+import { Badge } from "@app/ui/badge";
+import { Button } from "@app/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@app/ui/card";
+import { Input } from "@app/ui/input";
+import { Label } from "@app/ui/label";
+import { useConfirm } from "@app/ui/confirm-dialog";
+import { PageHeader } from "@app/ui/page-header";
 import { RoleSelect } from "@/components/role-select";
 import { showApiError } from "@/lib/api";
 import { initials } from "@/lib/utils";
@@ -209,7 +209,8 @@ function InvitesSection() {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["invites", tenant.id] });
 
   const createMutation = useMutation({
-    mutationFn: () => tenantApi.createInvite(tenant.id, { email, role: role as "admin" | "member" }),
+    mutationFn: () =>
+      tenantApi.createInvite(tenant.id, { email, role: role as "admin" | "member" }),
     onSuccess: () => {
       void invalidate();
       setEmail("");
@@ -266,7 +267,11 @@ function InvitesSection() {
                 <span className="text-xs text-muted-foreground">
                   expires {new Date(invite.expiresAt).toLocaleDateString("en-US")}
                 </span>
-                <Button variant="ghost" size="icon" onClick={() => revokeMutation.mutate(invite.id)}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => revokeMutation.mutate(invite.id)}
+                >
                   <Trash2Icon />
                   <span className="sr-only">Revoke</span>
                 </Button>

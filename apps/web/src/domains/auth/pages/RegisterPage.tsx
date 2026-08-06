@@ -1,9 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@app/ui/button";
+import { Input } from "@app/ui/input";
+import { Label } from "@app/ui/label";
 import { AuthLayout } from "@/layouts/AuthLayout";
 import { ApiError } from "@/lib/api";
 import { useAppConfig } from "@/app/config";

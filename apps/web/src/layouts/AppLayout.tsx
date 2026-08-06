@@ -13,8 +13,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { AgentFab } from "@/domains/tenant/agent-fab";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@app/ui/avatar";
+import { Button } from "@app/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,9 +22,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@app/ui/dropdown-menu";
 import { ApiError } from "@/lib/api";
-import { cn, initials } from "@/lib/utils";
+import { cn } from "@app/ui/lib/utils";
+import { initials } from "@/lib/utils";
 import { useAppConfig } from "@/app/config";
 import { authApi } from "@/domains/auth/api";
 import { useAuth } from "@/domains/auth/auth-provider";

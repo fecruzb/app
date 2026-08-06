@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "@fontsource-variable/geist";
 
+/* Scan the shared UI package so its Tailwind classes are generated. */
+@source "../../../packages/ui/src";
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);

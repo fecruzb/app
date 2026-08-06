@@ -18,10 +18,23 @@ Mirror the API: features live in `domains/<domain>/`, everything else is shared 
   - Public marketing screens (landing, pricing…) live in `domains/marketing/`
 - `app/` — application shell: `App.tsx` (route map), `config.ts` (app-level config), `NotFoundPage.tsx`
 - `layouts/` — AppLayout, AuthLayout, RequireAuth
-- `components/ui/` — shadcn (don't hand-rewrite); `components/` — shared app components (below)
-- `lib/` — pure infra: `api.ts` (raw HTTP client + `ApiError` + `showApiError`), `utils.ts` (`cn`, `initials`); no domain knowledge
+- `components/` — app-specific shared components that carry product copy/logic (e.g. `role-select`); reusable base UI lives in `@app/ui` (see below)
+- `lib/` — pure infra: `api.ts` (raw HTTP client + `ApiError` + `showApiError`), `utils.ts` (`initials`); no domain knowledge
 - Network calls go through a domain `api.ts`, never `fetch`/`@/lib/api` directly from a page
-- Always import with the `@/` alias (→ `src/`)
+- Always import in-app modules with the `@/` alias (→ `src/`); import base UI from `@app/ui`
+
+## Shared UI package (`@app/ui` → `packages/ui`)
+
+Framework-agnostic, tenant-agnostic base UI shared across web apps. Import per component via subpath:
+`import { Button } from "@app/ui/button"`.
+
+- Primitives (shadcn — don't hand-rewrite): `avatar`, `badge`, `button`, `card`, `dialog`,
+  `dropdown-menu`, `input`, `label`, `textarea`
+- Generic composites: `confirm-dialog` (`ConfirmProvider`/`useConfirm`), `empty-state`,
+  `page-header`, `page-loading`
+- `cn` lives here: `import { cn } from "@app/ui/lib/utils"`
+- Nothing in `@app/ui` may import from `@/` or reference a domain — keep it app-neutral. Anything
+  with product copy or business logic stays in `apps/web/src/components/` instead.
 
 ## Page template (follow it for every internal page)
 
@@ -35,10 +48,12 @@ loading flags for data. Copy `domains/task/pages/TasksPage.tsx` — it is the ca
 - Destructive actions use `const confirm = useConfirm()` → `if (await confirm({ title, destructive: true }))`, never `window.confirm`
 - Errors from mutations always go through `showApiError(err, fallback)`
 
-## Shared components (`components/`) — reach for these before writing new UI
+## Reusing UI — reach for these before writing new UI
 
-`PageHeader`, `PageLoading`, `EmptyState`, `RoleSelect`, and `useConfirm`/`ConfirmProvider`
-(`confirm-dialog.tsx`). If a UI shape repeats across two pages, extract it here.
+From `@app/ui`: `PageHeader`, `PageLoading`, `EmptyState`, and `useConfirm`/`ConfirmProvider`
+(`@app/ui/confirm-dialog`). App-specific: `RoleSelect` (`@/components/role-select`). If a generic UI
+shape repeats across pages, add it to `@app/ui`; if it carries product copy/logic, keep it in
+`apps/web/src/components/`.
 
 ## Routing
 

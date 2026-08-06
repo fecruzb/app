@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2Icon, Loader2Icon, XCircleIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@app/ui/button";
 import { AuthLayout } from "@/layouts/AuthLayout";
 import { ApiError } from "@/lib/api";
 import { authApi } from "../api";
