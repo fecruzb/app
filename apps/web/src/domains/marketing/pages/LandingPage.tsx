@@ -452,9 +452,7 @@ function buildResourceSlices(t: TFunction): Slice[] {
     {
       id: "route-map",
       ...sliceCopy("routeMap", t),
-      visual: (
-        <CodeBlock filename="domains/task/routes/index.ts" code={routeMapFile} lang="ts" />
-      ),
+      visual: <CodeBlock filename="domains/task/routes/index.ts" code={routeMapFile} lang="ts" />,
     },
     {
       id: "tool",
