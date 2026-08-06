@@ -10,4 +10,6 @@ alwaysApply: false
 - Return JSON-serializable data; throw `Error` for expected failures — never format a protocol response
 - `summarize` only on write tools (becomes a chip in the chat UI); reads don't have it
 - Tools and domains NEVER import MCP/OpenAI: the MCP SDK only lives in `agent/mcp-server.ts`; OpenAI's only in `integrations/openai.ts`
-- Canonical example: `apps/api/src/domains/task/tools/get-task.tool.ts`
+- Same JSDoc habit as routes: title / blank / `` `snake_case_name` `` / blank / description / `@returns` (and `@param` only if useful). Official tone — no "template/example"
+- `execute` body uses three section banners (same dash length as routes): `// -- Input ---`, `// -- Processing ---`, `// -- Output ---`. Input holds ctx/args locals; Processing holds repository/service work and throws; Output holds the return. Always include all three
+- Canonical example: `apps/api/src/domains/task/tools/create-task.tool.ts`

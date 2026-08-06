@@ -43,7 +43,7 @@ Without `RESEND_API_KEY`, emails (verification, password reset, invites) are log
 
 ## Structure
 
-The API is organized by **domain**: each domain groups its database schema, repository (all SQL), business rules, one file per endpoint and the agent tools.
+The API is organized by **domain**: each domain groups its database schema, repository (all SQL), business rules, one file per route and the agent tools.
 
 ```
 apps/api/src/
@@ -52,16 +52,16 @@ apps/api/src/
 ├── context.ts            # typed request context (user/tenant/membership from middlewares)
 ├── agent/                # agent surface (not a domain): assistant (policy), registry,
 │                         # mcp-server (adapter), tool (contract), mcp (stdio entry),
-│                         # mcp-http (remote MCP over HTTP, API-key auth), endpoints/, routes
+│                         # mcp-http (remote MCP over HTTP, API-key auth), routes/
 ├── lib/                  # pure utilities (no app dependency): env (validated at boot),
 │                         # crypto, logger, errors, email layout
 ├── integrations/         # external service wrappers: openai (client + tool loop), resend
 ├── domains/
-│   ├── auth/             # schema, repository, service, dto, emails, middleware, endpoints/, routes
-│   ├── account/          # endpoints/ (profile, password), routes
+│   ├── auth/             # schema, repository, service, dto, emails, middleware, routes/
+│   ├── account/          # routes/ (profile, password)
 │   ├── tenant/           # tenants + members + invites: schema, repository, service,
-│   │                     # emails, middleware, endpoints/, tools/, routes
-│   └── task/             # example resource (to-do list): schema, repository, dto, endpoints/, tools/, routes
+│   │                     # emails, middleware, routes/, tools/
+│   └── task/             # example resource (to-do list): schema, repository, dto, routes/, tools/
 └── db/                   # client, schema.ts (barrel for drizzle-kit), columns (audit), seed
 
 apps/web                  # React SPA (public pages + logged-in area)
@@ -70,13 +70,13 @@ packages/shared           # Zod schemas and DTOs per domain (auth, tenant, task,
 
 Conventions:
 
-- **One endpoint per file** in `domains/<domain>/endpoints/`, named `<action>.endpoint.ts` (e.g. `create-task.endpoint.ts`); the domain's `routes.ts` is just the method + path + middlewares map.
+- **One route per file** in `domains/<domain>/routes/`, named `<action>.route.ts` (e.g. `create-task.route.ts`); `routes/index.ts` is the method + path + middlewares map (same role as `tools/index.ts`).
 - **One tool per file** in `domains/<domain>/tools/`, named `<action>.tool.ts` (e.g. `create-task.tool.ts`); the tool is self-describing (`summarize` marks a write and becomes a chip in the chat UI). Register the domain's array in `agent/registry.ts`.
 - **Tools are transport-neutral**: they return JSON-serializable data and throw `Error` for expected failures. `agent/mcp-server.ts` translates to MCP; `agent/assistant.ts` translates to the OpenAI loop. Domains never import MCP/OpenAI (lint blocks it).
-- **Name suffix = file role.** Single-role domain files keep the role name (`repository.ts`, `service.ts`, `schema.ts`, `routes.ts`); action files (several per domain) carry the `.endpoint.ts` / `.tool.ts` suffix.
-- **The repository owns the SQL** — endpoints and services don't write queries. Every resource query filters by `tenantId`.
-- **Service only when there's real business logic** (sessions, tokens, invites…). Plain CRUD calls the repository straight from the endpoint/tool — that's why `task` has no `service.ts` while `auth`/`tenant` do. Once an operation gains a rule, create the service and route the endpoint and tool through it.
-- **Tenant isolation is safe by default** — each tenant-scoped domain's `routes.ts` applies `requireAuth`/`requireTenant` once (via `.use`), so every new route is isolated from the start.
+- **Name suffix = file role.** Single-role domain files keep the role name (`repository.ts`, `service.ts`, `schema.ts`); folders own their index (`routes/index.ts`, `tools/index.ts`); action files carry the `.route.ts` / `.tool.ts` suffix.
+- **The repository owns the SQL** — routes and services don't write queries. Every resource query filters by `tenantId`.
+- **Service only when there's real business logic** (sessions, tokens, invites…). Plain CRUD calls the repository straight from the route/tool — that's why `task` has no `service.ts` while `auth`/`tenant` do. Once an operation gains a rule, create the service and route the HTTP handler and tool through it.
+- **Tenant isolation is safe by default** — each tenant-scoped domain's `routes/index.ts` applies `requireAuth`/`requireTenant` once (via `.use`), so every new route is isolated from the start.
 - **New table?** Export the domain schema in `db/schema.ts` (the barrel drizzle-kit reads) and run `db:generate`.
 - **Env is validated at boot** (`lib/env.ts`, Zod): a missing required variable kills the process with a clear message instead of breaking on a query. Add new vars to that schema.
 - **Imports use the `@/` alias** (→ `apps/api/src/`): anything crossing a boundary uses the alias — `@/lib/*`, `@/integrations/*`, `@/db/*`, `@/domains/<other>/*`. Only imports within the same domain stay relative (`./repository`, `../service`). This way moving files doesn't break imports and `../../../` disappears.
@@ -94,7 +94,7 @@ Useful entry points:
 ## Deriving a new product
 
 1. Clone/copy this repo and rename it (`package.json`, `index.html`, "App Base" text, `render.yaml`)
-2. Replace the `tasks` resource with your domain: copy `apps/api/src/domains/task/` (schema → repository → endpoints → tools), export the schema in `db/schema.ts`, run `db:generate`, add the schemas to `packages/shared` and the page in web
+2. Replace the `tasks` resource with your domain: copy `apps/api/src/domains/task/` (schema → repository → routes → tools), export the schema in `db/schema.ts`, run `db:generate`, add the schemas to `packages/shared` and the page in web
 3. Adjust the landing (`apps/web/src/domains/marketing/pages/LandingPage.tsx`)
 4. Set `RESEND_API_KEY` and `MAIL_FROM` for real emails
 5. Deploy: push the repo to GitHub and create a Blueprint on Render pointing to `render.yaml`

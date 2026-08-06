@@ -520,7 +520,7 @@ export function TasksMock() {
   const tasks = [
     { title: "Design the schema", done: true },
     { title: "Wire the repository", done: true },
-    { title: "Expose the endpoint", done: false },
+    { title: "Expose the route", done: false },
     { title: "Build the screen", done: false },
   ];
   return (

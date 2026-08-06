@@ -11,7 +11,7 @@ Layers (boundaries enforced by lint in `.oxlintrc.json` — never violate):
 - `lib/` — pure utility; imports NOTHING from the app
 - `integrations/` — external service wrapper (openai, resend); only uses `lib/`
 - `db/` — client, `schema.ts` (barrel), columns, seed
-- `domains/<d>/` — business: `schema.ts`, `repository.ts`, `service.ts`, `dto.ts`, `emails.ts`, `middleware.ts`, `endpoints/`, `tools/`, `routes.ts`
+- `domains/<d>/` — business: `schema.ts`, `repository.ts`, `service.ts`, `dto.ts`, `emails.ts`, `middleware.ts`, `routes/` (handlers + `index.ts` route map), `tools/` (tools + `index.ts` registry)
 - `agent/` — agent surface (not a domain); domains only import `@/agent/tool`
 - `app.ts` builds routes; `server.ts` starts the server; `context.ts` = request types
 
@@ -19,7 +19,7 @@ Imports: `@/` alias for anything crossing a boundary; relative (`./`, `../`) onl
 
 Where to add:
 
-- Endpoint: `domains/<d>/endpoints/<action>.endpoint.ts` → register in the domain's `routes.ts`
+- Route: `domains/<d>/routes/<action>.route.ts` → register in `routes/index.ts`
 - Tool: `domains/<d>/tools/<action>.tool.ts` → register in `tools/index.ts` (and a new domain in `agent/registry.ts`)
 - Table: schema in the domain → export in `db/schema.ts` → `db:generate`
 - Env var: Zod schema in `lib/env.ts` + `.env.example` + `render.yaml`
@@ -28,14 +28,14 @@ Where to add:
 Rules:
 
 - Table shape (copy `domains/task/schema.ts`): `uuid("id").primaryKey().defaultRandom()`, `tenant_id` FK with `onDelete: "cascade"`, `...timestamps` from `@/db/columns`, and an index on `tenantId`. Same JSDoc habit as repositories: file header (title + module description), each table with title / blank / description; non-obvious columns get the same treatment.
-- Endpoint handler is `export async function <action>(c: AppContext)` — the name matches the route action (`createTask`, `login`), no `Endpoint` suffix, no default export. Same JSDoc habit: title / blank / `` `METHOD /path` `` (final HTTP route) / blank / description / `@param c` / `@returns` (status + body).
-- Endpoint body uses three section banners (same dash length): `// -- Input ---`, `// -- Processing ---`, `// -- Output ---`. Input holds `parseBody` / `uuidParam` / `c.get` and other request locals; Processing holds repository/service calls, auth checks, business rules and throws; Output holds DTO mapping, cookies and `c.json` / return. Always include all three, even on thin handlers. Blank line before each banner (except possibly Input right after `{`) and blank line between sections.
+- Route handler is `export async function <action>(c: AppContext)` — the name matches the route action (`createTask`, `login`), no `Route` suffix, no default export. Same JSDoc habit: title / blank / `` `METHOD /path` `` (final HTTP route) / blank / description / `@param c` / `@returns` (status + body).
+- Route body uses three section banners (same dash length): `// -- Input ---`, `// -- Processing ---`, `// -- Output ---`. Input holds `parseBody` / `uuidParam` / `c.get` and other request locals; Processing holds repository/service calls, auth checks, business rules and throws; Output holds DTO mapping, cookies and `c.json` / return. Always include all three, even on thin handlers. Blank line before each banner (except possibly Input right after `{`) and blank line between sections.
 - Validate input with `parseBody(c, schema)` (schema from `@app/shared`); read UUID route params with `uuidParam(c, "name")`; throw `HttpError(status, message)`; return with `c.json(...)`
-- Map rows to DTOs in `dto.ts` (`toXxxDto`), never inline inside an endpoint or repository
+- Map rows to DTOs in `dto.ts` (`toXxxDto`), never inline inside a route or repository
 - All SQL lives in `repository.ts` as an exported object of async methods. Two shapes (copy the matching one):
   - **Resource repo** (canonical: `task`, also `images`): one primary table, tenant-scoped. CRUD names are fixed: `list` / `find` / `insert` / `update` / `delete`. Every method takes `tenantId` and filters by it. Write each query inline in the method (no shared query helpers). Mutations use `.returning()` when the row is needed. Annotate returns. File header is title + module description (official tone, not "template"). Each method: title, blank line, description, then `@param` / `@returns`. Prefer `/** */` over `//`.
   - **Platform repo** (`auth`, `tenant`, `usage`): owns several tables or non-CRUD access. Prefix methods by entity (`insertUser`, `listMembers`, `sumUserSpendSince`). Same JSDoc habit as resource repos.
 - Repository returns DB rows / join shapes — never `@app/shared` DTOs. Map in `dto.ts`.
-- `service.ts` only when there's real business logic; plain CRUD calls the repository straight from the endpoint/tool. Same JSDoc habit as repositories: file header (title + module description), each export with title / blank / description / `@param` / `@returns`.
-- Tenant routes: `routes.ts` applies `requireAuth`/`requireTenant` once via `.use`. Same JSDoc habit: file header (title + module description) and a title / blank / description on each exported route group (include mount path).
-- Public, token-authenticated surfaces (e.g. `inviteRoutes`) may be a second export mounted at their own path — that's the one accepted exception to "one route group per domain"
+- `service.ts` only when there's real business logic; plain CRUD calls the repository straight from the route/tool. Same JSDoc habit as repositories: file header (title + module description), each export with title / blank / description / `@param` / `@returns`.
+- Tenant route maps live in `routes/index.ts` (mirrors `tools/index.ts`): apply `requireAuth`/`requireTenant` once via `.use`, export the Hono group(s). Same JSDoc habit: file header (title + module description) and a title / blank / description on each exported route group (include mount path).
+- Public, token-authenticated surfaces (e.g. `inviteRoutes`) may be a second export from the same `routes/index.ts`, mounted at their own path — that's the one accepted exception to "one route group per domain"

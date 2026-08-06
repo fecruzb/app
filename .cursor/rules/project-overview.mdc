@@ -27,7 +27,7 @@ To add a feature/resource end to end, follow the checklist in the `add-feature` 
 - **Layer boundaries are lint-enforced** (`.oxlintrc.json`): `lib/` imports nothing from the app, `integrations/` only uses `lib/`, domains only know `@/agent/tool` and never import MCP/OpenAI
 - **Migrations are generated** from the Drizzle schema (`npm run db:generate`), never hand-written
 - **New env var** = add to the Zod schema in `apps/api/src/lib/env.ts` + `.env.example` + `render.yaml`; optional vars must degrade gracefully (like `RESEND_API_KEY` / `OPENAI_API_KEY` do)
-- **File naming is fixed**: `<action>.endpoint.ts`, `<action>.tool.ts`, `PascalCasePage.tsx`, kebab-case components; single-role domain files keep the role name (`repository.ts`, `service.ts`, `routes.ts`)
+- **File naming is fixed**: `<action>.route.ts`, `<action>.tool.ts`, `PascalCasePage.tsx`, kebab-case components; single-role domain files keep the role name (`repository.ts`, `service.ts`); folders own their index (`routes/index.ts` route map, `tools/index.ts` tool list)
 
 ## Before finishing any change
 

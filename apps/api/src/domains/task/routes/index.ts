@@ -1,18 +1,18 @@
 /**
  * Task routes
  *
- * Tenant-scoped task CRUD. Auth and tenant middleware run once for the group.
- * Handlers live in `endpoints/*`.
+ * Wires handlers into the Hono route group. Auth and tenant middleware run once
+ * for the group. Individual handlers live in `*.route.ts` beside this file.
  */
 import { Hono } from "hono";
 import type { AppEnv } from "@/context";
 import { requireAuth } from "@/domains/auth/middleware";
 import { requireTenant } from "@/domains/tenant/middleware";
-import { createTask } from "./endpoints/create-task.endpoint";
-import { deleteTask } from "./endpoints/delete-task.endpoint";
-import { getTask } from "./endpoints/get-task.endpoint";
-import { listTasks } from "./endpoints/list-tasks.endpoint";
-import { updateTask } from "./endpoints/update-task.endpoint";
+import { createTask } from "./create-task.route";
+import { deleteTask } from "./delete-task.route";
+import { getTask } from "./get-task.route";
+import { listTasks } from "./list-tasks.route";
+import { updateTask } from "./update-task.route";
 
 /**
  * Task route group

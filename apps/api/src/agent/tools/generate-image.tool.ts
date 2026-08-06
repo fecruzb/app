@@ -1,6 +1,10 @@
-// Lives in agent/, not domains/images/tools/: it's the one tool that calls
-// OpenAI directly, and domains stay transport-neutral (OpenAI only belongs in
-// integrations/, orchestrated from here — see agent-tools.mdc).
+/**
+ * Generate image tool
+ *
+ * Lives in `agent/`, not `domains/images/tools/`: it is the one tool that
+ * calls OpenAI directly. Domains stay transport-neutral — OpenAI belongs only
+ * in `integrations/`, orchestrated from here (see agent-tools.mdc).
+ */
 import { z } from "zod";
 import { generateImage } from "@/integrations/openai";
 import { env } from "@/lib/env";
@@ -16,6 +20,15 @@ const SIZE_BY_ORIENTATION = {
   landscape: "1536x1024",
 } as const;
 
+/**
+ * Generate an image
+ *
+ * `generate_image`
+ *
+ * Generates an image from a text description and saves it to the tenant's images.
+ *
+ * @returns `{ id, url }` of the saved image
+ */
 export const generateImageTool = defineTool({
   name: "generate_image",
   description:
@@ -26,7 +39,11 @@ export const generateImageTool = defineTool({
   },
   summarize: (args) => `Image generated: ${args.prompt.slice(0, 60)}`,
   execute: async (ctx, { prompt, orientation }) => {
-    if (ctx.userId) await assertAiBudget(ctx.userId);
+    // -- Input -----------------------------------------------------------------
+    const { tenantId, userId } = ctx;
+
+    // -- Processing ------------------------------------------------------------
+    if (userId) await assertAiBudget(userId);
 
     const { data, usage } = await generateImage({
       model: env.imageModel,
@@ -34,19 +51,19 @@ export const generateImageTool = defineTool({
       size: SIZE_BY_ORIENTATION[orientation],
     });
 
-    const { path, sizeBytes } = await writeMedia(newUploadKey(ctx.tenantId, "png"), data);
+    const { path, sizeBytes } = await writeMedia(newUploadKey(tenantId, "png"), data);
     const image = await imageRepository.insert({
-      tenantId: ctx.tenantId,
-      authorId: ctx.userId,
+      tenantId,
+      authorId: userId,
       path,
       contentType: "image/webp",
       sizeBytes,
     });
 
-    if (ctx.userId) {
+    if (userId) {
       await usageRepository.insert({
-        userId: ctx.userId,
-        tenantId: ctx.tenantId,
+        userId,
+        tenantId,
         model: usage.model,
         inputTokens: usage.inputTokens,
         cachedInputTokens: usage.cachedInputTokens,
@@ -56,6 +73,7 @@ export const generateImageTool = defineTool({
       });
     }
 
+    // -- Output ----------------------------------------------------------------
     return { id: image.id, url: `/media${image.path}` };
   },
 });

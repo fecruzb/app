@@ -1,24 +1,24 @@
 /**
  * Tenant routes
  *
- * Workspace settings, members, and invites. Auth + membership are applied once
- * on the path tenant so every new route is isolated by default. Handlers live
- * in `endpoints/*`.
+ * Wires handlers into the Hono route groups. Auth + membership are applied once
+ * on the path tenant so every new route is isolated by default. Individual
+ * handlers live in `*.route.ts` beside this file.
  */
 import { Hono } from "hono";
 import type { AppEnv } from "@/context";
 import { requireAuth } from "@/domains/auth/middleware";
-import { acceptInvite } from "./endpoints/accept-invite.endpoint";
-import { createInvite } from "./endpoints/create-invite.endpoint";
-import { getInvite } from "./endpoints/get-invite.endpoint";
-import { getTenant } from "./endpoints/get-tenant.endpoint";
-import { listInvites } from "./endpoints/list-invites.endpoint";
-import { listMembers } from "./endpoints/list-members.endpoint";
-import { removeMember } from "./endpoints/remove-member.endpoint";
-import { revokeInvite } from "./endpoints/revoke-invite.endpoint";
-import { updateMemberRole } from "./endpoints/update-member-role.endpoint";
-import { updateTenant } from "./endpoints/update-tenant.endpoint";
-import { requireManager, requireTenant } from "./middleware";
+import { requireManager, requireTenant } from "../middleware";
+import { acceptInvite } from "./accept-invite.route";
+import { createInvite } from "./create-invite.route";
+import { getInvite } from "./get-invite.route";
+import { getTenant } from "./get-tenant.route";
+import { listInvites } from "./list-invites.route";
+import { listMembers } from "./list-members.route";
+import { removeMember } from "./remove-member.route";
+import { revokeInvite } from "./revoke-invite.route";
+import { updateMemberRole } from "./update-member-role.route";
+import { updateTenant } from "./update-tenant.route";
 
 /**
  * Tenant route group

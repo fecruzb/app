@@ -9,7 +9,7 @@ import { env } from "@/lib/env";
 import { allTools, getTool } from "./registry";
 import type { AgentContext } from "./tool";
 
-/** The wire contract plus the token spend, which the endpoint meters but never returns. */
+/** The wire contract plus the token spend, which the route meters but never returns. */
 export type AssistantResult = AgentResult & { usage: AiUsage };
 
 function systemPrompt(ctx: AgentContext): string {

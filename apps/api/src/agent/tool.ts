@@ -1,22 +1,36 @@
-// Agent tool contract. Each domain defines its tools in
-// domains/<domain>/tools/* (one per file) and the registry joins them all.
-// The contract is transport-neutral: tools return JSON-serializable data and
-// throw Error for expected failures — mcp-server (MCP) and assistant (OpenAI
-// loop) adapt at the edges. A tool with `summarize` is a write action (shown
-// as a chip in the chat UI); without it, a read.
+/**
+ * Agent tool contract
+ *
+ * Transport-neutral definition helpers for agent tools. Each domain defines
+ * tools in `domains/<domain>/tools/*` (one per file); the registry joins them.
+ * Tools return JSON-serializable data and throw `Error` for expected failures —
+ * `mcp-server` (MCP) and the assistant (OpenAI loop) adapt at the edges. A
+ * tool with `summarize` is a write action (chip in the chat UI); without it, a
+ * read.
+ */
 import type { z, ZodRawShape } from "zod";
 import type { TenantRole } from "@app/shared";
 
+/**
+ * Agent context
+ *
+ * Tenant and actor identity passed into every tool execution.
+ */
 export type AgentContext = {
   tenantId: string;
   tenantName: string;
   tenantSlug: string;
-  /** null when running via stdio without a user (e.g. Cursor in dev). */
+  /** Null when running via stdio without a user (e.g. Cursor in dev). */
   userId: string | null;
   userName: string;
   role: TenantRole;
 };
 
+/**
+ * Agent tool
+ *
+ * Runtime shape registered for MCP and the in-app assistant.
+ */
 export type AgentTool = {
   name: string;
   description: string;
@@ -27,7 +41,11 @@ export type AgentTool = {
   execute: (ctx: AgentContext, args: Record<string, unknown>) => Promise<unknown>;
 };
 
-/** Definition helper with args typed from the inputSchema. */
+/**
+ * Define a tool
+ *
+ * Helper that types `args` from the Zod `inputSchema`.
+ */
 export function defineTool<Shape extends ZodRawShape>(tool: {
   name: string;
   description: string;

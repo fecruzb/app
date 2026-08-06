@@ -2,6 +2,15 @@ import { z } from "zod";
 import { defineTool } from "@/agent/tool";
 import { taskRepository } from "../repository";
 
+/**
+ * Update a task
+ *
+ * `update_task`
+ *
+ * Updates a task's title and completed state in the current tenant.
+ *
+ * @returns `{ id, title, completed }` of the updated task
+ */
 export const updateTaskTool = defineTool({
   name: "update_task",
   description:
@@ -13,8 +22,14 @@ export const updateTaskTool = defineTool({
   },
   summarize: (args) => `Task updated: ${args.title}`,
   execute: async (ctx, { id, title, completed }) => {
-    const task = await taskRepository.update(ctx.tenantId, id, { title, completed });
+    // -- Input -----------------------------------------------------------------
+    const { tenantId } = ctx;
+
+    // -- Processing ------------------------------------------------------------
+    const task = await taskRepository.update(tenantId, id, { title, completed });
     if (!task) throw new Error("Task not found — check the id with list_tasks");
+
+    // -- Output ----------------------------------------------------------------
     return { id: task.id, title: task.title, completed: task.completed };
   },
 });

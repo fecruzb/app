@@ -50,7 +50,7 @@ type Included = {
 };
 
 // A single resource, walked top to bottom using the repo's real task domain:
-// its folder, the SQL + endpoint, the agent tool, and the screen it powers.
+// its folder, the SQL + route, the agent tool, and the screen it powers.
 type Slice = {
   id: string;
   eyebrow: string;
@@ -93,7 +93,16 @@ export const taskRepository = {
   },
 };`;
 
-const endpointFile = `// domains/task/endpoints/create-task.endpoint.ts
+const routeFile = `/**
+ * Create a task
+ *
+ * \`POST /api/tenants/:tenantId/tasks\`
+ *
+ * Inserts a task for the current tenant, attributed to the authenticated user.
+ *
+ * @param c - Authenticated tenant request context
+ * @returns 201 with the created task DTO
+ */
 export async function createTask(c: AppContext) {
   // -- Input -----------------------------------------------------------------
   const data = await parseBody(c, taskInputSchema);
@@ -112,13 +121,21 @@ export async function createTask(c: AppContext) {
   return c.json(toTaskDto({ task, authorName: user.name }), 201);
 }
 
-// routes.ts — auth + tenant middleware applied once for the group
+// routes/index.ts — wires handlers; auth + tenant middleware once for the group
 export const taskRoutes = new Hono<AppEnv>()
   .use("*", requireAuth, requireTenant)
   .get("/", listTasks)
   .post("/", createTask);`;
 
-const toolFile = `// domains/task/tools/create-task.tool.ts
+const toolFile = `/**
+ * Create a task
+ *
+ * \`create_task\`
+ *
+ * Creates a task in the current tenant for the acting user.
+ *
+ * @returns \`{ id, title }\` of the created task
+ */
 export const createTaskTool = defineTool({
   name: "create_task",
   description: "Creates a task in the tenant.",
@@ -127,13 +144,21 @@ export const createTaskTool = defineTool({
     completed: z.boolean().default(false),
   },
   summarize: (args) => \`Task created: \${args.title}\`,
-  execute: (ctx, { title, completed }) =>
-    taskRepository.insert({
-      tenantId: ctx.tenantId,
-      authorId: ctx.userId,
+  execute: async (ctx, { title, completed }) => {
+    // -- Input -----------------------------------------------------------------
+    const { tenantId, userId } = ctx;
+
+    // -- Processing ------------------------------------------------------------
+    const task = await taskRepository.insert({
+      tenantId,
+      authorId: userId,
       title,
       completed,
-    }),
+    });
+
+    // -- Output ----------------------------------------------------------------
+    return { id: task.id, title: task.title };
+  },
 });`;
 
 const webApiFile = `// apps/web/src/domains/task/api.ts — the only network boundary
@@ -176,9 +201,8 @@ apps/api/src/domains/task/
 ├── schema.ts        Drizzle table
 ├── repository.ts    all SQL (scoped by tenantId)
 ├── dto.ts           row → API shape
-├── routes.ts        wires endpoints + middleware
-├── endpoints/       one file per action (create-task.endpoint.ts …)
-└── tools/           one file per agent tool (create-task.tool.ts …)
+├── routes/          handlers + index.ts (route map)
+└── tools/           agent tools + index.ts (registry)
 
 // service.ts is added only when a domain grows real business logic.`;
 
@@ -198,7 +222,7 @@ apps/web/src/
 //   Button, Card, Input, Dialog · PageHeader · EmptyState · useConfirm`;
 
 // One visual per step so nothing stacks: the folder convention first, then the
-// files — table, queries, endpoint, tool, screen — the repo's real task domain.
+// files — table, queries, route, tool, screen — the repo's real task domain.
 const resourceSlices: Slice[] = [
   {
     id: "convention",
@@ -206,10 +230,10 @@ const resourceSlices: Slice[] = [
     title: "A feature is a folder",
     body: "Before the files, the shape. On the API, every feature is a domain — a single folder that owns its slice top to bottom, and each file has one fixed role, so you always know where a thing lives (and where to add the next one). Import directions are enforced by lint, so the structure can't quietly rot as the app grows.",
     points: [
-      "One folder per feature — schema, repository, dto, endpoints, tools",
+      "One folder per feature — schema, repository, dto, routes, tools",
       "Fixed roles, never a grab-bag file; service.ts only when there's real logic",
       "The repository owns the SQL; every query filters by tenantId",
-      "DTO mapping lives in dto.ts — never inline in the repository or endpoint",
+      "DTO mapping lives in dto.ts — never inline in the repository or route",
       "Boundaries fail the lint, not just code review",
     ],
     visual: <CodeBlock filename="apps/api/src/domains/task/" code={apiTreeFile} lang="text" />,
@@ -235,26 +259,22 @@ const resourceSlices: Slice[] = [
       "No query exists without a tenant filter",
       "CRUD is named list / find / insert / update / delete",
       "Each method owns its query end to end — readable without jumping around",
-      "Returns rows — dto.ts maps to the API shape; endpoints never write SQL",
+      "Returns rows — dto.ts maps to the API shape; routes never write SQL",
     ],
     visual: <CodeBlock filename="domains/task/repository.ts" code={repositoryFile} lang="ts" />,
   },
   {
-    id: "endpoint",
-    eyebrow: "The endpoint",
+    id: "route",
+    eyebrow: "The route",
     title: "A thin handler, wired in one line",
-    body: "The handler is structured as Input → Processing → Output: validate with the shared schema, call the repository, map through the DTO. It gets one line in routes.ts, where auth and tenant middleware already run for the whole group — so the handler never checks a session or resolves a tenant itself.",
+    body: "The handler is structured as Input → Processing → Output: validate with the shared schema, call the repository, map through the DTO. It gets one line in routes/index.ts, where auth and tenant middleware already run for the whole group — so the handler never checks a session or resolves a tenant itself.",
     points: [
       "Handler sections: Input → Processing → Output",
       "The tenant comes from context, never a request param",
       "Middleware is applied once via .use — new routes are isolated by default",
     ],
     visual: (
-      <CodeBlock
-        filename="domains/task/endpoints/create-task.endpoint.ts"
-        code={endpointFile}
-        lang="ts"
-      />
+      <CodeBlock filename="domains/task/routes/create-task.route.ts" code={routeFile} lang="ts" />
     ),
   },
   {
@@ -951,7 +971,7 @@ function DbGroupSection({ group, flip }: { group: DbGroup; flip: boolean }) {
 
 /**
  * The example resource walked end to end: the table opened it in the database
- * section, and this closes the loop — repository + endpoint, the agent tool,
+ * section, and this closes the loop — repository + route, the agent tool,
  * and the screen — all from the repo's real task domain, alternating sides.
  */
 function ResourceSlice() {
@@ -968,8 +988,8 @@ function ResourceSlice() {
           <p className="mx-auto mt-3 text-pretty text-muted-foreground">
             <code className="font-mono text-xs">tasks</code> is the one placeholder resource. First
             the convention — a feature is a folder — then the whole slice: the table, the queries,
-            the endpoint and the agent tool on the API, then the React domain, its api.ts and page,
-            and the screen. This is the exact shape you'd copy for your own.
+            the route and the agent tool on the API, then the React domain, its api.ts and page, and
+            the screen. This is the exact shape you'd copy for your own.
           </p>
         </div>
       </section>

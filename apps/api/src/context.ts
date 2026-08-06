@@ -14,5 +14,5 @@ export type AppEnv = {
   };
 };
 
-/** Endpoint handler signature (one per file in each domain's endpoints folder). */
+/** Route handler signature (one per file in each domain's routes folder). */
 export type AppContext = Context<AppEnv>;
