@@ -3,9 +3,12 @@
  *
  * Idempotent seed with a demo user for development. Password comes from
  * `SEED_DEMO_PASSWORD` when set; otherwise a random one is generated and
- * printed once (never hardcoded in the repo).
+ * written once to `apps/api/.seed-demo-password` (gitignored — never logged).
  */
 import { randomBytes } from "node:crypto";
+import { writeFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { hashPassword } from "@/lib/crypto";
 import { env } from "@/lib/env";
 import { sql } from "./client";
@@ -14,6 +17,10 @@ import { taskRepository } from "@/domains/task/repository";
 import { createTenantWithOwner } from "@/domains/tenant/service";
 
 const DEMO_EMAIL = "demo@example.com";
+const SEED_PASSWORD_FILE = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  "../../.seed-demo-password",
+);
 
 function demoPassword(): string {
   return env.seedDemoPassword ?? randomBytes(12).toString("base64url");
@@ -31,6 +38,7 @@ async function seed() {
     return;
   }
 
+  const fromEnv = Boolean(env.seedDemoPassword);
   const password = demoPassword();
   const user = await authRepository.insertUser({
     name: "Demo User",
@@ -59,7 +67,12 @@ async function seed() {
   }
 
   console.log(`[seed] created demo user ${DEMO_EMAIL} (tenant "${tenant.name}", platform admin)`);
-  console.log(`[seed] password: ${password}`);
+  if (fromEnv) {
+    console.log("[seed] password from SEED_DEMO_PASSWORD (not printed)");
+  } else {
+    writeFileSync(SEED_PASSWORD_FILE, `${password}\n`, { mode: 0o600 });
+    console.log("[seed] password written to apps/api/.seed-demo-password (gitignored)");
+  }
 }
 
 seed()

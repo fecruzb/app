@@ -11,8 +11,9 @@ One file per domain, re-exported from `src/index.ts`. Current modules: `app`, `b
 this package is the single source of truth for request/response shapes. Change a shape here and
 whichever side you forgot stops compiling; that's the point.
 
-`brand.ts` is product identity (`displayName`, `tagline`, `mcpServerName`, `defaultMailFrom`) — not a
-Zod contract. Day-1 rename starts there; the web mark lives in `apps/web/src/brand/`.
+`brand.ts` is product identity (`displayName`, `tagline`, `description`, `mcpServerName`,
+`defaultMailFrom`) — not a Zod contract. Day-1 rename starts there; the web mark lives in
+`apps/web/src/brand/`; run `npm run sync:brand` for Tauri shells.
 
 Resource domains (task, article, …) get their own `src/<domain>.ts`. Platform/support domains may
 share a file when shapes are tightly coupled (e.g. auth session DTOs), but prefer a dedicated file

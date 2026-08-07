@@ -1,3 +1,4 @@
+mod brand;
 mod update;
 
 use tauri::{
@@ -26,10 +27,12 @@ pub fn run() {
     .plugin(tauri_plugin_opener::init())
     .plugin(tauri_plugin_updater::Builder::new().build())
     .setup(|app| {
-      let open_item = MenuItem::with_id(app, "open", "Open App Base", true, None::<&str>)?;
+      let open_label = format!("Open {}", brand::DISPLAY_NAME);
+      let quit_label = format!("Quit {}", brand::DISPLAY_NAME);
+      let open_item = MenuItem::with_id(app, "open", &open_label, true, None::<&str>)?;
       let update_item =
         MenuItem::with_id(app, "check_update", "Check for Updates…", true, None::<&str>)?;
-      let quit_item = MenuItem::with_id(app, "quit", "Quit App Base", true, None::<&str>)?;
+      let quit_item = MenuItem::with_id(app, "quit", &quit_label, true, None::<&str>)?;
       let menu = Menu::with_items(
         app,
         &[
@@ -44,7 +47,7 @@ pub fn run() {
       let tray_icon = Image::from_bytes(include_bytes!("../icons/32x32.png"))?;
       TrayIconBuilder::with_id("main")
         .icon(tray_icon)
-        .tooltip("App Base")
+        .tooltip(brand::DISPLAY_NAME)
         .menu(&menu)
         .show_menu_on_left_click(true)
         .on_menu_event(|app, event| match event.id.as_ref() {

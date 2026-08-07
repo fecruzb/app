@@ -69,7 +69,7 @@ export function TerminalMock() {
     { text: "› web    http://localhost:3000", muted: true },
   ];
   return (
-    <Window label="bash — app-base">
+    <Window label={`bash — ${brand.mcpServerName}`}>
       <div className="space-y-1 bg-card p-4 font-mono text-xs leading-relaxed">
         {lines.map((line, i) => (
           <div key={i} className="flex gap-2">

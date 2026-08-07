@@ -6,6 +6,9 @@ dist/
 *.log
 .DS_Store
 
+# Local-only demo password written by `db:seed` when SEED_DEMO_PASSWORD is unset
+apps/api/.seed-demo-password
+
 # Local MCP client config may hold API keys — keep a personal copy, never commit.
 .cursor/mcp.json
 

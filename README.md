@@ -26,7 +26,7 @@ npm run setup   # starts Postgres (Docker), runs migrations and seed
 npm run dev     # API on :5000 + web on :3000 (proxies /api)
 ```
 
-Open http://localhost:3000 and sign in with `demo@example.com`. The password is printed by `npm run db:seed` (or set `SEED_DEMO_PASSWORD` in your `.env` before seeding).
+Open http://localhost:3000 and sign in with `demo@example.com`. Set `SEED_DEMO_PASSWORD` in your `.env` before seeding, or read the password from `apps/api/.seed-demo-password` after `npm run db:seed` (gitignored — never printed).
 
 Without `RESEND_API_KEY`, emails (verification, password reset, invites) are logged to the API console — copy the link from there to test the flows.
 
@@ -107,9 +107,10 @@ Useful entry points:
 
 Product identity is centralized:
 
-1. Edit `packages/shared/src/brand.ts` (`displayName`, `tagline`, `mcpServerName`, `defaultMailFrom`)
+1. Edit `packages/shared/src/brand.ts` (`displayName`, `tagline`, `description`, `mcpServerName`, `defaultMailFrom`)
 2. Swap the mark in `apps/web/src/brand/logo.tsx` and `apps/web/public/brand/logo.svg` (favicon / OG)
-3. Set `MAIL_FROM` in `.env` for real mail (defaults to `brand.defaultMailFrom`)
+3. Run `npm run sync:brand` (Tauri `productName` / window title / tray labels)
+4. Set `MAIL_FROM` in `.env` for real mail (defaults to `brand.defaultMailFrom`)
 
 UI copy that uses `{{brand}}` / `{{tagline}}`, SEO shell meta, invite emails, the agent prompt, and the MCP server name all follow `brand.ts`. Workspace packages (`@app/*`) can stay.
 
@@ -118,7 +119,7 @@ UI copy that uses `{{brand}}` / `{{tagline}}`, SEO shell meta, invite emails, th
 1. Replace the `tasks` resource with your domain: copy `apps/api/src/domains/task/` (schema → repository → routes → tools), export the schema in `db/schema.ts`, run `db:generate`, add the schemas to `packages/shared` and the page in web
 2. Adjust the plan catalog in `apps/api/src/domains/billing/plans.ts` and shared `packages/shared/src/billing.ts` if your pricing differs
 3. Rewrite landing marketing copy (`apps/web/src/i18n/locales/landing.*.json`) for your product story
-4. Desktop/mobile: Tauri `productName`, bundle `identifier`, and regenerate icons from one source (`tauri icon`)
+4. Desktop/mobile: update bundle `identifier` if needed, and regenerate icons from one source (`tauri icon`)
 5. Set `RESEND_API_KEY` and configure Cloudflare R2 (`CLOUDFLARE_*` / `R2_PUBLIC_BASE_URL`) if you need durable image storage on Render (otherwise media stays on the ephemeral local disk)
 6. Deploy: push the repo to GitHub and create a Blueprint on Render pointing to `render.yaml`
 

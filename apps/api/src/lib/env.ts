@@ -52,7 +52,8 @@ const schema = z.object({
   MEDIA_DIR: z.string().optional(),
   /**
    * Demo user password for `db:seed`. When unset, seed generates a random
-   * password and prints it once. Local-only — never set on Render.
+   * password and writes it to `apps/api/.seed-demo-password` (never logged).
+   * Local-only — never set on Render.
    */
   SEED_DEMO_PASSWORD: z.string().optional(),
   /**
@@ -103,7 +104,7 @@ export const env = {
    * folder (gitignored — local-only media, never committed).
    */
   mediaDir: raw.MEDIA_DIR ? resolve(raw.MEDIA_DIR) : resolve(moduleDir, "../../../web/public"),
-  /** Demo password for seed; null means seed generates and prints one. */
+  /** Demo password for seed; null means seed generates and writes a local file. */
   seedDemoPassword: raw.SEED_DEMO_PASSWORD?.trim() || null,
   /** Allowed CORS origins (empty set = middleware off). */
   corsOrigins: new Set(

@@ -11,7 +11,10 @@ function brandHtmlPlugin(): Plugin {
   return {
     name: "brand-html",
     transformIndexHtml(html) {
-      return html.replaceAll("%BRAND_NAME%", brand.displayName).replaceAll("%BRAND_TITLE%", title);
+      return html
+        .replaceAll("%BRAND_NAME%", brand.displayName)
+        .replaceAll("%BRAND_TITLE%", title)
+        .replaceAll("%BRAND_DESCRIPTION%", brand.description);
     },
   };
 }
