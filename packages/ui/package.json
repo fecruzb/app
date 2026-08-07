@@ -29,7 +29,9 @@
     "./data-table": "./src/composites/data-table.tsx",
     "./empty-state": "./src/composites/empty-state.tsx",
     "./page-header": "./src/composites/page-header.tsx",
-    "./page-loading": "./src/composites/page-loading.tsx"
+    "./page-loading": "./src/composites/page-loading.tsx",
+    "./browser-window": "./src/composites/browser-window.tsx",
+    "./code-block": "./src/composites/code-block.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
@@ -49,6 +51,9 @@
     "clsx": "^2.1.1",
     "lucide-react": "^1.28.0",
     "react-resizable-panels": "^4.12.2",
+    "shiki": "^4.4.2",
+    "@shikijs/langs": "^4.4.2",
+    "@shikijs/themes": "^4.4.2",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {

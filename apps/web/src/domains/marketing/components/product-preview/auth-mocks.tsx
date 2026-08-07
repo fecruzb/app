@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { BoxIcon } from "lucide-react";
 import { Field, SubmitButton } from "./field";
-import { Window } from "./window";
+import { Window } from "@app/ui/browser-window";
 
 export function AuthBody({
   title,
@@ -110,4 +110,3 @@ export function ResetPasswordBody() {
     </AuthBody>
   );
 }
-

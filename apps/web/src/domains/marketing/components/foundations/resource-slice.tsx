@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { FolderTreeIcon } from "lucide-react";
 import { points } from "@/i18n";
-import { CodeBlock } from "../code-block";
+import { CodeBlock } from "@app/ui/code-block";
 import { TaskTable, TasksMock } from "../product-preview";
 import { DbGroupSection } from "./database-foundation";
 import {

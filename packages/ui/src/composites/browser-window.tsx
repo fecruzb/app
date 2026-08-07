@@ -1,12 +1,14 @@
 import type { ReactNode } from "react";
 import { LockIcon } from "lucide-react";
-import { cn } from "@app/ui/lib/utils";
+import { cn } from "../lib/utils";
 
 /**
  * Browser chrome bar — traffic-light dots + centered URL pill.
  * Kept fixed while flow bodies swap underneath.
+ *
+ * Traffic-light colors mimic real OS chrome (not theme tokens).
  */
-export function WindowBar({ label, className }: { label: string; className?: string }) {
+function WindowBar({ label, className }: { label: string; className?: string }) {
   return (
     <div
       className={cn(
@@ -31,8 +33,8 @@ export function WindowBar({ label, className }: { label: string; className?: str
   );
 }
 
-/** Chrome frame so a mock reads like a real browser screenshot. */
-export function Window({
+/** Chrome frame so a mock or demo reads like a real browser screenshot. */
+function Window({
   label,
   children,
   className,
@@ -53,3 +55,5 @@ export function Window({
     </div>
   );
 }
+
+export { Window, WindowBar };

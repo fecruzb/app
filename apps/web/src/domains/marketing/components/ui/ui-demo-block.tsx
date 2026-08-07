@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@app/ui/lib/utils";
-import { CodeBlock } from "../code-block";
-import { Window } from "../product-preview/window";
+import { CodeBlock } from "@app/ui/code-block";
+import { Window } from "@app/ui/browser-window";
 
 /** One live demo block on the UI showcase page — preview + usage snippet. */
 export function UiDemoBlock({

@@ -1,7 +1,7 @@
 import { useTheme } from "@/theme/theme-provider";
 import { useTranslation } from "react-i18next";
 import { MoonIcon, PaletteIcon, SunIcon } from "lucide-react";
-import { CodeBlock } from "../code-block";
+import { CodeBlock } from "@app/ui/code-block";
 
 const themeFile = `// src/theme/themes.ts — add your brand in one block
 export const themes: Theme[] = [
@@ -112,4 +112,3 @@ export function ThemingSection() {
     </section>
   );
 }
-

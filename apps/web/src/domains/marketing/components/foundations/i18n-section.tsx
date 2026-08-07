@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { CheckIcon, LanguagesIcon } from "lucide-react";
 import { LOCALES, points, type Locale } from "@/i18n";
 import { setLocale } from "@/i18n/locale-controls";
-import { CodeBlock } from "../code-block";
+import { CodeBlock } from "@app/ui/code-block";
 
 const i18nFile = `// locales/en.json  ·  locales/pt.json — same keys
 {
@@ -82,4 +82,3 @@ export function I18nSection() {
     </section>
   );
 }
-

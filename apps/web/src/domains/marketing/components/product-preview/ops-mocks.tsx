@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { DatabaseIcon, GitBranchIcon, ServerIcon } from "lucide-react";
-import { Window } from "./window";
+import { Window } from "@app/ui/browser-window";
 
 export function EnvMock() {
   const { t } = useTranslation();
@@ -132,4 +132,3 @@ export function RenderMock() {
     </Window>
   );
 }
-

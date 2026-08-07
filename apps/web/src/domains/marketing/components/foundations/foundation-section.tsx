@@ -9,7 +9,7 @@ import {
   TerminalIcon,
 } from "lucide-react";
 import { points } from "@/i18n";
-import { CodeBlock } from "../code-block";
+import { CodeBlock } from "@app/ui/code-block";
 import { EnvMock, TerminalMock, RenderMock } from "../product-preview";
 
 export type Foundation = {

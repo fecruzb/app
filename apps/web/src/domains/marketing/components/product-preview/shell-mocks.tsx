@@ -13,7 +13,7 @@ import {
   UserIcon,
 } from "lucide-react";
 import { Field } from "./field";
-import { Window } from "./window";
+import { Window } from "@app/ui/browser-window";
 
 export function McpKeysMock() {
   const { t } = useTranslation();

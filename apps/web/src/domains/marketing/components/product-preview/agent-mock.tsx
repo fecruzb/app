@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { SendIcon, SparklesIcon } from "lucide-react";
-import { Window } from "./window";
+import { Window } from "@app/ui/browser-window";
 
 export function AgentChatMock() {
   const { t } = useTranslation();
@@ -38,4 +38,3 @@ export function AgentChatMock() {
     </Window>
   );
 }
-

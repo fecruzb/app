@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { TableIcon } from "lucide-react";
-import { Window } from "./window";
+import { Window } from "@app/ui/browser-window";
 
 export type Column = { name: string; type: string; badge?: "PK" | "FK" | "UQ" };
 

@@ -1,7 +1,7 @@
 import { createHighlighterCore, type HighlighterCore } from "shiki/core";
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
 
-/** Dual themes — Shiki emits both, and index.css swaps to dark under `.dark`. */
+/** Dual themes — Shiki emits both; the host app swaps to dark under `.dark`. */
 export const CODE_THEMES = { light: "github-light", dark: "github-dark" } as const;
 
 let instance: Promise<HighlighterCore> | null = null;

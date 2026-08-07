@@ -1,20 +1,26 @@
 import { useEffect, useState } from "react";
-import { CODE_THEMES, getHighlighter } from "./highlighter";
+import { cn } from "../lib/utils";
+import { CODE_THEMES, getHighlighter } from "./code-block-highlighter";
 
 type Lang = "ts" | "json" | "text";
 
 /**
  * Editor-style window with Shiki syntax highlighting. Renders the plain code
  * first, then swaps in the highlighted HTML once the highlighter loads.
+ *
+ * Host apps that support dark mode should style `.code-block` so Shiki's dual
+ * theme tokens swap under `.dark` (see the web app's `index.css`).
  */
-export function CodeBlock({
+function CodeBlock({
   filename,
   code,
   lang = "ts",
+  className,
 }: {
   filename: string;
   code: string;
   lang?: Lang;
+  className?: string;
 }) {
   const [html, setHtml] = useState<string | null>(null);
 
@@ -38,7 +44,7 @@ export function CodeBlock({
   }, [code, lang]);
 
   return (
-    <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
+    <div className={cn("overflow-hidden rounded-xl border bg-card shadow-sm", className)}>
       <div className="flex items-center gap-2 border-b bg-muted/50 px-4 py-2.5">
         <span className="size-2.5 rounded-full bg-muted-foreground/25" />
         <span className="size-2.5 rounded-full bg-muted-foreground/25" />
@@ -58,3 +64,6 @@ export function CodeBlock({
     </div>
   );
 }
+
+export { CodeBlock };
+export type { Lang as CodeBlockLang };

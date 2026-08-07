@@ -46,8 +46,9 @@ Framework-agnostic, tenant-agnostic base UI shared across web apps. Import per c
   - Pick a **layout shell** for chrome: `SidebarShell` (app/admin), `NavbarShell`
     (marketing), or `AuthShell` (login). Atoms (`Sidebar`, `SiteHeader`, `Brand`,
     `NavItem`) compose into those shells; app layouts stay thin (nav items + slots).
-- Composites (`src/composites/`): `confirm-dialog` (`ConfirmProvider`/`useConfirm`), `data-table`,
-  `empty-state`, `page-header`, `page-loading`
+- Composites (`src/composites/`): `browser-window` (`Window`/`WindowBar`), `code-block`,
+  `confirm-dialog` (`ConfirmProvider`/`useConfirm`), `data-table`, `empty-state`,
+  `page-header`, `page-loading`
 - `cn` lives here: `import { cn } from "@app/ui/lib/utils"`
 - Nothing in `@app/ui` may import from `@/` or reference a domain — keep it app-neutral. Anything
   with product copy or business logic stays in `domains/<domain>/components/` instead.

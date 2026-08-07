@@ -1,6 +1,7 @@
 import { useEffect, useState, type ComponentType } from "react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
+import { WindowBar } from "@app/ui/browser-window";
 import {
   AccountMock,
   AgentChatMock,
@@ -8,7 +9,6 @@ import {
   LoginMock,
   McpKeysMock,
   ShellMock,
-  WindowBar,
   type Screen,
 } from "../product-preview";
 
@@ -147,4 +147,3 @@ function MockCarousel({ chapter }: { chapter: Chapter }) {
     </div>
   );
 }
-
