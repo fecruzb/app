@@ -1,4 +1,5 @@
-import { HttpError, uuidParam } from "@/lib/errors";
+import { generateArticleCoverSchema } from "@app/shared";
+import { HttpError, parseBody, uuidParam } from "@/lib/errors";
 import { hasOpenAiKey } from "@/integrations/openai";
 import type { AppContext } from "@/context";
 import { toArticleDto } from "@/domains/article/dto";
@@ -22,11 +23,7 @@ export async function generateArticleCover(c: AppContext) {
   const tenant = c.get("tenant");
   const user = c.get("user");
   const articleId = uuidParam(c, "articleId");
-  const body = await c.req.json().catch(() => ({}));
-  const prompt =
-    typeof body === "object" && body && "prompt" in body && typeof body.prompt === "string"
-      ? body.prompt
-      : undefined;
+  const { prompt } = await parseBody(c, generateArticleCoverSchema);
 
   // -- Processing ------------------------------------------------------------
   const current = await articleRepository.find(tenant.id, articleId);

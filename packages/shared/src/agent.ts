@@ -9,7 +9,13 @@ export const agentChatSchema = z.object({
   messages: z.array(agentMessageSchema).min(1).max(40),
 });
 
+/** Optional body for `POST …/agent/articles/:articleId/cover`. */
+export const generateArticleCoverSchema = z.object({
+  prompt: z.string().trim().min(1).max(2000).optional(),
+});
+
 export type AgentMessage = z.infer<typeof agentMessageSchema>;
+export type GenerateArticleCoverInput = z.infer<typeof generateArticleCoverSchema>;
 
 /** Write action executed by the agent, shown as a chip in the UI. */
 export type AgentAction = {

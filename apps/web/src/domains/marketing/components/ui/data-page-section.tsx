@@ -98,13 +98,17 @@ export function DataPageSection() {
               </div>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <div className="rounded-md bg-muted/50 px-3 py-2">
-                  <p className="text-xs text-muted-foreground">{t("landing.ui.demo.tabsPlanSeats")}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {t("landing.ui.demo.tabsPlanSeats")}
+                  </p>
                   <p className="mt-0.5 text-sm font-medium">
                     {t("landing.ui.demo.tabsPlanSeatsValue")}
                   </p>
                 </div>
                 <div className="rounded-md bg-muted/50 px-3 py-2">
-                  <p className="text-xs text-muted-foreground">{t("landing.ui.demo.tabsPlanUsage")}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {t("landing.ui.demo.tabsPlanUsage")}
+                  </p>
                   <p className="mt-0.5 text-sm font-medium">
                     {t("landing.ui.demo.tabsPlanUsageValue")}
                   </p>
@@ -152,26 +156,72 @@ export function DataPageSection() {
 
 type DemoMember = {
   id: string;
-  name: string;
-  email: string;
+  nameKey: string;
+  emailKey: string;
   roleKey: "owner" | "admin" | "member";
 };
 
 const DEMO_MEMBERS: DemoMember[] = [
-  { id: "1", name: "Ada Lovelace", email: "ada@example.com", roleKey: "owner" },
-  { id: "2", name: "Alan Turing", email: "alan@example.com", roleKey: "admin" },
-  { id: "3", name: "Grace Hopper", email: "grace@example.com", roleKey: "member" },
-  { id: "4", name: "Katherine Johnson", email: "katherine@example.com", roleKey: "member" },
-  { id: "5", name: "Margaret Hamilton", email: "margaret@example.com", roleKey: "admin" },
-  { id: "6", name: "Tim Berners-Lee", email: "tim@example.com", roleKey: "member" },
-  { id: "7", name: "Linus Torvalds", email: "linus@example.com", roleKey: "member" },
-  { id: "8", name: "Barbara Liskov", email: "barbara@example.com", roleKey: "admin" },
+  {
+    id: "1",
+    nameKey: "landing.preview.sample.ada",
+    emailKey: "landing.preview.sample.adaEmailAlt",
+    roleKey: "owner",
+  },
+  {
+    id: "2",
+    nameKey: "landing.preview.sample.alan",
+    emailKey: "landing.preview.sample.alanEmailAlt",
+    roleKey: "admin",
+  },
+  {
+    id: "3",
+    nameKey: "landing.preview.sample.grace",
+    emailKey: "landing.preview.sample.graceEmailAlt",
+    roleKey: "member",
+  },
+  {
+    id: "4",
+    nameKey: "landing.preview.sample.katherine",
+    emailKey: "landing.preview.sample.katherineEmail",
+    roleKey: "member",
+  },
+  {
+    id: "5",
+    nameKey: "landing.preview.sample.margaret",
+    emailKey: "landing.preview.sample.margaretEmail",
+    roleKey: "admin",
+  },
+  {
+    id: "6",
+    nameKey: "landing.preview.sample.tim",
+    emailKey: "landing.preview.sample.timEmail",
+    roleKey: "member",
+  },
+  {
+    id: "7",
+    nameKey: "landing.preview.sample.linus",
+    emailKey: "landing.preview.sample.linusEmail",
+    roleKey: "member",
+  },
+  {
+    id: "8",
+    nameKey: "landing.preview.sample.barbara",
+    emailKey: "landing.preview.sample.barbaraEmail",
+    roleKey: "admin",
+  },
 ];
 
 function DemoDataTable() {
   const { t } = useTranslation();
 
-  const columns: DataTableColumn<DemoMember>[] = [
+  const rows = DEMO_MEMBERS.map((row) => ({
+    ...row,
+    name: t(row.nameKey),
+    email: t(row.emailKey),
+  }));
+
+  const columns: DataTableColumn<(typeof rows)[number]>[] = [
     {
       id: "name",
       header: t("landing.ui.demo.tableName"),
@@ -205,7 +255,7 @@ function DemoDataTable() {
   return (
     <DataTable
       columns={columns}
-      data={DEMO_MEMBERS}
+      data={rows}
       getRowId={(row) => row.id}
       pageSize={5}
       pagination={{

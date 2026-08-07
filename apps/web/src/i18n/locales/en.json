@@ -138,6 +138,8 @@
     "paginationNext": "Next",
     "paginationPage": "Page {{page}} of {{pages}}",
     "back": "Back to articles",
+    "editTitle": "Edit article",
+    "editDescription": "Cover, title, and Markdown body",
     "save": "Save",
     "saving": "Saving…",
     "saved": "Article saved",

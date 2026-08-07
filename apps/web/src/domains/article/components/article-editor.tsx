@@ -46,7 +46,7 @@ function ArticleEditorInner({
       },
       featureConfigs: {
         [CrepeFeature.Placeholder]: {
-          text: placeholder ?? "Write something…",
+          text: placeholder ?? "",
         },
         [CrepeFeature.BlockEdit]: {
           blockHandle: {
@@ -68,13 +68,7 @@ function ArticleEditorInner({
   }, []);
 
   return (
-    <div
-      className={cn(
-        "article-editor",
-        readonly && "pointer-events-none",
-        className,
-      )}
-    >
+    <div className={cn("article-editor", readonly && "pointer-events-none", className)}>
       <Milkdown />
     </div>
   );

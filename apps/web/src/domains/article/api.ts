@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { articleInputSchema, type ArticleDto } from "@app/shared";
+import { articleInputSchema, generateArticleCoverSchema, type ArticleDto } from "@app/shared";
 import { api } from "@/lib/api";
 
 export const articleApi = {
@@ -18,11 +18,11 @@ export const articleApi = {
     form.append("file", file);
     return api.upload<ArticleDto>(`/tenants/${tenantId}/articles/${id}/cover`, form);
   },
-  generateCover: (tenantId: string, id: string, prompt?: string) =>
-    api.post<ArticleDto>(
-      `/tenants/${tenantId}/agent/articles/${id}/cover`,
-      prompt ? { prompt } : {},
-    ),
+  generateCover: (
+    tenantId: string,
+    id: string,
+    body: z.infer<typeof generateArticleCoverSchema> = {},
+  ) => api.post<ArticleDto>(`/tenants/${tenantId}/agent/articles/${id}/cover`, body),
   deleteCover: (tenantId: string, id: string) =>
     api.delete<ArticleDto>(`/tenants/${tenantId}/articles/${id}/cover`),
   publish: (tenantId: string, id: string, published: boolean) =>

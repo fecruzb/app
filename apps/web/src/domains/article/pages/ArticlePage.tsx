@@ -7,6 +7,7 @@ import { ArrowLeftIcon, ExternalLinkIcon, GlobeIcon, Trash2Icon } from "lucide-r
 import { Button } from "@app/ui/button";
 import { Input } from "@app/ui/input";
 import { useConfirm } from "@app/ui/confirm-dialog";
+import { PageHeader } from "@app/ui/page-header";
 import { PageLoading } from "@app/ui/page-loading";
 import { useAppConfig } from "@/app/config";
 import { showApiError } from "@/lib/api";
@@ -180,18 +181,21 @@ export function ArticlePage() {
 
   return (
     <div className="grid gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link
-          to={`/app/${tenant.slug}/articles`}
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeftIcon className="size-4" />
-          {t("articles.back")}
-        </Link>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="grid gap-2">
+          <Link
+            to={`/app/${tenant.slug}/articles`}
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeftIcon className="size-4" />
+            {t("articles.back")}
+          </Link>
+          <PageHeader
+            title={t("articles.editTitle")}
+            description={dirty ? t("articles.unsaved") : t("articles.editDescription")}
+          />
+        </div>
         <div className="flex flex-wrap items-center gap-2">
-          {dirty ? (
-            <span className="text-xs text-muted-foreground">{t("articles.unsaved")}</span>
-          ) : null}
           {article.publishedAt ? (
             <Button variant="outline" asChild>
               <a href={`/articles/${article.id}`} target="_blank" rel="noreferrer">

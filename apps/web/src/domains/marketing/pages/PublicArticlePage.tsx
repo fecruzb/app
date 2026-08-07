@@ -33,7 +33,7 @@ export function PublicArticlePage() {
   });
 
   useDocumentMeta({
-    title: article ? `${article.title} · App Base` : t("landing.seo.articleFallback.title"),
+    title: article ? `${article.title} · ${t("brand")}` : t("landing.seo.articleFallback.title"),
     description: article
       ? excerpt(article.body) || t("landing.seo.articles.description")
       : t("landing.seo.articleFallback.description"),

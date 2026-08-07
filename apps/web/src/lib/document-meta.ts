@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 type DocumentMeta = {
   title: string;
@@ -9,8 +10,6 @@ type DocumentMeta = {
   /** Open Graph type. Defaults to `website`. */
   type?: "website" | "article";
 };
-
-const SITE_NAME = "App Base";
 
 function upsertMeta(attr: "name" | "property", key: string, content: string) {
   const selector = `meta[${attr}="${key}"]`;
@@ -39,6 +38,8 @@ export function useDocumentMeta({
   path,
   type = "website",
 }: DocumentMeta) {
+  const { t, i18n } = useTranslation();
+
   useEffect(() => {
     const previous = document.title;
     document.title = title;
@@ -46,7 +47,7 @@ export function useDocumentMeta({
     upsertMeta("property", "og:title", title);
     upsertMeta("name", "twitter:title", title);
     upsertMeta("property", "og:type", type);
-    upsertMeta("property", "og:site_name", SITE_NAME);
+    upsertMeta("property", "og:site_name", t("brand"));
 
     if (description) {
       upsertMeta("name", "description", description);
@@ -54,8 +55,7 @@ export function useDocumentMeta({
       upsertMeta("name", "twitter:description", description);
     }
 
-    const lang = document.documentElement.lang || "en";
-    upsertMeta("property", "og:locale", lang.startsWith("pt") ? "pt_BR" : "en_US");
+    upsertMeta("property", "og:locale", i18n.language.startsWith("pt") ? "pt_BR" : "en_US");
 
     if (image) {
       const absolute = absoluteUrl(image);
@@ -81,5 +81,5 @@ export function useDocumentMeta({
     return () => {
       document.title = previous;
     };
-  }, [title, description, image, path, type]);
+  }, [title, description, image, path, type, t, i18n.language]);
 }

@@ -138,6 +138,8 @@
     "paginationNext": "Próxima",
     "paginationPage": "Página {{page}} de {{pages}}",
     "back": "Voltar aos artigos",
+    "editTitle": "Editar artigo",
+    "editDescription": "Capa, título e corpo em Markdown",
     "save": "Salvar",
     "saving": "Salvando…",
     "saved": "Artigo salvo",

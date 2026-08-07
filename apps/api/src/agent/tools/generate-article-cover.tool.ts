@@ -5,6 +5,7 @@
  * calls OpenAI directly. Domains stay transport-neutral — OpenAI belongs only
  * in `integrations/`, orchestrated from here (see agent-tools.mdc).
  */
+import { generateArticleCoverSchema } from "@app/shared";
 import { z } from "zod";
 import { generateAndAttachArticleCover } from "../generate-article-cover";
 import { defineTool } from "../tool";
@@ -24,7 +25,7 @@ export const generateArticleCoverTool = defineTool({
     "Generates a cover image from a text description and sets it on an existing article. Prefer a prompt derived from the article title and body. Returns the article id and cover url.",
   inputSchema: {
     articleId: z.string().uuid(),
-    prompt: z.string().trim().min(1).max(2000).optional(),
+    prompt: generateArticleCoverSchema.shape.prompt,
   },
   progress: (args) => `Generating cover${args.prompt ? `: ${args.prompt.slice(0, 60)}` : "…"}`,
   summarize: (args) => `Cover generated${args.prompt ? `: ${args.prompt.slice(0, 60)}` : ""}`,
