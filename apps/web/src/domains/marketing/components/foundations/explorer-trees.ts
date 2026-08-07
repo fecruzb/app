@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import type { ExplorerNode } from "./explorer-preview";
+import type { ExplorerNode } from "@app/ui/explorer";
 
 /** Full monorepo — Foundations hero overview. */
 export function buildRepoTree(t: TFunction): ExplorerNode[] {

@@ -12,7 +12,7 @@ import {
   SearchIcon,
   SettingsIcon,
 } from "lucide-react";
-import { cn } from "@app/ui/lib/utils";
+import { cn } from "../lib/utils";
 
 export type ExplorerNode = {
   name: string;
@@ -24,7 +24,7 @@ export type ExplorerNode = {
   children?: ExplorerNode[];
 };
 
-type ExplorerPreviewProps = {
+type ExplorerProps = {
   workspace: string;
   tree: ExplorerNode[];
   ariaLabel: string;
@@ -33,9 +33,11 @@ type ExplorerPreviewProps = {
 
 /**
  * VS Code / Cursor explorer chrome — activity bar + EXPLORER tree.
- * Reused for the monorepo overview and per-module “zoom” sections.
+ * App-neutral frame for marketing demos and docs; pass any tree.
+ *
+ * Colors mimic the real editor chrome (same exception as browser-window traffic lights).
  */
-export function ExplorerPreview({ workspace, tree, ariaLabel, className }: ExplorerPreviewProps) {
+function Explorer({ workspace, tree, ariaLabel, className }: ExplorerProps) {
   return (
     <div
       className={cn(
@@ -162,3 +164,5 @@ function FileGlyph({ node, open }: { node: ExplorerNode; open: boolean }) {
   }
   return <FileIcon className="size-3 shrink-0 text-[#6b6b6b]" aria-hidden />;
 }
+
+export { Explorer };

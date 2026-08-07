@@ -11,9 +11,9 @@ import {
 } from "lucide-react";
 import { points } from "@/i18n";
 import { CodeBlock } from "@app/ui/code-block";
+import { Explorer } from "@app/ui/explorer";
 import { FeatureSplit } from "../feature-split";
 import { EnvMock, TerminalMock, RenderMock } from "../product-preview";
-import { ExplorerPreview } from "./explorer-preview";
 import { buildApiTree, buildUiTree, buildWebTree } from "./explorer-trees";
 
 export type Foundation = {
@@ -74,7 +74,7 @@ export function buildModuleZooms(t: TFunction): Foundation[] {
       icon: ServerIcon,
       ...moduleCopy("api", t),
       visual: (
-        <ExplorerPreview
+        <Explorer
           workspace={t("landing.moduleZoom.api.workspace")}
           ariaLabel={t("landing.moduleZoom.api.aria")}
           tree={buildApiTree(t)}
@@ -86,7 +86,7 @@ export function buildModuleZooms(t: TFunction): Foundation[] {
       icon: LayoutIcon,
       ...moduleCopy("web", t),
       visual: (
-        <ExplorerPreview
+        <Explorer
           workspace={t("landing.moduleZoom.web.workspace")}
           ariaLabel={t("landing.moduleZoom.web.aria")}
           tree={buildWebTree(t)}
@@ -98,7 +98,7 @@ export function buildModuleZooms(t: TFunction): Foundation[] {
       icon: PaletteIcon,
       ...moduleCopy("ui", t),
       visual: (
-        <ExplorerPreview
+        <Explorer
           workspace={t("landing.moduleZoom.ui.workspace")}
           ariaLabel={t("landing.moduleZoom.ui.aria")}
           tree={buildUiTree(t)}
