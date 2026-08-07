@@ -268,7 +268,7 @@ export const domainMapFile = `// Domain-driven: one feature = one folder on BOTH
 // Same name. Fixed roles. Shared contract in packages/shared.
 
 apps/api/src/domains/task/              apps/web/src/domains/task/
-├── schema.ts        table              ├── api.ts        typed HTTP
+├── schema/          tables             ├── api.ts        typed HTTP
 ├── repository.ts    all SQL            ├── pages/        route screens
 ├── dto.ts           row → DTO          ├── routes.tsx    <Route> element
 ├── routes/          HTTP handlers      └── components/   domain UI (as needed)

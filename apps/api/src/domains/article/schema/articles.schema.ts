@@ -1,20 +1,14 @@
 /**
- * Article schema
+ * Articles
  *
- * Tenant-scoped articles: title, Markdown body, optional cover, and an optional
- * `publishedAt` that surfaces the piece on the public marketing site.
+ * One row per article. Scoped to a tenant; optional author and cover.
+ * `publishedAt` null = private (app only); set = listed on `/articles`.
  */
 import { index, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { timestamps } from "@/db/columns";
 import { users } from "@/domains/auth/schema";
 import { tenants } from "@/domains/tenant/schema";
 
-/**
- * Articles
- *
- * One row per article. Scoped to a tenant; optional author and cover.
- * `publishedAt` null = private (app only); set = listed on `/articles`.
- */
 export const articles = pgTable(
   "articles",
   {

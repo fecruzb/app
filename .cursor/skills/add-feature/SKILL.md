@@ -14,8 +14,8 @@ A feature is a domain folder on both sides. Copy the `task` domain — it is the
 Checklist (track progress):
 
 ```
-- [ ] 1. API: schema.ts (table)
-- [ ] 2. Register in db/schema.ts barrel + generate migration
+- [ ] 1. API: schema/<table>.schema.ts (+ schema/index.ts)
+- [ ] 2. Register domain in db/schema.ts barrel + generate migration
 - [ ] 3. API: repository.ts (all SQL)
 - [ ] 4. Shared: input schema + DTO in packages/shared
 - [ ] 5. API: dto.ts (row → DTO)
@@ -29,9 +29,9 @@ Checklist (track progress):
 
 ## API side
 
-**1. Table** — `apps/api/src/domains/<domain>/schema.ts`. Copy `domains/task/schema.ts`: `uuid("id").primaryKey().defaultRandom()`, a `tenant_id` FK with `onDelete: "cascade"`, `...timestamps` from `@/db/columns`, an index on `tenantId`, and `export type Xxx = typeof xxx.$inferSelect`.
+**1. Table** — `apps/api/src/domains/<domain>/schema/<table>.schema.ts` (one table per file). Copy `domains/task/schema/tasks.schema.ts`: `uuid("id").primaryKey().defaultRandom()`, a `tenant_id` FK with `onDelete: "cascade"`, `...timestamps` from `@/db/columns`, an index on `tenantId`, and `export type Xxx = typeof xxx.$inferSelect`. Re-export from `schema/index.ts`.
 
-**2. Register + migrate** — add `export * from "@/domains/<domain>/schema"` to `apps/api/src/db/schema.ts` (the barrel drizzle-kit reads), then run `npm run db:generate` and `npm run db:migrate`. Never write SQL migrations by hand.
+**2. Register + migrate** — add `export * from "@/domains/<domain>/schema"` to `apps/api/src/db/schema.ts` if the domain is new (the barrel drizzle-kit reads), then run `npm run db:generate` and `npm run db:migrate`. Never write SQL migrations by hand.
 
 **3. Repository** — `repository.ts`, an exported object of async methods that owns ALL the SQL. For a new tenant-scoped resource, copy `task`: CRUD names `list` / `find` / `insert` / `update` / `delete`, every method takes `tenantId` and filters by it, each query written inline in the method (no shared helpers), annotated returns. Return rows (or join shapes), never DTOs — mapping stays in `dto.ts`. Routes, services and tools never write queries. (Platform domains like `auth`/`tenant` use entity-prefixed method names instead; see `api-structure.mdc`.)
 

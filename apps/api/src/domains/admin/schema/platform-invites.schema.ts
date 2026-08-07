@@ -1,17 +1,12 @@
 /**
- * Admin schema
- *
- * Platform-level tables for the admin area (orthogonal to tenants).
- */
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { users } from "@/domains/auth/schema";
-
-/**
  * Platform invites
  *
  * Pending signup invites by email. No tenant — accepting creates a personal
  * workspace. Token is stored hashed; expires after a TTL.
  */
+import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { users } from "@/domains/auth/schema";
+
 export const platformInvites = pgTable("platform_invites", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull(),

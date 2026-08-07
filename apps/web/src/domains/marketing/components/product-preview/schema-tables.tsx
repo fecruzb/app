@@ -61,7 +61,7 @@ function SchemaWindow({ label, children }: { label: string; children: ReactNode 
 /** Auth domain: identity, sessions, single-use tokens and personal API keys. */
 export function AuthTables() {
   return (
-    <SchemaWindow label="domains/auth/schema.ts">
+    <SchemaWindow label="domains/auth/schema/">
       <TableCard
         name="users"
         columns={[
@@ -106,7 +106,7 @@ export function AuthTables() {
 /** Tenant domain: the workspaces, their membership join table and invites. */
 export function TenantTables() {
   return (
-    <SchemaWindow label="domains/tenant/schema.ts">
+    <SchemaWindow label="domains/tenant/schema/">
       <TableCard
         name="tenants"
         columns={[
@@ -196,7 +196,7 @@ export function PlansCatalog() {
 /** AI spend ledger — append-only events per assistant request. */
 export function UsageTables() {
   return (
-    <SchemaWindow label="domains/usage/schema.ts">
+    <SchemaWindow label="domains/usage/schema/ai-usage-events.schema.ts">
       <TableCard
         name="ai_usage_events"
         accent
@@ -218,7 +218,7 @@ export function UsageTables() {
 /** Article + cover metadata — cover bytes live in object storage. */
 export function ArticleTables() {
   return (
-    <SchemaWindow label="domains/article/schema.ts">
+    <SchemaWindow label="domains/article/schema/articles.schema.ts">
       <TableCard
         name="articles"
         columns={[
@@ -239,7 +239,7 @@ export function ArticleTables() {
 /** Platform signup invites — orthogonal to tenant invites. */
 export function PlatformTables() {
   return (
-    <SchemaWindow label="domains/admin/schema.ts">
+    <SchemaWindow label="domains/admin/schema/platform-invites.schema.ts">
       <TableCard
         name="platform_invites"
         columns={[
@@ -257,7 +257,7 @@ export function PlatformTables() {
 /** The example resource — the exact shape you copy for your own domains. */
 export function TaskTable() {
   return (
-    <Window label="domains/task/schema.ts">
+    <Window label="domains/task/schema/tasks.schema.ts">
       <div className="bg-muted/30 p-4">
         <TableCard
           name="tasks"

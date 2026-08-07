@@ -82,11 +82,11 @@ Conventions:
 - **One route per file** in `domains/<domain>/routes/`, named `<path>.<method>.route.ts` relative to the mount (e.g. `articles.get.route.ts`, `article.post.route.ts`, `article.get.route.ts`, `article.cover.post.route.ts`; each `:param` → schema singular); `routes/index.ts` is the method + path + middlewares map (same role as `tools/index.ts`).
 - **One tool per file** in `domains/<domain>/tools/`, named `<action>.tool.ts` (e.g. `create-task.tool.ts`); the tool is self-describing (`summarize` marks a write and becomes a chip in the chat UI). Register the domain's array in `agent/registry.ts`. Agent-owned OpenAI tools live in `agent/tools/`.
 - **Tools are transport-neutral**: they return JSON-serializable data and throw `Error` for expected failures. `agent/mcp-server.ts` translates to MCP; `agent/assistant.ts` translates to the OpenAI loop. Domains never import the MCP/OpenAI SDK packages (lint blocks it); agent-owned tools may use `@/integrations/openai`.
-- **Name suffix = file role.** Single-role domain files keep the role name (`repository.ts`, `service.ts`, `schema.ts`); folders own their index (`routes/index.ts`, `tools/index.ts`); route/tool files carry the `.route.ts` / `.tool.ts` suffix.
+- **Name suffix = file role.** Single-role domain files keep the role name (`repository.ts`, `service.ts`); folders own their index (`schema/`, `routes/`, `tools/`, `template/`, `middleware/`); table/route/tool/template files carry the matching suffix (`.schema.ts`, `.route.ts`, `.tool.ts`, `.template.ts`).
 - **The repository owns the SQL** — routes and services don't write queries. Every tenant-scoped resource query filters by `tenantId`.
 - **Service only when there's real business logic** (sessions, tokens, invites, seat/AI gates…). Plain CRUD calls the repository straight from the route/tool — that's why `task` has no `service.ts` while `auth`/`tenant`/`billing` do. Once an operation gains a rule, create the service and route the HTTP handler and tool through it.
 - **Tenant isolation is safe by default** — each tenant-scoped domain's `routes/index.ts` applies `requireAuth`/`requireTenant` once (via `.use`), so every new route is isolated from the start.
-- **New table?** Export the domain schema in `db/schema.ts` (the barrel drizzle-kit reads) and run `db:generate`.
+- **New table?** Add `schema/<table>.schema.ts`, re-export from `schema/index.ts`, ensure the domain is in `db/schema.ts` (the barrel drizzle-kit reads), and run `db:generate`.
 - **Env is validated at boot** (`lib/env.ts`, Zod): a missing required variable kills the process with a clear message instead of breaking on a query. Add new vars to that schema, `.env.example`, and `render.yaml` when production needs them.
 - **Imports use the `@/` alias** (→ `apps/api/src/`): anything crossing a boundary uses the alias — `@/lib/*`, `@/integrations/*`, `@/db/*`, `@/domains/<other>/*`. Only imports within the same domain stay relative (`./repository`, `../service`). This way moving files doesn't break imports and `../../../` disappears.
 - **Boundaries are enforced by lint** (`.oxlintrc.json`, `no-restricted-imports`): `lib/` can't depend on anything in the app; `integrations/` only on `lib/`; domains only know the agent contract (`@/agent/tool`) and never the MCP/OpenAI SDK packages directly. Cross the line and `npm run lint` flags it.
@@ -116,7 +116,7 @@ UI copy that uses `{{brand}}` / `{{tagline}}`, SEO shell meta, invite emails, th
 
 ### Next
 
-1. Replace the `tasks` resource with your domain: copy `apps/api/src/domains/task/` (schema → repository → routes → tools), export the schema in `db/schema.ts`, run `db:generate`, add the schemas to `packages/shared` and the page in web
+1. Replace the `tasks` resource with your domain: copy `apps/api/src/domains/task/` (`schema/` → repository → routes → tools), ensure the domain is exported in `db/schema.ts`, run `db:generate`, add the contracts to `packages/shared` and the page in web
 2. Adjust the plan catalog in `apps/api/src/domains/billing/plans.ts` and shared `packages/shared/src/billing.ts` if your pricing differs
 3. Rewrite landing marketing copy (`apps/web/src/i18n/locales/landing.*.json`) for your product story
 4. Desktop/mobile: update bundle `identifier` and Cargo `authors` (`Your Name <you@example.com>` placeholders) if needed, and regenerate icons from one source (`tauri icon`)

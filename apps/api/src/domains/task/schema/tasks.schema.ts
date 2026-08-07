@@ -1,18 +1,13 @@
 /**
- * Task schema
+ * Tasks
  *
- * Tenant-scoped tasks: title, completion flag, and optional author.
+ * One row per task. Scoped to a tenant; optional author (set null on user delete).
  */
 import { boolean, index, pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { timestamps } from "@/db/columns";
 import { users } from "@/domains/auth/schema";
 import { tenants } from "@/domains/tenant/schema";
 
-/**
- * Tasks
- *
- * One row per task. Scoped to a tenant; optional author (set null on user delete).
- */
 export const tasks = pgTable(
   "tasks",
   {

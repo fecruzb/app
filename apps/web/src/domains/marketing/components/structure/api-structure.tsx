@@ -78,7 +78,9 @@ function buildApiLayers(t: TFunction): ApiLayer[] {
       id: "schema",
       ...layerCopy("schemaFile", t),
       visualScale: 0.72,
-      visual: <CodeBlock filename="domains/task/schema.ts" code={schemaFile} lang="ts" />,
+      visual: (
+        <CodeBlock filename="domains/task/schema/tasks.schema.ts" code={schemaFile} lang="ts" />
+      ),
     },
     {
       id: "repository-method",

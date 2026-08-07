@@ -1,17 +1,12 @@
 /**
- * Usage schema
+ * AI usage events
  *
- * AI spend ledger: one row per assistant request (not per model round).
+ * Append-only spend records. Entitlements are per user inside a tenant (plan).
  */
 import { index, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { users } from "@/domains/auth/schema";
 import { tenants } from "@/domains/tenant/schema";
 
-/**
- * AI usage events
- *
- * Append-only spend records. Entitlements are per user inside a tenant (plan).
- */
 export const aiUsageEvents = pgTable(
   "ai_usage_events",
   {

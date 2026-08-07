@@ -81,7 +81,11 @@ export function buildApiTree(t: TFunction): ExplorerNode[] {
               hint: p("task"),
               active: true,
               children: [
-                { name: "schema.ts", kind: "file" },
+                {
+                  name: "schema",
+                  kind: "folder",
+                  children: [{ name: "tasks.schema.ts", kind: "file", active: true }],
+                },
                 { name: "repository.ts", kind: "file" },
                 { name: "dto.ts", kind: "file" },
                 { name: "routes", kind: "folder" },
