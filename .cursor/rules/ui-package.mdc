@@ -9,6 +9,8 @@ alwaysApply: false
 Base UI consumed per subpath: `import { Button } from "@app/ui/button"`.
 Public import paths stay flat; source files live in category folders.
 
+**Rule of thumb:** if it would still make sense in another web app tomorrow, it belongs here.
+
 ## Source layout
 
 ```
@@ -17,17 +19,27 @@ packages/ui/src/
   primitives/    shadcn building blocks (button, card, dialog, table, …)
   shell/         app chrome (brand, nav-item, site-header, sidebar,
                  sidebar-shell, navbar-shell, auth-shell, user-menu-button)
-  composites/    higher-level patterns (browser-window, code-block, data-table,
-                 page-header, empty-state, confirm-dialog, …)
+  composites/    higher-level patterns (browser-window, code-block/, data-table, …)
+  theme/         ThemeProvider, defaultThemes, createTheme
 ```
+
+## Multi-file components
+
+- **One file** → flat (`button.tsx`)
+- **Two or more files** → dedicated folder with `index.tsx` (or `index.ts`) as the public entry
+  (e.g. `composites/code-block/`, `theme/`). Package `exports` still use a flat subpath
+  (`@app/ui/code-block`, `@app/ui/theme`).
 
 ## Rules
 
-- Every new component file MUST be registered in `packages/ui/package.json` under `exports` — without that entry the subpath import fails
-- Keep it app-neutral: no `@/` imports, no product copy, no domain/tenant knowledge. A component that needs product copy or business logic belongs in `apps/web/src/domains/<domain>/components/` instead
-- Primitives are shadcn-generated — restyle through variants/tokens, don't hand-rewrite them. Shell and composite pieces stay generic
-- Colors come only from the CSS variables (`--primary`, `--background`, …) that the web app's ThemeProvider writes — never hardcode a color, or theming breaks. Exception: `browser-window` traffic lights mimic real OS chrome on purpose.
-- `CodeBlock` dual-theme highlighting needs host CSS for `.code-block` under `.dark` (see `apps/web/src/index.css`)
+- Every new public entry MUST be registered in `packages/ui/package.json` under `exports`
+- Keep it app-neutral: no `@/` imports, no product copy, no domain/tenant knowledge
+- Primitives are shadcn-generated — restyle through variants/tokens, don't hand-rewrite them
+- Colors come only from CSS variables (`--primary`, `--background`, …) that `ThemeProvider`
+  writes onto `<html>`. Exception: `browser-window` traffic lights mimic real OS chrome on purpose
+- Theme system lives here (`@app/ui/theme`): built-in catalogs + light/dark. Consumers may pass
+  `themes={[...defaultThemes, createTheme({ id, primary })]}` for brand packs. Components use
+  token utilities (`bg-card`, `dark:…`) or follow `html.dark` (e.g. CodeBlock)
 - `cn` lives at `packages/ui/src/lib/utils.ts` (`@app/ui/lib/utils`)
-- Only add a component here when a generic UI shape repeats across pages; one-off UI stays in the app
-- Put new files in the matching category folder (`primitives/` / `shell/` / `composites/`)
+- Only add a component here when a generic UI shape repeats; one-off UI stays in the app
+- Put new files in the matching category folder (`primitives/` / `shell/` / `composites/` / `theme/`)

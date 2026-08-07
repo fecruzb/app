@@ -6,8 +6,8 @@
 
 /*
  * Default token values (Mono / light). These are the fallback until
- * ThemeProvider writes the chosen theme onto <html> — the color tokens all live
- * in src/theme/themes.ts, which is the single place to edit or add themes.
+ * ThemeProvider (`@app/ui/theme`) writes the chosen theme onto <html> — the
+ * color tokens all live in packages/ui/src/theme/themes.ts.
  */
 :root {
   --background: oklch(1 0 0);
@@ -35,7 +35,7 @@
 /*
  * Pre-hydration fallback so a dark reload doesn't flash white before
  * ThemeProvider writes the exact theme tokens. Kept in sync with darkBase in
- * src/theme/themes.ts (Mono dark).
+ * packages/ui/src/theme/themes.ts (Mono dark).
  */
 .dark {
   --background: oklch(0.145 0 0);
@@ -120,17 +120,5 @@
       transform: none;
       transition: none;
     }
-  }
-
-  /* Let Shiki keep its token colors but blend the frame into the card.
-     Required by `@app/ui/code-block` dual-theme output. */
-  .code-block pre.shiki {
-    margin: 0;
-    background-color: transparent !important;
-  }
-  /* Dual-theme output: swap to the dark palette when the app is in dark mode. */
-  .dark .code-block .shiki,
-  .dark .code-block .shiki span {
-    color: var(--shiki-dark) !important;
   }
 }

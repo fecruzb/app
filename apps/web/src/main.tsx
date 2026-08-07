@@ -7,7 +7,7 @@ import "@/i18n";
 import { App } from "@/app/App";
 import { ConfirmProvider } from "@app/ui/confirm-dialog";
 import { AuthProvider } from "@/domains/auth/context/auth-provider";
-import { ThemeProvider, useTheme } from "@/theme/theme-provider";
+import { ThemeProvider, useTheme } from "@app/ui/theme";
 import "./index.css";
 
 const queryClient = new QueryClient({

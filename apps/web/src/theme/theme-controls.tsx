@@ -10,9 +10,9 @@ import {
   DropdownMenuTrigger,
 } from "@app/ui/dropdown-menu";
 import { cn } from "@app/ui/lib/utils";
+import { useTheme } from "@app/ui/theme";
 import { LocalePicker, setLocale } from "@/i18n/locale-controls";
 import { LOCALES, type Locale } from "@/i18n";
-import { useTheme } from "./theme-provider";
 
 /** Icon button that flips between light and dark. */
 export function ModeToggle({ className }: { className?: string }) {

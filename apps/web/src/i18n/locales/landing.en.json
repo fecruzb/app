@@ -218,10 +218,10 @@
   },
   "theming": {
     "eyebrow": "Theming",
-    "title": "One file, every color — light and dark",
-    "bodyBefore": "A theme is just two sets of tokens: light and dark. The primary color drives buttons, highlights and focus rings; the rest is neutral surfaces you rarely touch. Pick a primary, and the whole UI — landing page included — recolors from CSS variables. No component edits, no ",
+    "title": "Kit themes, brand when you need it",
+    "bodyBefore": "Light and dark palettes ship with @app/ui. The primary color drives buttons, highlights and focus rings; the rest is neutral surfaces. ThemeProvider writes CSS variables onto the page — the whole UI recolors with no component edits, no ",
     "bodyCode": "dark:",
-    "bodyAfter": " classes to chase.",
+    "bodyAfter": " classes to chase. Extend with createTheme when your product needs its own accent.",
     "primaryColor": "Primary color",
     "mode": "Mode",
     "light": "Light",

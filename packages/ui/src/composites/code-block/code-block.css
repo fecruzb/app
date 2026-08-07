@@ -1,0 +1,5 @@
+/* Shiki paints its own pre background — blend into the themed card surface. */
+[data-slot="code-block"] pre.shiki {
+  margin: 0;
+  background-color: transparent !important;
+}

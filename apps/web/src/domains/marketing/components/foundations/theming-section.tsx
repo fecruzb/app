@@ -1,33 +1,27 @@
-import { useTheme } from "@/theme/theme-provider";
+import { useTheme } from "@app/ui/theme";
 import { useTranslation } from "react-i18next";
 import { MoonIcon, PaletteIcon, SunIcon } from "lucide-react";
 import { CodeBlock } from "@app/ui/code-block";
 
-const themeFile = `// src/theme/themes.ts — add your brand in one block
-export const themes: Theme[] = [
-  {
+const themeFile = `// Brand pack on top of @app/ui — optional when you diverge
+import { createTheme, defaultThemes } from "@app/ui/theme";
+
+export const appThemes = [
+  ...defaultThemes,
+  createTheme({
     id: "violet",
-    // Display name comes from i18n: theme.themes.violet
-    swatch: "oklch(0.55 0.22 295)",
-    light: {
-      ...lightBase,                        // neutral surfaces
-      "--primary": "oklch(0.55 0.22 295)", // buttons, highlights
-      "--primary-foreground": "oklch(0.985 0 0)",
-      "--ring": "oklch(0.55 0.22 295)",
-    },
-    dark: {
-      ...darkBase,
-      "--primary": "oklch(0.68 0.19 295)", // lifted for dark bg
-      "--primary-foreground": "oklch(0.145 0 0)",
-      "--ring": "oklch(0.68 0.19 295)",
-    },
-  },
-];`;
+    primary: "oklch(0.55 0.22 295)",
+    primaryDark: "oklch(0.68 0.19 295)",
+  }),
+];
+
+// main.tsx
+// <ThemeProvider themes={appThemes} />`;
 
 /**
  * Live theming demo — the swatches and toggle drive the real ThemeProvider, so
- * clicking one recolors this entire page. The code panel is the actual file you
- * edit to add your own theme.
+ * clicking one recolors this entire page. The code panel shows how to extend
+ * the kit catalog with createTheme.
  */
 export function ThemingSection() {
   const { t } = useTranslation();
@@ -106,7 +100,7 @@ export function ThemingSection() {
         </div>
 
         <div className="reveal reveal-delay min-w-0">
-          <CodeBlock filename="src/theme/themes.ts" code={themeFile} lang="ts" />
+          <CodeBlock filename="src/theme/app-themes.ts" code={themeFile} lang="ts" />
         </div>
       </div>
     </section>

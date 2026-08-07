@@ -218,10 +218,10 @@
   },
   "theming": {
     "eyebrow": "Temas",
-    "title": "Um arquivo, todas as cores — claro e escuro",
-    "bodyBefore": "Um tema é só dois conjuntos de tokens: light e dark. A cor primária dirige botões, destaques e anéis de foco; o resto são superfícies neutras que você quase não toca. Escolha um primary e a UI inteira — inclusive a landing — recoloriza pelas variáveis CSS. Sem editar componentes, sem sair caçando classes ",
+    "title": "Temas do kit, brand quando precisar",
+    "bodyBefore": "Paletas light e dark vêm com o @app/ui. A cor primária dirige botões, destaques e anéis de foco; o resto são superfícies neutras. O ThemeProvider grava variáveis CSS na página — a UI inteira recoloriza sem editar componentes, sem sair caçando classes ",
     "bodyCode": "dark:",
-    "bodyAfter": ".",
+    "bodyAfter": ". Estenda com createTheme quando o produto precisar do próprio accent.",
     "primaryColor": "Cor primária",
     "mode": "Modo",
     "light": "Claro",

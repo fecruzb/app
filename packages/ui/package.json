@@ -31,7 +31,8 @@
     "./page-header": "./src/composites/page-header.tsx",
     "./page-loading": "./src/composites/page-loading.tsx",
     "./browser-window": "./src/composites/browser-window.tsx",
-    "./code-block": "./src/composites/code-block.tsx"
+    "./code-block": "./src/composites/code-block/index.tsx",
+    "./theme": "./src/theme/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

@@ -1,13 +1,10 @@
 /**
- * The whole theming system lives here. A theme is just two sets of tokens —
- * one for `light`, one for `dark` — expressed as the same CSS variables the UI
- * already consumes (`--primary`, `--background`, …). `ThemeProvider` writes the
- * chosen set onto `<html>` at runtime, so every `bg-primary` / `text-foreground`
- * class re-colors itself with no component changes.
+ * Theme catalog for `@app/ui`. A theme is two token sets (light + dark) using
+ * the same CSS variables components already consume (`--primary`, `--background`, …).
+ * `ThemeProvider` writes the active set onto `<html>` at runtime.
  *
- * To add your own theme: copy one block below, pick a new `id`, and swap the
- * `--primary` (and its foreground) for your brand color. Colors are oklch —
- * `oklch(lightness chroma hue)` — but any valid CSS color works.
+ * Prefer `createTheme({ id, primary })` for brand packs; use these bases when
+ * you need full control.
  */
 
 export type ThemeTokens = Record<string, string>;
@@ -20,9 +17,10 @@ export type Theme = {
   dark: ThemeTokens;
 };
 
-// Tokens shared by every theme's light mode — only the accent color changes per
-// theme, so the neutral surfaces are declared once and spread in.
-const lightBase: ThemeTokens = {
+export type Mode = "light" | "dark";
+
+/** Neutral surfaces shared by every light theme — only the accent usually changes. */
+export const lightBase: ThemeTokens = {
   "--background": "oklch(1 0 0)",
   "--foreground": "oklch(0.145 0 0)",
   "--card": "oklch(1 0 0)",
@@ -41,7 +39,8 @@ const lightBase: ThemeTokens = {
   "--input": "oklch(0.922 0 0)",
 };
 
-const darkBase: ThemeTokens = {
+/** Neutral surfaces shared by every dark theme. */
+export const darkBase: ThemeTokens = {
   "--background": "oklch(0.145 0 0)",
   "--foreground": "oklch(0.985 0 0)",
   "--card": "oklch(0.205 0 0)",
@@ -60,7 +59,7 @@ const darkBase: ThemeTokens = {
   "--input": "oklch(1 0 0 / 15%)",
 };
 
-export const themes: Theme[] = [
+export const defaultThemes: Theme[] = [
   {
     id: "mono",
     swatch: "oklch(0.205 0 0)",
@@ -127,11 +126,12 @@ export const themes: Theme[] = [
   },
 ];
 
-export type Mode = "light" | "dark";
+/** @deprecated Use `defaultThemes` — kept as an alias for clarity at call sites. */
+export const themes = defaultThemes;
 
 export const DEFAULT_THEME = "mono";
 export const DEFAULT_MODE: Mode = "light";
 
-export function getTheme(id: string): Theme {
-  return themes.find((t) => t.id === id) ?? themes[0];
+export function getTheme(id: string, catalog: Theme[] = defaultThemes): Theme {
+  return catalog.find((t) => t.id === id) ?? catalog[0] ?? defaultThemes[0];
 }
