@@ -154,6 +154,134 @@ export const taskApi = {
     api.delete(\`/tenants/\${tenantId}/tasks/\${id}\`),
 };`;
 
+/** Zoom-in: one method from the domain api object. */
+export const webApiMethodFile = `/** List tasks — path mirrors /api/tenants/:tenantId/tasks */
+list: (tenantId: string, search?: string) => {
+  const q = search?.trim() ? \`?search=\${encodeURIComponent(search.trim())}\` : "";
+  return api.get<TaskDto[]>(\`/tenants/\${tenantId}/tasks\${q}\`);
+}`;
+
+export const webAppMountFile = `// app/App.tsx — compose top-level route groups once
+export function App() {
+  return (
+    <Routes>
+      {marketingRoutes}
+      {authRoutes}
+      {joinRoutes}
+      {adminRoutes}
+      {tenantRoutes}
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+  );
+}`;
+
+export const webLibApiFile = `// lib/api.ts — raw HTTP only (no domain knowledge)
+export class ApiError extends Error { /* status + message */ }
+
+export function showApiError(err: unknown, fallback: string): void { /* toast */ }
+
+export const api = {
+  get: <T>(path: string) => request<T>(path),
+  post: <T>(path: string, body?: unknown) => request<T>(path, { method: "POST", body }),
+  patch: <T>(path: string, body?: unknown) => request<T>(path, { method: "PATCH", body }),
+  delete: <T = void>(path: string) => request<T>(path, { method: "DELETE" }),
+};
+
+// Pages import ApiError / showApiError — never api.get from a page.`;
+
+export const webLayoutsFile = `// layouts/RequireAuth.tsx — gate the outlet
+export function RequireAuth() {
+  const { me, isLoading } = useAuth();
+  const location = useLocation();
+
+  if (isLoading) return <Spinner />;
+  if (!me) {
+    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+  }
+  return <Outlet />;
+}
+
+// AppLayout = SidebarShell + nav items · AuthLayout = AuthShell`;
+
+export const webContextFile = `// context/tenant-provider.tsx — Provider + useTenant together
+export function TenantProvider({ children }: { children: ReactNode }) {
+  const { me } = useAuth();
+  const { tenantSlug } = useParams();
+  const tenant = me?.tenants.find((t) => t.slug === tenantSlug) ?? null;
+
+  if (!tenant) return <Navigate to="/app" replace />;
+
+  return (
+    <TenantContext.Provider
+      value={{ tenant, isManager: managerRoles.includes(tenant.role) }}
+    >
+      {children}
+    </TenantContext.Provider>
+  );
+}
+
+export function useTenant(): TenantContextValue { /* … */ }
+// Pages read tenant here — never parse the URL themselves.`;
+
+export const webHooksFile = `// hooks/use-audio-recorder.ts — React helper (not the context consumer)
+export function useAudioRecorder({ onAudio, onError }: Options) {
+  const [recording, setRecording] = useState(false);
+  // getUserMedia + MediaRecorder → Blob for the caller
+  return { recording, start, stop, cancel };
+}
+
+// Context consumers (useAuth / useTenant) stay next to their Provider.
+// Non-React helpers with logic → utils/; statics → constants/.`;
+
+export const webComponentFile = `// components/role-select.tsx — domain UI, kebab-case
+export function RoleSelect({ value, onChange, includeOwner }: Props) {
+  const { t } = useTranslation();
+  return (
+    <select value={value} onChange={(e) => onChange(e.target.value as TenantRole)}>
+      {includeOwner && <option value="owner">{t("roles.owner")}</option>}
+      <option value="admin">{t("roles.admin")}</option>
+      <option value="member">{t("roles.member")}</option>
+    </select>
+  );
+}
+
+// Base UI from @app/ui — product UI stays in the owning domain.`;
+
+export const webConstantsSnippet = `// constants/<topic>.constants.ts — static values only (optional folder)
+export const LAST_TENANT_KEY = "app:lastTenant";
+
+// Same role as the API: catalogs · keys · limits. No helpers.
+// Create the folder with the first file — never empty.`;
+
+export const webUtilsSnippet = `// utils/<topic>.utils.ts — non-React helpers with logic (optional)
+export function formatInviteLabel(email: string, role: TenantRole): string {
+  return \`\${email} · \${role}\`;
+}
+
+// React helpers → hooks/. App-root lib/ stays cross-cutting infra.`;
+
+export const webI18nFile = `// i18n/ — UI copy, never hardcoded in JSX
+// locales/en.json + pt.json           → app shell
+// locales/landing.en.json + .pt.json  → public landing
+
+const { t } = useTranslation();
+t("tasks.title");
+t("landing.moduleZoom.web.title");
+
+// Add every new string to both files of the matching pair.`;
+
+export const webThemeFile = `// theme/theme-controls.tsx — product wiring only
+// language · palette · mode (uses useTheme from @app/ui/theme)
+
+// ThemeProvider + tokens live in @app/ui/theme — not here.
+// Components use CSS variables — never hardcode colors.`;
+
+export const webBrandFile = `// brand/logo.tsx → AppLogo (+ logo.css for motion)
+<Brand icon={<AppLogo />}>{t("brand")}</Brand>
+
+// Display name / MCP id → @app/shared brand
+// Favicon + static mark → apps/web/public/brand/`;
+
 export const webRoutesFile = `// domains/task/routes.tsx — the domain owns its <Route>
 export const taskRoutes = <Route path="tasks" element={<TasksPage />} />;`;
 

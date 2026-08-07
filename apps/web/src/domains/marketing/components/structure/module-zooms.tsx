@@ -1,19 +1,10 @@
 import type { TFunction } from "i18next";
-import { FolderTreeIcon, LayoutIcon, PaletteIcon } from "lucide-react";
+import { FolderTreeIcon, PaletteIcon } from "lucide-react";
 import { points } from "@/i18n";
 import { Explorer } from "@app/ui/explorer";
 import type { Foundation } from "../foundations/foundation-section";
-import { buildUiTree, buildWebTree } from "./explorer-trees";
+import { buildUiTree } from "./explorer-trees";
 import { MonorepoPreview } from "./monorepo-preview";
-
-function moduleCopy(key: "web" | "ui", t: TFunction) {
-  return {
-    eyebrow: t(`landing.moduleZoom.${key}.eyebrow`),
-    title: t(`landing.moduleZoom.${key}.title`),
-    body: t(`landing.moduleZoom.${key}.body`),
-    points: points(t, `landing.moduleZoom.${key}.points`),
-  };
-}
 
 /** Whole-repo overview — Structure hub narrative. */
 export function buildMonorepoPillar(t: TFunction): Foundation {
@@ -28,27 +19,14 @@ export function buildMonorepoPillar(t: TFunction): Foundation {
   };
 }
 
-export function buildWebPillar(t: TFunction): Foundation {
-  return {
-    id: "web",
-    icon: LayoutIcon,
-    ...moduleCopy("web", t),
-    visual: (
-      <Explorer
-        title={t("landing.structureIntro.preview.explorer")}
-        workspace={t("landing.moduleZoom.web.workspace")}
-        ariaLabel={t("landing.moduleZoom.web.aria")}
-        tree={buildWebTree(t)}
-      />
-    ),
-  };
-}
-
 export function buildUiPillar(t: TFunction): Foundation {
   return {
     id: "ui",
     icon: PaletteIcon,
-    ...moduleCopy("ui", t),
+    eyebrow: t("landing.moduleZoom.ui.eyebrow"),
+    title: t("landing.moduleZoom.ui.title"),
+    body: t("landing.moduleZoom.ui.body"),
+    points: points(t, "landing.moduleZoom.ui.points"),
     visual: (
       <Explorer
         title={t("landing.structureIntro.preview.explorer")}

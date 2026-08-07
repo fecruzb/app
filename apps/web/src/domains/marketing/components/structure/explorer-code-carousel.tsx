@@ -25,6 +25,8 @@ type ExplorerCodeCarouselProps = {
    * Typical zoom-in: file outline (index) → one unit (code).
    */
   examples: CodeExample[];
+  /** i18n prefix for Files / aria labels — `landing.apiCourse` or `landing.webCourse`. */
+  labelsNamespace?: "landing.apiCourse" | "landing.webCourse";
 };
 
 /** Toggle label = file basename (or the part after " → "). */
@@ -39,7 +41,11 @@ function fileTabLabel(filename: string): string {
  * Same visual slot: tree ↔ code(s). Height stays stable (grid stack).
  * Toggle: Files, then each example in array order (filenames as labels).
  */
-export function ExplorerCodeCarousel({ tree, examples }: ExplorerCodeCarouselProps) {
+export function ExplorerCodeCarousel({
+  tree,
+  examples,
+  labelsNamespace = "landing.apiCourse",
+}: ExplorerCodeCarouselProps) {
   const { t } = useTranslation();
   /** null = Files; otherwise index into `examples`. */
   const [slide, setSlide] = useState<number | null>(null);
@@ -62,13 +68,13 @@ export function ExplorerCodeCarousel({ tree, examples }: ExplorerCodeCarouselPro
       <div
         className="mt-3 flex justify-center"
         role="group"
-        aria-label={t("landing.apiCourse.carouselLabel")}
+        aria-label={t(`${labelsNamespace}.carouselLabel`)}
       >
         <div className="flex max-w-full flex-wrap justify-center rounded-md border bg-muted/40 p-0.5">
           <ModeButton
             active={slide === null}
-            label={t("landing.apiCourse.slideTree")}
-            short={t("landing.apiCourse.modeFiles")}
+            label={t(`${labelsNamespace}.slideTree`)}
+            short={t(`${labelsNamespace}.modeFiles`)}
             icon={FolderTreeIcon}
             onClick={() => setSlide(null)}
           />

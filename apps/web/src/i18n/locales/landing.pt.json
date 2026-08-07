@@ -73,7 +73,7 @@
     },
     "structureWeb": {
       "title": "Estrutura do web · {{brand}}",
-      "description": "apps/web — domínios que espelham a API, com api.ts, pages e routes."
+      "description": "apps/web — mapa primeiro, depois cada pasta: domains, shell e os papéis fixos dentro de uma feature."
     },
     "structureUi": {
       "title": "Interface · {{brand}}",
@@ -748,22 +748,35 @@
     },
     "web": {
       "eyebrow": "apps/web",
-      "title": "O SPA React",
-      "body": "Os mesmos nomes de domínio da API. Cada feature possui api.ts, pages e routes — layouts e i18n ficam no shell.",
+      "title": "SPA frontend",
+      "body": "Mapa primeiro. Depois cada pasta — papel, fronteira, keywords.",
+      "layout": {
+        "eyebrow": "Visão geral",
+        "title": "Mesmos nomes de domínio da API",
+        "body": "domains/ = features. app/ · layouts/ = shell. lib/ · i18n/ · theme/ · brand/ = chrome compartilhado. Fechadas aqui — abertas a seguir."
+      },
       "points": [
-        "domains/<nome>/ espelha apps/api/src/domains/<nome>/",
-        "api.ts é a única fronteira de rede daquele domínio",
-        "layouts/, i18n/, theme/ são chrome compartilhado — não código de feature"
+        "domains/ — uma pasta por feature",
+        "app/ · layouts/ — shell, não features",
+        "task/ — peek dos papéis do recurso"
       ],
       "workspace": "apps/web",
-      "aria": "Árvore de apps/web num explorer estilo VS Code",
+      "aria": "Árvore do código da web",
       "hints": {
-        "domains": "mesmos nomes da API",
-        "task": "api · pages · routes",
-        "layouts": "shells App e Auth",
-        "lib": "cliente HTTP",
-        "i18n": "en.json + pt.json",
-        "theme": "paleta + modo"
+        "domains": "features",
+        "task": "recurso",
+        "article": "recurso + mídia",
+        "auth": "identidade",
+        "tenant": "shell do workspace",
+        "marketing": "público",
+        "admin": "plataforma",
+        "agent": "chat FAB",
+        "app": "mapa de rotas",
+        "layouts": "shells",
+        "lib": "infra",
+        "i18n": "copy",
+        "theme": "controles",
+        "brand": "marca"
       }
     },
     "ui": {
@@ -986,6 +999,199 @@
         "title": "E-mail de saída",
         "body": "Subject + body. Service envia. Token só no link.",
         "points": ["verify · reset · invite", "um propósito por arquivo", "nunca logar tokens crus"]
+      }
+    }
+  },
+  "webCourse": {
+    "carouselLabel": "Files, código ou index",
+    "slideTree": "Árvore de pastas",
+    "slideCode": "Uma unidade",
+    "slideIndex": "Index completo — todos os métodos / mapa",
+    "modeFiles": "Files",
+    "modeCode": "Code",
+    "modeIndex": "Index",
+    "parts": {
+      "domain": {
+        "eyebrow": "Dentro do domínio",
+        "title": "Papéis fixos",
+        "body": "api.ts → pages → routes → components. Opcional: context · hooks · constants · utils."
+      }
+    },
+    "folderHints": {
+      "domains": "features",
+      "moreDomains": "outros domains",
+      "app": "mapa de rotas",
+      "layouts": "shells",
+      "lib": "infra",
+      "i18n": "copy",
+      "theme": "controles",
+      "brand": "marca",
+      "main": "boot",
+      "api": "HTTP",
+      "pages": "telas",
+      "routes": "Route",
+      "components": "UI do domínio",
+      "context": "Provider",
+      "hooks": "helpers React",
+      "constants": "estáticos",
+      "utils": "helpers",
+      "resource": "CRUD",
+      "platform": "identidade",
+      "shell": "workspace",
+      "public": "landing",
+      "fab": "sem page",
+      "routeMap": "compõe",
+      "flags": "config",
+      "sidebar": "shell do app",
+      "authShell": "shell de login",
+      "gate": "gate de auth",
+      "http": "cliente cru",
+      "appCopy": "shell do app",
+      "landingCopy": "landing"
+    },
+    "folders": {
+      "domains": {
+        "eyebrow": "domains/",
+        "title": "Features",
+        "body": "Uma pasta = uma feature. Mesmo nome da API.",
+        "points": [
+          "resource — api · pages · routes · components",
+          "platform — auth · tenant · admin",
+          "público — marketing (pages + hooks + components)",
+          "agent — UI FAB, sem routes.tsx"
+        ]
+      },
+      "app": {
+        "eyebrow": "app/",
+        "title": "Mapa de rotas",
+        "body": "Compõe os grupos de topo uma vez. Flags vindas do servidor ficam aqui.",
+        "points": [
+          "App.tsx — marketing · auth · tenant · admin",
+          "config — selfSignup · aiEnabled",
+          "NotFoundPage — catch-all"
+        ]
+      },
+      "layouts": {
+        "eyebrow": "layouts/",
+        "title": "Shells",
+        "body": "Chrome do app e gate de auth. Domains não donos do layout.",
+        "points": [
+          "AppLayout — SidebarShell + nav",
+          "AuthLayout — AuthShell",
+          "RequireAuth — gate do outlet"
+        ]
+      },
+      "lib": {
+        "eyebrow": "lib/",
+        "title": "Infra",
+        "body": "HTTP cru e helpers puros. Sem conhecimento de domínio.",
+        "points": [
+          "api — get · post · patch · delete",
+          "ApiError · showApiError",
+          "domains encapsulam — pages nunca chamam cru"
+        ]
+      },
+      "i18n": {
+        "eyebrow": "i18n/",
+        "title": "Copy",
+        "body": "Toda string visível ao usuário. Nunca hardcode no JSX.",
+        "points": [
+          "en.json + pt.json — shell do app",
+          "landing.*.json — landing pública",
+          "adicione chaves nos dois arquivos do par"
+        ]
+      },
+      "theme": {
+        "eyebrow": "theme/",
+        "title": "Controles",
+        "body": "Idioma · paleta · modo. Tokens vivem em @app/ui.",
+        "points": [
+          "theme-controls — wiring do produto",
+          "ThemeProvider em @app/ui/theme",
+          "variáveis CSS — nunca hardcode de cores"
+        ]
+      },
+      "brand": {
+        "eyebrow": "brand/",
+        "title": "Marca",
+        "body": "Só o logo do produto. Nome de exibição fica no shared.",
+        "points": ["logo.tsx + logo.css", "shell Brand usa AppLogo", "favicon em public/brand/"]
+      },
+      "api": {
+        "eyebrow": "api.ts",
+        "title": "Fronteira de rede",
+        "body": "Chamadas tipadas deste domínio. O único lugar que toca a rede.",
+        "points": [
+          "encapsula @/lib/api",
+          "retorna DTOs compartilhados",
+          "pages nunca fazem fetch nem chamam lib/api cru"
+        ]
+      },
+      "pages": {
+        "eyebrow": "pages/",
+        "title": "Telas",
+        "body": "Uma tela de rota por arquivo. Query para reads, mutation para writes.",
+        "points": [
+          "PascalCase · XxxPage.tsx",
+          "PageHeader · PageLoading · EmptyState",
+          "tenant de useTenant — nunca parsear a URL"
+        ]
+      },
+      "routes": {
+        "eyebrow": "routes.tsx",
+        "title": "Elemento Route",
+        "body": "O domínio dono do seu <Route>. Tenant compõe sob :tenantSlug.",
+        "points": [
+          "todo domínio com pages exporta um",
+          "shell do tenant compõe rotas de resource",
+          "App.tsx compõe grupos de topo"
+        ]
+      },
+      "components": {
+        "eyebrow": "components/",
+        "title": "UI do domínio",
+        "body": "UI de produto desta feature. kebab-case. Sem dump no topo.",
+        "points": [
+          "crie com a primeira peça que não é page",
+          "UI base de @app/ui",
+          "copy / lógica de negócio ficam aqui"
+        ]
+      },
+      "context": {
+        "eyebrow": "context/",
+        "title": "Provider",
+        "body": "Estado React compartilhado do domínio. Provider + useX juntos.",
+        "points": [
+          "<name>-provider.tsx",
+          "auth · tenant já fazem isso",
+          "adicione a pasta com o primeiro provider"
+        ]
+      },
+      "hooks": {
+        "eyebrow": "hooks/",
+        "title": "Helpers React",
+        "body": "Hooks reutilizáveis que não são o consumer do context.",
+        "points": [
+          "não useAuth / useTenant",
+          "só React — helpers com lógica → utils/",
+          "crie com o primeiro hook"
+        ]
+      },
+      "constants": {
+        "eyebrow": "constants/",
+        "title": "Estáticos",
+        "body": "Keys · catálogos · limites. Mesmo papel da API. Opcional.",
+        "points": ["um tópico por arquivo", "sem helpers", "crie com o primeiro arquivo"]
+      },
+      "utils": {
+        "eyebrow": "utils/",
+        "title": "Helpers",
+        "body": "Helpers sem React com lógica. Opcional.",
+        "points": [
+          "helpers React → hooks/",
+          "lib/ na raiz fica transversal",
+          "crie com o primeiro arquivo"
+        ]
       }
     }
   },
