@@ -17,6 +17,8 @@ export function MarketingShell({ children }: { children: ReactNode }) {
 
   return (
     <NavbarShell
+      // Hero atmosphere sits under the sticky bar — no hairline between them.
+      headerClassName="border-b-0 bg-background/70"
       brand={
         <Link to="/">
           <Brand icon={<BoxIcon className="size-5 text-primary" />}>{t("brand")}</Brand>

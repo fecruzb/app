@@ -12,6 +12,7 @@ import { Card, CardContent } from "@app/ui/card";
 import { useAppConfig } from "@/app/config";
 import { useAuth } from "@/domains/auth/context/auth-provider";
 import { useDocumentMeta } from "@/lib/document-meta";
+import { MarketingHero } from "../components/marketing-hero";
 import { MarketingShell } from "../components/marketing-shell";
 import { StackSection } from "../components/landing/stack-section";
 import { useReveal } from "../hooks/use-reveal";
@@ -29,17 +30,13 @@ export function LandingPage() {
 
   return (
     <MarketingShell>
-      <section className="mx-auto w-full max-w-5xl px-4 py-24 text-center sm:py-32">
-        <p className="mb-4 text-sm font-medium text-muted-foreground">
-          {t("landing.hero.eyebrow")}
-        </p>
-        <h1 className="mx-auto max-w-2xl text-4xl font-bold tracking-tight text-balance sm:text-5xl">
-          {t("landing.hero.title")}
-        </h1>
-        <p className="mx-auto mt-6 max-w-xl text-lg text-pretty text-muted-foreground">
-          {t("landing.hero.body")}
-        </p>
-        <div className="mx-auto mt-8 flex w-fit max-w-full items-center gap-2 overflow-x-auto rounded-lg border bg-muted/50 px-4 py-3 font-mono text-sm">
+      <MarketingHero
+        size="lg"
+        eyebrow={t("landing.hero.eyebrow")}
+        title={t("landing.hero.title")}
+        body={t("landing.hero.body")}
+      >
+        <div className="mx-auto flex w-fit max-w-full items-center gap-2 overflow-x-auto rounded-lg border bg-background/70 px-4 py-3 font-mono text-sm backdrop-blur-sm">
           <TerminalIcon className="size-4 shrink-0 text-muted-foreground" />
           <span className="text-muted-foreground">$</span>
           <span className="whitespace-nowrap">{t("landing.hero.clone")}</span>
@@ -51,7 +48,7 @@ export function LandingPage() {
             </Link>
           </Button>
         </div>
-      </section>
+      </MarketingHero>
 
       <StackSection />
 

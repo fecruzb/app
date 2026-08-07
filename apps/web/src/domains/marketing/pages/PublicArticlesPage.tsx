@@ -5,10 +5,13 @@ import { PageLoading } from "@app/ui/page-loading";
 import { EmptyState } from "@app/ui/empty-state";
 import { useDocumentMeta } from "@/lib/document-meta";
 import { publicArticleApi } from "@/domains/article/public-api";
+import { MarketingHero } from "../components/marketing-hero";
 import { MarketingShell } from "../components/marketing-shell";
+import { useReveal } from "../hooks/use-reveal";
 
 export function PublicArticlesPage() {
   const { t, i18n } = useTranslation();
+  useReveal();
   const { data: articles, isLoading } = useQuery({
     queryKey: ["public-articles"],
     queryFn: () => publicArticleApi.list(),
@@ -24,17 +27,12 @@ export function PublicArticlesPage() {
 
   return (
     <MarketingShell>
-      <section className="border-b px-4 pt-16 pb-12">
-        <div className="mx-auto max-w-5xl">
-          <p className="text-sm font-medium text-primary">{t("landing.articles.eyebrow")}</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-            {t("landing.articles.title")}
-          </h1>
-          <p className="mt-3 max-w-2xl text-pretty text-muted-foreground">
-            {t("landing.articles.description")}
-          </p>
-        </div>
-      </section>
+      <MarketingHero
+        align="left"
+        eyebrow={t("landing.articles.eyebrow")}
+        title={t("landing.articles.title")}
+        body={t("landing.articles.description")}
+      />
 
       <section className="px-4 py-12">
         <div className="mx-auto max-w-5xl">

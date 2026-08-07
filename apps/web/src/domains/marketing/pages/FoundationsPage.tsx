@@ -8,6 +8,7 @@ import {
 } from "../components/foundations/foundation-section";
 import { I18nSection } from "../components/foundations/i18n-section";
 import { useDocumentMeta } from "@/lib/document-meta";
+import { MarketingHero } from "../components/marketing-hero";
 import { MarketingShell } from "../components/marketing-shell";
 import { ResourceSlice } from "../components/foundations/resource-slice";
 import { ThemingSection } from "../components/foundations/theming-section";
@@ -28,21 +29,14 @@ export function FoundationsPage() {
 
   return (
     <MarketingShell>
-      <section className="border-b bg-muted/40 px-4 pt-20 pb-4">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-medium text-primary">
-            {t("landing.foundationsIntro.eyebrow")}
-          </p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
-            {t("landing.foundationsIntro.title")}
-          </h1>
-          <p className="mx-auto mt-3 text-pretty text-muted-foreground">
-            {t("landing.foundationsIntro.body")}
-          </p>
-        </div>
-      </section>
+      <MarketingHero
+        eyebrow={t("landing.foundationsIntro.eyebrow")}
+        title={t("landing.foundationsIntro.title")}
+        body={t("landing.foundationsIntro.body")}
+      />
 
-      <div className="bg-muted/40">
+      {/* White after the hero fade; drop the first border-t so it doesn't cut the wash. */}
+      <div className="[&>section:first-child]:border-t-0">
         <FoundationSection pillar={monorepoPillar} flip={false} />
         <DatabaseFoundation />
         <ResourceSlice />

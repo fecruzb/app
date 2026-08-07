@@ -42,7 +42,7 @@
   },
   "articles": {
     "eyebrow": "From the community",
-    "title": "Articles",
+    "title": "Stories from the workspaces",
     "description": "Stories published by workspaces on this app — private tenant content, surfaced on the public site.",
     "empty": "No published articles yet. Sign in, write one, and hit Publish.",
     "noCover": "No cover",
@@ -51,7 +51,7 @@
   },
   "ui": {
     "eyebrow": "Design system",
-    "title": "The UI kit you ship with",
+    "title": "One kit. Every surface.",
     "body": "Base components from @app/ui — shadcn primitives plus a few composites. Import per subpath, restyle through theme tokens, never hardcode colors.",
     "sections": {
       "brand": {
@@ -218,8 +218,8 @@
   },
   "hero": {
     "eyebrow": "Open-source SaaS boilerplate · React + Hono + Postgres",
-    "title": "The starting point for your next SaaS",
-    "body": "Stop rebuilding auth, tenants, email and an AI agent for every project. This is the groundwork — a typed monorepo, organized by domain, ready to become your product.",
+    "title": "Stop rebuilding. Start shipping.",
+    "body": "Auth, tenants, email and an AI agent — already wired in a typed monorepo. Clone App Base and turn the groundwork into your product.",
     "clone": "git clone https://github.com/fecruzb/app"
   },
   "stackSection": {
@@ -235,12 +235,12 @@
   },
   "foundationsIntro": {
     "eyebrow": "What's under the hood",
-    "title": "The foundations, already wired",
+    "title": "Wired before you write a line",
     "body": "Before any of your product exists, these pieces are in place and connected: how the code is laid out, where the data lives, and one real resource walked top to bottom."
   },
   "tourIntro": {
     "eyebrow": "The product tour",
-    "title": "An app that's already assembled",
+    "title": "See the product before you build it",
     "body": "Those foundations, rendered as real screens. Here's the tour, in the order you'd meet them: sign in, get set up, then step into the workspace and everything it ships with."
   },
   "closing": {

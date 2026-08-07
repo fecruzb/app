@@ -2,6 +2,7 @@ import { useEffect, useState, type ComponentType } from "react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { WindowBar } from "@app/ui/browser-window";
+import { FeatureSplit } from "../feature-split";
 import {
   AccountMock,
   AgentChatMock,
@@ -65,20 +66,13 @@ export function buildChapters(t: TFunction): Chapter[] {
 /** One product-tour chapter: copy on one side, its mock (plus any email) on the other. */
 export function ChapterSection({ chapter, flip }: { chapter: Chapter; flip: boolean }) {
   return (
-    <section className="px-4 py-10 sm:py-12">
-      <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
-        <div className={`reveal ${flip ? "lg:order-2" : ""}`}>
-          <p className="text-sm font-medium text-primary">{chapter.eyebrow}</p>
-          <h3 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
-            {chapter.title}
-          </h3>
-          <p className="mt-4 text-pretty text-muted-foreground">{chapter.body}</p>
-        </div>
-        <div className={`reveal reveal-delay min-w-0 ${flip ? "lg:order-1" : ""}`}>
-          <MockCarousel chapter={chapter} />
-        </div>
-      </div>
-    </section>
+    <FeatureSplit
+      flip={flip}
+      eyebrow={chapter.eyebrow}
+      title={chapter.title}
+      body={chapter.body}
+      visual={<MockCarousel chapter={chapter} />}
+    />
   );
 }
 

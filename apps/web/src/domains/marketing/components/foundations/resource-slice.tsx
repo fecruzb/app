@@ -4,6 +4,7 @@ import type { TFunction } from "i18next";
 import { FolderTreeIcon } from "lucide-react";
 import { points } from "@/i18n";
 import { CodeBlock } from "@app/ui/code-block";
+import { MarketingHero } from "../marketing-hero";
 import { TaskTable, TasksMock } from "../product-preview";
 import { DbGroupSection } from "./database-foundation";
 import {
@@ -183,21 +184,23 @@ export function ResourceSlice() {
 
   return (
     <>
-      <section className="border-t px-4 pt-16 pb-4 sm:pt-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="flex items-center justify-center gap-2 text-sm font-medium text-primary">
-            <FolderTreeIcon className="size-4" /> {t("landing.resourceIntro.eyebrow")}
-          </p>
-          <h3 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
-            {t("landing.resourceIntro.title")}
-          </h3>
-          <p className="mx-auto mt-3 text-pretty text-muted-foreground">
+      <MarketingHero
+        headingAs="h2"
+        eyebrow={
+          <>
+            <FolderTreeIcon className="size-4" />
+            {t("landing.resourceIntro.eyebrow")}
+          </>
+        }
+        title={t("landing.resourceIntro.title")}
+        body={
+          <>
             {t("landing.resourceIntro.bodyBefore")}
             <code className="font-mono text-xs">{t("landing.resourceIntro.bodyCode")}</code>
             {t("landing.resourceIntro.bodyAfter")}
-          </p>
-        </div>
-      </section>
+          </>
+        }
+      />
 
       {resourceSlices.map((slice, i) => (
         <DbGroupSection

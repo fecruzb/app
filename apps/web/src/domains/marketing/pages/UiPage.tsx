@@ -4,6 +4,7 @@ import { ControlsSection } from "../components/ui/controls-section";
 import { DataPageSection } from "../components/ui/data-page-section";
 import { FormOverlaySection } from "../components/ui/form-overlay-section";
 import { useDocumentMeta } from "@/lib/document-meta";
+import { MarketingHero } from "../components/marketing-hero";
 import { MarketingShell } from "../components/marketing-shell";
 import { ShellDemosSection } from "../components/ui/shell-demos-section";
 import { useReveal } from "../hooks/use-reveal";
@@ -19,17 +20,14 @@ export function UiPage() {
 
   return (
     <MarketingShell>
-      <section className="border-b bg-muted/40 px-4 pt-20 pb-10">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-medium text-primary">{t("landing.ui.eyebrow")}</p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
-            {t("landing.ui.title")}
-          </h1>
-          <p className="mx-auto mt-3 text-pretty text-muted-foreground">{t("landing.ui.body")}</p>
-        </div>
-      </section>
+      <MarketingHero
+        eyebrow={t("landing.ui.eyebrow")}
+        title={t("landing.ui.title")}
+        body={t("landing.ui.body")}
+      />
 
-      <div className="bg-muted/40">
+      {/* White after the hero fade; drop the first border-t so it doesn't cut the wash. */}
+      <div className="[&>section:first-child]:border-t-0">
         <BrandNavSection />
         <ShellDemosSection />
         <ControlsSection />

@@ -1,15 +1,9 @@
 import { type ComponentType, type ReactNode } from "react";
 import type { TFunction } from "i18next";
-import {
-  CheckIcon,
-  CloudIcon,
-  FolderTreeIcon,
-  RocketIcon,
-  SlidersIcon,
-  TerminalIcon,
-} from "lucide-react";
+import { CloudIcon, FolderTreeIcon, RocketIcon, SlidersIcon, TerminalIcon } from "lucide-react";
 import { points } from "@/i18n";
 import { CodeBlock } from "@app/ui/code-block";
+import { FeatureSplit } from "../feature-split";
 import { EnvMock, TerminalMock, RenderMock } from "../product-preview";
 
 export type Foundation = {
@@ -113,30 +107,20 @@ export function buildRenderPillar(t: TFunction): Foundation {
 export function FoundationSection({ pillar, flip }: { pillar: Foundation; flip: boolean }) {
   const Icon = pillar.icon;
   return (
-    <section className="border-t px-4 py-16 sm:py-20">
-      <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
-        <div className={`reveal min-w-0 ${flip ? "lg:order-2" : ""}`}>
-          <p className="flex items-center gap-2 text-sm font-medium text-primary">
-            <Icon className="size-4" /> {pillar.eyebrow}
-          </p>
-          <h3 className="mt-2 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
-            {pillar.title}
-          </h3>
-          <p className="mt-4 text-pretty text-muted-foreground">{pillar.body}</p>
-          <ul className="mt-6 space-y-3 text-sm">
-            {pillar.points.map((point) => (
-              <li key={point} className="flex gap-2.5">
-                <CheckIcon className="mt-0.5 size-4 shrink-0 text-primary" />
-                <span className="text-muted-foreground">{point}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className={`reveal reveal-delay min-w-0 ${flip ? "lg:order-1" : ""}`}>
-          {pillar.visual}
-        </div>
-      </div>
-    </section>
+    <FeatureSplit
+      bordered
+      density="loose"
+      flip={flip}
+      eyebrow={
+        <>
+          <Icon className="size-4" />
+          {pillar.eyebrow}
+        </>
+      }
+      title={pillar.title}
+      body={pillar.body}
+      points={pillar.points}
+      visual={pillar.visual}
+    />
   );
 }

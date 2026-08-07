@@ -42,7 +42,7 @@
   },
   "articles": {
     "eyebrow": "Da comunidade",
-    "title": "Artigos",
+    "title": "Histórias dos workspaces",
     "description": "Histórias publicadas pelos workspaces deste app — conteúdo privado do tenant, na vitrine pública.",
     "empty": "Nenhum artigo publicado ainda. Entre, escreva um e clique em Publicar.",
     "noCover": "Sem capa",
@@ -51,7 +51,7 @@
   },
   "ui": {
     "eyebrow": "Design system",
-    "title": "O kit de UI que já vem no pacote",
+    "title": "Um kit. Todas as telas.",
     "body": "Componentes base do @app/ui — primitives shadcn e alguns composites. Importe por subpath, restilize pelos tokens do tema, nunca fixe cores no código.",
     "sections": {
       "brand": {
@@ -218,8 +218,8 @@
   },
   "hero": {
     "eyebrow": "Boilerplate SaaS open-source · React + Hono + Postgres",
-    "title": "O ponto de partida do seu próximo SaaS",
-    "body": "Pare de reconstruir autenticação, tenants, e-mail e um agente de IA em todo projeto. Este é o alicerce — um monorepo tipado, organizado por domínio, pronto para virar o seu produto.",
+    "title": "Pare de reconstruir. Comece a entregar.",
+    "body": "Auth, tenants, e-mail e um agente de IA — já ligados num monorepo tipado. Clone o App Base e transforme o alicerce no seu produto.",
     "clone": "git clone https://github.com/fecruzb/app"
   },
   "stackSection": {
@@ -235,12 +235,12 @@
   },
   "foundationsIntro": {
     "eyebrow": "Por baixo do capô",
-    "title": "As fundações, já conectadas",
+    "title": "Ligado antes de você escrever uma linha",
     "body": "Antes de qualquer pedaço do seu produto existir, essas peças já estão no lugar e ligadas: como o código se organiza, onde os dados vivem e um recurso real percorrido de ponta a ponta."
   },
   "tourIntro": {
     "eyebrow": "O tour do produto",
-    "title": "Um app que já vem montado",
+    "title": "Veja o produto antes de construí-lo",
     "body": "Essas fundações, renderizadas como telas de verdade. O tour, na ordem em que você as encontraria: entrar, configurar e então entrar no workspace com tudo o que ele já traz."
   },
   "closing": {
