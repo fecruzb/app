@@ -1,6 +1,7 @@
 import type { z } from "zod";
 import {
   articleInputSchema,
+  articlePublishSchema,
   generateArticleCoverSchema,
   type ArticleDto,
   type PublicArticleDto,
@@ -31,8 +32,8 @@ export const articleApi = {
   ) => api.post<ArticleDto>(`/tenants/${tenantId}/agent/articles/${id}/cover`, body),
   deleteCover: (tenantId: string, id: string) =>
     api.delete<ArticleDto>(`/tenants/${tenantId}/articles/${id}/cover`),
-  publish: (tenantId: string, id: string, published: boolean) =>
-    api.post<ArticleDto>(`/tenants/${tenantId}/articles/${id}/publish`, { published }),
+  publish: (tenantId: string, id: string, body: z.infer<typeof articlePublishSchema>) =>
+    api.post<ArticleDto>(`/tenants/${tenantId}/articles/${id}/publish`, body),
 };
 
 /** Anonymous public catalog — no tenant scope (consumed by the marketing pages). */

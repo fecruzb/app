@@ -18,7 +18,8 @@
     "minPassword": "Mínimo de 8 caracteres",
     "you": "(você)",
     "tenant": "Workspace",
-    "lessThanCent": "<US$ 0,01"
+    "lessThanCent": "<US$ 0,01",
+    "emptyValue": "—"
   },
   "theme": {
     "switchToLight": "Mudar para modo claro",
@@ -172,7 +173,31 @@
     "viewPublic": "Ver página pública",
     "columnStatus": "Status",
     "statusPublished": "Publicado",
-    "statusDraft": "Rascunho"
+    "statusDraft": "Rascunho",
+    "editor": {
+      "bold": "Negrito",
+      "italic": "Itálico",
+      "strikethrough": "Riscado",
+      "code": "Código",
+      "link": "Link",
+      "linkPlaceholder": "Colar link…",
+      "textGroup": "Texto",
+      "text": "Texto",
+      "heading1": "Título 1",
+      "heading2": "Título 2",
+      "heading3": "Título 3",
+      "heading4": "Título 4",
+      "heading5": "Título 5",
+      "heading6": "Título 6",
+      "quote": "Citação",
+      "divider": "Divisor",
+      "listGroup": "Lista",
+      "bulletList": "Lista com marcadores",
+      "orderedList": "Lista numerada",
+      "taskList": "Lista de tarefas",
+      "advancedGroup": "Avançado",
+      "table": "Tabela"
+    }
   },
   "account": {
     "title": "Minha conta",

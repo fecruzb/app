@@ -4,6 +4,8 @@
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
     "noEmit": true,
+    // vite.config.ts imports brand via a `.ts` path for Node's native ESM loader
+    "allowImportingTsExtensions": true,
     "paths": {
       "@/*": ["./src/*"]
     }

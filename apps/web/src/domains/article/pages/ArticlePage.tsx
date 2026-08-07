@@ -103,7 +103,7 @@ export function ArticlePage() {
   });
 
   const publishMutation = useMutation({
-    mutationFn: (published: boolean) => articleApi.publish(tenant.id, articleId, published),
+    mutationFn: (published: boolean) => articleApi.publish(tenant.id, articleId, { published }),
     onSuccess: (updated) => {
       invalidate();
       void queryClient.invalidateQueries({ queryKey: ["public-articles"] });

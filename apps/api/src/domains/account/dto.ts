@@ -6,6 +6,39 @@
 import type { ApiKeyDto, CreatedApiKeyDto } from "@app/shared";
 import type { ApiKeyWithTenant } from "@/domains/auth/repository";
 
+/** API key row fields needed for DTO mapping (no secrets). */
+type ApiKeyRow = {
+  id: string;
+  name: string;
+  prefix: string;
+  tenantId: string;
+  lastUsedAt: Date | null;
+  expiresAt: Date | null;
+  createdAt: Date;
+};
+
+/**
+ * With tenant name
+ *
+ * Joins an inserted API key row with the tenant display name for DTO mapping.
+ *
+ * @param key - API key row (no `tokenHash`)
+ * @param tenantName - Owning tenant's name
+ * @returns Shape expected by `toApiKeyDto` / `toCreatedApiKeyDto`
+ */
+export function withApiKeyTenantName(key: ApiKeyRow, tenantName: string): ApiKeyWithTenant {
+  return {
+    id: key.id,
+    name: key.name,
+    prefix: key.prefix,
+    tenantId: key.tenantId,
+    tenantName,
+    lastUsedAt: key.lastUsedAt,
+    expiresAt: key.expiresAt,
+    createdAt: key.createdAt,
+  };
+}
+
 /**
  * To API key DTO
  *

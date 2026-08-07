@@ -1,7 +1,7 @@
 import { createApiKeySchema } from "@app/shared";
 import { HttpError, parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
-import { toCreatedApiKeyDto } from "../dto";
+import { toCreatedApiKeyDto, withApiKeyTenantName } from "../dto";
 import { createApiKey as createApiKeyForUser } from "@/domains/auth/service";
 import { tenantRepository } from "@/domains/tenant/repository";
 
@@ -29,19 +29,7 @@ export async function createApiKey(c: AppContext) {
 
   // -- Output ----------------------------------------------------------------
   return c.json(
-    toCreatedApiKeyDto(
-      {
-        id: apiKey.id,
-        name: apiKey.name,
-        prefix: apiKey.prefix,
-        tenantId: apiKey.tenantId,
-        tenantName: membership.tenant.name,
-        lastUsedAt: apiKey.lastUsedAt,
-        expiresAt: apiKey.expiresAt,
-        createdAt: apiKey.createdAt,
-      },
-      key,
-    ),
+    toCreatedApiKeyDto(withApiKeyTenantName(apiKey, membership.tenant.name), key),
     201,
   );
 }

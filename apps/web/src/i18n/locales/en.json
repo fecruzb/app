@@ -18,7 +18,8 @@
     "minPassword": "Minimum of 8 characters",
     "you": "(you)",
     "tenant": "Tenant",
-    "lessThanCent": "<$0.01"
+    "lessThanCent": "<$0.01",
+    "emptyValue": "—"
   },
   "theme": {
     "switchToLight": "Switch to light mode",
@@ -172,7 +173,31 @@
     "viewPublic": "View public page",
     "columnStatus": "Status",
     "statusPublished": "Published",
-    "statusDraft": "Draft"
+    "statusDraft": "Draft",
+    "editor": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "strikethrough": "Strikethrough",
+      "code": "Code",
+      "link": "Link",
+      "linkPlaceholder": "Paste link…",
+      "textGroup": "Text",
+      "text": "Text",
+      "heading1": "Heading 1",
+      "heading2": "Heading 2",
+      "heading3": "Heading 3",
+      "heading4": "Heading 4",
+      "heading5": "Heading 5",
+      "heading6": "Heading 6",
+      "quote": "Quote",
+      "divider": "Divider",
+      "listGroup": "List",
+      "bulletList": "Bullet list",
+      "orderedList": "Ordered list",
+      "taskList": "Task list",
+      "advancedGroup": "Advanced",
+      "table": "Table"
+    }
   },
   "account": {
     "title": "My account",

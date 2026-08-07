@@ -97,7 +97,9 @@ export function ArticlesPage() {
       id: "author",
       header: t("articles.columnAuthor"),
       sortValue: (row) => row.authorName ?? "",
-      cell: (row) => <span className="text-muted-foreground">{row.authorName ?? "—"}</span>,
+      cell: (row) => (
+        <span className="text-muted-foreground">{row.authorName ?? t("common.emptyValue")}</span>
+      ),
     },
     {
       id: "status",

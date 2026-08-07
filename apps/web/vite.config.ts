@@ -1,7 +1,8 @@
 import path from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import { brand } from "@app/shared";
+// Vite config runs under Node ESM — use the file + `.ts` (not the `@app/shared` barrel).
+import { brand } from "../../packages/shared/src/brand.ts";
 import { defineConfig, type Plugin } from "vite";
 
 /** Fills `%BRAND_*%` placeholders in index.html from `@app/shared` brand. */
