@@ -1,14 +1,15 @@
 import { z } from "zod";
+import { passwordSchema, userNameSchema } from "./auth";
 
 // -- schemas (validated in the API and reused in web forms) -------------------
 
 export const updateAccountSchema = z.object({
-  name: z.string().trim().min(2).max(100),
+  name: userNameSchema,
 });
 
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(1),
-  newPassword: z.string().min(8).max(200),
+  newPassword: passwordSchema,
 });
 
 export const createApiKeySchema = z.object({

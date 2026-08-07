@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { passwordSchema, userNameSchema } from "./auth";
 
 export const tenantRoles = ["owner", "admin", "member"] as const;
 export type TenantRole = (typeof tenantRoles)[number];
@@ -32,8 +33,8 @@ export const updateMemberSchema = z.object({
 
 /** Invite acceptance that creates a new account (logged-out user). */
 export const acceptInviteNewAccountSchema = z.object({
-  name: z.string().trim().min(2).max(100),
-  password: z.string().min(8).max(200),
+  name: userNameSchema,
+  password: passwordSchema,
 });
 
 // -- DTOs ----------------------------------------------------------------------

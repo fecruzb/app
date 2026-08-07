@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { passwordSchema, userNameSchema } from "./auth";
 import { planIdSchema, type PlanId } from "./billing";
 import { tenantSlugSchema, type MemberDto } from "./tenant";
 
@@ -26,8 +27,8 @@ export const createPlatformInviteSchema = z.object({
 });
 
 export const acceptPlatformInviteSchema = z.object({
-  name: z.string().trim().min(2).max(100),
-  password: z.string().min(8).max(200),
+  name: userNameSchema,
+  password: passwordSchema,
 });
 
 // -- DTOs ----------------------------------------------------------------------

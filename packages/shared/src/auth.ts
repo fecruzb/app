@@ -3,10 +3,16 @@ import type { TenantSummaryDto } from "./tenant";
 
 // -- schemas (validated in the API and reused in web forms) -------------------
 
+/** Display name for signup / profile (also reused by invite accept flows). */
+export const userNameSchema = z.string().trim().min(2).max(100);
+
+/** Password for signup, reset, and change (login only requires non-empty). */
+export const passwordSchema = z.string().min(8).max(200);
+
 export const registerSchema = z.object({
-  name: z.string().trim().min(2).max(100),
+  name: userNameSchema,
   email: z.email().toLowerCase(),
-  password: z.string().min(8).max(200),
+  password: passwordSchema,
 });
 
 export const loginSchema = z.object({
@@ -20,7 +26,7 @@ export const forgotPasswordSchema = z.object({
 
 export const resetPasswordSchema = z.object({
   token: z.string().min(1),
-  password: z.string().min(8).max(200),
+  password: passwordSchema,
 });
 
 export const verifyEmailSchema = z.object({
