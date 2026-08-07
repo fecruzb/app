@@ -30,7 +30,8 @@ Mirror the API: features live in `domains/<domain>/`, everything else is shared 
   - In-app agent chat UI lives under `domains/agent/` (`api` + `components` + `hooks`); composed from `AppLayout` as a FAB — no `routes.tsx` / page. Not under `tenant/`
   - AI spend UI lives under Billing; the API `usage` domain is ledger-only (no web mirror)
 - `app/` — application shell: `App.tsx` (route map), `config.ts` (`useAppConfig()` → `selfSignupEnabled`, `aiEnabled` — the server-driven flags), `NotFoundPage.tsx`
-- `brand/` — product mark only (`logo.tsx` → `AppLogo`). Display name / MCP id live in
+- `brand/` — product mark only (`logo.tsx` → `AppLogo`, with its motion in the colocated
+  `logo.css` so rebranding drops both together). Display name / MCP id live in
   `@app/shared` `brand`; favicon + static mark in `apps/web/public/brand/`. Shells use
   `<Brand icon={<AppLogo />}>{t("brand")}</Brand>` — never scatter Lucide stand-ins
 - `layouts/` — AppLayout (`SidebarShell` + sidebar `items` for primary nav;

@@ -33,7 +33,7 @@ export function LandingPage() {
     <MarketingShell>
       <MarketingHero
         size="lg"
-        mark={<AppLogo className="size-20 sm:size-24 md:size-28" />}
+        mark={<AppLogo animated className="size-20 sm:size-24 md:size-28" />}
         title={t("landing.hero.title")}
         body={t("landing.hero.body")}
       >

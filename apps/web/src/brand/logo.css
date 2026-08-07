@@ -1,0 +1,42 @@
+/*
+ * Motion for the product mark, imported by logo.tsx so it travels with the
+ * logo — replace the mark and this file goes with it. Unlayered on purpose:
+ * these are mark-private classes, not Tailwind utilities.
+ *
+ * Only the open shape moves: it leans over its fixed base while its outline
+ * breathes on a shorter period, so the two never repeat the same pose.
+ */
+@keyframes app-logo-drift {
+  0%,
+  100% {
+    transform: rotate(-11deg);
+  }
+  50% {
+    transform: rotate(11deg);
+  }
+}
+@keyframes app-logo-breathe {
+  0%,
+  100% {
+    stroke-width: 1.55px;
+  }
+  50% {
+    stroke-width: 1.95px;
+  }
+}
+.app-logo-shape {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.app-logo-animated .app-logo-shape {
+  animation: app-logo-drift 7s ease-in-out infinite;
+}
+.app-logo-animated .app-logo-shape rect {
+  animation: app-logo-breathe 4.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-logo-animated .app-logo-shape,
+  .app-logo-animated .app-logo-shape rect {
+    animation: none;
+  }
+}
