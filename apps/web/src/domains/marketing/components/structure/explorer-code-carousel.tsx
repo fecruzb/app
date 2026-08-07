@@ -12,21 +12,24 @@ export type CodeExample = {
   /**
    * code = one unit (handler / method / tool).
    * index = full map / all methods.
-   * Order in the `examples` array is the toggle order (after Files).
+   * Order in the `examples` array is the toggle order (after Files, if any).
    */
   mode: "code" | "index";
 };
 
 type ExplorerCodeCarouselProps = {
-  /** VS Code explorer (or any tree chrome). */
-  tree: ReactNode;
   /**
-   * Code slides after Files — order matters.
+   * VS Code explorer (or any tree chrome). Omit for code-only toggles
+   * (starts on the first example — no Files tab).
+   */
+  tree?: ReactNode;
+  /**
+   * Code slides — order matters.
    * Typical zoom-in: file outline (index) → one unit (code).
    */
   examples: CodeExample[];
-  /** i18n prefix for Files / aria labels — `landing.apiCourse` or `landing.webCourse`. */
-  labelsNamespace?: "landing.apiCourse" | "landing.webCourse";
+  /** i18n prefix for Files / aria labels. */
+  labelsNamespace?: "landing.apiCourse" | "landing.webCourse" | "landing.dbCourse";
 };
 
 /** Toggle label = file basename (or the part after " → "). */
@@ -38,8 +41,8 @@ function fileTabLabel(filename: string): string {
 }
 
 /**
- * Same visual slot: tree ↔ code(s). Height stays stable (grid stack).
- * Toggle: Files, then each example in array order (filenames as labels).
+ * Same visual slot: optional tree ↔ code(s). Height stays stable (grid stack).
+ * Toggle: Files (if tree), then each example in array order (filenames as labels).
  */
 export function ExplorerCodeCarousel({
   tree,
@@ -47,13 +50,14 @@ export function ExplorerCodeCarousel({
   labelsNamespace = "landing.apiCourse",
 }: ExplorerCodeCarouselProps) {
   const { t } = useTranslation();
+  const hasTree = tree != null;
   /** null = Files; otherwise index into `examples`. */
-  const [slide, setSlide] = useState<number | null>(null);
+  const [slide, setSlide] = useState<number | null>(hasTree ? null : 0);
 
   return (
     <div className="mx-auto w-full max-w-md">
       <div className="grid">
-        <Slide visible={slide === null}>{tree}</Slide>
+        {hasTree ? <Slide visible={slide === null}>{tree}</Slide> : null}
         {examples.map((example, i) => (
           <Slide key={`${example.mode}-${example.filename}`} visible={slide === i}>
             <CodeBlock
@@ -71,13 +75,15 @@ export function ExplorerCodeCarousel({
         aria-label={t(`${labelsNamespace}.carouselLabel`)}
       >
         <div className="flex max-w-full flex-wrap justify-center rounded-md border bg-muted/40 p-0.5">
-          <ModeButton
-            active={slide === null}
-            label={t(`${labelsNamespace}.slideTree`)}
-            short={t(`${labelsNamespace}.modeFiles`)}
-            icon={FolderTreeIcon}
-            onClick={() => setSlide(null)}
-          />
+          {hasTree ? (
+            <ModeButton
+              active={slide === null}
+              label={t(`${labelsNamespace}.slideTree`)}
+              short={t(`${labelsNamespace}.modeFiles`)}
+              icon={FolderTreeIcon}
+              onClick={() => setSlide(null)}
+            />
+          ) : null}
           {examples.map((example, i) => (
             <ModeButton
               key={`${example.mode}-${example.filename}`}

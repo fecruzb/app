@@ -4,7 +4,7 @@ import { useDocumentMeta } from "@/lib/document-meta";
 import { MarketingShell } from "../components/marketing-shell";
 import { useReveal } from "../hooks/use-reveal";
 
-/** Postgres schema groups — tables walked by domain. */
+/** Database course — Postgres → Drizzle → queries → migrations → tables → seed. */
 export function StructureDatabasePage() {
   const { t } = useTranslation();
   useReveal();

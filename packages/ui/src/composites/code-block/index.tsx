@@ -4,7 +4,13 @@ import { ScaledContent } from "../content-scale";
 import { getHighlighter } from "./highlighter";
 import "./code-block.css";
 
-type Lang = "ts" | "json" | "text";
+type Lang = "ts" | "json" | "sql" | "text";
+
+const SHIKI_LANG: Record<Exclude<Lang, "text">, string> = {
+  ts: "typescript",
+  json: "json",
+  sql: "sql",
+};
 
 /** Tracks `html.dark` — same switch ThemeProvider toggles for the rest of the kit. */
 function useDocumentDark(): boolean {
@@ -54,7 +60,7 @@ function CodeBlock({
         if (!active) return;
         setHtml(
           hl.codeToHtml(code, {
-            lang: lang === "json" ? "json" : "typescript",
+            lang: SHIKI_LANG[lang],
             theme: dark ? "github-dark" : "github-light",
           }),
         );

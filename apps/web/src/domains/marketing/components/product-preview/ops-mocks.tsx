@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { DatabaseIcon, GitBranchIcon, ServerIcon } from "lucide-react";
 import { brand } from "@app/shared";
 import { Window } from "@app/ui/browser-window";
+import { Terminal } from "@app/ui/terminal";
 
 export function EnvMock() {
   const { t } = useTranslation();
@@ -57,32 +58,116 @@ export function EnvMock() {
   );
 }
 
-/** A terminal window running the two commands that boot the whole stack locally. */
-export function TerminalMock() {
-  const lines: { prompt?: boolean; text: string; muted?: boolean }[] = [
-    { prompt: true, text: "npm run setup" },
-    { text: "✔ docker compose up — postgres:16 on :5442", muted: true },
-    { text: "✔ migrations applied — 7 tables", muted: true },
-    { text: "✔ seed — demo workspace + user", muted: true },
-    { prompt: true, text: "npm run dev" },
-    { text: "› api    http://localhost:5000", muted: true },
-    { text: "› web    http://localhost:3000", muted: true },
-  ];
+/** Local Postgres via Docker Compose — the database page opens here. */
+export function PostgresMock() {
+  const { t } = useTranslation();
   return (
-    <Window label={`bash — ${brand.mcpServerName}`}>
-      <div className="space-y-1 bg-card p-4 font-mono text-xs leading-relaxed">
-        {lines.map((line, i) => (
-          <div key={i} className="flex gap-2">
-            {line.prompt ? (
-              <span className="shrink-0 text-primary">$</span>
-            ) : (
-              <span className="shrink-0 text-transparent">$</span>
-            )}
-            <span className={line.muted ? "text-muted-foreground" : ""}>{line.text}</span>
-          </div>
-        ))}
+    <Window label="docker-compose.yml">
+      <div className="space-y-3 bg-card p-4 font-mono text-[11px] leading-relaxed">
+        <div className="space-y-1">
+          <p>
+            <span className="text-primary">services</span>
+            <span className="text-muted-foreground">:</span>
+          </p>
+          <p className="pl-2">
+            <span className="text-primary">postgres</span>
+            <span className="text-muted-foreground">:</span>
+          </p>
+          <p className="pl-4">
+            <span className="text-muted-foreground">image: </span>
+            <span>postgres:16</span>
+          </p>
+          <p className="pl-4">
+            <span className="text-muted-foreground">ports: </span>
+            <span>&quot;5442:5432&quot;</span>
+          </p>
+          <p className="pl-4">
+            <span className="text-muted-foreground">POSTGRES_DB: </span>
+            <span>app_base</span>
+          </p>
+        </div>
+        <div className="rounded-md border border-dashed px-3 py-2 text-[10px]">
+          <p className="text-muted-foreground">{t("landing.dbCourse.postgres.visualEnv")}</p>
+          <p className="mt-1 break-all">
+            <span className="text-primary">DATABASE_URL</span>
+            <span className="text-muted-foreground/50">=</span>
+            <span className="text-muted-foreground">
+              postgres://app:app@localhost:5442/app_base
+            </span>
+          </p>
+        </div>
       </div>
     </Window>
+  );
+}
+
+/** Migration terminal — generate then apply. */
+export function MigrateMock() {
+  const { t } = useTranslation();
+  return (
+    <Terminal
+      label="bash — migrations"
+      lines={[
+        { prompt: true, text: "npm run db:generate" },
+        { text: t("landing.dbCourse.migrateFlow.visualGenerate"), muted: true },
+        { prompt: true, text: "npm run db:migrate" },
+        { text: t("landing.dbCourse.migrateFlow.visualMigrate"), muted: true },
+        { text: t("landing.dbCourse.migrateFlow.visualDone"), muted: true },
+      ]}
+    />
+  );
+}
+
+/** When migrations run — local setup + Render preDeploy. */
+export function MigrateWhenMock() {
+  const { t } = useTranslation();
+  return (
+    <Terminal
+      label="bash — when"
+      lines={[
+        { prompt: true, text: "npm run setup" },
+        { text: t("landing.dbCourse.migrateWhen.visualSetup"), muted: true },
+        { prompt: true, text: "npm run db:migrate" },
+        { text: t("landing.dbCourse.migrateWhen.visualMigrate"), muted: true },
+        { text: t("landing.dbCourse.migrateWhen.visualRender"), muted: true },
+        { text: t("landing.dbCourse.migrateWhen.visualSkip"), muted: true },
+      ]}
+    />
+  );
+}
+
+/** Seed console — demo user, tenant, sample tasks. */
+export function SeedMock() {
+  const { t } = useTranslation();
+  return (
+    <Terminal
+      label="bash — seed"
+      lines={[
+        { prompt: true, text: "npm run db:seed" },
+        { text: t("landing.dbCourse.seed.visualUser"), muted: true },
+        { text: t("landing.dbCourse.seed.visualTenant"), muted: true },
+        { text: t("landing.dbCourse.seed.visualTasks"), muted: true },
+        { text: t("landing.dbCourse.seed.visualPassword"), muted: true },
+      ]}
+    />
+  );
+}
+
+/** A terminal window running the two commands that boot the whole stack locally. */
+export function TerminalMock() {
+  return (
+    <Terminal
+      label={`bash — ${brand.mcpServerName}`}
+      lines={[
+        { prompt: true, text: "npm run setup" },
+        { text: "✔ docker compose up — postgres:16 on :5442", muted: true },
+        { text: "✔ migrations applied — 7 tables", muted: true },
+        { text: "✔ seed — demo workspace + user", muted: true },
+        { prompt: true, text: "npm run dev" },
+        { text: "› api    http://localhost:5000", muted: true },
+        { text: "› web    http://localhost:3000", muted: true },
+      ]}
+    />
   );
 }
 

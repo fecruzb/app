@@ -44,6 +44,7 @@
     "./code-block": "./src/composites/code-block/index.tsx",
     "./content-scale": "./src/composites/content-scale.tsx",
     "./explorer": "./src/composites/explorer.tsx",
+    "./terminal": "./src/composites/terminal.tsx",
     "./theme": "./src/theme/index.ts"
   },
   "scripts": {

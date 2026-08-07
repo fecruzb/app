@@ -66,7 +66,7 @@ Framework-agnostic, tenant-agnostic base UI shared across web apps. Import per c
   (follows `html.dark`), `combobox` (searchable select / typeahead), `field`
   (`Field`/`FieldLabel`/`FieldGroup` — vertical or horizontal form rows),
   `content-scale` (zoom body inside chrome, never the shell), `explorer`
-  (VS Code tree chrome), `confirm-dialog` (`ConfirmProvider`/`useConfirm`),
+  (VS Code tree chrome), `terminal` (bash mock chrome), `confirm-dialog` (`ConfirmProvider`/`useConfirm`),
   `data-table`, `empty-state`, `page-header`, `page-loading`
 - Theme (`src/theme/` → `@app/ui/theme`): `ThemeProvider`, `useTheme`, `defaultThemes`,
   `createTheme` — light/dark + built-in palettes; web may pass a custom `themes` list

@@ -85,7 +85,7 @@
     },
     "structureDatabase": {
       "title": "Database · {{brand}}",
-      "description": "Postgres modelado no Drizzle — identidade, tenancy, billing, usage, articles e o recurso de exemplo."
+      "description": "Postgres primeiro, depois Drizzle como ORM — tabelas por domínio e o seed demo."
     },
     "structureStorage": {
       "title": "Storage · {{brand}}",
@@ -639,10 +639,174 @@
   },
   "database": {
     "eyebrow": "O banco de dados",
-    "title": "Postgres, modelado em TypeScript puro",
-    "bodyBefore": "A persistência é Postgres com Drizzle como ORM — sem linguagem de schema separada, sem console de ORM. Uma tabela é um ",
-    "bodyCode": "pgTable",
-    "bodyAfter": " no domínio que a possui. Identidade, tenancy, catálogo de planos, usage de IA, articles, convites de plataforma — depois tasks como o recurso de exemplo que você copia."
+    "title": "Postgres primeiro. Depois o ORM.",
+    "body": "O engine é Postgres. O Drizzle modela tabelas, roda queries e gera migrations. Percorra o stack, depois as tabelas que vêm no box, depois o seed demo."
+  },
+  "dbCourse": {
+    "parts": {
+      "queries": {
+        "eyebrow": "Drizzle · queries",
+        "title": "Schema pronto — agora use",
+        "body": "Tudo abaixo vive no repository do domínio. Imports, reads, writes, operators — uma ideia por seção."
+      },
+      "migrations": {
+        "eyebrow": "Migrations",
+        "title": "Schema → SQL → banco",
+        "body": "Nunca escreva o SQL da migration à mão. Gere a partir do schema TypeScript, faça commit dos arquivos, aplique os pendentes — no local e em todo deploy."
+      },
+      "schema": {
+        "eyebrow": "O que vem pronto",
+        "title": "Tabelas por domínio",
+        "body": "Cada domínio dono do seu schema/. Identidade, tenancy, planos, usage, articles, o recurso de exemplo, convites de plataforma."
+      },
+      "seed": {
+        "eyebrow": "Dados demo",
+        "title": "Seed para você clicar",
+        "body": "Depois do migrate, o seed coloca user demo, workspace e tasks de exemplo — idempotente, seguro reexecutar."
+      }
+    },
+    "postgres": {
+      "eyebrow": "PostgreSQL",
+      "title": "O engine",
+      "body": "Postgres 16 é o único banco. No local roda em Docker; em produção é Postgres gerenciado no Render.",
+      "points": [
+        "docker compose — postgres:16 em :5442",
+        "DATABASE_URL — a única connection string",
+        "Render — Postgres gerenciado via render.yaml"
+      ],
+      "visualEnv": "O app conecta com"
+    },
+    "drizzle": {
+      "eyebrow": "Drizzle · schema",
+      "title": "Declare a tabela",
+      "body": "Primeiro você modela a tabela: pgTable, colunas, FK, index. Esse arquivo é a fonte da verdade — gere migrations a partir dele e depois consulte no repository.",
+      "points": [
+        "pgTable em domains/<nome>/schema/",
+        "uuid · text · boolean · …timestamps",
+        "db:generate → SQL — nunca à mão"
+      ]
+    },
+    "queryImports": {
+      "eyebrow": "Imports",
+      "title": "De onde vêm as coisas",
+      "body": "Três fontes em todo repository: operators do drizzle-orm, o db vivo de @/db/client e o seu pgTable de ./schema. Helpers de coluna para tabelas novas vêm de drizzle-orm/pg-core.",
+      "points": [
+        "drizzle-orm — eq · and · desc · ilike",
+        "@/db/client — a conexão",
+        "./schema — a sua tabela",
+        "pg-core — só ao declarar tabelas"
+      ]
+    },
+    "querySelect": {
+      "eyebrow": "Reads",
+      "title": "select · from · where",
+      "body": "Reads encadeiam da esquerda para a direita como SQL: o que você quer, qual tabela, join opcional, filtros, ordenação. tenantId entra em todo where de dado com escopo de tenant.",
+      "points": [
+        "select — colunas ou objeto moldado",
+        "from + leftJoin",
+        "where — sempre escopar o tenant",
+        "orderBy — desc / asc"
+      ]
+    },
+    "queryWrites": {
+      "eyebrow": "Writes",
+      "title": "insert · update · delete",
+      "body": "Mutations terminam com .returning() para devolver a row. O Drizzle retorna um array — faça destructure [row]. Update e delete filtram por id e tenantId juntos.",
+      "points": [
+        "insert(table).values(…).returning()",
+        "update(table).set(…).where(…).returning()",
+        "delete(table).where(…).returning()",
+        "const [row] = await …"
+      ]
+    },
+    "queryOperators": {
+      "eyebrow": "Operators",
+      "title": "A caixa de ferramentas do dia a dia",
+      "body": "eq, and, or, ilike, desc, asc — filtros e sorts que você usa o tempo todo. Faltar tenantId no where é leak cross-tenant.",
+      "points": [
+        "eq — equals",
+        "and / or — combinar filtros",
+        "ilike — busca case-insensitive",
+        "desc / asc — ordem"
+      ]
+    },
+    "migrateFlow": {
+      "eyebrow": "db:generate → db:migrate",
+      "title": "Os dois comandos",
+      "body": "Edite um pgTable, exporte em db/schema.ts e rode generate. O drizzle-kit compara o schema com o último snapshot e escreve SQL numerado. O migrate aplica o que ainda estiver pendente no DATABASE_URL.",
+      "points": [
+        "mude o schema TypeScript primeiro",
+        "db:generate escreve o SQL",
+        "db:migrate aplica os pendentes",
+        "nunca escreva o SQL da migration à mão"
+      ],
+      "visualGenerate": "✔ escreveu drizzle/000N_….sql + snapshot em meta",
+      "visualMigrate": "✔ aplicou migrations pendentes",
+      "visualDone": "✔ banco igual ao schema"
+    },
+    "migrateFiles": {
+      "eyebrow": "apps/api/drizzle/",
+      "title": "Onde elas ficam salvas",
+      "body": "O SQL gerado e os snapshots em meta ficam em apps/api/drizzle/. Faça commit dessa pasta — time e Render reaplicam o mesmo histórico. O drizzle.config.ts aponta o schema no barrel e o out nessa pasta.",
+      "points": [
+        "000N_*.sql — um arquivo por mudança",
+        "meta/_journal.json — tags em ordem",
+        "meta/*_snapshot.json — snapshot do schema",
+        "commite drizzle/ junto com a feature"
+      ],
+      "workspace": "APP-BASE",
+      "aria": "Pasta de migrations do drizzle num explorer estilo VS Code",
+      "hints": {
+        "config": "schema + out",
+        "out": "SQL gerado",
+        "sql": "uma mudança",
+        "meta": "journal + snapshots",
+        "journal": "ordem",
+        "snapshot": "estado do schema",
+        "schema": "fonte TS"
+      }
+    },
+    "migrateExample": {
+      "eyebrow": "Arquivo de exemplo",
+      "title": "O que o generate escreve",
+      "body": "Você muda o schema em TypeScript — por exemplo adiciona publishedAt. O db:generate compara com o último snapshot e emite um SQL numerado: ALTER TABLE … ADD COLUMN, às vezes um index. É o mesmo formato de toda migration real em apps/api/drizzle/.",
+      "points": [
+        "edite o pgTable primeiro — nunca o .sql",
+        "ADD COLUMN · CREATE INDEX · ADD CONSTRAINT…",
+        "--> statement-breakpoint entre statements",
+        "commite o arquivo · migrate aplica"
+      ]
+    },
+    "migrateWhen": {
+      "eyebrow": "Quando rodam",
+      "title": "Setup local e todo deploy",
+      "body": "No local, npm run setup migra depois que o Postgres sobe. Depois disso, db:migrate pega o que estiver pendente. Em produção, o render.yaml roda migrate no preDeployCommand — antes do tráfego ir para o build novo.",
+      "points": [
+        "setup — docker → migrate → seed",
+        "db:migrate — aplica pendentes a qualquer hora",
+        "Render preDeploy — em todo deploy",
+        "arquivos já aplicados são pulados"
+      ],
+      "visualSetup": "✔ docker up → migrate → seed",
+      "visualMigrate": "✔ aplicou migrations pendentes",
+      "visualRender": "✔ render.yaml preDeploy — em todo deploy",
+      "visualSkip": "✔ arquivos já aplicados são pulados"
+    },
+    "seed": {
+      "eyebrow": "db/seed.ts",
+      "title": "User, tenant e tasks demo",
+      "body": "Seed idempotente para o local (e o setup). Cria um user demo platform-admin, o workspace Demo Company e algumas tasks para o SPA não nascer vazio.",
+      "points": [
+        "demo@example.com — verificado, platform admin",
+        "tenant + membership de owner",
+        "tasks de exemplo — troque pelo seu domínio",
+        "senha em .seed-demo-password (gitignored)"
+      ],
+      "visualUser": "✔ user demo@example.com (platform admin)",
+      "visualTenant": "✔ tenant \"Demo Company\" + seat de owner",
+      "visualTasks": "✔ tasks de exemplo seedadas",
+      "visualPassword": "✔ senha → apps/api/.seed-demo-password"
+    }
   },
   "resourceIntro": {
     "eyebrow": "Recurso de exemplo",
@@ -684,8 +848,8 @@
     },
     "database": {
       "eyebrow": "Database",
-      "title": "Postgres em TypeScript",
-      "body": "Tabelas Drizzle por domínio — identidade, tenancy, billing, usage, articles e tasks.",
+      "title": "Postgres → Drizzle → tabelas",
+      "body": "Engine, ORM, schemas por domínio e o seed demo.",
       "cta": "Abrir o banco"
     },
     "storage": {
@@ -1566,6 +1730,16 @@
         "tenant_id com cascade; author_id set null no delete do user",
         "cover_path é a chave de storage, ex. <tenantId>/uploads/<uuid>.webp",
         "CRUD mais completo que tasks — lista/detalhe, upload e capas geradas pelo agente"
+      ]
+    },
+    "tasks": {
+      "eyebrow": "Recurso de exemplo",
+      "title": "Tasks — o placeholder que você troca",
+      "body": "tasks é a tabela template com escopo de tenant: id, tenant_id, author opcional, campos, timestamps. Copie este formato para o recurso do seu produto e delete o domínio quando estiver pronto.",
+      "points": [
+        "tenant_id com cascade — toda row pertence a um workspace",
+        "author_id set null no delete do user",
+        "Mesmo padrão de todo recurso novo"
       ]
     },
     "platform": {

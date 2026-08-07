@@ -4,13 +4,17 @@ import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
 let instance: Promise<HighlighterCore> | null = null;
 
 /**
- * Lazy singleton: TS + JSON, JS regex engine (no WASM), light + dark themes
- * so CodeBlock can swap on `html.dark` without reloading grammars.
+ * Lazy singleton: TS + JSON + SQL, JS regex engine (no WASM), light + dark
+ * themes so CodeBlock can swap on `html.dark` without reloading grammars.
  */
 export function getHighlighter(): Promise<HighlighterCore> {
   if (!instance) {
     instance = createHighlighterCore({
-      langs: [import("@shikijs/langs/typescript"), import("@shikijs/langs/json")],
+      langs: [
+        import("@shikijs/langs/typescript"),
+        import("@shikijs/langs/json"),
+        import("@shikijs/langs/sql"),
+      ],
       themes: [import("@shikijs/themes/github-light"), import("@shikijs/themes/github-dark")],
       engine: createJavaScriptRegexEngine(),
     });

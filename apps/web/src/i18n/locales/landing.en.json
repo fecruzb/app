@@ -85,7 +85,7 @@
     },
     "structureDatabase": {
       "title": "Database · {{brand}}",
-      "description": "Postgres modeled in Drizzle — identity, tenancy, billing, usage, articles, and the example resource."
+      "description": "Postgres first, then Drizzle as the ORM — shipped tables by domain and the demo seed."
     },
     "structureStorage": {
       "title": "Storage · {{brand}}",
@@ -635,10 +635,174 @@
   },
   "database": {
     "eyebrow": "The database",
-    "title": "Postgres, modeled in plain TypeScript",
-    "bodyBefore": "Persistence is Postgres with Drizzle as the ORM — no separate schema language, no ORM console. A table is a ",
-    "bodyCode": "pgTable",
-    "bodyAfter": " in the domain that owns it. Identity, tenancy, the plan catalog, AI usage, articles, platform invites — then tasks as the example resource you copy."
+    "title": "Postgres first. Then the ORM.",
+    "body": "The engine is Postgres. Drizzle models tables, runs queries, and generates migrations. Walk the stack, then the tables that ship, then the demo seed."
+  },
+  "dbCourse": {
+    "parts": {
+      "queries": {
+        "eyebrow": "Drizzle · queries",
+        "title": "Schema done — now use it",
+        "body": "Everything below lives in the domain repository. Imports, reads, writes, operators — one idea per section."
+      },
+      "migrations": {
+        "eyebrow": "Migrations",
+        "title": "Schema → SQL → database",
+        "body": "Never hand-write migration SQL. Generate from the TypeScript schema, commit the files, apply pending ones — locally and on every deploy."
+      },
+      "schema": {
+        "eyebrow": "What ships",
+        "title": "Tables by domain",
+        "body": "Each domain owns its schema/. Identity, tenancy, plans, usage, articles, the example resource, platform invites."
+      },
+      "seed": {
+        "eyebrow": "Demo data",
+        "title": "Seed so you can click",
+        "body": "After migrate, seed puts a demo user, workspace, and sample tasks in place — idempotent, safe to re-run."
+      }
+    },
+    "postgres": {
+      "eyebrow": "PostgreSQL",
+      "title": "The engine",
+      "body": "Postgres 16 is the only database. Locally it runs in Docker; in production it is managed Postgres on Render.",
+      "points": [
+        "docker compose — postgres:16 on :5442",
+        "DATABASE_URL — the only connection string",
+        "Render — managed Postgres from render.yaml"
+      ],
+      "visualEnv": "App connects with"
+    },
+    "drizzle": {
+      "eyebrow": "Drizzle · schema",
+      "title": "Declare the table",
+      "body": "First you model the table: pgTable, columns, FK, index. That file is the source of truth — generate migrations from it, then query it from the repository.",
+      "points": [
+        "pgTable in domains/<name>/schema/",
+        "uuid · text · boolean · …timestamps",
+        "db:generate → SQL — never hand-written"
+      ]
+    },
+    "queryImports": {
+      "eyebrow": "Imports",
+      "title": "Where things come from",
+      "body": "Three sources in every repository: operators from drizzle-orm, the live db from @/db/client, and your pgTable from ./schema. Column helpers for new tables come from drizzle-orm/pg-core.",
+      "points": [
+        "drizzle-orm — eq · and · desc · ilike",
+        "@/db/client — the connection",
+        "./schema — your table",
+        "pg-core — only when declaring tables"
+      ]
+    },
+    "querySelect": {
+      "eyebrow": "Reads",
+      "title": "select · from · where",
+      "body": "Reads chain left to right like SQL: what you want, which table, optional join, filters, sort. tenantId belongs in every where for tenant-scoped data.",
+      "points": [
+        "select — columns or shaped object",
+        "from + leftJoin",
+        "where — always scope the tenant",
+        "orderBy — desc / asc"
+      ]
+    },
+    "queryWrites": {
+      "eyebrow": "Writes",
+      "title": "insert · update · delete",
+      "body": "Mutations end with .returning() so you get the row back. Drizzle returns an array — destructure [row]. Updates and deletes filter by id and tenantId together.",
+      "points": [
+        "insert(table).values(…).returning()",
+        "update(table).set(…).where(…).returning()",
+        "delete(table).where(…).returning()",
+        "const [row] = await …"
+      ]
+    },
+    "queryOperators": {
+      "eyebrow": "Operators",
+      "title": "The everyday toolbox",
+      "body": "eq, and, or, ilike, desc, asc — the filters and sorts you reach for constantly. Missing tenantId in a where is a cross-tenant leak.",
+      "points": [
+        "eq — equals",
+        "and / or — combine filters",
+        "ilike — case-insensitive search",
+        "desc / asc — order"
+      ]
+    },
+    "migrateFlow": {
+      "eyebrow": "db:generate → db:migrate",
+      "title": "The two commands",
+      "body": "Edit a pgTable, export it from db/schema.ts, then generate. drizzle-kit diffs the schema against the last snapshot and writes numbered SQL. migrate applies whatever is still pending on DATABASE_URL.",
+      "points": [
+        "change TypeScript schema first",
+        "db:generate writes the SQL",
+        "db:migrate applies pending files",
+        "never hand-write migration SQL"
+      ],
+      "visualGenerate": "✔ wrote drizzle/000N_….sql + meta snapshot",
+      "visualMigrate": "✔ applied pending migrations",
+      "visualDone": "✔ database matches schema"
+    },
+    "migrateFiles": {
+      "eyebrow": "apps/api/drizzle/",
+      "title": "Where they are saved",
+      "body": "Generated SQL and meta snapshots live under apps/api/drizzle/. Commit that folder — teammates and Render replay the same history. drizzle.config.ts points schema at the barrel and out at this directory.",
+      "points": [
+        "000N_*.sql — one file per change",
+        "meta/_journal.json — ordered tags",
+        "meta/*_snapshot.json — schema snapshot",
+        "commit drizzle/ with the feature"
+      ],
+      "workspace": "APP-BASE",
+      "aria": "drizzle migrations folder in a VS Code-style explorer",
+      "hints": {
+        "config": "schema + out",
+        "out": "generated SQL",
+        "sql": "one change",
+        "meta": "journal + snapshots",
+        "journal": "order",
+        "snapshot": "schema state",
+        "schema": "TS source"
+      }
+    },
+    "migrateExample": {
+      "eyebrow": "Example file",
+      "title": "What generate writes",
+      "body": "You change the TypeScript schema — say you add a publishedAt column. db:generate diffs that against the last snapshot and emits a numbered SQL file: ALTER TABLE … ADD COLUMN, maybe an index. Same shape for every real migration in apps/api/drizzle/.",
+      "points": [
+        "edit pgTable first — never the .sql",
+        "ADD COLUMN · CREATE INDEX · ADD CONSTRAINT…",
+        "--> statement-breakpoint between statements",
+        "commit the file · migrate applies it"
+      ]
+    },
+    "migrateWhen": {
+      "eyebrow": "When they run",
+      "title": "Local setup and every deploy",
+      "body": "Locally, npm run setup migrates after Postgres is up. Anytime after that, db:migrate catches pending files. In production, render.yaml runs migrate as preDeployCommand — before traffic hits the new build.",
+      "points": [
+        "setup — docker → migrate → seed",
+        "db:migrate — apply pending anytime",
+        "Render preDeploy — every deploy",
+        "already-applied files are skipped"
+      ],
+      "visualSetup": "✔ docker up → migrate → seed",
+      "visualMigrate": "✔ applied pending migrations",
+      "visualRender": "✔ render.yaml preDeploy — every deploy",
+      "visualSkip": "✔ already-applied files are skipped"
+    },
+    "seed": {
+      "eyebrow": "db/seed.ts",
+      "title": "Demo user, tenant, tasks",
+      "body": "Idempotent seed for local (and setup). Creates a platform-admin demo user, a Demo Company workspace, and a few tasks so the SPA is not empty.",
+      "points": [
+        "demo@example.com — verified, platform admin",
+        "tenant + owner membership",
+        "sample tasks — replace with your domain",
+        "password in .seed-demo-password (gitignored)"
+      ],
+      "visualUser": "✔ user demo@example.com (platform admin)",
+      "visualTenant": "✔ tenant \"Demo Company\" + owner seat",
+      "visualTasks": "✔ sample tasks seeded",
+      "visualPassword": "✔ password → apps/api/.seed-demo-password"
+    }
   },
   "resourceIntro": {
     "eyebrow": "Example resource",
@@ -680,8 +844,8 @@
     },
     "database": {
       "eyebrow": "Database",
-      "title": "Postgres in TypeScript",
-      "body": "Drizzle tables by domain — identity, tenancy, billing, usage, articles, and tasks.",
+      "title": "Postgres → Drizzle → tables",
+      "body": "Engine, ORM, shipped schemas by domain, and the demo seed.",
       "cta": "Open the database"
     },
     "storage": {
@@ -1558,6 +1722,16 @@
         "tenant_id cascade; author_id set null on user delete",
         "cover_path is the storage key, e.g. <tenantId>/uploads/<uuid>.webp",
         "Richer CRUD than tasks — list/detail, upload, and agent-generated covers"
+      ]
+    },
+    "tasks": {
+      "eyebrow": "Example resource",
+      "title": "Tasks — the placeholder you replace",
+      "body": "tasks is the template tenant-scoped table: id, tenant_id, optional author, fields, timestamps. Copy this shape for your product resource, then delete the domain when you are ready.",
+      "points": [
+        "tenant_id cascade — every row belongs to a workspace",
+        "author_id set null on user delete",
+        "Same pattern every new resource follows"
       ]
     },
     "platform": {

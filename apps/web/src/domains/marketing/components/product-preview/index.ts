@@ -27,4 +27,12 @@ export {
   PlatformTables,
   TaskTable,
 } from "./schema-tables";
-export { EnvMock, TerminalMock, RenderMock } from "./ops-mocks";
+export {
+  EnvMock,
+  MigrateMock,
+  MigrateWhenMock,
+  PostgresMock,
+  SeedMock,
+  TerminalMock,
+  RenderMock,
+} from "./ops-mocks";

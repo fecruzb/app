@@ -930,6 +930,62 @@ export function buildWebFolderTree(
   }
 }
 
+/** apps/api/drizzle/ — where generated migrations live. */
+export function buildDrizzleMigrationsTree(t: TFunction): ExplorerNode[] {
+  const h = (key: string) => t(`landing.dbCourse.migrateFiles.hints.${key}`);
+  return [
+    {
+      name: "apps",
+      kind: "folder",
+      children: [
+        {
+          name: "api",
+          kind: "folder",
+          children: [
+            {
+              name: "drizzle.config.ts",
+              kind: "file",
+              hint: h("config"),
+              muted: true,
+            },
+            {
+              name: "drizzle",
+              kind: "folder",
+              hint: h("out"),
+              active: true,
+              children: [
+                {
+                  name: "0000_harsh_paibok.sql",
+                  kind: "file",
+                  hint: h("sql"),
+                  active: true,
+                },
+                { name: "0001_….sql", kind: "file", hint: h("sql") },
+                { name: "···", kind: "file", muted: true },
+                {
+                  name: "meta",
+                  kind: "folder",
+                  hint: h("meta"),
+                  children: [
+                    { name: "_journal.json", kind: "file", hint: h("journal") },
+                    { name: "0000_snapshot.json", kind: "file", hint: h("snapshot") },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "src",
+              kind: "folder",
+              muted: true,
+              children: [{ name: "db", kind: "folder", muted: true, hint: h("schema") }],
+            },
+          ],
+        },
+      ],
+    },
+  ];
+}
+
 /** Zoom: packages/ui — kit layout by category. */
 export function buildUiTree(t: TFunction): ExplorerNode[] {
   const p = (key: string) => t(`landing.moduleZoom.ui.hints.${key}`);

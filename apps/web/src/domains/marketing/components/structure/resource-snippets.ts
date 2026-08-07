@@ -487,6 +487,87 @@ export * from "@/domains/article/schema";
 export * from "@/domains/admin/schema";
 // Tables live in domains — this file only re-exports.`;
 
+/** After the schema exists — what to import to query it. */
+export const drizzleImportsFile = `// repository.ts — three places things come from
+
+// 1. Operators (eq, and, or, desc, ilike…) — drizzle-orm
+import { and, desc, eq, ilike } from "drizzle-orm";
+
+// 2. The live connection — apps/api/src/db/client.ts
+import { db } from "@/db/client";
+
+// 3. YOUR table (the pgTable you just declared)
+import { tasks, type Task } from "./schema";
+
+// Join another domain's table when you need it
+import { users } from "@/domains/auth/schema";
+
+// Column helpers for NEW tables live in drizzle-orm/pg-core:
+//   import { boolean, index, pgTable, text, uuid } from "drizzle-orm/pg-core";`;
+
+/** Read path — select · from · join · where · orderBy. */
+export const drizzleSelectFile = `// Reads chain like SQL — left to right, top to bottom
+const where = search
+  ? and(eq(tasks.tenantId, tenantId), ilike(tasks.title, \`%\${search}%\`))
+  : eq(tasks.tenantId, tenantId);
+
+return db
+  .select({ task: tasks, authorName: users.name }) // what you want back
+  .from(tasks)                                      // main table
+  .leftJoin(users, eq(users.id, tasks.authorId))    // optional join
+  .where(where)                                     // filters (always tenantId)
+  .orderBy(desc(tasks.createdAt));                  // sort
+
+// .select() with no args → every column on the table
+// Shape the row: .select({ id: tasks.id, title: tasks.title })`;
+
+/** Write path — insert · update · delete + returning. */
+export const drizzleWritesFile = `// Writes — always .returning() so you get the row back
+const [task] = await db
+  .insert(tasks)
+  .values({ tenantId, authorId, title, completed: false })
+  .returning();
+
+const [updated] = await db
+  .update(tasks)
+  .set({ title, completed })
+  .where(and(eq(tasks.id, taskId), eq(tasks.tenantId, tenantId)))
+  .returning();
+
+const [removed] = await db
+  .delete(tasks)
+  .where(and(eq(tasks.id, taskId), eq(tasks.tenantId, tenantId)))
+  .returning();
+
+// Destructure [row] — Drizzle returns an array`;
+
+/** Operators you'll reach for constantly. */
+export const drizzleOperatorsFile = `// drizzle-orm — the toolbox next to every query
+eq(tasks.id, taskId)              // =
+and(a, b)  /  or(a, b)            // combine filters
+ilike(tasks.title, \`%\${q}%\`)      // case-insensitive LIKE
+desc(tasks.createdAt)             // ORDER BY … DESC
+asc(tasks.createdAt)              // ORDER BY … ASC
+
+// Always scope tenant data:
+.where(eq(tasks.tenantId, tenantId))
+// Missing tenantId in where = cross-tenant leak`;
+
+/**
+ * Real shape of a generated migration — add a column (+ index).
+ * Mirrors apps/api/drizzle/0008_watery_blue_blade.sql.
+ */
+export const migrationExampleFile = `-- You added publishedAt on articles.schema.ts, then ran db:generate.
+-- This file is what landed in apps/api/drizzle/ — never typed by hand.
+
+ALTER TABLE "articles" ADD COLUMN "published_at" timestamp with time zone;
+--> statement-breakpoint
+CREATE INDEX "articles_published_idx" ON "articles" USING btree ("published_at");
+
+-- Same shape as other real migrations in this repo:
+--   ALTER TABLE "users" ADD COLUMN "is_platform_admin" boolean DEFAULT false NOT NULL;
+--   ALTER TABLE "tenants" ADD COLUMN "plan_id" text DEFAULT 'free' NOT NULL;`;
+
 export const agentRegistryFile = `// agent/registry.ts — all tools in one list
 export const allTools = [
   ...tenantTools,
