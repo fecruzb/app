@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { defineTool } from "@/agent/tool";
+import { defineTool, ToolError } from "@/agent/tool";
 import { taskRepository } from "../repository";
 
 /**
@@ -26,7 +26,7 @@ export const setTaskCompletedTool = defineTool({
 
     // -- Processing ------------------------------------------------------------
     const row = await taskRepository.find(tenantId, id);
-    if (!row) throw new Error("Task not found — check the id with list_tasks");
+    if (!row) throw new ToolError("Task not found — check the id with list_tasks");
     const task = await taskRepository.update(tenantId, id, {
       title: row.task.title,
       completed,

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { defineTool } from "@/agent/tool";
+import { defineTool, ToolError } from "@/agent/tool";
 import { removeMedia } from "../media";
 import { articleRepository } from "../repository";
 
@@ -24,7 +24,7 @@ export const deleteArticleTool = defineTool({
 
     // -- Processing ------------------------------------------------------------
     const article = await articleRepository.delete(tenantId, id);
-    if (!article) throw new Error("Article not found — check the id with list_articles");
+    if (!article) throw new ToolError("Article not found — check the id with list_articles");
     if (article.coverPath) await removeMedia(article.coverPath);
 
     // -- Output ----------------------------------------------------------------

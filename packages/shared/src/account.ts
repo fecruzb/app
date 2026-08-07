@@ -14,6 +14,8 @@ export const changePasswordSchema = z.object({
 export const createApiKeySchema = z.object({
   name: z.string().trim().min(1).max(100),
   tenantId: z.string().uuid(),
+  /** Optional lifetime in days; omit or null for a key that never expires. */
+  expiresInDays: z.number().int().min(1).max(365).nullish(),
 });
 
 // -- DTOs ----------------------------------------------------------------------
@@ -25,6 +27,7 @@ export type ApiKeyDto = {
   tenantId: string;
   tenantName: string;
   lastUsedAt: string | null;
+  expiresAt: string | null;
   createdAt: string;
 };
 

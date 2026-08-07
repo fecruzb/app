@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { PageLoading } from "@app/ui/page-loading";
 import { EmptyState } from "@app/ui/empty-state";
 import { useDocumentMeta } from "@/lib/document-meta";
-import { publicArticleApi } from "@/domains/article/public-api";
+import { publicArticleApi } from "@/domains/article/api";
 import { MarketingHero } from "../components/marketing-hero";
 import { MarketingShell } from "../components/marketing-shell";
 import { useReveal } from "../hooks/use-reveal";

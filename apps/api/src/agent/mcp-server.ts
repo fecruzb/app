@@ -6,8 +6,9 @@
  */
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import { logger } from "@/lib/logger";
 import { allTools } from "./registry";
-import type { AgentContext } from "./tool";
+import { type AgentContext, ToolError } from "./tool";
 
 export function createMcpServer(ctx: AgentContext): McpServer {
   const server = new McpServer({ name: "app-base", version: "1.0.0" });
@@ -20,8 +21,16 @@ export function createMcpServer(ctx: AgentContext): McpServer {
           const data = await tool.execute(ctx, args as Record<string, unknown>);
           return { content: [{ type: "text", text: JSON.stringify(data ?? null) }] };
         } catch (err) {
-          const message = err instanceof Error ? err.message : String(err);
-          return { content: [{ type: "text", text: message }], isError: true };
+          // Only ToolError carries a caller-safe message; mask anything else so
+          // driver/SQL/internal details never reach the MCP client.
+          if (err instanceof ToolError) {
+            return { content: [{ type: "text", text: err.message }], isError: true };
+          }
+          logger.error(`[mcp] tool ${tool.name} failed:`, err);
+          return {
+            content: [{ type: "text", text: `Tool ${tool.name} failed.` }],
+            isError: true,
+          };
         }
       },
     );

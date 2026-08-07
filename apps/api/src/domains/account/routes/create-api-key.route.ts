@@ -18,14 +18,14 @@ import { tenantRepository } from "@/domains/tenant/repository";
  */
 export async function createApiKey(c: AppContext) {
   // -- Input -----------------------------------------------------------------
-  const { name, tenantId } = await parseBody(c, createApiKeySchema);
+  const { name, tenantId, expiresInDays } = await parseBody(c, createApiKeySchema);
   const user = c.get("user");
 
   // -- Processing ------------------------------------------------------------
   const membership = await tenantRepository.findTenantWithMembership(tenantId, user.id);
   if (!membership) throw new HttpError(404, "Tenant not found");
 
-  const { apiKey, key } = await createApiKeyForUser(user.id, tenantId, name);
+  const { apiKey, key } = await createApiKeyForUser(user.id, tenantId, name, expiresInDays);
 
   // -- Output ----------------------------------------------------------------
   return c.json(
@@ -37,6 +37,7 @@ export async function createApiKey(c: AppContext) {
         tenantId: apiKey.tenantId,
         tenantName: membership.tenant.name,
         lastUsedAt: apiKey.lastUsedAt,
+        expiresAt: apiKey.expiresAt,
         createdAt: apiKey.createdAt,
       },
       key,

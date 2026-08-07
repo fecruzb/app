@@ -22,6 +22,7 @@ export function toApiKeyDto(key: ApiKeyWithTenant): ApiKeyDto {
     tenantId: key.tenantId,
     tenantName: key.tenantName,
     lastUsedAt: key.lastUsedAt?.toISOString() ?? null,
+    expiresAt: key.expiresAt?.toISOString() ?? null,
     createdAt: key.createdAt.toISOString(),
   };
 }

@@ -1,5 +1,11 @@
 import type { z } from "zod";
-import { articleInputSchema, generateArticleCoverSchema, type ArticleDto } from "@app/shared";
+import {
+  articleInputSchema,
+  generateArticleCoverSchema,
+  type ArticleDto,
+  type PublicArticleDto,
+  type PublicArticleSummaryDto,
+} from "@app/shared";
 import { api } from "@/lib/api";
 
 export const articleApi = {
@@ -27,4 +33,10 @@ export const articleApi = {
     api.delete<ArticleDto>(`/tenants/${tenantId}/articles/${id}/cover`),
   publish: (tenantId: string, id: string, published: boolean) =>
     api.post<ArticleDto>(`/tenants/${tenantId}/articles/${id}/publish`, { published }),
+};
+
+/** Anonymous public catalog — no tenant scope (consumed by the marketing pages). */
+export const publicArticleApi = {
+  list: () => api.get<PublicArticleSummaryDto[]>("/articles"),
+  get: (id: string) => api.get<PublicArticleDto>(`/articles/${id}`),
 };

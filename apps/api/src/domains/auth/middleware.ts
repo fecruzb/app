@@ -5,7 +5,8 @@ import type { AppEnv } from "@/context";
 import { isEffectivePlatformAdmin, syncPlatformAdminFromEnv } from "./platform-admin";
 import { clearSessionCookie, getSessionUser, SESSION_COOKIE } from "./service";
 
-function bearerSessionToken(c: {
+/** Extracts a session token from an `Authorization: Bearer` header (Tauri shells), if present. */
+export function bearerSessionToken(c: {
   req: { header: (name: string) => string | undefined };
 }): string | null {
   const header = c.req.header("authorization");

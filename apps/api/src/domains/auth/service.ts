@@ -18,7 +18,7 @@ import { syncPlatformAdminFromEnv } from "./platform-admin";
 import { authRepository, type ApiKeyPrincipal } from "./repository";
 import type { ActionTokenPurpose, ApiKey, User } from "./schema";
 
-export { hashPassword, verifyPassword } from "@/lib/crypto";
+export { dummyVerifyPassword, hashPassword, verifyPassword } from "@/lib/crypto";
 
 /** Cookie name for the opaque session token. */
 export const SESSION_COOKIE = "app_session";
@@ -229,14 +229,19 @@ export async function createApiKey(
   userId: string,
   tenantId: string,
   name: string,
+  expiresInDays?: number | null,
 ): Promise<{ apiKey: ApiKey; key: string }> {
   const { key, prefix } = generateApiKey();
+  const expiresAt = expiresInDays
+    ? new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000)
+    : null;
   const apiKey = await authRepository.insertApiKey({
     userId,
     tenantId,
     name,
     tokenHash: hashToken(key),
     prefix,
+    expiresAt,
   });
   return { apiKey, key };
 }
@@ -252,6 +257,8 @@ export async function createApiKey(
 export async function resolveApiKey(key: string): Promise<ApiKeyPrincipal | null> {
   if (!key.startsWith("abk_")) return null;
   const principal = await authRepository.findApiKeyPrincipal(hashToken(key));
-  if (principal) void authRepository.touchApiKey(principal.keyId);
+  if (!principal) return null;
+  if (principal.expiresAt && principal.expiresAt.getTime() <= Date.now()) return null;
+  void authRepository.touchApiKey(principal.keyId);
   return principal;
 }

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { articleInputSchema } from "@app/shared";
-import { defineTool } from "@/agent/tool";
+import { defineTool, ToolError } from "@/agent/tool";
 import { articleRepository } from "../repository";
 
 /**
@@ -29,13 +29,13 @@ export const updateArticleTool = defineTool({
 
     // -- Processing ------------------------------------------------------------
     const current = await articleRepository.find(tenantId, id);
-    if (!current) throw new Error("Article not found — check the id with list_articles");
+    if (!current) throw new ToolError("Article not found — check the id with list_articles");
 
     const article = await articleRepository.update(tenantId, id, {
       title: title ?? current.article.title,
       body: body ?? current.article.body,
     });
-    if (!article) throw new Error("Article not found — check the id with list_articles");
+    if (!article) throw new ToolError("Article not found — check the id with list_articles");
 
     // -- Output ----------------------------------------------------------------
     return { id: article.id, title: article.title };

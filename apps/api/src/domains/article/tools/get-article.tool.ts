@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { defineTool } from "@/agent/tool";
+import { defineTool, ToolError } from "@/agent/tool";
 import { toArticleToolSummary } from "../dto";
 import { articleRepository } from "../repository";
 
@@ -22,7 +22,7 @@ export const getArticleTool = defineTool({
 
     // -- Processing ------------------------------------------------------------
     const row = await articleRepository.find(tenantId, id);
-    if (!row) throw new Error("Article not found — check the id with list_articles");
+    if (!row) throw new ToolError("Article not found — check the id with list_articles");
 
     // -- Output ----------------------------------------------------------------
     return toArticleToolSummary(row, { includeBody: true, includeCover: true });

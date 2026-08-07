@@ -2,8 +2,9 @@
 // tool-calling loop (model → tool calls → results → model). The only place that
 // knows the OpenAI API; swap the provider here without touching the agent.
 import OpenAI from "openai";
-import { z, type ZodRawShape } from "zod";
+import { z, ZodError, type ZodRawShape } from "zod";
 import { env } from "@/lib/env";
+import { logger } from "@/lib/logger";
 
 export function hasOpenAiKey(): boolean {
   return Boolean(env.openaiApiKey);
@@ -295,10 +296,15 @@ export async function runToolLoop(opts: {
 
       await emit({ type: "tool_start", name: call.function.name, args });
       const { text, isError } = tool
-        ? await tool.run(args).catch((err: unknown) => ({
-            text: err instanceof Error ? err.message : String(err),
-            isError: true,
-          }))
+        ? await tool.run(args).catch((err: unknown) => {
+            // `run` masks its own tool errors; a throw here is an invalid-args
+            // ZodError (safe, non-sensitive) or an unexpected failure we mask.
+            if (err instanceof ZodError) {
+              return { text: `Invalid arguments for ${call.function.name}.`, isError: true };
+            }
+            logger.error(`[openai] tool ${call.function.name} failed:`, err);
+            return { text: `Tool ${call.function.name} failed.`, isError: true };
+          })
         : { text: `Unknown tool: ${call.function.name}`, isError: true };
 
       calls.push({ name: call.function.name, args, text, isError });

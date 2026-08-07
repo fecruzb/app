@@ -29,6 +29,7 @@ export type ApiKeyPrincipal = {
   tenantName: string;
   tenantSlug: string;
   role: TenantRole;
+  expiresAt: Date | null;
 };
 
 /** API key row with the owning tenant's name joined in. */
@@ -39,6 +40,7 @@ export type ApiKeyWithTenant = {
   tenantId: string;
   tenantName: string;
   lastUsedAt: Date | null;
+  expiresAt: Date | null;
   createdAt: Date;
 };
 
@@ -245,6 +247,7 @@ export const authRepository = {
     name: string;
     tokenHash: string;
     prefix: string;
+    expiresAt: Date | null;
   }): Promise<ApiKey> {
     const [key] = await db.insert(apiKeys).values(values).returning();
     return key;
@@ -267,6 +270,7 @@ export const authRepository = {
         tenantId: apiKeys.tenantId,
         tenantName: tenants.name,
         lastUsedAt: apiKeys.lastUsedAt,
+        expiresAt: apiKeys.expiresAt,
         createdAt: apiKeys.createdAt,
       })
       .from(apiKeys)
@@ -296,9 +300,7 @@ export const authRepository = {
    * @param tenantId - Tenant the keys were scoped to
    */
   async deleteApiKeysForTenantUser(userId: string, tenantId: string): Promise<void> {
-    await db
-      .delete(apiKeys)
-      .where(and(eq(apiKeys.userId, userId), eq(apiKeys.tenantId, tenantId)));
+    await db.delete(apiKeys).where(and(eq(apiKeys.userId, userId), eq(apiKeys.tenantId, tenantId)));
   },
 
   /**
@@ -320,6 +322,7 @@ export const authRepository = {
         tenantName: tenants.name,
         tenantSlug: tenants.slug,
         role: tenantMembers.role,
+        expiresAt: apiKeys.expiresAt,
       })
       .from(apiKeys)
       .innerJoin(users, eq(users.id, apiKeys.userId))

@@ -15,6 +15,16 @@ export function verifyPassword(stored: string, password: string): boolean {
   return timingSafeEqual(Buffer.from(hash, "hex"), candidate);
 }
 
+// Precomputed real hash so a login for a nonexistent email spends the same
+// scrypt time as a wrong password — closes the timing-based account enumeration.
+const DUMMY_PASSWORD_HASH = hashPassword(randomBytes(16).toString("hex"));
+
+/** Runs scrypt against a throwaway hash and always fails; use to equalize login timing. */
+export function dummyVerifyPassword(password: string): false {
+  verifyPassword(DUMMY_PASSWORD_HASH, password);
+  return false;
+}
+
 // -- opaque tokens: raw value goes in the cookie/email; only the hash is stored --
 
 export function generateToken(): string {

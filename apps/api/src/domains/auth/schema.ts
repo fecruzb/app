@@ -61,7 +61,8 @@ export const actionTokens = pgTable("action_tokens", {
  * Programmatic access (e.g. MCP). Each key belongs to a user and is scoped to
  * one tenant. Only the hash is stored; `prefix` is the visible head in the UI.
  * HTTP management is under `domains/account` — this table stays in auth because
- * keys are credentials (same home as sessions).
+ * keys are credentials (same home as sessions). `expiresAt` is optional: null
+ * means the key never expires; a past value makes it stop resolving.
  */
 export const apiKeys = pgTable("api_keys", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -75,6 +76,7 @@ export const apiKeys = pgTable("api_keys", {
   tokenHash: text("token_hash").notNull().unique(),
   prefix: text("prefix").notNull(),
   lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
+  expiresAt: timestamp("expires_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

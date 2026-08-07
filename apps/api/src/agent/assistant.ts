@@ -9,8 +9,9 @@ import { z } from "zod";
 import type { AgentMessage, AgentResult, AgentStreamEvent } from "@app/shared";
 import { runToolLoop, type AiUsage, type LoopTool } from "@/integrations/openai";
 import { env } from "@/lib/env";
+import { logger } from "@/lib/logger";
 import { allTools, getTool } from "./registry";
-import type { AgentContext } from "./tool";
+import { type AgentContext, ToolError } from "./tool";
 
 /** The wire contract plus the token spend, which the route meters but never returns. */
 export type AssistantResult = AgentResult & { usage: AiUsage };
@@ -65,9 +66,16 @@ export async function runAssistant(
     inputSchema: tool.inputSchema,
     run: async (rawArgs) => {
       const args = z.object(tool.inputSchema).parse(rawArgs);
-      // Errors thrown by the tool are caught by runToolLoop and become isError.
-      const data = await tool.execute(ctx, args);
-      return { text: JSON.stringify(data ?? null), isError: false };
+      try {
+        const data = await tool.execute(ctx, args);
+        return { text: JSON.stringify(data ?? null), isError: false };
+      } catch (err) {
+        // Only ToolError is caller-safe; mask anything else before it reaches
+        // the model or the chat UI as a tool_done chip.
+        if (err instanceof ToolError) return { text: err.message, isError: true };
+        logger.error(`[assistant] tool ${tool.name} failed:`, err);
+        return { text: `Tool ${tool.name} failed.`, isError: true };
+      }
     },
   }));
 

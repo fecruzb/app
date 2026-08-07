@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { defineTool } from "@/agent/tool";
+import { defineTool, ToolError } from "@/agent/tool";
 import { taskRepository } from "../repository";
 
 /**
@@ -23,7 +23,7 @@ export const deleteTaskTool = defineTool({
 
     // -- Processing ------------------------------------------------------------
     const task = await taskRepository.delete(tenantId, id);
-    if (!task) throw new Error("Task not found — check the id with list_tasks");
+    if (!task) throw new ToolError("Task not found — check the id with list_tasks");
 
     // -- Output ----------------------------------------------------------------
     return { ok: true, title: task.title };

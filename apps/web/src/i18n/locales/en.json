@@ -211,6 +211,11 @@
     "copyFailed": "Couldn't copy — copy it manually",
     "used": "used {{date}}",
     "neverUsed": "never used",
+    "expiry": "Expiry",
+    "expiryNever": "Never",
+    "expiryDays": "{{count}} days",
+    "expiresOn": "expires {{date}}",
+    "expired": "expired",
     "noKeys": "No API keys yet."
   },
   "settings": {

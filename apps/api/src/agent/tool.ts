@@ -3,13 +3,29 @@
  *
  * Transport-neutral definition helpers for agent tools. Each domain defines
  * tools in `domains/<domain>/tools/*` (one per file); the registry joins them.
- * Tools return JSON-serializable data and throw `Error` for expected failures —
- * `mcp-server` (MCP) and the assistant (OpenAI loop) adapt at the edges. A
- * tool with `summarize` is a write action (chip in the chat UI); without it, a
- * read. Optional `progress` is the in-flight label while the tool runs.
+ * Tools return JSON-serializable data and throw `ToolError` for expected
+ * failures whose message is safe to show the caller — `mcp-server` (MCP) and
+ * the assistant (OpenAI loop) surface those verbatim and mask any other error
+ * behind a generic message. A tool with `summarize` is a write action (chip in
+ * the chat UI); without it, a read. Optional `progress` is the in-flight label
+ * while the tool runs.
  */
 import type { z, ZodRawShape } from "zod";
 import type { TenantRole } from "@app/shared";
+
+/**
+ * Tool error
+ *
+ * Expected, caller-safe failure from a tool (e.g. "Task not found"). The edges
+ * surface its message; any other thrown error is masked as a generic failure so
+ * driver/SQL/internal details never reach an MCP client or the chat UI.
+ */
+export class ToolError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ToolError";
+  }
+}
 
 /**
  * Agent context
@@ -39,7 +55,7 @@ export type AgentTool = {
   progress?: (args: Record<string, unknown>) => string;
   /** Done label for the UI; only present on write tools. */
   summarize?: (args: Record<string, unknown>) => string;
-  /** Returns JSON-serializable data; throw Error for expected failures. */
+  /** Returns JSON-serializable data; throw `ToolError` for expected failures. */
   execute: (ctx: AgentContext, args: Record<string, unknown>) => Promise<unknown>;
 };
 

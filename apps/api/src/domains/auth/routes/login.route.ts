@@ -4,6 +4,7 @@ import type { AppContext } from "@/context";
 import {
   buildMe,
   createSession,
+  dummyVerifyPassword,
   meWithShellToken,
   setSessionCookie,
   verifyPassword,
@@ -28,7 +29,11 @@ export async function login(c: AppContext) {
 
   // -- Processing ------------------------------------------------------------
   const user = await authRepository.findUserByEmail(data.email);
-  if (!user || !verifyPassword(user.passwordHash, data.password)) {
+  // Spend the same scrypt time whether or not the email exists — no enumeration by timing.
+  const ok = user
+    ? verifyPassword(user.passwordHash, data.password)
+    : dummyVerifyPassword(data.password);
+  if (!user || !ok) {
     throw new HttpError(401, "Invalid email or password");
   }
 

@@ -211,6 +211,11 @@
     "copyFailed": "Não foi possível copiar — copie manualmente",
     "used": "usada em {{date}}",
     "neverUsed": "nunca usada",
+    "expiry": "Expiração",
+    "expiryNever": "Nunca",
+    "expiryDays": "{{count}} dias",
+    "expiresOn": "expira em {{date}}",
+    "expired": "expirada",
     "noKeys": "Nenhuma chave de API ainda."
   },
   "settings": {

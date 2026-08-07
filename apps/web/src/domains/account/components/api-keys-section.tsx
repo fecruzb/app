@@ -26,8 +26,10 @@ export function ApiKeysSection() {
   const queryClient = useQueryClient();
   const confirm = useConfirm();
   const tenants = me?.tenants ?? [];
+  const expiryOptions = [0, 30, 90, 365] as const;
   const [name, setName] = useState("");
   const [tenantId, setTenantId] = useState(tenants[0]?.id ?? "");
+  const [expiresInDays, setExpiresInDays] = useState(0);
   const [created, setCreated] = useState<CreatedApiKeyDto | null>(null);
 
   const { data: keys, isLoading } = useQuery({
@@ -38,7 +40,8 @@ export function ApiKeysSection() {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["api-keys"] });
 
   const createMutation = useMutation({
-    mutationFn: () => accountApi.createApiKey({ name, tenantId }),
+    mutationFn: () =>
+      accountApi.createApiKey({ name, tenantId, expiresInDays: expiresInDays || null }),
     onSuccess: (key) => {
       setCreated(key);
       setName("");
@@ -106,6 +109,23 @@ export function ApiKeysSection() {
               ))}
             </select>
           </div>
+          <div className="grid gap-2">
+            <Label htmlFor="key-expiry">{t("integrations.expiry")}</Label>
+            <select
+              id="key-expiry"
+              className={selectClass}
+              value={expiresInDays}
+              onChange={(e) => setExpiresInDays(Number(e.target.value))}
+            >
+              {expiryOptions.map((days) => (
+                <option key={days} value={days}>
+                  {days === 0
+                    ? t("integrations.expiryNever")
+                    : t("integrations.expiryDays", { count: days })}
+                </option>
+              ))}
+            </select>
+          </div>
           <Button type="submit" disabled={createMutation.isPending || !name.trim()}>
             {createMutation.isPending ? t("common.creating") : t("integrations.createKey")}
           </Button>
@@ -132,6 +152,16 @@ export function ApiKeysSection() {
                           ),
                         })
                       : t("integrations.neverUsed")}
+                    {key.expiresAt &&
+                      ` · ${
+                        new Date(key.expiresAt).getTime() <= Date.now()
+                          ? t("integrations.expired")
+                          : t("integrations.expiresOn", {
+                              date: new Date(key.expiresAt).toLocaleDateString(
+                                dateLocale(i18n.language),
+                              ),
+                            })
+                      }`}
                   </p>
                 </div>
                 <Button

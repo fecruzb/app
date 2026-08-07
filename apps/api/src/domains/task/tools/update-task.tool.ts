@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { taskInputSchema } from "@app/shared";
-import { defineTool } from "@/agent/tool";
+import { defineTool, ToolError } from "@/agent/tool";
 import { taskRepository } from "../repository";
 
 /**
@@ -29,13 +29,13 @@ export const updateTaskTool = defineTool({
 
     // -- Processing ------------------------------------------------------------
     const current = await taskRepository.find(tenantId, id);
-    if (!current) throw new Error("Task not found — check the id with list_tasks");
+    if (!current) throw new ToolError("Task not found — check the id with list_tasks");
 
     const task = await taskRepository.update(tenantId, id, {
       title,
       completed: completed ?? current.task.completed,
     });
-    if (!task) throw new Error("Task not found — check the id with list_tasks");
+    if (!task) throw new ToolError("Task not found — check the id with list_tasks");
 
     // -- Output ----------------------------------------------------------------
     return { id: task.id, title: task.title, completed: task.completed };

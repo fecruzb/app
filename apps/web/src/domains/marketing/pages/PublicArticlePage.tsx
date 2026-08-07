@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { ArrowLeftIcon } from "lucide-react";
 import { PageLoading } from "@app/ui/page-loading";
 import { useDocumentMeta } from "@/lib/document-meta";
-import { publicArticleApi } from "@/domains/article/public-api";
+import { publicArticleApi } from "@/domains/article/api";
 import { ArticleEditor } from "@/domains/article/components/article-editor";
 import { MarketingShell } from "../components/marketing-shell";
 
