@@ -9,7 +9,8 @@ import { TaskTable, TasksMock } from "../product-preview";
 import { DbGroupSection } from "./database-foundation";
 import {
   domainMapFile,
-  pageFile,
+  pageReadsFile,
+  pageWritesFile,
   repositoryMethodFile,
   repositoryOutlineFile,
   routeHandlerFile,
@@ -33,6 +34,8 @@ type Slice = {
   points: string[];
   /** The evidence for this step — a code panel, a mock, or both. */
   visual: ReactNode;
+  /** Override FeatureSplit visual zoom for tall snippets. */
+  visualScale?: number;
 };
 
 type SliceLocaleKey =
@@ -50,6 +53,7 @@ type SliceLocaleKey =
   | "webRoutes"
   | "webRouteMap"
   | "page"
+  | "pageWrites"
   | "screen";
 
 function sliceCopy(localeKey: SliceLocaleKey, t: TFunction) {
@@ -101,6 +105,7 @@ function buildResourceSlices(t: TFunction): Slice[] {
     {
       id: "route",
       ...sliceCopy("route", t),
+      visualScale: 0.7,
       visual: (
         <CodeBlock
           filename="domains/task/routes/create-task.route.ts"
@@ -117,6 +122,8 @@ function buildResourceSlices(t: TFunction): Slice[] {
     {
       id: "tool",
       ...sliceCopy("tool", t),
+      // Tall defineTool file — zoom down further than the tight default.
+      visualScale: 0.7,
       visual: (
         <CodeBlock filename="domains/task/tools/create-task.tool.ts" code={toolFile} lang="ts" />
       ),
@@ -160,7 +167,18 @@ function buildResourceSlices(t: TFunction): Slice[] {
       visual: (
         <CodeBlock
           filename="apps/web/src/domains/task/pages/TasksPage.tsx"
-          code={pageFile}
+          code={pageReadsFile}
+          lang="ts"
+        />
+      ),
+    },
+    {
+      id: "page-writes",
+      ...sliceCopy("pageWrites", t),
+      visual: (
+        <CodeBlock
+          filename="apps/web/src/domains/task/pages/TasksPage.tsx"
+          code={pageWritesFile}
           lang="ts"
         />
       ),
@@ -212,6 +230,7 @@ export function ResourceSlice() {
             body: slice.body,
             points: slice.points,
             visual: slice.visual,
+            visualScale: slice.visualScale,
           }}
           flip={i % 2 === 1}
         />

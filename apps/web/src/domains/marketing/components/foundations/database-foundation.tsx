@@ -21,6 +21,8 @@ export type DbGroup = {
   body: string;
   points: string[];
   visual: ReactNode;
+  /** Override FeatureSplit visual zoom for tall snippets. */
+  visualScale?: number;
 };
 
 function dbGroupCopy(
@@ -117,6 +119,7 @@ export function DbGroupSection({ group, flip }: { group: DbGroup; flip: boolean 
       body={group.body}
       points={group.points}
       visual={group.visual}
+      visualScale={group.visualScale}
     />
   );
 }

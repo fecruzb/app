@@ -9,6 +9,7 @@ import { NavbarShell } from "@app/ui/navbar-shell";
 import { useAppConfig } from "@/app/config";
 import { useAuth } from "@/domains/auth/context/auth-provider";
 import { ThemeControls } from "@/theme/theme-controls";
+import { NextSectionButton } from "./next-section-button";
 
 export function MarketingShell({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
@@ -72,6 +73,7 @@ export function MarketingShell({ children }: { children: ReactNode }) {
       }
     >
       {children}
+      <NextSectionButton />
     </NavbarShell>
   );
 }

@@ -3,10 +3,11 @@ import { useTranslation } from "react-i18next";
 import { DatabaseFoundation } from "../components/foundations/database-foundation";
 import {
   buildFoundations,
-  buildMonorepoPillar,
+  buildModuleZooms,
   FoundationSection,
 } from "../components/foundations/foundation-section";
 import { I18nSection } from "../components/foundations/i18n-section";
+import { MonorepoPreview } from "../components/foundations/monorepo-preview";
 import { useDocumentMeta } from "@/lib/document-meta";
 import { MarketingHero } from "../components/marketing-hero";
 import { MarketingShell } from "../components/marketing-shell";
@@ -24,20 +25,26 @@ export function FoundationsPage() {
   });
 
   const lang = i18n.language;
-  const monorepoPillar = useMemo(() => buildMonorepoPillar(t), [t, lang]);
+  const moduleZooms = useMemo(() => buildModuleZooms(t), [t, lang]);
   const foundations = useMemo(() => buildFoundations(t), [t, lang]);
 
   return (
     <MarketingShell>
       <MarketingHero
+        size="lg"
+        uppercaseEyebrow
         eyebrow={t("landing.foundationsIntro.eyebrow")}
         title={t("landing.foundationsIntro.title")}
         body={t("landing.foundationsIntro.body")}
-      />
+      >
+        <MonorepoPreview />
+      </MarketingHero>
 
       {/* White after the hero fade; drop the first border-t so it doesn't cut the wash. */}
       <div className="[&>section:first-child]:border-t-0">
-        <FoundationSection pillar={monorepoPillar} flip={false} />
+        {moduleZooms.map((pillar, i) => (
+          <FoundationSection key={pillar.id} pillar={pillar} flip={i % 2 === 1} />
+        ))}
         <DatabaseFoundation />
         <ResourceSlice />
         {foundations.map((pillar, i) => (

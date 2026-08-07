@@ -1,10 +1,20 @@
 import { type ComponentType, type ReactNode } from "react";
 import type { TFunction } from "i18next";
-import { CloudIcon, FolderTreeIcon, RocketIcon, SlidersIcon, TerminalIcon } from "lucide-react";
+import {
+  CloudIcon,
+  LayoutIcon,
+  PaletteIcon,
+  RocketIcon,
+  ServerIcon,
+  SlidersIcon,
+  TerminalIcon,
+} from "lucide-react";
 import { points } from "@/i18n";
 import { CodeBlock } from "@app/ui/code-block";
 import { FeatureSplit } from "../feature-split";
 import { EnvMock, TerminalMock, RenderMock } from "../product-preview";
+import { ExplorerPreview } from "./explorer-preview";
+import { buildApiTree, buildUiTree, buildWebTree } from "./explorer-trees";
 
 export type Foundation = {
   id: string;
@@ -13,20 +23,9 @@ export type Foundation = {
   title: string;
   body: string;
   points: string[];
-  /** The evidence for this pillar: a schema map, a terminal, a Render panel. */
+  /** The evidence for this pillar: explorer zoom, schema map, terminal… */
   visual: ReactNode;
 };
-
-const repoTreeFile = `app-base/
-├── apps/
-│   ├── api/          Hono + Drizzle + Postgres
-│   └── web/          React + Vite SPA
-├── packages/
-│   ├── shared/       Zod schemas + DTOs (both sides)
-│   └── ui/           @app/ui — shells, themes, base components
-├── .cursor/rules/    conventions the AI follows
-├── render.yaml       one-service deploy
-└── turbo.json        task graph`;
 
 const mediaStoreFile = `// lib/media-store.ts — the one interface any domain touches for files
 export interface MediaStore {
@@ -49,7 +48,7 @@ export async function writeMedia(key: string, data: Buffer) {
   return { path: \`/\${target}\`, sizeBytes: compressed.byteLength };
 }`;
 
-function pillarCopy(key: "monorepo" | "config" | "storage" | "localRun" | "render", t: TFunction) {
+function pillarCopy(key: "config" | "storage" | "localRun" | "render", t: TFunction) {
   return {
     eyebrow: t(`landing.${key}.eyebrow`),
     title: t(`landing.${key}.title`),
@@ -58,13 +57,55 @@ function pillarCopy(key: "monorepo" | "config" | "storage" | "localRun" | "rende
   };
 }
 
-export function buildMonorepoPillar(t: TFunction): Foundation {
+function moduleCopy(key: "api" | "web" | "ui", t: TFunction) {
   return {
-    id: "monorepo",
-    icon: FolderTreeIcon,
-    ...pillarCopy("monorepo", t),
-    visual: <CodeBlock filename="app-base" code={repoTreeFile} lang="text" />,
+    eyebrow: t(`landing.moduleZoom.${key}.eyebrow`),
+    title: t(`landing.moduleZoom.${key}.title`),
+    body: t(`landing.moduleZoom.${key}.body`),
+    points: points(t, `landing.moduleZoom.${key}.points`),
   };
+}
+
+/** Zoom into api → web → ui after the hero shows the whole repo. */
+export function buildModuleZooms(t: TFunction): Foundation[] {
+  return [
+    {
+      id: "api",
+      icon: ServerIcon,
+      ...moduleCopy("api", t),
+      visual: (
+        <ExplorerPreview
+          workspace={t("landing.moduleZoom.api.workspace")}
+          ariaLabel={t("landing.moduleZoom.api.aria")}
+          tree={buildApiTree(t)}
+        />
+      ),
+    },
+    {
+      id: "web",
+      icon: LayoutIcon,
+      ...moduleCopy("web", t),
+      visual: (
+        <ExplorerPreview
+          workspace={t("landing.moduleZoom.web.workspace")}
+          ariaLabel={t("landing.moduleZoom.web.aria")}
+          tree={buildWebTree(t)}
+        />
+      ),
+    },
+    {
+      id: "ui",
+      icon: PaletteIcon,
+      ...moduleCopy("ui", t),
+      visual: (
+        <ExplorerPreview
+          workspace={t("landing.moduleZoom.ui.workspace")}
+          ariaLabel={t("landing.moduleZoom.ui.aria")}
+          tree={buildUiTree(t)}
+        />
+      ),
+    },
+  ];
 }
 
 export function buildFoundations(t: TFunction): Foundation[] {

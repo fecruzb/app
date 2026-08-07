@@ -127,6 +127,25 @@
       transition: none;
     }
   }
+
+  /* Soft ring pulse on the marketing “next section” control. */
+  @keyframes next-section-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in oklab, var(--primary) 14%, transparent);
+    }
+    55% {
+      box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 0%, transparent);
+    }
+  }
+  .next-section-pulse {
+    animation: next-section-pulse 3.2s ease-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .next-section-pulse {
+      animation: none;
+    }
+  }
 }
 
 /*

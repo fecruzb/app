@@ -100,15 +100,7 @@ export const taskRoutes = new Hono<AppEnv>()
   .patch("/:taskId", updateTask)
   .delete("/:taskId", deleteTask);`;
 
-export const toolFile = `/**
- * Create a task
- *
- * \`create_task\`
- *
- * Creates a task in the current tenant for the acting user.
- *
- * @returns \`{ id, title }\` of the created task
- */
+export const toolFile = `// tools/create-task.tool.ts — one file teaches the assistant
 export const createTaskTool = defineTool({
   name: "create_task",
   description: "Creates a task in the tenant.",
@@ -186,57 +178,53 @@ export const tenantRoutes = (
   </Fragment>
 );`;
 
-export const pageFile = `// pages/TasksPage.tsx — the canonical page template (copy this shape)
+/** Reads + page chrome — first half of the canonical TasksPage template. */
+export const pageReadsFile = `// pages/TasksPage.tsx — reads + chrome
 export function TasksPage() {
   const { t } = useTranslation();
-  // Tenant comes from context (TenantProvider), never from parsing the URL here.
+  // Tenant from TenantProvider — never parse the URL here.
   const { tenant } = useTenant();
-  const queryClient = useQueryClient();
-  const confirm = useConfirm();
 
-  // Reads are queries, keyed by the tenant.
   const { data: tasks, isLoading } = useQuery({
     queryKey: ["tasks", tenant.id],
     queryFn: () => taskApi.list(tenant.id),
   });
 
-  // Writes are mutations that invalidate on success — no manual loading flags.
-  const createMutation = useMutation({
-    mutationFn: (title: string) => taskApi.create(tenant.id, { title }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks", tenant.id] }),
-    onError: (err) => showApiError(err, t("tasks.addFailed")),
-  });
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => taskApi.delete(tenant.id, id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks", tenant.id] }),
-    onError: (err) => showApiError(err, t("tasks.deleteFailed")),
-  });
-
-  async function handleDelete(task: TaskDto) {
-    const ok = await confirm({
-      title: t("tasks.deleteTitle"),
-      confirmLabel: t("common.delete"),
-      cancelLabel: t("common.cancel"),
-      destructive: true,
-    });
-    if (ok) deleteMutation.mutate(task.id);
-  }
-
-  // Header + form always render; loading / list / empty swap in the body.
   return (
     <div className="grid gap-6">
       <PageHeader title={t("tasks.title")} description={t("tasks.description")} />
-      {/* …add form wired to createMutation… */}
       {isLoading ? (
         <PageLoading />
-      ) : tasks && tasks.length > 0 ? (
-        /* …list UI; delete goes through handleDelete… */
+      ) : tasks?.length ? (
+        /* …list… */
         null
       ) : (
         <EmptyState>{t("tasks.empty")}</EmptyState>
       )}
     </div>
   );
+}`;
+
+/** Writes half of the template — mutations, confirm, showApiError. */
+export const pageWritesFile = `// pages/TasksPage.tsx — writes
+const queryClient = useQueryClient();
+const confirm = useConfirm();
+
+const deleteMutation = useMutation({
+  mutationFn: (id: string) => taskApi.delete(tenant.id, id),
+  onSuccess: () =>
+    queryClient.invalidateQueries({ queryKey: ["tasks", tenant.id] }),
+  onError: (err) => showApiError(err, t("tasks.deleteFailed")),
+});
+
+async function handleDelete(task: TaskDto) {
+  const ok = await confirm({
+    title: t("tasks.deleteTitle"),
+    confirmLabel: t("common.delete"),
+    cancelLabel: t("common.cancel"),
+    destructive: true,
+  });
+  if (ok) deleteMutation.mutate(task.id);
 }`;
 
 export const webTreeFile = `// Same domain name on the web — fixed roles, optional folders.

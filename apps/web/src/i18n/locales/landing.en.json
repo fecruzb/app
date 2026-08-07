@@ -222,6 +222,7 @@
     "body": "Auth, tenants, email and an AI agent — already wired in a typed monorepo. Clone App Base and turn the groundwork into your product.",
     "clone": "git clone https://github.com/fecruzb/app"
   },
+  "nextSection": "Next section",
   "stackSection": {
     "title": "A stack you already know",
     "body": "Boring, well-documented tools — nothing exotic to learn before you're productive."
@@ -236,7 +237,19 @@
   "foundationsIntro": {
     "eyebrow": "What's under the hood",
     "title": "Wired before you write a line",
-    "body": "Before any of your product exists, these pieces are in place and connected: how the code is laid out, where the data lives, and one real resource walked top to bottom."
+    "body": "Layout, data, and one resource — already connected.",
+    "preview": {
+      "aria": "Monorepo folder tree in a VS Code-style explorer",
+      "explorer": "Explorer",
+      "workspace": "App-Base",
+      "api": "Hono · Drizzle · Postgres",
+      "web": "React · Vite · Tailwind",
+      "shared": "Zod · both sides",
+      "ui": "@app/ui kit",
+      "rulesHint": "AI conventions",
+      "renderHint": "one-service deploy",
+      "turboHint": "task graph"
+    }
   },
   "tourIntro": {
     "eyebrow": "The product tour",
@@ -301,6 +314,67 @@
       "In production the API serves the built SPA — one origin, no CORS",
       "TypeScript everywhere, end to end — a domain is a folder on both sides"
     ]
+  },
+  "moduleZoom": {
+    "api": {
+      "eyebrow": "apps/api",
+      "title": "Zoom in: the Hono server",
+      "body": "Domains own schema, repository, routes and tools. Cross-cutting pieces live in lib/, agent/, and integrations/ — never scattered.",
+      "points": [
+        "One folder per domain under domains/ — auth, tenant, task…",
+        "lib/ is pure infra (env, crypto, media) — domains import it, not the reverse",
+        "Agent tools sit beside the domain they act on"
+      ],
+      "workspace": "apps/api",
+      "aria": "apps/api folder tree in a VS Code-style explorer",
+      "hints": {
+        "domains": "one folder per feature",
+        "task": "example resource",
+        "lib": "env, crypto, media",
+        "agent": "chat + MCP",
+        "integrations": "Resend, OpenAI, R2",
+        "db": "Drizzle client + seed"
+      }
+    },
+    "web": {
+      "eyebrow": "apps/web",
+      "title": "Zoom in: the React SPA",
+      "body": "Same domain names as the API. Each feature owns api.ts, pages, and routes — layouts and i18n stay in the shell.",
+      "points": [
+        "domains/<name>/ mirrors apps/api/src/domains/<name>/",
+        "api.ts is the only network boundary for that domain",
+        "layouts/, i18n/, theme/ are shared chrome — not feature code"
+      ],
+      "workspace": "apps/web",
+      "aria": "apps/web folder tree in a VS Code-style explorer",
+      "hints": {
+        "domains": "same names as the API",
+        "task": "api · pages · routes",
+        "layouts": "App, Auth shells",
+        "lib": "HTTP client",
+        "i18n": "en.json + pt.json",
+        "theme": "palette + mode"
+      }
+    },
+    "ui": {
+      "eyebrow": "packages/ui",
+      "title": "Zoom in: the @app/ui kit",
+      "body": "App-neutral building blocks, grouped by role. Import per subpath — restyle through theme tokens, never hardcode colors.",
+      "points": [
+        "primitives/ — shadcn buttons, inputs, dialogs…",
+        "shell/ — SidebarShell, NavbarShell, AuthShell, Brand",
+        "composites/ + theme/ — higher patterns and palettes"
+      ],
+      "workspace": "packages/ui",
+      "aria": "packages/ui folder tree in a VS Code-style explorer",
+      "hints": {
+        "primitives": "shadcn building blocks",
+        "shell": "app chrome",
+        "composites": "tables, headers…",
+        "theme": "ThemeProvider + tokens",
+        "lib": "cn()"
+      }
+    }
   },
   "config": {
     "eyebrow": "Configuration",
@@ -495,13 +569,23 @@
       ]
     },
     "page": {
-      "eyebrow": "The page",
-      "title": "Reads are queries, tenant comes from context",
-      "body": "Every internal page follows the same TanStack Query template: useTenant() for the workspace (from TenantProvider — the React parallel to API middleware), useQuery keyed by the tenant for reads, useMutation that invalidates on success for writes. @app/ui covers PageHeader, PageLoading, EmptyState and useConfirm so the page stays about the feature. Errors go through showApiError().",
+      "eyebrow": "The page · reads",
+      "title": "Queries + chrome from @app/ui",
+      "body": "Every internal page starts the same way: useTenant() for the workspace (TenantProvider — the React parallel to API middleware), useQuery keyed by the tenant for reads, then PageHeader / PageLoading / EmptyState so the page stays about the feature.",
       "points": [
         "useTenant() — tenant from context, never parsed ad hoc in the page",
-        "useQuery for reads, useMutation + invalidate for writes",
-        "PageLoading / EmptyState / useConfirm from @app/ui; errors via showApiError()"
+        "useQuery keyed by tenant.id for every list/detail read",
+        "PageHeader, PageLoading, EmptyState from @app/ui — same chrome every page"
+      ]
+    },
+    "pageWrites": {
+      "eyebrow": "The page · writes",
+      "title": "Mutations invalidate; deletes confirm",
+      "body": "Writes are useMutation with invalidateQueries on success — no manual loading flags. Destructive actions go through useConfirm; failures surface with showApiError(). Same shape for create, update, and delete.",
+      "points": [
+        "useMutation + invalidateQueries on success — no local loading state",
+        "useConfirm() for destructive actions, never window.confirm",
+        "showApiError(err, fallback) for every mutation onError"
       ]
     },
     "screen": {

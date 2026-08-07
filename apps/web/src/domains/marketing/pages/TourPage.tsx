@@ -24,6 +24,8 @@ export function TourPage() {
   return (
     <MarketingShell>
       <MarketingHero
+        size="lg"
+        uppercaseEyebrow
         eyebrow={t("landing.tourIntro.eyebrow")}
         title={t("landing.tourIntro.title")}
         body={t("landing.tourIntro.body")}

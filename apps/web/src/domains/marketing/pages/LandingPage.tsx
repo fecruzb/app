@@ -52,7 +52,7 @@ export function LandingPage() {
 
       <StackSection />
 
-      <section className="border-t px-4 py-20">
+      <section data-section className="scroll-mt-20 border-t px-4 py-20">
         <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <Card className="reveal">
             <CardContent className="flex h-full flex-col p-6">
@@ -110,7 +110,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section className="border-t px-4 py-24">
+      <section data-section className="scroll-mt-20 border-t px-4 py-24">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-semibold tracking-tight text-balance">
             {t("landing.closing.title")}

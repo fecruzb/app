@@ -21,6 +21,8 @@ export function UiPage() {
   return (
     <MarketingShell>
       <MarketingHero
+        size="lg"
+        uppercaseEyebrow
         eyebrow={t("landing.ui.eyebrow")}
         title={t("landing.ui.title")}
         body={t("landing.ui.body")}

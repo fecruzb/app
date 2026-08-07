@@ -1,6 +1,8 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { CheckIcon } from "lucide-react";
 import { cn } from "@app/ui/lib/utils";
+
+type Density = "loose" | "normal" | "tight";
 
 type FeatureSplitProps = {
   eyebrow: ReactNode;
@@ -21,9 +23,21 @@ type FeatureSplitProps = {
    * - `normal` — product-tour chapters
    * - `tight` — database / resource subsections
    */
-  density?: "loose" | "normal" | "tight";
+  density?: Density;
+  /**
+   * Proportional zoom for the visual column (code, mocks, screenshots).
+   * Uses CSS `zoom` so the layout box shrinks with the content — not just a
+   * paint-time scale. Omit to use the density default.
+   */
+  visualScale?: number;
   headingAs?: "h2" | "h3" | "h4";
   className?: string;
+};
+
+const defaultVisualScale: Record<Density, number> = {
+  loose: 1,
+  normal: 0.92,
+  tight: 0.82,
 };
 
 /**
@@ -40,15 +54,18 @@ export function FeatureSplit({
   flip = false,
   bordered = false,
   density = "normal",
+  visualScale,
   headingAs = "h3",
   className,
 }: FeatureSplitProps) {
   const Heading = headingAs;
+  const scale = visualScale ?? defaultVisualScale[density];
 
   return (
     <section
+      data-section
       className={cn(
-        "px-4",
+        "scroll-mt-20 px-4",
         bordered && "border-t",
         density === "loose" && "py-16 sm:py-20",
         density === "normal" && "py-10 sm:py-12",
@@ -97,8 +114,24 @@ export function FeatureSplit({
           {children ? <div className="mt-6">{children}</div> : null}
         </div>
 
-        <div className={cn("reveal reveal-delay min-w-0", flip && "lg:order-1")}>{visual}</div>
+        <div className={cn("reveal reveal-delay min-w-0", flip && "lg:order-1")}>
+          <ScaledVisual scale={scale}>{visual}</ScaledVisual>
+        </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * Shrink the visual with CSS `zoom` so the layout box collapses with the
+ * content (unlike `transform: scale`). Set inline — Tailwind's arbitrary
+ * `lg:[zoom:var(…)]` never applied.
+ */
+function ScaledVisual({ scale, children }: { scale: number; children: ReactNode }) {
+  if (scale >= 1) return children;
+  return (
+    <div className="w-full" style={{ zoom: scale } as CSSProperties}>
+      {children}
+    </div>
   );
 }

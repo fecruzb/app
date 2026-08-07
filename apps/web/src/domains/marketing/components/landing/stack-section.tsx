@@ -16,7 +16,7 @@ export function StackSection() {
   const { t } = useTranslation();
 
   return (
-    <section className="bg-muted/40 px-4 py-16">
+    <section id="stack" data-section className="scroll-mt-20 bg-muted/40 px-4 py-16">
       <div className="mx-auto max-w-5xl">
         <div className="text-center">
           <h2 className="text-2xl font-semibold tracking-tight">

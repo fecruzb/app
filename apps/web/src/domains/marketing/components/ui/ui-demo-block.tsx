@@ -29,7 +29,7 @@ export function UiDemoBlock({
   children: ReactNode;
 }) {
   return (
-    <section className="border-t px-4 py-12 sm:py-16">
+    <section data-section className="scroll-mt-20 border-t px-4 py-12 sm:py-16">
       <div className="mx-auto max-w-5xl">
         <div className="mb-6 max-w-2xl">
           <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">{title}</h2>
