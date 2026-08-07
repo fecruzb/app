@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { passwordSchema, userNameSchema } from "./auth";
+import { emailSchema, passwordSchema, userNameSchema } from "./auth";
 import { planIdSchema, type PlanId } from "./billing";
 import { tenantSlugSchema, type MemberDto } from "./tenant";
 
@@ -23,7 +23,7 @@ export const updateAdminTenantSchema = z
   );
 
 export const createPlatformInviteSchema = z.object({
-  email: z.email().toLowerCase(),
+  email: emailSchema,
 });
 
 export const acceptPlatformInviteSchema = z.object({

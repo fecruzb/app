@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { passwordSchema, userNameSchema } from "./auth";
+import { emailSchema, passwordSchema, userNameSchema } from "./auth";
 
 export const tenantRoles = ["owner", "admin", "member"] as const;
 export type TenantRole = (typeof tenantRoles)[number];
@@ -23,7 +23,7 @@ export const updateTenantSchema = z.object({
 });
 
 export const createInviteSchema = z.object({
-  email: z.email().toLowerCase(),
+  email: emailSchema,
   role: z.enum(["admin", "member"]),
 });
 

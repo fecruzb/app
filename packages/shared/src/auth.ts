@@ -9,19 +9,22 @@ export const userNameSchema = z.string().trim().min(2).max(100);
 /** Password for signup, reset, and change (login only requires non-empty). */
 export const passwordSchema = z.string().min(8).max(200);
 
+/** Normalized email for auth and invite flows. */
+export const emailSchema = z.email().toLowerCase();
+
 export const registerSchema = z.object({
   name: userNameSchema,
-  email: z.email().toLowerCase(),
+  email: emailSchema,
   password: passwordSchema,
 });
 
 export const loginSchema = z.object({
-  email: z.email().toLowerCase(),
+  email: emailSchema,
   password: z.string().min(1),
 });
 
 export const forgotPasswordSchema = z.object({
-  email: z.email().toLowerCase(),
+  email: emailSchema,
 });
 
 export const resetPasswordSchema = z.object({
