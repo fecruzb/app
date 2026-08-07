@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { LockIcon } from "lucide-react";
 import { cn } from "../lib/utils";
+import { ScaledContent } from "./content-scale";
 
 /**
  * Browser chrome bar — traffic-light dots + centered URL pill.
@@ -51,7 +52,8 @@ function Window({
       )}
     >
       <WindowBar label={label} />
-      {children}
+      {/* Traffic lights + URL stay at 1× — ContentScaleProvider zooms the page body. */}
+      <ScaledContent>{children}</ScaledContent>
     </div>
   );
 }

@@ -4,12 +4,25 @@
   "tryDemo": "Try the demo",
   "tryLiveDemo": "Try the live demo",
   "nav": {
+    "structure": "Code",
+    "codeMenu": {
+      "open": "Open Code menu",
+      "overview": "Overview",
+      "api": "API",
+      "web": "Web",
+      "ui": "UI kit",
+      "environment": "Environment",
+      "database": "Database",
+      "storage": "Storage",
+      "i18n": "i18n"
+    },
     "foundations": "Foundations",
-    "tour": "Tour",
+    "tour": "Product",
     "ui": "UI",
     "articles": "Articles"
   },
   "teasers": {
+    "exploreStructure": "Explore the structure",
     "exploreFoundations": "Explore foundations",
     "exploreTour": "Explore the tour",
     "exploreUi": "Browse components"
@@ -19,9 +32,41 @@
       "title": "App Base — The starting point for your next SaaS",
       "description": "Open-source multi-tenant SaaS template with auth, tenants, email, an AI agent, and a typed monorepo ready to become your product."
     },
+    "structure": {
+      "title": "Project structure · App Base",
+      "description": "How the monorepo is laid out — workspaces, Turbo, one deploy — then dive into the API, web, or UI package."
+    },
+    "structureApi": {
+      "title": "API structure · App Base",
+      "description": "apps/api domain layers — schema, repository, tools, DTOs, and routes — walked as a guided course."
+    },
+    "structureWeb": {
+      "title": "Web structure · App Base",
+      "description": "apps/web — domains that mirror the API, with api.ts, pages, and routes."
+    },
+    "structureUi": {
+      "title": "UI kit · App Base",
+      "description": "packages/ui folder layout, then the live component catalog — primitives, shells, and composites."
+    },
     "foundations": {
       "title": "Foundations · App Base",
-      "description": "Monorepo layout, database schema, theming, i18n, and one resource walked top to bottom — the groundwork already wired."
+      "description": "Theme tokens and brand packs — light, dark, and createTheme when you need your own accent."
+    },
+    "structureEnvironment": {
+      "title": "Environment · App Base",
+      "description": "Validated .env, local Docker run, and Render deploy from one YAML — configure, run, and ship."
+    },
+    "structureDatabase": {
+      "title": "Database · App Base",
+      "description": "Postgres modeled in Drizzle — identity, tenancy, billing, usage, articles, and the example resource."
+    },
+    "structureStorage": {
+      "title": "Storage · App Base",
+      "description": "MediaStore with Cloudflare R2 when configured, local disk fallback for development."
+    },
+    "structureI18n": {
+      "title": "i18n · App Base",
+      "description": "English and Portuguese locale files, useTranslation, and a live language switcher."
     },
     "tour": {
       "title": "Product tour · App Base",
@@ -165,8 +210,9 @@
       "navHome": "Home",
       "navTasks": "Tasks",
       "navSettings": "Settings",
+      "navStructure": "Code",
       "navFoundations": "Foundations",
-      "navTour": "Tour",
+      "navTour": "Product",
       "navUi": "UI",
       "headerActions": "Sign in",
       "userName": "Ada Lovelace",
@@ -234,10 +280,10 @@
     "ai": "AI",
     "tooling": "Tooling"
   },
-  "foundationsIntro": {
-    "eyebrow": "What's under the hood",
-    "title": "Wired before you write a line",
-    "body": "Layout, data, and one resource — already connected.",
+  "structureIntro": {
+    "eyebrow": "The codebase",
+    "title": "See the code. This is what you clone.",
+    "body": "After git clone, this is the first thing you open — how the repo is laid out, what each package owns, and where to put your feature.",
     "preview": {
       "aria": "Monorepo folder tree in a VS Code-style explorer",
       "explorer": "Explorer",
@@ -250,6 +296,23 @@
       "renderHint": "one-service deploy",
       "turboHint": "task graph"
     }
+  },
+  "foundationsIntro": {
+    "eyebrow": "Foundations",
+    "title": "Themes that recolor the whole app",
+    "body": "Light and dark palettes ship with @app/ui. Pick a primary, extend with createTheme — the kit follows tokens, not hard-coded colors."
+  },
+  "structureEnvironment": {
+    "eyebrow": "Environment",
+    "title": "Configure. Run. Deploy.",
+    "body": "One validated .env at boot, Docker Postgres and npm run dev locally, then render.yaml for production — the same knobs from laptop to Render."
+  },
+  "structureBuild": {
+    "eyebrow": "Your turn",
+    "title": "Everything above is the template. Now build yours.",
+    "body": "What you just walked is the model App Base ships ready — packages, env, database, storage, i18n. Your product starts when you add your own resources: a schema, a repository, routes and tools. The API page shows that pattern end to end with tasks — copy the folder, rename it, register it, ship.",
+    "cta": "See how to add a resource",
+    "hint": "Schema → repository → tools → DTOs → routes — then mirror it on the web."
   },
   "tourIntro": {
     "eyebrow": "The product tour",
@@ -305,21 +368,77 @@
     "bodyAfter": " is the placeholder domain. Same name on API and web, fixed roles on each side, one shared contract in packages/shared. Walk the API (table → schema.ts → repository → route → tool), then the React domain (folder → api.ts → routes → page), and land on the screen. Copy that folder pair for your own resource."
   },
   "showScreen": "Show screen {{n}}",
+  "structureLinks": {
+    "eyebrow": "Packages",
+    "title": "Pick a package to open",
+    "body": "Each deep-dive walks that package’s folders and conventions — same guided style as the monorepo overview above.",
+    "platformEyebrow": "Runtime & data",
+    "platformTitle": "How the app is wired",
+    "platformBody": "Env, database, object storage, and i18n — the pieces every feature leans on.",
+    "api": {
+      "path": "apps/api",
+      "title": "The Hono server",
+      "body": "Schema, repository, tools, DTOs, and routes — one domain folder walked top to bottom.",
+      "cta": "Open the API"
+    },
+    "web": {
+      "path": "apps/web",
+      "title": "The React SPA",
+      "body": "Domains that mirror the API — api.ts, pages, routes, and shell chrome.",
+      "cta": "Open the web app"
+    },
+    "ui": {
+      "path": "packages/ui",
+      "title": "The UI kit",
+      "body": "Primitives, shell, composites, and theme — the app-neutral building blocks.",
+      "cta": "Open the UI kit"
+    },
+    "environment": {
+      "eyebrow": "Environment",
+      "title": ".env, local run, Render",
+      "body": "Validated env at boot, Docker + npm run dev locally, and one-YAML deploy to Render.",
+      "cta": "Open environment"
+    },
+    "database": {
+      "eyebrow": "Database",
+      "title": "Postgres in TypeScript",
+      "body": "Drizzle tables by domain — identity, tenancy, billing, usage, articles, and tasks.",
+      "cta": "Open the database"
+    },
+    "storage": {
+      "eyebrow": "Storage",
+      "title": "Files via MediaStore",
+      "body": "One interface for uploads — Cloudflare R2 in production, local disk when you skip credentials.",
+      "cta": "Open storage"
+    },
+    "i18n": {
+      "eyebrow": "i18n",
+      "title": "English and Portuguese",
+      "body": "Locale JSON files and t() — switch language live and the whole UI follows.",
+      "cta": "Open i18n"
+    }
+  },
   "monorepo": {
-    "eyebrow": "The layout",
-    "title": "One typed monorepo, wired end to end",
-    "body": "Everything lives in one repo run by npm workspaces and Turborepo: the Hono API, the React SPA, and a shared package of Zod schemas both sides import. That shared package is the trick — change a request shape there and whichever side you forgot stops compiling.",
+    "eyebrow": "The monorepo",
+    "title": "One repo. Workspaces, Turbo, one deploy.",
+    "body": "Everything lives in one npm workspaces + Turborepo repo: the Hono API, the React SPA, shared Zod contracts, and the UI kit. Turbo wires the task graph; render.yaml ships API + SPA as one service with managed Postgres.",
     "points": [
-      "packages/shared is one source of truth for types across API and web",
-      "In production the API serves the built SPA — one origin, no CORS",
-      "TypeScript everywhere, end to end — a domain is a folder on both sides"
+      "apps/api, apps/web, packages/shared, packages/ui — one graph, not four repos",
+      "turbo.json defines the build/lint/typecheck pipeline across packages",
+      "render.yaml: one web service (API serves the SPA) + managed Postgres",
+      "packages/shared is the typed contract — change a shape, the forgotten side fails to compile"
     ]
   },
   "moduleZoom": {
     "api": {
       "eyebrow": "apps/api",
-      "title": "Zoom in: the Hono server",
+      "title": "The Hono server",
       "body": "Domains own schema, repository, routes and tools. Cross-cutting pieces live in lib/, agent/, and integrations/ — never scattered.",
+      "layout": {
+        "eyebrow": "The tree",
+        "title": "One folder per domain",
+        "body": "Open apps/api and the map is the product: domains/ for features, lib/ for infra, agent/ and integrations/ for cross-cutting work — never a grab-bag of files."
+      },
       "points": [
         "One folder per domain under domains/ — auth, tenant, task…",
         "lib/ is pure infra (env, crypto, media) — domains import it, not the reverse",
@@ -338,7 +457,7 @@
     },
     "web": {
       "eyebrow": "apps/web",
-      "title": "Zoom in: the React SPA",
+      "title": "The React SPA",
       "body": "Same domain names as the API. Each feature owns api.ts, pages, and routes — layouts and i18n stay in the shell.",
       "points": [
         "domains/<name>/ mirrors apps/api/src/domains/<name>/",
@@ -358,7 +477,7 @@
     },
     "ui": {
       "eyebrow": "packages/ui",
-      "title": "Zoom in: the @app/ui kit",
+      "title": "The UI kit",
       "body": "App-neutral building blocks, grouped by role. Import per subpath — restyle through theme tokens, never hardcode colors.",
       "points": [
         "primitives/ — shadcn buttons, inputs, dialogs…",
@@ -467,60 +586,70 @@
         "Export from db/schema.ts, then npm run db:generate — never hand-write SQL"
       ]
     },
-    "repository": {
-      "eyebrow": "The repository",
-      "title": "All SQL lives in one object",
-      "body": "For a tenant-scoped resource the shape is fixed: list / find / insert / update / delete on a single exported object. Every method takes a tenantId. Routes, tools and services call these methods — they never write SQL. DTO mapping stays in dto.ts.",
+    "repositoryMethod": {
+      "eyebrow": "Talking to the database",
+      "title": "One method, one Drizzle query",
+      "body": "Start here. A repository method is where the ORM runs — select, join, where, orderBy in plain TypeScript. list always filters by tenantId (isolation is not optional), optionally searches the title, joins the author, and returns rows. No hidden helpers; the whole query sits in the method.",
       "points": [
-        "CRUD is named list / find / insert / update / delete",
-        "Every method takes tenantId — isolation is the only entry point",
-        "Returns rows — dto.ts maps to the API shape; routes never write SQL"
+        "Drizzle in the method body — this is the only place SQL lives",
+        "tenantId in every where — a missing filter is a cross-tenant leak",
+        "Returns DB rows / joins — not API DTOs yet"
       ]
     },
-    "repositoryMethod": {
-      "eyebrow": "One method",
-      "title": "Each query is written in full",
-      "body": "Open any method and you can read the whole query without jumping around — no shared helpers that hide the tenant filter. list joins the author, filters by tenantId and orders newest first. The same rule applies to find, insert, update and delete.",
+    "repository": {
+      "eyebrow": "The repository",
+      "title": "Those methods live in one object",
+      "body": "Zoom out from list. find, insert, update, and delete sit beside it on a single exported taskRepository — fixed CRUD names, every method takes tenantId. Routes and tools call this object; they never write SQL. Mapping to the wire shape is the next step (dto.ts).",
       "points": [
-        "No query exists without a tenant filter",
-        "Each method owns its query end to end",
-        "Readable in place — copy the shape for the next resource"
+        "One object per resource: list / find / insert / update / delete",
+        "Same tenantId rule on every method you just saw in list",
+        "Callers stay thin — repository owns persistence"
+      ]
+    },
+    "dto": {
+      "eyebrow": "The DTO",
+      "title": "Map rows explicitly — never spread a DB row",
+      "body": "dto.ts turns repository shapes into the shared TaskDto from packages/shared. Dates become ISO strings; password hashes and token hashes never leave the server. Routes and tools call toTaskDto — they don't invent response shapes inline.",
+      "points": [
+        "Explicit field map in toXxxDto — never …row into JSON",
+        "Shared TaskDto lives in packages/shared — both sides compile against it",
+        "Dates are strings on the wire; secrets stay off the DTO"
       ]
     },
     "route": {
-      "eyebrow": "The handler",
-      "title": "A thin handler: Input → Processing → Output",
-      "body": "One file per action. Validate with the shared schema, read tenant and user from middleware context, call the repository, map through the DTO. The handler never checks a session or resolves a tenant itself — that already ran on the route group.",
+      "eyebrow": "Serving HTTP",
+      "title": "One handler, one action",
+      "body": "Start here. A route file is a thin HTTP action — Input → Processing → Output. createTask validates with the shared schema, reads tenant and user from middleware context, calls the repository, and maps through the DTO. It never checks a session or resolves a tenant itself — that already ran on the group.",
       "points": [
         "Handler sections: Input → Processing → Output",
-        "The tenant comes from context, never a request param",
+        "Tenant from context, never from the request body",
         "parseBody + repository + toXxxDto — no SQL in the route"
       ]
     },
     "routeMap": {
       "eyebrow": "The route map",
-      "title": "Wire handlers in one place",
-      "body": "routes/index.ts exports the Hono group: apply requireAuth and requireTenant once with .use, then hang each handler on a line. New actions stay isolated by default — add the file, import it here, done.",
+      "title": "Those handlers live on one group",
+      "body": "Zoom out from createTask. list, get, update, delete hang beside it in routes/index.ts — requireAuth and requireTenant once via .use, then one line per handler. Same aggregator pattern as the repository object and the tool array. Mount the group in app.ts under /api/tenants/:tenantId/tasks.",
       "points": [
         "Middleware once via .use — every route inherits auth + tenant",
         "One line per handler: .get(\"/\", listTasks), .post(\"/\", createTask)",
-        "Mount the group in app.ts under /api/tenants/:tenantId/tasks"
+        "Add a file, import it here, done"
       ]
     },
     "tool": {
-      "eyebrow": "The tool",
-      "title": "One file teaches the assistant",
-      "body": "The same resource becomes an agent tool with a single defineTool — a name, a Zod input and an execute that reuses the repository you already wrote. That one definition drives the in-app chat and the remote MCP server, with zero extra glue.",
+      "eyebrow": "Teaching the assistant",
+      "title": "One defineTool, one action",
+      "body": "Start here. A tool file is how the agent learns a single action — name, description, Zod input, and execute that calls the repository you already wrote. create_task reuses taskRepository.insert; tenant and user come from ctx, never from the model guessing IDs. The same definition powers in-app chat and remote MCP.",
       "points": [
-        "Same definition drives the chat and the remote MCP server",
-        "summarize marks a write — it shows up as a chip in the chat",
-        "Tools never import MCP or OpenAI — the lint blocks it"
+        "defineTool in one file — no MCP or OpenAI imports (lint blocks them)",
+        "execute reuses the repository — tools don't invent a second data path",
+        "summarize marks a write — it shows up as a chip in the chat"
       ]
     },
     "toolMap": {
       "eyebrow": "The tool map",
-      "title": "Collect tools, register once",
-      "body": "tools/index.ts exports the domain's AgentTool[] — same role as routes/index.ts for HTTP. Drop that array into agent/registry.ts allTools and every surface (chat, HTTP MCP) picks it up. Add a tool file, push it onto the array, done.",
+      "title": "Those tools live in one array",
+      "body": "Zoom out from create_task. list, get, update, delete sit beside it in tools/index.ts as taskTools — same role as the repository object for SQL. Spread that array into agent/registry.ts allTools and every surface picks it up. Add a tool file, push it onto the array, done.",
       "points": [
         "One array per domain: export const taskTools: AgentTool[] = […]",
         "Spread into allTools in agent/registry.ts",

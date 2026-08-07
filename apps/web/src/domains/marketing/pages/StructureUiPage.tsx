@@ -1,35 +1,32 @@
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { FoundationSection } from "../components/foundations/foundation-section";
 import { BrandNavSection } from "../components/ui/brand-nav-section";
 import { ControlsSection } from "../components/ui/controls-section";
 import { DataPageSection } from "../components/ui/data-page-section";
 import { FormOverlaySection } from "../components/ui/form-overlay-section";
-import { useDocumentMeta } from "@/lib/document-meta";
-import { MarketingHero } from "../components/marketing-hero";
-import { MarketingShell } from "../components/marketing-shell";
 import { ShellDemosSection } from "../components/ui/shell-demos-section";
+import { buildUiPillar } from "../components/structure/module-zooms";
+import { useDocumentMeta } from "@/lib/document-meta";
+import { MarketingShell } from "../components/marketing-shell";
 import { useReveal } from "../hooks/use-reveal";
 
-export function UiPage() {
-  const { t } = useTranslation();
+/** packages/ui structure overview + the live component catalog. */
+export function StructureUiPage() {
+  const { t, i18n } = useTranslation();
   useReveal();
   useDocumentMeta({
-    title: t("landing.seo.ui.title"),
-    description: t("landing.seo.ui.description"),
-    path: "/ui",
+    title: t("landing.seo.structureUi.title"),
+    description: t("landing.seo.structureUi.description"),
+    path: "/structure/ui",
   });
+
+  const ui = useMemo(() => buildUiPillar(t), [t, i18n.language]);
 
   return (
     <MarketingShell>
-      <MarketingHero
-        size="lg"
-        uppercaseEyebrow
-        eyebrow={t("landing.ui.eyebrow")}
-        title={t("landing.ui.title")}
-        body={t("landing.ui.body")}
-      />
-
-      {/* White after the hero fade; drop the first border-t so it doesn't cut the wash. */}
-      <div className="[&>section:first-child]:border-t-0">
+      <FoundationSection pillar={ui} flip={false} />
+      <div className="border-t [&>section:first-child]:border-t-0">
         <BrandNavSection />
         <ShellDemosSection />
         <ControlsSection />

@@ -1,7 +1,7 @@
 import type { TFunction } from "i18next";
 import type { ExplorerNode } from "@app/ui/explorer";
 
-/** Full monorepo — Foundations hero overview. */
+/** Full monorepo — Structure overview section. */
 export function buildRepoTree(t: TFunction): ExplorerNode[] {
   return [
     {
@@ -11,7 +11,7 @@ export function buildRepoTree(t: TFunction): ExplorerNode[] {
         {
           name: "api",
           kind: "folder",
-          hint: t("landing.foundationsIntro.preview.api"),
+          hint: t("landing.structureIntro.preview.api"),
           active: true,
           children: [
             { name: "package.json", kind: "file" },
@@ -21,7 +21,7 @@ export function buildRepoTree(t: TFunction): ExplorerNode[] {
         {
           name: "web",
           kind: "folder",
-          hint: t("landing.foundationsIntro.preview.web"),
+          hint: t("landing.structureIntro.preview.web"),
           children: [
             { name: "package.json", kind: "file" },
             { name: "src", kind: "folder", children: [{ name: "main.tsx", kind: "file" }] },
@@ -36,13 +36,13 @@ export function buildRepoTree(t: TFunction): ExplorerNode[] {
         {
           name: "shared",
           kind: "folder",
-          hint: t("landing.foundationsIntro.preview.shared"),
+          hint: t("landing.structureIntro.preview.shared"),
           children: [{ name: "src", kind: "folder" }],
         },
         {
           name: "ui",
           kind: "folder",
-          hint: t("landing.foundationsIntro.preview.ui"),
+          hint: t("landing.structureIntro.preview.ui"),
           children: [{ name: "src", kind: "folder" }],
         },
       ],
@@ -51,11 +51,11 @@ export function buildRepoTree(t: TFunction): ExplorerNode[] {
       name: ".cursor",
       kind: "folder",
       children: [
-        { name: "rules", kind: "folder", hint: t("landing.foundationsIntro.preview.rulesHint") },
+        { name: "rules", kind: "folder", hint: t("landing.structureIntro.preview.rulesHint") },
       ],
     },
-    { name: "render.yaml", kind: "file", hint: t("landing.foundationsIntro.preview.renderHint") },
-    { name: "turbo.json", kind: "file", hint: t("landing.foundationsIntro.preview.turboHint") },
+    { name: "render.yaml", kind: "file", hint: t("landing.structureIntro.preview.renderHint") },
+    { name: "turbo.json", kind: "file", hint: t("landing.structureIntro.preview.turboHint") },
     { name: "package.json", kind: "file" },
   ];
 }

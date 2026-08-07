@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { buildChapters, ChapterSection } from "../components/tour/chapter-section";
 import { ClosingSection } from "../components/tour/closing-section";
-import { buildRenderPillar, FoundationSection } from "../components/foundations/foundation-section";
 import { useDocumentMeta } from "@/lib/document-meta";
 import { MarketingHero } from "../components/marketing-hero";
 import { MarketingShell } from "../components/marketing-shell";
@@ -17,9 +16,7 @@ export function TourPage() {
     path: "/tour",
   });
 
-  const lang = i18n.language;
-  const chapters = useMemo(() => buildChapters(t), [t, lang]);
-  const renderPillar = useMemo(() => buildRenderPillar(t), [t, lang]);
+  const chapters = useMemo(() => buildChapters(t), [t, i18n.language]);
 
   return (
     <MarketingShell>
@@ -35,7 +32,6 @@ export function TourPage() {
         <ChapterSection key={chapter.id} chapter={chapter} flip={i % 2 === 1} />
       ))}
 
-      <FoundationSection pillar={renderPillar} flip={false} />
       <ClosingSection />
     </MarketingShell>
   );

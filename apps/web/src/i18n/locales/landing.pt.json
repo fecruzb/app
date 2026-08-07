@@ -4,12 +4,25 @@
   "tryDemo": "Experimentar o demo",
   "tryLiveDemo": "Experimentar o demo ao vivo",
   "nav": {
+    "structure": "Code",
+    "codeMenu": {
+      "open": "Abrir menu Code",
+      "overview": "Visão geral",
+      "api": "API",
+      "web": "Web",
+      "ui": "Kit de UI",
+      "environment": "Environment",
+      "database": "Database",
+      "storage": "Storage",
+      "i18n": "i18n"
+    },
     "foundations": "Fundações",
-    "tour": "Tour",
+    "tour": "Product",
     "ui": "UI",
     "articles": "Artigos"
   },
   "teasers": {
+    "exploreStructure": "Explorar a estrutura",
     "exploreFoundations": "Explorar fundações",
     "exploreTour": "Explorar o tour",
     "exploreUi": "Ver componentes"
@@ -19,9 +32,41 @@
       "title": "App Base — O ponto de partida do seu próximo SaaS",
       "description": "Template SaaS multi-tenant open-source com autenticação, tenants, e-mail, agente de IA e um monorepo tipado pronto para virar o seu produto."
     },
+    "structure": {
+      "title": "Estrutura do projeto · App Base",
+      "description": "Como o monorepo está organizado — workspaces, Turbo, um deploy — e depois mergulhe na API, no web ou no kit de UI."
+    },
+    "structureApi": {
+      "title": "Estrutura da API · App Base",
+      "description": "Camadas do domínio em apps/api — schema, repository, tools, DTOs e rotas — percorridas como um curso guiado."
+    },
+    "structureWeb": {
+      "title": "Estrutura do web · App Base",
+      "description": "apps/web — domínios que espelham a API, com api.ts, pages e routes."
+    },
+    "structureUi": {
+      "title": "Kit de UI · App Base",
+      "description": "Layout das pastas de packages/ui e o catálogo ao vivo — primitives, shells e composites."
+    },
     "foundations": {
       "title": "Fundações · App Base",
-      "description": "Layout do monorepo, schema do banco, temas, i18n e um recurso percorrido de ponta a ponta — o alicerce já conectado."
+      "description": "Tokens de tema e brand packs — light, dark e createTheme quando precisar do próprio accent."
+    },
+    "structureEnvironment": {
+      "title": "Environment · App Base",
+      "description": ".env validado, run local com Docker e deploy no Render a partir de um YAML — configurar, rodar e subir."
+    },
+    "structureDatabase": {
+      "title": "Database · App Base",
+      "description": "Postgres modelado no Drizzle — identidade, tenancy, billing, usage, articles e o recurso de exemplo."
+    },
+    "structureStorage": {
+      "title": "Storage · App Base",
+      "description": "MediaStore com Cloudflare R2 quando configurado, e disco local como fallback no desenvolvimento."
+    },
+    "structureI18n": {
+      "title": "i18n · App Base",
+      "description": "Arquivos de locale em inglês e português, useTranslation e um seletor de idioma ao vivo."
     },
     "tour": {
       "title": "Tour do produto · App Base",
@@ -165,8 +210,9 @@
       "navHome": "Início",
       "navTasks": "Tarefas",
       "navSettings": "Configurações",
+      "navStructure": "Code",
       "navFoundations": "Fundações",
-      "navTour": "Tour",
+      "navTour": "Product",
       "navUi": "UI",
       "headerActions": "Entrar",
       "userName": "Ada Lovelace",
@@ -234,10 +280,10 @@
     "ai": "IA",
     "tooling": "Ferramentas"
   },
-  "foundationsIntro": {
-    "eyebrow": "Por baixo do capô",
-    "title": "Ligado antes de você escrever uma linha",
-    "body": "Layout, dados e um recurso — já conectados.",
+  "structureIntro": {
+    "eyebrow": "O código",
+    "title": "Veja o código. É isso que você clona.",
+    "body": "Depois do git clone, é a primeira coisa que você abre — como o repo está organizado, o que cada pacote faz e onde entra a sua feature.",
     "preview": {
       "aria": "Árvore do monorepo num explorer estilo VS Code",
       "explorer": "Explorer",
@@ -250,6 +296,23 @@
       "renderHint": "deploy num serviço",
       "turboHint": "grafo de tasks"
     }
+  },
+  "foundationsIntro": {
+    "eyebrow": "Fundações",
+    "title": "Temas que recolorizam o app inteiro",
+    "body": "Paletas light e dark vêm com o @app/ui. Escolha a primária, estenda com createTheme — o kit segue tokens, não cores hard-coded."
+  },
+  "structureEnvironment": {
+    "eyebrow": "Environment",
+    "title": "Configure. Rode. Faça deploy.",
+    "body": "Um .env validado no boot, Postgres no Docker e npm run dev no local, depois render.yaml em produção — os mesmos knobs do laptop ao Render."
+  },
+  "structureBuild": {
+    "eyebrow": "Sua vez",
+    "title": "Tudo acima é o template. Agora construa o seu.",
+    "body": "O que você percorreu é o modelo que o App Base já traz pronto — pacotes, env, banco, storage, i18n. O produto começa quando você adiciona os próprios recursos: um schema, um repository, rotas e tools. A página da API mostra esse padrão de ponta a ponta com tasks — copie a pasta, renomeie, registre e envie.",
+    "cta": "Ver como adicionar um recurso",
+    "hint": "Schema → repository → tools → DTOs → rotas — depois espelhe no web."
   },
   "tourIntro": {
     "eyebrow": "O tour do produto",
@@ -305,21 +368,77 @@
     "bodyAfter": " é o domínio placeholder. Mesmo nome na API e no web, papéis fixos de cada lado, um contrato compartilhado em packages/shared. Percorra a API (tabela → schema.ts → repository → rota → tool), depois o domínio React (pasta → api.ts → routes → page), e chegue na tela. Copie esse par de pastas para o seu recurso."
   },
   "showScreen": "Mostrar tela {{n}}",
+  "structureLinks": {
+    "eyebrow": "Pacotes",
+    "title": "Escolha um pacote para abrir",
+    "body": "Cada deep-dive percorre as pastas e convenções daquele pacote — no mesmo estilo guiado do overview do monorepo acima.",
+    "platformEyebrow": "Runtime e dados",
+    "platformTitle": "Como o app está ligado",
+    "platformBody": "Env, banco, object storage e i18n — as peças em que toda feature se apoia.",
+    "api": {
+      "path": "apps/api",
+      "title": "O servidor Hono",
+      "body": "Schema, repository, tools, DTOs e rotas — um domínio percorrido de ponta a ponta.",
+      "cta": "Abrir a API"
+    },
+    "web": {
+      "path": "apps/web",
+      "title": "O SPA React",
+      "body": "Domínios que espelham a API — api.ts, pages, routes e o chrome do shell.",
+      "cta": "Abrir o web"
+    },
+    "ui": {
+      "path": "packages/ui",
+      "title": "O kit de UI",
+      "body": "Primitives, shell, composites e theme — os blocos agnósticos do app.",
+      "cta": "Abrir o kit de UI"
+    },
+    "environment": {
+      "eyebrow": "Environment",
+      "title": ".env, run local, Render",
+      "body": "Env validado no boot, Docker + npm run dev no local e deploy num YAML no Render.",
+      "cta": "Abrir environment"
+    },
+    "database": {
+      "eyebrow": "Database",
+      "title": "Postgres em TypeScript",
+      "body": "Tabelas Drizzle por domínio — identidade, tenancy, billing, usage, articles e tasks.",
+      "cta": "Abrir o banco"
+    },
+    "storage": {
+      "eyebrow": "Storage",
+      "title": "Arquivos via MediaStore",
+      "body": "Uma interface para uploads — Cloudflare R2 em produção, disco local sem credenciais.",
+      "cta": "Abrir storage"
+    },
+    "i18n": {
+      "eyebrow": "i18n",
+      "title": "Inglês e português",
+      "body": "JSONs de locale e t() — mude o idioma ao vivo e a UI inteira acompanha.",
+      "cta": "Abrir i18n"
+    }
+  },
   "monorepo": {
-    "eyebrow": "A organização",
-    "title": "Um monorepo tipado, ligado de ponta a ponta",
-    "body": "Tudo vive num único repositório com npm workspaces e Turborepo: a API Hono, o SPA React e um pacote compartilhado de schemas Zod que os dois lados importam. Esse pacote compartilhado é o truque — mude o formato de um request lá e o lado que você esqueceu deixa de compilar.",
+    "eyebrow": "O monorepo",
+    "title": "Um repo. Workspaces, Turbo, um deploy.",
+    "body": "Tudo vive num único repo com npm workspaces + Turborepo: a API Hono, o SPA React, os contratos Zod compartilhados e o kit de UI. O Turbo liga o grafo de tasks; o render.yaml sobe API + SPA num serviço só com Postgres gerenciado.",
     "points": [
-      "packages/shared é a única fonte da verdade de tipos entre API e web",
-      "Em produção a API serve o SPA buildado — uma origem, sem CORS",
-      "TypeScript em tudo, de ponta a ponta — um domínio é uma pasta nos dois lados"
+      "apps/api, apps/web, packages/shared, packages/ui — um grafo, não quatro repos",
+      "turbo.json define o pipeline de build/lint/typecheck entre pacotes",
+      "render.yaml: um web service (API serve o SPA) + Postgres gerenciado",
+      "packages/shared é o contrato tipado — mude um formato e o lado esquecido deixa de compilar"
     ]
   },
   "moduleZoom": {
     "api": {
       "eyebrow": "apps/api",
-      "title": "Zoom: o servidor Hono",
+      "title": "O servidor Hono",
       "body": "Domínios possuem schema, repository, routes e tools. Peças transversais ficam em lib/, agent/ e integrations/ — nunca espalhadas.",
+      "layout": {
+        "eyebrow": "A árvore",
+        "title": "Uma pasta por domínio",
+        "body": "Abra apps/api e o mapa é o produto: domains/ para features, lib/ para infra, agent/ e integrations/ para o transversal — nunca um saco de arquivos."
+      },
       "points": [
         "Uma pasta por domínio em domains/ — auth, tenant, task…",
         "lib/ é infra pura (env, crypto, media) — domains importam, nunca o contrário",
@@ -338,7 +457,7 @@
     },
     "web": {
       "eyebrow": "apps/web",
-      "title": "Zoom: o SPA React",
+      "title": "O SPA React",
       "body": "Os mesmos nomes de domínio da API. Cada feature possui api.ts, pages e routes — layouts e i18n ficam no shell.",
       "points": [
         "domains/<nome>/ espelha apps/api/src/domains/<nome>/",
@@ -358,7 +477,7 @@
     },
     "ui": {
       "eyebrow": "packages/ui",
-      "title": "Zoom: o kit @app/ui",
+      "title": "O kit de UI",
       "body": "Blocos neutros do app, agrupados por papel. Importe por subpath — restilize pelos tokens do tema, nunca fixe cores.",
       "points": [
         "primitives/ — buttons, inputs, dialogs shadcn…",
@@ -467,60 +586,70 @@
         "Exporte em db/schema.ts e rode npm run db:generate — nunca escreva SQL à mão"
       ]
     },
-    "repository": {
-      "eyebrow": "O repository",
-      "title": "Todo o SQL mora num único objeto",
-      "body": "Para um recurso com escopo de tenant o formato é fixo: list / find / insert / update / delete num único objeto exportado. Todo método recebe um tenantId. Routes, tools e services chamam esses métodos — nunca escrevem SQL. O mapeamento de DTO fica em dto.ts.",
+    "repositoryMethod": {
+      "eyebrow": "Falando com o banco",
+      "title": "Um método, uma query Drizzle",
+      "body": "Comece por aqui. Um método do repository é onde o ORM roda — select, join, where, orderBy em TypeScript puro. list sempre filtra por tenantId (isolamento não é opcional), opcionalmente busca no título, faz join no author e devolve rows. Sem helpers escondidos; a query inteira fica no método.",
       "points": [
-        "O CRUD se chama list / find / insert / update / delete",
-        "Todo método recebe tenantId — isolamento é a única porta de entrada",
-        "Devolve rows — dto.ts mapeia para o formato da API; rotas nunca escrevem SQL"
+        "Drizzle no corpo do método — é o único lugar onde mora SQL",
+        "tenantId em todo where — filtro faltando é vazamento entre tenants",
+        "Devolve rows / joins do DB — ainda não é DTO da API"
       ]
     },
-    "repositoryMethod": {
-      "eyebrow": "Um método",
-      "title": "Cada query é escrita por completo",
-      "body": "Abra qualquer método e você lê a query inteira sem saltar de arquivo — sem helpers compartilhados que escondem o filtro de tenant. list faz join no author, filtra por tenantId e ordena do mais novo. A mesma regra vale para find, insert, update e delete.",
+    "repository": {
+      "eyebrow": "O repository",
+      "title": "Esses métodos moram num único objeto",
+      "body": "Afaste o zoom do list. find, insert, update e delete ficam ao lado dele num único taskRepository exportado — nomes de CRUD fixos, todo método recebe tenantId. Routes e tools chamam esse objeto; nunca escrevem SQL. Mapear para o formato do fio é o próximo passo (dto.ts).",
       "points": [
-        "Nenhuma query existe sem filtro de tenant",
-        "Cada método é dono da sua query de ponta a ponta",
-        "Legível no lugar — copie o formato para o próximo recurso"
+        "Um objeto por recurso: list / find / insert / update / delete",
+        "A mesma regra de tenantId em todo método que você viu no list",
+        "Callers ficam finos — o repository é dono da persistência"
+      ]
+    },
+    "dto": {
+      "eyebrow": "O DTO",
+      "title": "Mapeie rows na mão — nunca espalhe a row do DB",
+      "body": "dto.ts transforma o formato do repository no TaskDto compartilhado de packages/shared. Datas viram strings ISO; hashes de senha e token nunca saem do servidor. Routes e tools chamam toTaskDto — não inventam o formato da resposta inline.",
+      "points": [
+        "Mapa explícito em toXxxDto — nunca …row no JSON",
+        "TaskDto compartilhado mora em packages/shared — os dois lados compilam contra ele",
+        "Datas são strings no fio; segredos ficam fora do DTO"
       ]
     },
     "route": {
-      "eyebrow": "O handler",
-      "title": "Um handler fino: Input → Processing → Output",
-      "body": "Um arquivo por ação. Valida com o schema compartilhado, lê tenant e user do context do middleware, chama o repository, mapeia pelo DTO. O handler nunca checa sessão nem resolve um tenant sozinho — isso já rodou no grupo de rotas.",
+      "eyebrow": "Servindo HTTP",
+      "title": "Um handler, uma ação",
+      "body": "Comece por aqui. Um arquivo de rota é uma ação HTTP fina — Input → Processing → Output. createTask valida com o schema compartilhado, lê tenant e user do context do middleware, chama o repository e mapeia pelo DTO. Nunca checa sessão nem resolve tenant sozinho — isso já rodou no grupo.",
       "points": [
         "Seções do handler: Input → Processing → Output",
-        "O tenant vem do context, nunca de um param da request",
+        "Tenant do context, nunca do body da request",
         "parseBody + repository + toXxxDto — sem SQL na rota"
       ]
     },
     "routeMap": {
       "eyebrow": "O mapa de rotas",
-      "title": "Plugue os handlers num só lugar",
-      "body": "routes/index.ts exporta o grupo Hono: aplica requireAuth e requireTenant uma vez com .use, depois pendura cada handler numa linha. Ações novas já nascem isoladas — adicione o arquivo, importe aqui, pronto.",
+      "title": "Esses handlers moram num único grupo",
+      "body": "Afaste o zoom do createTask. list, get, update, delete ficam ao lado em routes/index.ts — requireAuth e requireTenant uma vez via .use, depois uma linha por handler. O mesmo padrão de agregador do objeto repository e do array de tools. Monte o grupo em app.ts sob /api/tenants/:tenantId/tasks.",
       "points": [
         "Middleware uma vez via .use — toda rota herda auth + tenant",
         "Uma linha por handler: .get(\"/\", listTasks), .post(\"/\", createTask)",
-        "Monte o grupo em app.ts sob /api/tenants/:tenantId/tasks"
+        "Adicione o arquivo, importe aqui, pronto"
       ]
     },
     "tool": {
-      "eyebrow": "A tool",
-      "title": "Um arquivo ensina o assistente",
-      "body": "O mesmo recurso vira uma tool do agente com um único defineTool — um nome, um input Zod e um execute que reusa o repository que você já escreveu. Essa definição única dirige o chat in-app e o servidor MCP remoto, sem cola extra.",
+      "eyebrow": "Ensinando o assistente",
+      "title": "Um defineTool, uma ação",
+      "body": "Comece por aqui. Um arquivo de tool é como o agente aprende uma ação — nome, descrição, input Zod e execute que chama o repository que você já escreveu. create_task reusa taskRepository.insert; tenant e user vêm do ctx, nunca do modelo inventando IDs. A mesma definição dirige o chat in-app e o MCP remoto.",
       "points": [
-        "A mesma definição dirige o chat e o servidor MCP remoto",
-        "summarize marca uma escrita — aparece como chip no chat",
-        "Tools nunca importam MCP ou OpenAI — o lint bloqueia"
+        "defineTool num arquivo — sem import de MCP ou OpenAI (o lint bloqueia)",
+        "execute reusa o repository — tools não inventam um segundo caminho de dados",
+        "summarize marca uma escrita — aparece como chip no chat"
       ]
     },
     "toolMap": {
       "eyebrow": "O mapa de tools",
-      "title": "Colete as tools, registre uma vez",
-      "body": "tools/index.ts exporta o AgentTool[] do domínio — o mesmo papel de routes/index.ts no HTTP. Espalhe esse array em allTools em agent/registry.ts e toda superfície (chat, MCP HTTP) passa a vê-lo. Adicione o arquivo da tool, empurre no array, pronto.",
+      "title": "Essas tools moram num único array",
+      "body": "Afaste o zoom do create_task. list, get, update, delete ficam ao lado em tools/index.ts como taskTools — o mesmo papel do objeto repository para SQL. Espalhe esse array em allTools em agent/registry.ts e toda superfície passa a vê-lo. Adicione o arquivo, empurre no array, pronto.",
       "points": [
         "Um array por domínio: export const taskTools: AgentTool[] = […]",
         "Spread em allTools em agent/registry.ts",

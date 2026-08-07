@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import {
   ArrowRightIcon,
   FolderTreeIcon,
+  LayersIcon,
   LayoutDashboardIcon,
   PaletteIcon,
   TerminalIcon,
@@ -53,22 +54,22 @@ export function LandingPage() {
       <StackSection />
 
       <section data-section className="scroll-mt-20 border-t px-4 py-20">
-        <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2">
           <Card className="reveal">
             <CardContent className="flex h-full flex-col p-6">
               <FolderTreeIcon className="mb-4 size-5 text-primary" />
               <p className="text-sm font-medium text-primary">
-                {t("landing.foundationsIntro.eyebrow")}
+                {t("landing.structureIntro.eyebrow")}
               </p>
               <h2 className="mt-2 text-xl font-semibold tracking-tight">
-                {t("landing.foundationsIntro.title")}
+                {t("landing.structureIntro.title")}
               </h2>
               <p className="mt-3 flex-1 text-sm text-pretty text-muted-foreground">
-                {t("landing.foundationsIntro.body")}
+                {t("landing.structureIntro.body")}
               </p>
               <Button variant="outline" className="mt-6 w-fit" asChild>
-                <Link to="/foundations">
-                  {t("landing.teasers.exploreFoundations")} <ArrowRightIcon />
+                <Link to="/structure">
+                  {t("landing.teasers.exploreStructure")} <ArrowRightIcon />
                 </Link>
               </Button>
             </CardContent>
@@ -92,7 +93,27 @@ export function LandingPage() {
             </CardContent>
           </Card>
 
-          <Card className="reveal reveal-delay sm:col-span-2 lg:col-span-1">
+          <Card className="reveal reveal-delay">
+            <CardContent className="flex h-full flex-col p-6">
+              <LayersIcon className="mb-4 size-5 text-primary" />
+              <p className="text-sm font-medium text-primary">
+                {t("landing.foundationsIntro.eyebrow")}
+              </p>
+              <h2 className="mt-2 text-xl font-semibold tracking-tight">
+                {t("landing.foundationsIntro.title")}
+              </h2>
+              <p className="mt-3 flex-1 text-sm text-pretty text-muted-foreground">
+                {t("landing.foundationsIntro.body")}
+              </p>
+              <Button variant="outline" className="mt-6 w-fit" asChild>
+                <Link to="/foundations">
+                  {t("landing.teasers.exploreFoundations")} <ArrowRightIcon />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="reveal reveal-delay">
             <CardContent className="flex h-full flex-col p-6">
               <PaletteIcon className="mb-4 size-5 text-primary" />
               <p className="text-sm font-medium text-primary">{t("landing.ui.eyebrow")}</p>
@@ -101,7 +122,7 @@ export function LandingPage() {
                 {t("landing.ui.body")}
               </p>
               <Button variant="outline" className="mt-6 w-fit" asChild>
-                <Link to="/ui">
+                <Link to="/structure/ui">
                   {t("landing.teasers.exploreUi")} <ArrowRightIcon />
                 </Link>
               </Button>

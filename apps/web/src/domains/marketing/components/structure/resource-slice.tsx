@@ -5,27 +5,18 @@ import { FolderTreeIcon } from "lucide-react";
 import { points } from "@/i18n";
 import { CodeBlock } from "@app/ui/code-block";
 import { MarketingHero } from "../marketing-hero";
-import { TaskTable, TasksMock } from "../product-preview";
+import { TasksMock } from "../product-preview";
 import { DbGroupSection } from "./database-foundation";
 import {
-  domainMapFile,
   pageReadsFile,
   pageWritesFile,
-  repositoryMethodFile,
-  repositoryOutlineFile,
-  routeHandlerFile,
-  routeMapFile,
-  schemaFile,
-  toolFile,
-  toolMapFile,
   webApiFile,
   webRouteMapFile,
   webRoutesFile,
   webTreeFile,
 } from "./resource-snippets";
 
-// A single resource, walked top to bottom using the repo's real task domain:
-// its folder, the SQL + route, the agent tool, and the screen it powers.
+// Web half of the example resource — API layers live under ApiStructure.
 type Slice = {
   id: string;
   eyebrow: string;
@@ -39,15 +30,6 @@ type Slice = {
 };
 
 type SliceLocaleKey =
-  | "convention"
-  | "schema"
-  | "schemaFile"
-  | "repository"
-  | "repositoryMethod"
-  | "route"
-  | "routeMap"
-  | "tool"
-  | "toolMap"
   | "webConvention"
   | "api"
   | "webRoutes"
@@ -65,74 +47,8 @@ function sliceCopy(localeKey: SliceLocaleKey, t: TFunction) {
   };
 }
 
-// One visual per step: domain map → API files → web files → the screen.
-// tasks is the placeholder resource you'd copy end to end for your own.
 function buildResourceSlices(t: TFunction): Slice[] {
   return [
-    {
-      id: "convention",
-      ...sliceCopy("convention", t),
-      visual: <CodeBlock filename="domains/task/" code={domainMapFile} lang="text" />,
-    },
-    {
-      id: "schema",
-      ...sliceCopy("schema", t),
-      visual: <TaskTable />,
-    },
-    {
-      id: "schema-file",
-      ...sliceCopy("schemaFile", t),
-      visual: <CodeBlock filename="domains/task/schema.ts" code={schemaFile} lang="ts" />,
-    },
-    {
-      id: "repository",
-      ...sliceCopy("repository", t),
-      visual: (
-        <CodeBlock filename="domains/task/repository.ts" code={repositoryOutlineFile} lang="ts" />
-      ),
-    },
-    {
-      id: "repository-method",
-      ...sliceCopy("repositoryMethod", t),
-      visual: (
-        <CodeBlock
-          filename="domains/task/repository.ts → list"
-          code={repositoryMethodFile}
-          lang="ts"
-        />
-      ),
-    },
-    {
-      id: "route",
-      ...sliceCopy("route", t),
-      visualScale: 0.7,
-      visual: (
-        <CodeBlock
-          filename="domains/task/routes/create-task.route.ts"
-          code={routeHandlerFile}
-          lang="ts"
-        />
-      ),
-    },
-    {
-      id: "route-map",
-      ...sliceCopy("routeMap", t),
-      visual: <CodeBlock filename="domains/task/routes/index.ts" code={routeMapFile} lang="ts" />,
-    },
-    {
-      id: "tool",
-      ...sliceCopy("tool", t),
-      // Tall defineTool file — zoom down further than the tight default.
-      visualScale: 0.7,
-      visual: (
-        <CodeBlock filename="domains/task/tools/create-task.tool.ts" code={toolFile} lang="ts" />
-      ),
-    },
-    {
-      id: "tool-map",
-      ...sliceCopy("toolMap", t),
-      visual: <CodeBlock filename="domains/task/tools/index.ts" code={toolMapFile} lang="ts" />,
-    },
     {
       id: "web-convention",
       ...sliceCopy("webConvention", t),
@@ -192,9 +108,7 @@ function buildResourceSlices(t: TFunction): Slice[] {
 }
 
 /**
- * The example resource walked end to end: the table opened it in the database
- * section, and this closes the loop — repository + route, the agent tool,
- * and the screen — all from the repo's real task domain, alternating sides.
+ * Web half of the example resource — after ApiStructure covered the server layers.
  */
 export function ResourceSlice() {
   const { t, i18n } = useTranslation();

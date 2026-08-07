@@ -25,7 +25,7 @@ import { HomeIcon } from "lucide-react";
 import { NavItem } from "@app/ui/nav-item";
 
 {/* Header variant */}
-<NavLink to="/ui">
+<NavLink to="/structure">
   {({ isActive }) => (
     <NavItem variant="header" active={isActive}>UI</NavItem>
   )}

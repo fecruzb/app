@@ -19,7 +19,9 @@ import { brandSnippet, navItemSnippet, siteHeaderSnippet } from "./ui-snippets";
 export function BrandNavSection() {
   const { t } = useTranslation();
   const [sidebarActive, setSidebarActive] = useState<"home" | "tasks" | "settings">("home");
-  const [headerActive, setHeaderActive] = useState<"foundations" | "tour" | "ui">("ui");
+  const [headerActive, setHeaderActive] = useState<"structure" | "tour" | "foundations">(
+    "structure",
+  );
 
   return (
     <>
@@ -54,9 +56,9 @@ export function BrandNavSection() {
           <div className="flex flex-wrap gap-1">
             {(
               [
-                ["foundations", t("landing.ui.demo.navFoundations")],
+                ["structure", t("landing.ui.demo.navStructure")],
                 ["tour", t("landing.ui.demo.navTour")],
-                ["ui", t("landing.ui.demo.navUi")],
+                ["foundations", t("landing.ui.demo.navFoundations")],
               ] as const
             ).map(([id, label]) => (
               <button key={id} type="button" onClick={() => setHeaderActive(id)}>
@@ -101,14 +103,14 @@ export function BrandNavSection() {
             }
             nav={
               <>
-                <NavItem variant="header" active={false}>
-                  {t("landing.ui.demo.navFoundations")}
+                <NavItem variant="header" active>
+                  {t("landing.ui.demo.navStructure")}
                 </NavItem>
                 <NavItem variant="header" active={false}>
                   {t("landing.ui.demo.navTour")}
                 </NavItem>
-                <NavItem variant="header" active>
-                  {t("landing.ui.demo.navUi")}
+                <NavItem variant="header" active={false}>
+                  {t("landing.ui.demo.navFoundations")}
                 </NavItem>
               </>
             }

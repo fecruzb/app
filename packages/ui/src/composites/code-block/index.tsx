@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { cn } from "../../lib/utils";
+import { ScaledContent } from "../content-scale";
 import { getHighlighter } from "./highlighter";
 import "./code-block.css";
 
@@ -72,22 +73,25 @@ function CodeBlock({
         className,
       )}
     >
+      {/* Title bar stays at 1× — ContentScaleProvider zooms only the body. */}
       <div className="flex items-center gap-2 border-b bg-muted/50 px-4 py-2.5">
         <span className="size-2.5 rounded-full bg-muted-foreground/25" aria-hidden />
         <span className="size-2.5 rounded-full bg-muted-foreground/25" aria-hidden />
         <span className="size-2.5 rounded-full bg-muted-foreground/25" aria-hidden />
         <span className="ml-2 truncate font-mono text-xs text-muted-foreground">{filename}</span>
       </div>
-      {html ? (
-        <div
-          className="overflow-x-auto p-4 text-xs leading-relaxed sm:text-[13px]"
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
-      ) : (
-        <pre className="overflow-x-auto p-4 text-xs leading-relaxed text-foreground sm:text-[13px]">
-          <code>{code}</code>
-        </pre>
-      )}
+      <ScaledContent>
+        {html ? (
+          <div
+            className="overflow-x-auto p-4 text-xs leading-relaxed sm:text-[13px]"
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+        ) : (
+          <pre className="overflow-x-auto p-4 text-xs leading-relaxed text-foreground sm:text-[13px]">
+            <code>{code}</code>
+          </pre>
+        )}
+      </ScaledContent>
     </div>
   );
 }

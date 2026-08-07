@@ -1,20 +1,10 @@
 import { type ComponentType, type ReactNode } from "react";
 import type { TFunction } from "i18next";
-import {
-  CloudIcon,
-  LayoutIcon,
-  PaletteIcon,
-  RocketIcon,
-  ServerIcon,
-  SlidersIcon,
-  TerminalIcon,
-} from "lucide-react";
+import { CloudIcon, RocketIcon, SlidersIcon, TerminalIcon } from "lucide-react";
 import { points } from "@/i18n";
 import { CodeBlock } from "@app/ui/code-block";
-import { Explorer } from "@app/ui/explorer";
 import { FeatureSplit } from "../feature-split";
-import { EnvMock, TerminalMock, RenderMock } from "../product-preview";
-import { buildApiTree, buildUiTree, buildWebTree } from "./explorer-trees";
+import { EnvMock, TerminalMock } from "../product-preview";
 
 export type Foundation = {
   id: string;
@@ -57,86 +47,66 @@ function pillarCopy(key: "config" | "storage" | "localRun" | "render", t: TFunct
   };
 }
 
-function moduleCopy(key: "api" | "web" | "ui", t: TFunction) {
+export function buildConfigPillar(t: TFunction): Foundation {
   return {
-    eyebrow: t(`landing.moduleZoom.${key}.eyebrow`),
-    title: t(`landing.moduleZoom.${key}.title`),
-    body: t(`landing.moduleZoom.${key}.body`),
-    points: points(t, `landing.moduleZoom.${key}.points`),
+    id: "config",
+    icon: SlidersIcon,
+    ...pillarCopy("config", t),
+    visual: <EnvMock />,
   };
 }
 
-/** Zoom into api → web → ui after the hero shows the whole repo. */
-export function buildModuleZooms(t: TFunction): Foundation[] {
-  return [
-    {
-      id: "api",
-      icon: ServerIcon,
-      ...moduleCopy("api", t),
-      visual: (
-        <Explorer
-          workspace={t("landing.moduleZoom.api.workspace")}
-          ariaLabel={t("landing.moduleZoom.api.aria")}
-          tree={buildApiTree(t)}
-        />
-      ),
-    },
-    {
-      id: "web",
-      icon: LayoutIcon,
-      ...moduleCopy("web", t),
-      visual: (
-        <Explorer
-          workspace={t("landing.moduleZoom.web.workspace")}
-          ariaLabel={t("landing.moduleZoom.web.aria")}
-          tree={buildWebTree(t)}
-        />
-      ),
-    },
-    {
-      id: "ui",
-      icon: PaletteIcon,
-      ...moduleCopy("ui", t),
-      visual: (
-        <Explorer
-          workspace={t("landing.moduleZoom.ui.workspace")}
-          ariaLabel={t("landing.moduleZoom.ui.aria")}
-          tree={buildUiTree(t)}
-        />
-      ),
-    },
-  ];
+export function buildLocalRunPillar(t: TFunction): Foundation {
+  return {
+    id: "localRun",
+    icon: TerminalIcon,
+    ...pillarCopy("localRun", t),
+    visual: <TerminalMock />,
+  };
 }
 
-export function buildFoundations(t: TFunction): Foundation[] {
-  return [
-    {
-      id: "config",
-      icon: SlidersIcon,
-      ...pillarCopy("config", t),
-      visual: <EnvMock />,
-    },
-    {
-      id: "storage",
-      icon: CloudIcon,
-      ...pillarCopy("storage", t),
-      visual: <CodeBlock filename="lib/media-store.ts" code={mediaStoreFile} lang="ts" />,
-    },
-    {
-      id: "localRun",
-      icon: TerminalIcon,
-      ...pillarCopy("localRun", t),
-      visual: <TerminalMock />,
-    },
-  ];
+export function buildStoragePillar(t: TFunction): Foundation {
+  return {
+    id: "storage",
+    icon: CloudIcon,
+    ...pillarCopy("storage", t),
+    visual: <CodeBlock filename="lib/media-store.ts" code={mediaStoreFile} lang="ts" />,
+  };
 }
+
+const renderYamlFile = `# render.yaml — one web service (API + SPA) + Postgres
+services:
+  - type: web
+    name: app
+    runtime: node
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    preDeployCommand: npm run db:migrate
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: app-db
+          property: connectionString
+      - key: APP_URL
+        sync: false          # set in the Render dashboard
+      - key: RESEND_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+
+databases:
+  - name: app-db
+    plan: basic-256mb
+    postgresMajorVersion: "16"`;
 
 export function buildRenderPillar(t: TFunction): Foundation {
   return {
     id: "render",
     icon: RocketIcon,
     ...pillarCopy("render", t),
-    visual: <RenderMock />,
+    visual: <CodeBlock filename="render.yaml" code={renderYamlFile} lang="text" />,
   };
 }
 

@@ -1,5 +1,6 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { CheckIcon } from "lucide-react";
+import { ContentScaleProvider } from "@app/ui/content-scale";
 import { cn } from "@app/ui/lib/utils";
 
 type Density = "loose" | "normal" | "tight";
@@ -25,9 +26,9 @@ type FeatureSplitProps = {
    */
   density?: Density;
   /**
-   * Proportional zoom for the visual column (code, mocks, screenshots).
-   * Uses CSS `zoom` so the layout box shrinks with the content — not just a
-   * paint-time scale. Omit to use the density default.
+   * Zoom for the body inside chrome frames (CodeBlock / Window / Explorer).
+   * Never shrinks the title bar, traffic lights, or activity bar — those stay
+   * at 1× via ContentScaleProvider. Omit to use the density default.
    */
   visualScale?: number;
   headingAs?: "h2" | "h3" | "h4";
@@ -115,23 +116,9 @@ export function FeatureSplit({
         </div>
 
         <div className={cn("reveal reveal-delay min-w-0", flip && "lg:order-1")}>
-          <ScaledVisual scale={scale}>{visual}</ScaledVisual>
+          <ContentScaleProvider scale={scale}>{visual}</ContentScaleProvider>
         </div>
       </div>
     </section>
-  );
-}
-
-/**
- * Shrink the visual with CSS `zoom` so the layout box collapses with the
- * content (unlike `transform: scale`). Set inline — Tailwind's arbitrary
- * `lg:[zoom:var(…)]` never applied.
- */
-function ScaledVisual({ scale, children }: { scale: number; children: ReactNode }) {
-  if (scale >= 1) return children;
-  return (
-    <div className="w-full" style={{ zoom: scale } as CSSProperties}>
-      {children}
-    </div>
   );
 }

@@ -32,6 +32,7 @@
     "./page-loading": "./src/composites/page-loading.tsx",
     "./browser-window": "./src/composites/browser-window.tsx",
     "./code-block": "./src/composites/code-block/index.tsx",
+    "./content-scale": "./src/composites/content-scale.tsx",
     "./explorer": "./src/composites/explorer.tsx",
     "./theme": "./src/theme/index.ts"
   },

@@ -19,7 +19,8 @@ packages/ui/src/
   primitives/    shadcn building blocks (button, card, dialog, table, …)
   shell/         app chrome (brand, nav-item, site-header, sidebar,
                  sidebar-shell, navbar-shell, auth-shell, user-menu-button)
-  composites/    higher-level patterns (browser-window, code-block/, explorer, data-table, …)
+  composites/    higher-level patterns (browser-window, code-block/, content-scale,
+                 explorer, data-table, …)
   theme/         ThemeProvider, defaultThemes, createTheme
 ```
 

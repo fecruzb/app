@@ -13,6 +13,7 @@ import {
   SettingsIcon,
 } from "lucide-react";
 import { cn } from "../lib/utils";
+import { ScaledContent } from "./content-scale";
 
 export type ExplorerNode = {
   name: string;
@@ -70,11 +71,14 @@ function Explorer({ workspace, tree, ariaLabel, className }: ExplorerProps) {
           {workspace}
         </div>
 
-        <ul className="px-0.5 pb-1.5 font-mono text-[11px] leading-[18px]">
-          {tree.map((node) => (
-            <TreeRow key={node.name} node={node} depth={0} />
-          ))}
-        </ul>
+        {/* Activity bar + EXPLORER header stay at 1× — only the tree zooms. */}
+        <ScaledContent>
+          <ul className="px-0.5 pb-1.5 font-mono text-[11px] leading-[18px]">
+            {tree.map((node) => (
+              <TreeRow key={node.name} node={node} depth={0} />
+            ))}
+          </ul>
+        </ScaledContent>
       </div>
     </div>
   );

@@ -139,9 +139,7 @@ export function ShellDemosSection() {
           <h1 className="text-lg font-semibold tracking-tight">
             {t("landing.ui.demo.shellHomeTitle")}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t("landing.ui.demo.shellHomeBody")}
-          </p>
+          <p className="mt-1 text-sm text-muted-foreground">{t("landing.ui.demo.shellHomeBody")}</p>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             <div className="rounded-lg border p-3">
               <p className="flex items-center gap-1.5 text-sm font-medium">
@@ -183,14 +181,14 @@ export function ShellDemosSection() {
           }
           nav={
             <>
-              <NavItem variant="header" active={false}>
-                {t("landing.ui.demo.navFoundations")}
+              <NavItem variant="header" active>
+                {t("landing.ui.demo.navStructure")}
               </NavItem>
               <NavItem variant="header" active={false}>
                 {t("landing.ui.demo.navTour")}
               </NavItem>
-              <NavItem variant="header" active>
-                {t("landing.ui.demo.navUi")}
+              <NavItem variant="header" active={false}>
+                {t("landing.ui.demo.navFoundations")}
               </NavItem>
             </>
           }
@@ -213,9 +211,7 @@ export function ShellDemosSection() {
             <h1 className="mt-2 text-xl font-semibold tracking-tight text-balance sm:text-2xl">
               {t("landing.ui.title")}
             </h1>
-            <p className="mt-3 text-sm text-pretty text-muted-foreground">
-              {t("landing.ui.body")}
-            </p>
+            <p className="mt-3 text-sm text-pretty text-muted-foreground">{t("landing.ui.body")}</p>
             <Button className="mt-6" size="sm">
               {t("landing.teasers.exploreUi")}
             </Button>
