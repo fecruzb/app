@@ -11,6 +11,7 @@ import { Button } from "@app/ui/button";
 import { Card, CardContent } from "@app/ui/card";
 import { useAppConfig } from "@/app/config";
 import { useAuth } from "@/domains/auth/context/auth-provider";
+import { AppLogo } from "@/brand/logo";
 import { useDocumentMeta } from "@/lib/document-meta";
 import { MarketingHero } from "../components/marketing-hero";
 import { MarketingShell } from "../components/marketing-shell";
@@ -32,7 +33,7 @@ export function LandingPage() {
     <MarketingShell>
       <MarketingHero
         size="lg"
-        eyebrow={t("landing.hero.eyebrow")}
+        mark={<AppLogo className="size-20 sm:size-24 md:size-28" />}
         title={t("landing.hero.title")}
         body={t("landing.hero.body")}
       >
@@ -40,13 +41,6 @@ export function LandingPage() {
           <TerminalIcon className="size-4 shrink-0 text-muted-foreground" />
           <span className="text-muted-foreground">$</span>
           <span className="whitespace-nowrap">{t("landing.hero.clone")}</span>
-        </div>
-        <div className="mt-8 flex justify-center gap-3">
-          <Button size="lg" asChild>
-            <Link to={me ? "/app" : selfSignupEnabled ? "/register" : "/login"}>
-              {me ? t("landing.goToApp") : t("landing.tryLiveDemo")} <ArrowRightIcon />
-            </Link>
-          </Button>
         </div>
       </MarketingHero>
 

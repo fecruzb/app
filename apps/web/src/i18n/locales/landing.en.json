@@ -1,7 +1,7 @@
 {
   "signIn": "Sign in",
   "goToApp": "Go to app",
-  "tryDemo": "Try the demo",
+  "tryDemo": "Login",
   "tryLiveDemo": "Try the live demo",
   "nav": {
     "structure": "Code",
@@ -27,7 +27,7 @@
       "admin": "Admin"
     },
     "tour": "Product",
-    "ui": "User Interface",
+    "ui": "UI",
     "articles": "Articles",
     "platforms": "Platforms",
     "platformsMenu": {
@@ -39,9 +39,9 @@
       "ios": "iOS",
       "android": "Android"
     },
-    "userInterface": "User Interface",
+    "userInterface": "UI",
     "uiMenu": {
-      "open": "Open User Interface menu",
+      "open": "Open UI menu",
       "overview": "Overview",
       "theming": "Theming",
       "brand": "Brand & nav",
@@ -461,9 +461,8 @@
     }
   },
   "hero": {
-    "eyebrow": "Open-source SaaS boilerplate · React + Hono + Postgres",
     "title": "Stop rebuilding. Start shipping.",
-    "body": "Auth, tenants, email and an AI agent — already wired in a typed monorepo. Clone {{brand}} and turn the groundwork into your product.",
+    "body": "Auth, tenants, email, and an AI agent — already wired. Make it yours.",
     "clone": "git clone https://github.com/fecruzb/app"
   },
   "nextSection": "Next section",

@@ -42,7 +42,7 @@ const componentItems: UiMenuItem[] = [
 ];
 
 /**
- * “User Interface” split control — pill → hub; menu lists foundations then components.
+ * “UI” split control — pill → hub; menu lists foundations then components.
  */
 export function UiNavMenu() {
   const { t } = useTranslation();

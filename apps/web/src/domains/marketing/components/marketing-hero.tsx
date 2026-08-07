@@ -2,7 +2,9 @@ import type { ReactNode } from "react";
 import { cn } from "@app/ui/lib/utils";
 
 type MarketingHeroProps = {
-  eyebrow: ReactNode;
+  /** Optional brand mark above the eyebrow (home hero). */
+  mark?: ReactNode;
+  eyebrow?: ReactNode;
   title: ReactNode;
   body: ReactNode;
   children?: ReactNode;
@@ -23,6 +25,7 @@ type MarketingHeroProps = {
  * Marked `data-section` for the floating next-section control.
  */
 export function MarketingHero({
+  mark,
   eyebrow,
   title,
   body,
@@ -73,17 +76,30 @@ export function MarketingHero({
           !centered && size === "md" && "max-w-5xl",
         )}
       >
-        <p
-          className={cn(
-            "reveal text-sm font-semibold text-primary",
-            capsEyebrow && "tracking-wide uppercase",
-            size === "lg" && "mb-4",
-            centered && "flex items-center justify-center gap-2",
-            !centered && "flex items-center gap-2",
-          )}
-        >
-          {eyebrow}
-        </p>
+        {mark ? (
+          <div
+            className={cn(
+              "reveal mb-6",
+              centered && "flex flex-col items-center",
+              !centered && "flex flex-col items-start",
+            )}
+          >
+            {mark}
+          </div>
+        ) : null}
+        {eyebrow ? (
+          <p
+            className={cn(
+              "reveal text-sm font-semibold text-primary",
+              capsEyebrow && "tracking-wide uppercase",
+              size === "lg" && "mb-4",
+              centered && "flex items-center justify-center gap-2",
+              !centered && "flex items-center gap-2",
+            )}
+          >
+            {eyebrow}
+          </p>
+        ) : null}
         <Heading
           className={cn(
             "reveal reveal-delay font-bold tracking-tight text-balance",

@@ -1,7 +1,7 @@
 {
   "signIn": "Entrar",
   "goToApp": "Ir para o app",
-  "tryDemo": "Experimentar o demo",
+  "tryDemo": "Login",
   "tryLiveDemo": "Experimentar o demo ao vivo",
   "nav": {
     "structure": "Code",
@@ -27,7 +27,7 @@
       "admin": "Admin"
     },
     "tour": "Product",
-    "ui": "Interface",
+    "ui": "UI",
     "articles": "Artigos",
     "platforms": "Plataformas",
     "platformsMenu": {
@@ -39,9 +39,9 @@
       "ios": "iOS",
       "android": "Android"
     },
-    "userInterface": "Interface",
+    "userInterface": "UI",
     "uiMenu": {
-      "open": "Abrir menu Interface",
+      "open": "Abrir menu UI",
       "overview": "Visão geral",
       "theming": "Temas",
       "brand": "Brand e nav",
@@ -465,9 +465,8 @@
     }
   },
   "hero": {
-    "eyebrow": "Boilerplate SaaS open-source · React + Hono + Postgres",
     "title": "Pare de reconstruir. Comece a entregar.",
-    "body": "Auth, tenants, e-mail e um agente de IA — já ligados num monorepo tipado. Clone o {{brand}} e transforme o alicerce no seu produto.",
+    "body": "Auth, tenants, e-mail e um agente de IA — já ligados. Faça o seu.",
     "clone": "git clone https://github.com/fecruzb/app"
   },
   "nextSection": "Próxima seção",

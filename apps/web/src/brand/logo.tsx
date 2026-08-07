@@ -14,18 +14,18 @@ export function AppLogo({ className }: { className?: string }) {
       className={cn("size-5 shrink-0 text-primary", className)}
       aria-hidden
     >
-      <path
-        d="M3.5 8.5 12 3.5l8.5 5v7L12 20.5l-8.5-5v-7Z"
+      {/* Solid base carrying an open shape — the groundwork is done, the product is yours. */}
+      <rect
+        x="6.75"
+        y="3.75"
+        width="10.5"
+        height="10.5"
+        rx="2.9"
+        transform="rotate(45 12 9)"
         stroke="currentColor"
-        strokeWidth="1.75"
-        strokeLinejoin="round"
+        strokeWidth="1.7"
       />
-      <path
-        d="M3.5 8.5 12 13.5l8.5-5M12 13.5V20.5"
-        stroke="currentColor"
-        strokeWidth="1.75"
-        strokeLinejoin="round"
-      />
+      <rect x="4.5" y="18.5" width="15" height="2.8" rx="1.4" fill="currentColor" />
     </svg>
   );
 }
