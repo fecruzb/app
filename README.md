@@ -166,13 +166,12 @@ The client gets the same tools as the in-app agent, acting on that key's tenant.
 `apps/desktop` and `apps/mobile` package the same `apps/web` UI and call a **remote** API (`VITE_API_URL` + cookie sessions). Enable `CORS_ORIGIN` on the API (see `.env.example`) so cross-origin cookies work (`SameSite=None` for allow-listed Origins).
 
 ```bash
-# Desktop (Vite :1420) — API must already be running
-npm run tauri -w @app/desktop dev
-# or: npm run dev -w @app/desktop
+# Desktop (Vite :1420) — API must already be running (`npm run dev`)
+npm run dev:desktop
 
 # iOS (Vite :1422) — see apps/mobile/README.md for Xcode / device notes
 npm run ios:init -w @app/mobile   # once
-npm run ios:dev -w @app/mobile
+npm run dev:mobile
 ```
 
 ### Desktop releases → R2
@@ -191,6 +190,8 @@ Commit the updater **public** key in `apps/desktop/src-tauri/tauri.conf.json` (r
 | --------------------------------------- | ------------------------------------- |
 | `npm run setup`                         | Postgres up + migrate + seed          |
 | `npm run dev`                           | API + web in watch                    |
+| `npm run dev:desktop`                   | Tauri desktop shell (Vite :1420)      |
+| `npm run dev:mobile`                    | Tauri iOS shell (Vite :1422)          |
 | `npm run build`                         | Production build (web)                |
 | `npm start`                             | API in production (serves SPA)        |
 | `npm run db:up` / `db:down`             | Start / stop local Postgres (Docker)  |

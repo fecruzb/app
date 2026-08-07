@@ -6,7 +6,7 @@ Thin packaging shell around `apps/web`. Talks to a remote API via
 
 ```bash
 # from repo root, with API on :5050 and CORS_ORIGIN set
-npm run dev -w @app/desktop
+npm run dev:desktop
 ```
 
 Local API: prefer `http://localhost:5050` (macOS AirPlay often owns `:5000`).

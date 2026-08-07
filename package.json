@@ -9,7 +9,9 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --filter=!@app/desktop --filter=!@app/mobile",
+    "dev:desktop": "npm run dev -w @app/desktop",
+    "dev:mobile": "npm run dev -w @app/mobile",
     "build": "turbo run build",
     "start": "npm -w @app/api run start",
     "lint": "oxlint .",

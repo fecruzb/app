@@ -26,7 +26,7 @@ are product-specific. Use Xcode locally.
 4. Open the Xcode project / run:
 
 ```bash
-npm run ios:dev -w @app/mobile     # Vite on :1422 + iOS dev
+npm run dev:mobile                 # Vite on :1422 + iOS dev
 # or
 npm run ios:open -w @app/mobile    # open in Xcode after ios:init
 npm run ios:build -w @app/mobile   # release-style local build
