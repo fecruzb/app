@@ -109,7 +109,7 @@ Product identity is centralized:
 
 1. Edit `packages/shared/src/brand.ts` (`displayName`, `tagline`, `description`, `mcpServerName`, `defaultMailFrom`)
 2. Swap the mark in `apps/web/src/brand/logo.tsx` and `apps/web/public/brand/logo.svg` (favicon / OG)
-3. Run `npm run sync:brand` (Tauri `productName` / window title / tray labels)
+3. Run `npm run sync:brand` (Tauri `productName` / window title / tray labels / macOS install script)
 4. Set `MAIL_FROM` in `.env` for real mail (defaults to `brand.defaultMailFrom`)
 
 UI copy that uses `{{brand}}` / `{{tagline}}`, SEO shell meta, invite emails, the agent prompt, and the MCP server name all follow `brand.ts`. Workspace packages (`@app/*`) can stay.

@@ -6,6 +6,7 @@
 import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { createReadStream, existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { brand } from "../../packages/shared/src/brand.ts";
 
 /** Key prefix inside the shared media bucket. */
 export const RELEASES_PREFIX = "desktop-releases";
@@ -117,7 +118,7 @@ export async function mergeAndPutManifest(client, bucket, { version, notes, plat
   const manifest = {
     version,
     pub_date: new Date().toISOString(),
-    notes: notes ?? `App Base ${version}`,
+    notes: notes ?? `${brand.displayName} ${version}`,
     platforms: { ...existing.platforms, ...platforms },
   };
   const body = `${JSON.stringify(manifest, null, 2)}\n`;
