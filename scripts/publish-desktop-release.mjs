@@ -8,6 +8,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  ARTIFACT_BASENAME,
   createR2Client,
   findNewestWithSuffix,
   loadEnvFiles,
@@ -25,9 +26,9 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 loadEnvFiles(root);
 
 const TAURI_CONF = join(root, "apps/desktop/src-tauri/tauri.conf.json");
-const DMG_KEY = `${RELEASES_PREFIX}/latest/AppBase.dmg`;
+const DMG_KEY = `${RELEASES_PREFIX}/latest/${ARTIFACT_BASENAME}.dmg`;
 const INSTALL_SCRIPT_KEY = `${RELEASES_PREFIX}/latest/install-macos.sh`;
-const UPDATER_KEY = `${RELEASES_PREFIX}/latest/AppBase.app.tar.gz`;
+const UPDATER_KEY = `${RELEASES_PREFIX}/latest/${ARTIFACT_BASENAME}.app.tar.gz`;
 const INSTALL_SCRIPT_PATH = join(root, "scripts/install-macos.sh");
 
 const UNIVERSAL_DMG_DIR = join(
@@ -92,7 +93,7 @@ async function main() {
     key: DMG_KEY,
     path: dmg,
     contentType: "application/x-apple-diskimage",
-    disposition: 'attachment; filename="AppBase.dmg"',
+    disposition: `attachment; filename="${ARTIFACT_BASENAME}.dmg"`,
   });
   await putFile(client, bucket, {
     key: INSTALL_SCRIPT_KEY,
@@ -104,7 +105,7 @@ async function main() {
     key: UPDATER_KEY,
     path: tarball,
     contentType: "application/gzip",
-    disposition: 'attachment; filename="AppBase.app.tar.gz"',
+    disposition: `attachment; filename="${ARTIFACT_BASENAME}.app.tar.gz"`,
   });
 
   const updaterUrl = `${base}/${UPDATER_KEY}`;

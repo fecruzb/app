@@ -11,6 +11,8 @@ import { brand } from "../../packages/shared/src/brand.ts";
 /** Key prefix inside the shared media bucket. */
 export const RELEASES_PREFIX = "desktop-releases";
 export const MANIFEST_KEY = `${RELEASES_PREFIX}/latest/latest.json`;
+/** Installer / updater filename stem from `@app/shared` brand. */
+export const ARTIFACT_BASENAME = brand.desktopArtifactBasename;
 
 export function loadEnvFiles(root) {
   for (const rel of ["apps/api/.env", ".env"]) {

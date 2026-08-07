@@ -43,11 +43,14 @@ existing tag.
 
 ### What CI produces (per workflow → R2 `desktop-releases/latest/`)
 
-| Workflow          | Runner                                      | Installer key                      | Updater payload                 | Manifest merge                    |
-| ----------------- | ------------------------------------------- | ---------------------------------- | ------------------------------- | --------------------------------- |
-| macOS (universal) | `macos-15` (+ `x86_64-apple-darwin` target) | `AppBase.dmg` + `install-macos.sh` | `AppBase.app.tar.gz` (+ `.sig`) | `darwin-aarch64`, `darwin-x86_64` |
-| Windows (x64)     | `windows-latest`                            | `AppBase-Windows-Setup.exe`        | the `.exe` (+ `.sig`)           | `windows-x86_64`                  |
-| Linux (x64)       | `ubuntu-22.04`                              | `AppBase.AppImage`                 | the `.AppImage` (+ `.sig`)      | `linux-x86_64`                    |
+Installer / updater R2 keys use `brand.desktopArtifactBasename` from
+`packages/shared/src/brand.ts` (default `AppBase`):
+
+| Workflow          | Runner                                      | Installer key                         | Updater payload                    | Manifest merge                    |
+| ----------------- | ------------------------------------------- | ------------------------------------- | ---------------------------------- | --------------------------------- |
+| macOS (universal) | `macos-15` (+ `x86_64-apple-darwin` target) | `{basename}.dmg` + `install-macos.sh` | `{basename}.app.tar.gz` (+ `.sig`) | `darwin-aarch64`, `darwin-x86_64` |
+| Windows (x64)     | `windows-latest`                            | `{basename}-Windows-Setup.exe`        | the `.exe` (+ `.sig`)              | `windows-x86_64`                  |
+| Linux (x64)       | `ubuntu-22.04`                              | `{basename}.AppImage`                 | the `.AppImage` (+ `.sig`)         | `linux-x86_64`                    |
 
 ### Required repo secrets
 

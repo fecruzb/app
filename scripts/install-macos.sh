@@ -1,20 +1,21 @@
 #!/usr/bin/env bash
 # One-liner installer for the latest macOS .dmg from the public releases bucket.
-# BRAND_NAME is maintained by `npm run sync:brand` — do not edit by hand.
+# BRAND_NAME / ARTIFACT_BASENAME are maintained by `npm run sync:brand` — do not edit by hand.
 set -euo pipefail
 
 BRAND_NAME="App Base"
+ARTIFACT_BASENAME="AppBase"
 
 PUBLIC_BASE="${R2_PUBLIC_BASE_URL:-https://your-r2-public.example}"
 PUBLIC_BASE="${PUBLIC_BASE%/}"
-DMG_URL="${PUBLIC_BASE}/desktop-releases/latest/AppBase.dmg"
+DMG_URL="${PUBLIC_BASE}/desktop-releases/latest/${ARTIFACT_BASENAME}.dmg"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
 echo "Downloading ${BRAND_NAME}…"
-curl -fsSL "$DMG_URL" -o "$TMP/AppBase.dmg"
+curl -fsSL "$DMG_URL" -o "$TMP/${ARTIFACT_BASENAME}.dmg"
 echo "Mounting…"
-MOUNT="$(hdiutil attach "$TMP/AppBase.dmg" -nobrowse | awk 'END{print $NF}')"
+MOUNT="$(hdiutil attach "$TMP/${ARTIFACT_BASENAME}.dmg" -nobrowse | awk 'END{print $NF}')"
 APP="$(find "$MOUNT" -maxdepth 1 -name '*.app' -print -quit)"
 if [[ -z "$APP" ]]; then
   echo "No .app found in the DMG" >&2

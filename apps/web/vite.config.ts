@@ -5,6 +5,15 @@ import react from "@vitejs/plugin-react";
 import { brand } from "../../packages/shared/src/brand.ts";
 import { defineConfig, type Plugin } from "vite";
 
+/** Escape for double-quoted HTML attributes and text nodes. */
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
 /** Fills `%BRAND_*%` placeholders in index.html from `@app/shared` brand. */
 function brandHtmlPlugin(): Plugin {
   const title = `${brand.displayName} — ${brand.tagline}`;
@@ -12,9 +21,9 @@ function brandHtmlPlugin(): Plugin {
     name: "brand-html",
     transformIndexHtml(html) {
       return html
-        .replaceAll("%BRAND_NAME%", brand.displayName)
-        .replaceAll("%BRAND_TITLE%", title)
-        .replaceAll("%BRAND_DESCRIPTION%", brand.description);
+        .replaceAll("%BRAND_NAME%", escapeHtml(brand.displayName))
+        .replaceAll("%BRAND_TITLE%", escapeHtml(title))
+        .replaceAll("%BRAND_DESCRIPTION%", escapeHtml(brand.description));
     },
   };
 }

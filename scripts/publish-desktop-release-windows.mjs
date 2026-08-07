@@ -8,6 +8,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  ARTIFACT_BASENAME,
   createR2Client,
   findNewestWithSuffix,
   loadEnvFiles,
@@ -25,7 +26,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 loadEnvFiles(root);
 
 const TAURI_CONF = join(root, "apps/desktop/src-tauri/tauri.conf.json");
-const INSTALLER_KEY = `${RELEASES_PREFIX}/latest/AppBase-Windows-Setup.exe`;
+const INSTALLER_KEY = `${RELEASES_PREFIX}/latest/${ARTIFACT_BASENAME}-Windows-Setup.exe`;
 const NSIS_DIR = join(root, "apps/desktop/src-tauri/target/release/bundle/nsis");
 
 function buildWindows() {
@@ -64,7 +65,7 @@ async function main() {
     key: INSTALLER_KEY,
     path: exe,
     contentType: "application/octet-stream",
-    disposition: 'attachment; filename="AppBase-Windows-Setup.exe"',
+    disposition: `attachment; filename="${ARTIFACT_BASENAME}-Windows-Setup.exe"`,
   });
 
   const url = `${base}/${INSTALLER_KEY}`;
