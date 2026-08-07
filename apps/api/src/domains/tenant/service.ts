@@ -16,7 +16,7 @@ import {
   assertSeatAvailableForAccept,
   assertSeatAvailableForInvite,
 } from "@/domains/billing/service";
-import { inviteTemplate } from "./emails";
+import { inviteTemplate } from "./template";
 import { tenantRepository } from "./repository";
 import type { Tenant, TenantInvite, TenantMember } from "./schema";
 

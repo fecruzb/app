@@ -1,17 +1,14 @@
 import { emailLayout } from "@/lib/email";
 
-export function verifyEmailTemplate(name: string, url: string) {
-  return {
-    subject: "Confirm your email",
-    html: emailLayout(
-      "Confirm your email",
-      `<p>Hi ${name}! Confirm your email address to finish signing up. This link expires in 24 hours.</p>`,
-      "Confirm email",
-      url,
-    ),
-  };
-}
-
+/**
+ * Reset password template
+ *
+ * Password-reset message with a time-limited link.
+ *
+ * @param name - Recipient display name
+ * @param url - Absolute reset-password URL including the raw token
+ * @returns Subject and HTML body
+ */
 export function resetPasswordTemplate(name: string, url: string) {
   return {
     subject: "Password reset",

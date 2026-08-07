@@ -13,7 +13,7 @@ import { env } from "@/lib/env";
 import { toTenantSummary } from "@/domains/tenant/dto";
 import { tenantRepository } from "@/domains/tenant/repository";
 import { toUserDto } from "./dto";
-import { resetPasswordTemplate, verifyEmailTemplate } from "./emails";
+import { resetPasswordTemplate, verifyEmailTemplate } from "./template";
 import { syncPlatformAdminFromEnv } from "./platform-admin";
 import { authRepository, type ApiKeyPrincipal } from "./repository";
 import type { ActionTokenPurpose, User } from "./schema";

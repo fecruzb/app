@@ -11,7 +11,7 @@ Layers (boundaries enforced by lint in `.oxlintrc.json` — never violate):
 - `lib/` — pure utility; imports NOTHING from the app
 - `integrations/` — external service wrapper (openai, resend, r2); only uses `lib/`
 - `db/` — client, `schema.ts` (barrel), columns, seed
-- `domains/<d>/` — business: typically `schema.ts`, `repository.ts`, `service.ts`, `dto.ts`, `emails.ts`, `middleware.ts`, `routes/` (handlers + `index.ts` route map), `tools/` (tools + `index.ts` registry). Not every domain has every file — resource domains (`task`, `article`) are the full template; `account` is routes-only (HTTP for profile/password/API keys); `billing` has no schema/tools; `usage` tracks spend without HTTP routes
+- `domains/<d>/` — business: typically `schema.ts`, `repository.ts`, `service.ts`, `dto.ts`, `middleware.ts`, `routes/` (handlers + `index.ts` route map), `tools/` (tools + `index.ts` registry), `template/` (outbound message templates — email today — one `<purpose>.template.ts` + `index.ts`). Not every domain has every file — resource domains (`task`, `article`) are the full CRUD template; `account` is routes-only (HTTP for profile/password/API keys); `billing` has no schema/tools; `usage` tracks spend without HTTP routes
 - **API keys ownership**: credentials live in `auth` (table `api_keys`, repository + `createApiKey`/`resolveApiKey` in auth service). Account owns the user-facing HTTP surface (`/api/account/api-keys` + `account/dto.ts`) and checks membership before minting. Do not duplicate the table under account — keys are auth credentials, account is the management UI.
 - `agent/` — agent surface (not a domain); domains only import `@/agent/tool`. Agent-owned tools may live in `agent/tools/`
 - `app.ts` builds routes; `server.ts` starts the server; `context.ts` = request types
@@ -22,6 +22,7 @@ Where to add:
 
 - Route: `domains/<d>/routes/<path>.<method>.route.ts` (relative to the Hono mount). Collection `/`: list = schema **plural** + method (`articles.get`), create = schema **singular** + method (`article.post`). Member `/:id` and nested paths use the singular (`article.get`, `article.cover.post`). Each `:param` → schema singular (`tenant.members.member.patch`). Second mounts in the same folder append a surface suffix before `.route.ts` (e.g. `articles.get.public.route.ts`, `invite.get.join.route.ts`). Handler export stays the action name (`createTask`).
 - Tool: `domains/<d>/tools/<action>.tool.ts` → register in `tools/index.ts` (and a new domain in `agent/registry.ts`)
+- Template: `domains/<d>/template/<purpose>.template.ts` (email subject/HTML today) → re-export from `template/index.ts`; services import from `./template`
 - Table: schema in the domain → export in `db/schema.ts` → `db:generate`
 - Env var: Zod schema in `lib/env.ts` + `.env.example` + `render.yaml` (when production needs it)
 - Schema/DTO shared with web: `packages/shared/src/<domain>.ts`

@@ -12,7 +12,7 @@ import { authRepository } from "@/domains/auth/repository";
 import { buildMe, createSession } from "@/domains/auth/service";
 import type { MeDto } from "@app/shared";
 import { createTenantWithOwner } from "@/domains/tenant/service";
-import { platformInviteTemplate } from "./emails";
+import { platformInviteTemplate } from "./template";
 import { adminRepository } from "./repository";
 import type { PlatformInvite } from "./schema";
 
