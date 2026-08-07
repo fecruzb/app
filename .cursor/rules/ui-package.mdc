@@ -36,7 +36,8 @@ packages/ui/src/
 - Keep it app-neutral: no `@/` imports, no product copy, no domain/tenant knowledge
 - Primitives are shadcn-generated — restyle through variants/tokens, don't hand-rewrite them
 - Colors come only from CSS variables (`--primary`, `--background`, …) that `ThemeProvider`
-  writes onto `<html>`. Exception: `browser-window` traffic lights mimic real OS chrome on purpose
+  writes onto `<html>`. Allowed exceptions: `browser-window` traffic lights (real OS chrome);
+  CodeBlock Shiki palettes (`github-light` / `github-dark`) for syntax highlighting
 - Theme system lives here (`@app/ui/theme`): built-in catalogs + light/dark. Consumers may pass
   `themes={[...defaultThemes, createTheme({ id, primary })]}` for brand packs. Components use
   token utilities (`bg-card`, `dark:…`) or follow `html.dark` (e.g. CodeBlock)

@@ -5,7 +5,6 @@ export {
   defaultThemes,
   getTheme,
   lightBase,
-  themes,
   type Mode,
   type Theme,
   type ThemeTokens,

@@ -126,9 +126,6 @@ export const defaultThemes: Theme[] = [
   },
 ];
 
-/** @deprecated Use `defaultThemes` — kept as an alias for clarity at call sites. */
-export const themes = defaultThemes;
-
 export const DEFAULT_THEME = "mono";
 export const DEFAULT_MODE: Mode = "light";
 

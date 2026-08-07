@@ -18,7 +18,7 @@ export type CreateThemeOptions = {
 };
 
 /**
- * Build a full light+dark theme from a brand primary (Itaú-box style).
+ * Build a full light+dark theme from a brand primary.
  * Surfaces come from `lightBase` / `darkBase`; only the accent needs to change.
  */
 export function createTheme({

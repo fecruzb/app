@@ -28,7 +28,8 @@ const repoTreeFile = `app-base/
 │   ├── api/          Hono + Drizzle + Postgres
 │   └── web/          React + Vite SPA
 ├── packages/
-│   └── shared/       Zod schemas + DTOs (both sides)
+│   ├── shared/       Zod schemas + DTOs (both sides)
+│   └── ui/           @app/ui — shells, themes, base components
 ├── .cursor/rules/    conventions the AI follows
 ├── render.yaml       one-service deploy
 └── turbo.json        task graph`;

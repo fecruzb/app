@@ -40,7 +40,8 @@ Mirror the API: features live in `domains/<domain>/`, everything else is shared 
 ## Shared UI package (`@app/ui` → `packages/ui`)
 
 Framework-agnostic, tenant-agnostic base UI shared across web apps. Import per component via subpath:
-`import { Button } from "@app/ui/button"` (flat public paths; source is grouped under `src/primitives|shell|composites`).
+`import { Button } from "@app/ui/button"` (flat public paths; source is grouped under
+`src/{lib,primitives,shell,composites,theme}`).
 
 - Primitives (`src/primitives/`): `avatar`, `badge`, `button`, `card`, `dialog`,
   `dropdown-menu`, `input`, `label`, `resizable`, `table`, `tabs`, `textarea`

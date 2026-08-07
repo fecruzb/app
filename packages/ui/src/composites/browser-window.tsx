@@ -46,7 +46,7 @@ function Window({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-xl border bg-card shadow-md ring-1 ring-black/5 dark:ring-white/10",
+        "overflow-hidden rounded-xl border bg-card shadow-md ring-1 ring-foreground/5",
         className,
       )}
     >
