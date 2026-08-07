@@ -2,8 +2,10 @@ import type { ReactNode } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowRightIcon, BoxIcon } from "lucide-react";
+import { Brand } from "@app/ui/brand";
 import { Button } from "@app/ui/button";
-import { cn } from "@app/ui/lib/utils";
+import { NavItem } from "@app/ui/nav-item";
+import { SiteHeader } from "@app/ui/site-header";
 import { useAppConfig } from "@/app/config";
 import { useAuth } from "@/domains/auth/context/auth-provider";
 import { ThemeControls } from "@/theme/theme-controls";
@@ -15,20 +17,21 @@ export function MarketingShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur">
-        <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between gap-4 px-4">
-          <div className="flex items-center gap-6">
-            <Link to="/" className="flex items-center gap-2 font-semibold">
-              <BoxIcon className="size-5 text-primary" />
-              {t("brand")}
-            </Link>
-            <nav className="hidden items-center gap-1 sm:flex">
-              <MarketingNavLink to="/foundations">{t("landing.nav.foundations")}</MarketingNavLink>
-              <MarketingNavLink to="/tour">{t("landing.nav.tour")}</MarketingNavLink>
-              <MarketingNavLink to="/ui">{t("landing.nav.ui")}</MarketingNavLink>
-            </nav>
-          </div>
-          <nav className="flex items-center gap-2">
+      <SiteHeader
+        brand={
+          <Link to="/">
+            <Brand icon={<BoxIcon className="size-5 text-primary" />}>{t("brand")}</Brand>
+          </Link>
+        }
+        nav={
+          <>
+            <HeaderNavLink to="/foundations">{t("landing.nav.foundations")}</HeaderNavLink>
+            <HeaderNavLink to="/tour">{t("landing.nav.tour")}</HeaderNavLink>
+            <HeaderNavLink to="/ui">{t("landing.nav.ui")}</HeaderNavLink>
+          </>
+        }
+        actions={
+          <>
             <ThemeControls className="mr-1" />
             {me ? (
               <Button asChild>
@@ -48,9 +51,9 @@ export function MarketingShell({ children }: { children: ReactNode }) {
                 )}
               </>
             )}
-          </nav>
-        </div>
-      </header>
+          </>
+        }
+      />
 
       <main className="flex-1">{children}</main>
 
@@ -64,20 +67,14 @@ export function MarketingShell({ children }: { children: ReactNode }) {
   );
 }
 
-function MarketingNavLink({ to, children }: { to: string; children: ReactNode }) {
+function HeaderNavLink({ to, children }: { to: string; children: ReactNode }) {
   return (
-    <NavLink
-      to={to}
-      className={({ isActive }) =>
-        cn(
-          "rounded-md px-3 py-1.5 text-sm transition-colors",
-          isActive
-            ? "bg-muted font-medium text-foreground"
-            : "text-muted-foreground hover:text-foreground",
-        )
-      }
-    >
-      {children}
+    <NavLink to={to}>
+      {({ isActive }) => (
+        <NavItem variant="header" active={isActive}>
+          {children}
+        </NavItem>
+      )}
     </NavLink>
   );
 }

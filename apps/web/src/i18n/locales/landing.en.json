@@ -18,6 +18,30 @@
     "title": "The UI kit you ship with",
     "body": "Base components from @app/ui — shadcn primitives plus a few composites. Import per subpath, restyle through theme tokens, never hardcode colors.",
     "sections": {
+      "brand": {
+        "title": "Brand",
+        "description": "Logo icon + name (+ optional subtitle). Same mark on the marketing header, app sidebar, admin sidebar, and auth screens."
+      },
+      "navItem": {
+        "title": "NavItem",
+        "description": "One nav entry with header and sidebar variants. Active state comes from the router; icons are passed as nodes."
+      },
+      "siteHeader": {
+        "title": "SiteHeader",
+        "description": "Sticky public header chrome: brand, nav row, and trailing actions (theme toggles, CTAs)."
+      },
+      "sidebar": {
+        "title": "Sidebar",
+        "description": "App shell slots — header (brand), nav (items), footer (toggles + user menu)."
+      },
+      "userMenu": {
+        "title": "UserMenuButton",
+        "description": "Avatar + name + email trigger. Dropdown content stays in the app layer."
+      },
+      "iconButton": {
+        "title": "Icon button",
+        "description": "Button size=\"icon\" — the same control ThemeControls uses for language, palette, and mode."
+      },
       "button": {
         "title": "Button",
         "description": "Primary actions with variants for hierarchy and sizes for density."
@@ -79,7 +103,22 @@
       "menuItem3": "Archive",
       "pageTitle": "Tasks",
       "pageDescription": "Canonical page chrome: title, optional description, then list or empty.",
-      "empty": "No items yet. Create the first one to get started."
+      "empty": "No items yet. Create the first one to get started.",
+      "brandName": "App Base",
+      "brandSubtitle": "Platform admin",
+      "navHome": "Home",
+      "navTasks": "Tasks",
+      "navSettings": "Settings",
+      "navFoundations": "Foundations",
+      "navTour": "Tour",
+      "navUi": "UI",
+      "headerActions": "Sign in",
+      "userName": "Ada Lovelace",
+      "userEmail": "ada@example.com",
+      "userInitials": "AL",
+      "language": "Language",
+      "theme": "Theme",
+      "mode": "Mode"
     }
   },
   "hero": {

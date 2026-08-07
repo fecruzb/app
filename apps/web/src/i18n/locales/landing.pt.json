@@ -18,6 +18,30 @@
     "title": "O kit de UI que já vem no pacote",
     "body": "Componentes base do @app/ui — primitives shadcn e alguns composites. Importe por subpath, restilize pelos tokens do tema, nunca fixe cores no código.",
     "sections": {
+      "brand": {
+        "title": "Brand",
+        "description": "Ícone + nome (+ subtítulo opcional). A mesma marca no header da marketing, na sidebar do app, na do admin e nas telas de auth."
+      },
+      "navItem": {
+        "title": "NavItem",
+        "description": "Um item de nav com variantes header e sidebar. O estado ativo vem do router; ícones entram como nodes."
+      },
+      "siteHeader": {
+        "title": "SiteHeader",
+        "description": "Chrome sticky do header público: brand, nav e ações à direita (toggles de tema, CTAs)."
+      },
+      "sidebar": {
+        "title": "Sidebar",
+        "description": "Slots do shell do app — header (brand), nav (itens), footer (toggles + menu do usuário)."
+      },
+      "userMenu": {
+        "title": "UserMenuButton",
+        "description": "Trigger com avatar + nome + e-mail. O conteúdo do dropdown fica na camada do app."
+      },
+      "iconButton": {
+        "title": "Icon button",
+        "description": "Button size=\"icon\" — o mesmo controle que o ThemeControls usa para idioma, paleta e modo."
+      },
       "button": {
         "title": "Button",
         "description": "Ações primárias com variantes de hierarquia e tamanhos de densidade."
@@ -79,7 +103,22 @@
       "menuItem3": "Arquivar",
       "pageTitle": "Tarefas",
       "pageDescription": "Chrome canônico da página: título, descrição opcional, depois lista ou vazio.",
-      "empty": "Nenhum item ainda. Crie o primeiro para começar."
+      "empty": "Nenhum item ainda. Crie o primeiro para começar.",
+      "brandName": "App Base",
+      "brandSubtitle": "Admin da plataforma",
+      "navHome": "Início",
+      "navTasks": "Tarefas",
+      "navSettings": "Configurações",
+      "navFoundations": "Fundações",
+      "navTour": "Tour",
+      "navUi": "UI",
+      "headerActions": "Entrar",
+      "userName": "Ada Lovelace",
+      "userEmail": "ada@example.com",
+      "userInitials": "AL",
+      "language": "Idioma",
+      "theme": "Tema",
+      "mode": "Modo"
     }
   },
   "hero": {

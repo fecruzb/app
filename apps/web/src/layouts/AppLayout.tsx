@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { AgentFab } from "@/domains/tenant/components/agent-fab";
-import { Avatar, AvatarFallback } from "@app/ui/avatar";
+import { Brand } from "@app/ui/brand";
 import { Button } from "@app/ui/button";
 import {
   DropdownMenu,
@@ -30,14 +30,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@app/ui/dropdown-menu";
+import { NavItem } from "@app/ui/nav-item";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
   useDefaultLayout,
 } from "@app/ui/resizable";
+import { Sidebar, SidebarFooter, SidebarHeader, SidebarNav } from "@app/ui/sidebar";
+import { UserMenuButton } from "@app/ui/user-menu-button";
 import { showApiError } from "@/lib/api";
-import { cn } from "@app/ui/lib/utils";
 import { initials } from "@/lib/utils";
 import { useAppConfig } from "@/app/config";
 import { ThemeControls } from "@/theme/theme-controls";
@@ -109,17 +111,11 @@ function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex w-full items-center gap-2 rounded-md p-2 text-left text-sm hover:bg-accent">
-          <Avatar>
-            <AvatarFallback className="bg-primary/10 text-primary">
-              {initials(me.user.name)}
-            </AvatarFallback>
-          </Avatar>
-          <span className="min-w-0 flex-1">
-            <span className="block truncate font-medium">{me.user.name}</span>
-            <span className="block truncate text-xs text-muted-foreground">{me.user.email}</span>
-          </span>
-        </button>
+        <UserMenuButton
+          name={me.user.name}
+          email={me.user.email}
+          initials={initials(me.user.name)}
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="center" side="top">
         <DropdownMenuItem onSelect={() => navigate(`/app/${tenant.slug}/account`)}>
@@ -191,43 +187,29 @@ function AppSidebar({
   const { t } = useTranslation();
 
   return (
-    <aside className="flex shrink-0 flex-col gap-4 border-b p-4 md:h-full md:min-h-0 md:border-b-0 md:py-8">
-      <div className="px-2">
-        <Link to="/" className="flex items-center gap-2 font-semibold">
-          <BoxIcon className="size-5 shrink-0 text-primary" />
-          <span className="truncate">{t("brand")}</span>
+    <Sidebar>
+      <SidebarHeader>
+        <Link to="/">
+          <Brand icon={<BoxIcon className="size-5 shrink-0 text-primary" />}>{t("brand")}</Brand>
         </Link>
-      </div>
+      </SidebarHeader>
       <TenantSwitcher />
-      <nav className="flex gap-1 overflow-x-auto md:min-h-0 md:flex-1 md:flex-col md:overflow-y-auto">
+      <SidebarNav>
         {items.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.end}
-            className={({ isActive }) =>
-              cn(
-                "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
-              )
-            }
-          >
+          <NavLink key={item.to} to={item.to} end={item.end}>
             {({ isActive }) => (
-              <>
-                <item.icon className={cn("size-4", isActive && "text-primary")} />
+              <NavItem variant="sidebar" active={isActive} icon={<item.icon />}>
                 {item.label}
-              </>
+              </NavItem>
             )}
           </NavLink>
         ))}
-      </nav>
-      <div className="mt-auto flex shrink-0 flex-col gap-2">
+      </SidebarNav>
+      <SidebarFooter>
         <ThemeControls className="w-full px-1" menuSide="top" menuAlign="bar" />
         <UserMenu />
-      </div>
-    </aside>
+      </SidebarFooter>
+    </Sidebar>
   );
 }
 

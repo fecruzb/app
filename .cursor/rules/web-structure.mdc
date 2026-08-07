@@ -35,11 +35,12 @@ Mirror the API: features live in `domains/<domain>/`, everything else is shared 
 ## Shared UI package (`@app/ui` → `packages/ui`)
 
 Framework-agnostic, tenant-agnostic base UI shared across web apps. Import per component via subpath:
-`import { Button } from "@app/ui/button"`.
+`import { Button } from "@app/ui/button"` (flat public paths; source is grouped under `src/primitives|shell|composites`).
 
-- Primitives (shadcn — don't hand-rewrite): `avatar`, `badge`, `button`, `card`, `dialog`,
+- Primitives (`src/primitives/`): `avatar`, `badge`, `button`, `card`, `dialog`,
   `dropdown-menu`, `input`, `label`, `resizable`, `textarea`
-- Generic composites: `confirm-dialog` (`ConfirmProvider`/`useConfirm`), `empty-state`,
+- Shell (`src/shell/`): `brand`, `nav-item`, `site-header`, `sidebar`, `user-menu-button`
+- Composites (`src/composites/`): `confirm-dialog` (`ConfirmProvider`/`useConfirm`), `empty-state`,
   `page-header`, `page-loading`
 - `cn` lives here: `import { cn } from "@app/ui/lib/utils"`
 - Nothing in `@app/ui` may import from `@/` or reference a domain — keep it app-neutral. Anything

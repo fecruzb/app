@@ -1,4 +1,4 @@
-import { Card, CardContent } from "./card";
+import { Card, CardContent } from "../primitives/card";
 
 /** Placeholder card shown when a list has no items. */
 export function EmptyState({ children }: { children: React.ReactNode }) {

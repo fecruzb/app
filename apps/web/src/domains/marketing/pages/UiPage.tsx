@@ -1,7 +1,19 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { MoreHorizontalIcon } from "lucide-react";
+import {
+  BoxIcon,
+  CheckSquareIcon,
+  HomeIcon,
+  LanguagesIcon,
+  MoonIcon,
+  MoreHorizontalIcon,
+  PaletteIcon,
+  SettingsIcon,
+  SunIcon,
+} from "lucide-react";
 import { Avatar, AvatarFallback } from "@app/ui/avatar";
 import { Badge } from "@app/ui/badge";
+import { Brand } from "@app/ui/brand";
 import { Button } from "@app/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@app/ui/card";
 import {
@@ -24,9 +36,13 @@ import {
 import { EmptyState } from "@app/ui/empty-state";
 import { Input } from "@app/ui/input";
 import { Label } from "@app/ui/label";
+import { NavItem } from "@app/ui/nav-item";
 import { PageHeader } from "@app/ui/page-header";
 import { PageLoading } from "@app/ui/page-loading";
+import { Sidebar, SidebarFooter, SidebarHeader, SidebarNav } from "@app/ui/sidebar";
+import { SiteHeader } from "@app/ui/site-header";
 import { Textarea } from "@app/ui/textarea";
+import { UserMenuButton } from "@app/ui/user-menu-button";
 import { MarketingShell } from "../components/marketing-shell";
 import { UiDemoBlock } from "../components/ui/ui-demo-block";
 import { useReveal } from "../hooks/use-reveal";
@@ -34,6 +50,9 @@ import { useReveal } from "../hooks/use-reveal";
 export function UiPage() {
   const { t } = useTranslation();
   useReveal();
+  const [sidebarActive, setSidebarActive] = useState<"home" | "tasks" | "settings">("home");
+  const [headerActive, setHeaderActive] = useState<"foundations" | "tour" | "ui">("ui");
+  const [darkDemo, setDarkDemo] = useState(false);
 
   return (
     <MarketingShell>
@@ -48,6 +67,203 @@ export function UiPage() {
       </section>
 
       <div className="bg-muted/40">
+        <UiDemoBlock
+          title={t("landing.ui.sections.brand.title")}
+          description={t("landing.ui.sections.brand.description")}
+          importPath='import { Brand } from "@app/ui/brand"'
+        >
+          <div className="flex flex-wrap items-start gap-8">
+            <Brand icon={<BoxIcon className="size-5 text-primary" />}>
+              {t("landing.ui.demo.brandName")}
+            </Brand>
+            <Brand
+              icon={<BoxIcon className="size-5 shrink-0 text-primary" />}
+              subtitle={t("landing.ui.demo.brandSubtitle")}
+            >
+              {t("landing.ui.demo.brandName")}
+            </Brand>
+          </div>
+        </UiDemoBlock>
+
+        <UiDemoBlock
+          title={t("landing.ui.sections.navItem.title")}
+          description={t("landing.ui.sections.navItem.description")}
+          importPath='import { NavItem } from "@app/ui/nav-item"'
+        >
+          <div className="space-y-6">
+            <div className="flex flex-wrap gap-1">
+              {(
+                [
+                  ["foundations", t("landing.ui.demo.navFoundations")],
+                  ["tour", t("landing.ui.demo.navTour")],
+                  ["ui", t("landing.ui.demo.navUi")],
+                ] as const
+              ).map(([id, label]) => (
+                <button key={id} type="button" onClick={() => setHeaderActive(id)}>
+                  <NavItem variant="header" active={headerActive === id}>
+                    {label}
+                  </NavItem>
+                </button>
+              ))}
+            </div>
+            <div className="flex max-w-xs flex-col gap-1">
+              {(
+                [
+                  ["home", HomeIcon, t("landing.ui.demo.navHome")],
+                  ["tasks", CheckSquareIcon, t("landing.ui.demo.navTasks")],
+                  ["settings", SettingsIcon, t("landing.ui.demo.navSettings")],
+                ] as const
+              ).map(([id, Icon, label]) => (
+                <button key={id} type="button" onClick={() => setSidebarActive(id)}>
+                  <NavItem
+                    variant="sidebar"
+                    active={sidebarActive === id}
+                    icon={<Icon />}
+                  >
+                    {label}
+                  </NavItem>
+                </button>
+              ))}
+            </div>
+          </div>
+        </UiDemoBlock>
+
+        <UiDemoBlock
+          title={t("landing.ui.sections.siteHeader.title")}
+          description={t("landing.ui.sections.siteHeader.description")}
+          importPath='import { SiteHeader } from "@app/ui/site-header"'
+        >
+          <div className="overflow-hidden rounded-xl border">
+            <SiteHeader
+              className="static"
+              brand={
+                <Brand icon={<BoxIcon className="size-5 text-primary" />}>
+                  {t("landing.ui.demo.brandName")}
+                </Brand>
+              }
+              nav={
+                <>
+                  <NavItem variant="header" active={false}>
+                    {t("landing.ui.demo.navFoundations")}
+                  </NavItem>
+                  <NavItem variant="header" active={false}>
+                    {t("landing.ui.demo.navTour")}
+                  </NavItem>
+                  <NavItem variant="header" active>
+                    {t("landing.ui.demo.navUi")}
+                  </NavItem>
+                </>
+              }
+              actions={
+                <>
+                  <Button variant="ghost" size="icon" aria-label={t("landing.ui.demo.language")}>
+                    <LanguagesIcon />
+                  </Button>
+                  <Button variant="ghost" size="icon" aria-label={t("landing.ui.demo.theme")}>
+                    <PaletteIcon />
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    {t("landing.ui.demo.headerActions")}
+                  </Button>
+                </>
+              }
+            />
+          </div>
+        </UiDemoBlock>
+
+        <UiDemoBlock
+          title={t("landing.ui.sections.sidebar.title")}
+          description={t("landing.ui.sections.sidebar.description")}
+          importPath='import { Sidebar, SidebarHeader, SidebarNav, SidebarFooter } from "@app/ui/sidebar"'
+        >
+          <div className="mx-auto max-w-xs overflow-hidden rounded-xl border bg-background md:border-0">
+            <Sidebar className="md:border-r">
+              <SidebarHeader>
+                <Brand icon={<BoxIcon className="size-5 shrink-0 text-primary" />}>
+                  {t("landing.ui.demo.brandName")}
+                </Brand>
+              </SidebarHeader>
+              <SidebarNav>
+                <NavItem variant="sidebar" active icon={<HomeIcon />}>
+                  {t("landing.ui.demo.navHome")}
+                </NavItem>
+                <NavItem variant="sidebar" icon={<CheckSquareIcon />}>
+                  {t("landing.ui.demo.navTasks")}
+                </NavItem>
+                <NavItem variant="sidebar" icon={<SettingsIcon />}>
+                  {t("landing.ui.demo.navSettings")}
+                </NavItem>
+              </SidebarNav>
+              <SidebarFooter>
+                <div className="flex justify-center gap-0.5 px-1">
+                  <Button variant="ghost" size="icon" aria-label={t("landing.ui.demo.language")}>
+                    <LanguagesIcon />
+                  </Button>
+                  <Button variant="ghost" size="icon" aria-label={t("landing.ui.demo.theme")}>
+                    <PaletteIcon />
+                  </Button>
+                  <Button variant="ghost" size="icon" aria-label={t("landing.ui.demo.mode")}>
+                    <MoonIcon />
+                  </Button>
+                </div>
+                <UserMenuButton
+                  name={t("landing.ui.demo.userName")}
+                  email={t("landing.ui.demo.userEmail")}
+                  initials={t("landing.ui.demo.userInitials")}
+                />
+              </SidebarFooter>
+            </Sidebar>
+          </div>
+        </UiDemoBlock>
+
+        <UiDemoBlock
+          title={t("landing.ui.sections.userMenu.title")}
+          description={t("landing.ui.sections.userMenu.description")}
+          importPath='import { UserMenuButton } from "@app/ui/user-menu-button"'
+        >
+          <div className="max-w-xs">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <UserMenuButton
+                  name={t("landing.ui.demo.userName")}
+                  email={t("landing.ui.demo.userEmail")}
+                  initials={t("landing.ui.demo.userInitials")}
+                />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="start">
+                <DropdownMenuLabel>{t("landing.ui.demo.menuLabel")}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>{t("landing.ui.demo.menuItem1")}</DropdownMenuItem>
+                <DropdownMenuItem>{t("landing.ui.demo.menuItem2")}</DropdownMenuItem>
+                <DropdownMenuItem>{t("landing.ui.demo.menuItem3")}</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </UiDemoBlock>
+
+        <UiDemoBlock
+          title={t("landing.ui.sections.iconButton.title")}
+          description={t("landing.ui.sections.iconButton.description")}
+          importPath='import { Button } from "@app/ui/button"'
+        >
+          <div className="flex flex-wrap gap-1">
+            <Button variant="ghost" size="icon" aria-label={t("landing.ui.demo.language")}>
+              <LanguagesIcon />
+            </Button>
+            <Button variant="ghost" size="icon" aria-label={t("landing.ui.demo.theme")}>
+              <PaletteIcon />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={t("landing.ui.demo.mode")}
+              onClick={() => setDarkDemo((v) => !v)}
+            >
+              {darkDemo ? <SunIcon /> : <MoonIcon />}
+            </Button>
+          </div>
+        </UiDemoBlock>
+
         <UiDemoBlock
           title={t("landing.ui.sections.button.title")}
           description={t("landing.ui.sections.button.description")}

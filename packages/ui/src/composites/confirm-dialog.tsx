@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useRef, useState } from "react";
-import { Button } from "./button";
+import { Button } from "../primitives/button";
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "./dialog";
+} from "../primitives/dialog";
 
 type ConfirmOptions = {
   title: string;
