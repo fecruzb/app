@@ -8,3 +8,8 @@ export type AppConfig = {
 export type ApiErrorBody = {
   error: string;
 };
+
+/** Generic success body for mutating routes that return no entity. */
+export type OkDto = {
+  ok: true;
+};

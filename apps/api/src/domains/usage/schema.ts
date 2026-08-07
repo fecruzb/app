@@ -38,7 +38,11 @@ export const aiUsageEvents = pgTable(
     costMicros: integer("cost_micros").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [index("ai_usage_events_user_created_idx").on(t.userId, t.createdAt)],
+  (t) => [
+    index("ai_usage_events_user_created_idx").on(t.userId, t.createdAt),
+    /** Billing aggregates filter by tenant + time window. */
+    index("ai_usage_events_tenant_created_idx").on(t.tenantId, t.createdAt),
+  ],
 );
 
 /** Selected usage event row. */

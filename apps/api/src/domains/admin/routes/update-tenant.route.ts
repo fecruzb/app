@@ -37,8 +37,7 @@ export async function updateTenant(c: AppContext) {
   const tenant = await adminRepository.updateTenant(tenantId, patch);
   if (!tenant) throw new HttpError(404, "Tenant not found");
 
-  const rows = await adminRepository.listTenants();
-  const row = rows.find((r) => r.tenant.id === tenantId);
+  const row = await adminRepository.findTenantWithMembers(tenantId);
   if (!row) throw new HttpError(404, "Tenant not found");
 
   // -- Output ----------------------------------------------------------------

@@ -7,6 +7,7 @@ import {
   verifyEmailSchema,
   type AuthSessionDto,
   type MeDto,
+  type OkDto,
 } from "@app/shared";
 import { api } from "@/lib/api";
 import { clearSessionToken, setSessionToken } from "@/lib/session-token";
@@ -31,10 +32,10 @@ export const authApi = {
     }
   },
   forgotPassword: (body: z.infer<typeof forgotPasswordSchema>) =>
-    api.post("/auth/forgot-password", body),
+    api.post<OkDto>("/auth/forgot-password", body),
   resetPassword: async (body: z.infer<typeof resetPasswordSchema>) =>
     captureShellSession(await api.post<AuthSessionDto>("/auth/reset-password", body)),
   verifyEmail: (body: z.infer<typeof verifyEmailSchema>) =>
-    api.post<{ ok: boolean }>("/auth/verify-email", body),
-  resendVerification: () => api.post("/auth/resend-verification"),
+    api.post<OkDto>("/auth/verify-email", body),
+  resendVerification: () => api.post<OkDto>("/auth/resend-verification"),
 };

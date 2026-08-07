@@ -41,8 +41,7 @@ export async function updateUser(c: AppContext) {
   const updated = await adminRepository.setPlatformAdmin(userId, data.isPlatformAdmin);
   if (!updated) throw new HttpError(404, "User not found");
 
-  const rows = await adminRepository.listUsers();
-  const row = rows.find((r) => r.user.id === userId);
+  const row = await adminRepository.findUserWithTenantCount(userId);
   if (!row) throw new HttpError(404, "User not found");
 
   // -- Output ----------------------------------------------------------------

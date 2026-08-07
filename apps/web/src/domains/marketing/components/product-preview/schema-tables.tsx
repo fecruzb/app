@@ -215,19 +215,21 @@ export function UsageTables() {
   );
 }
 
-/** Media metadata — bytes live in object storage. */
-export function ImageTables() {
+/** Article + cover metadata — cover bytes live in object storage. */
+export function ArticleTables() {
   return (
-    <SchemaWindow label="domains/images/schema.ts">
+    <SchemaWindow label="domains/article/schema.ts">
       <TableCard
-        name="images"
+        name="articles"
         columns={[
           { name: "id", type: "uuid", badge: "PK" },
           { name: "tenant_id", type: "uuid", badge: "FK" },
           { name: "author_id", type: "uuid", badge: "FK" },
-          { name: "path", type: "text" },
-          { name: "content_type", type: "text" },
-          { name: "size_bytes", type: "int" },
+          { name: "title", type: "text" },
+          { name: "body", type: "text" },
+          { name: "cover_path", type: "text" },
+          { name: "cover_content_type", type: "text" },
+          { name: "cover_size_bytes", type: "int" },
         ]}
       />
     </SchemaWindow>

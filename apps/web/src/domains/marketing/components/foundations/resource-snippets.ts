@@ -145,7 +145,7 @@ export const taskTools: AgentTool[] = [
 ];
 
 // agent/registry.ts
-export const allTools = [...tenantTools, ...taskTools, ...imageTools, ...agentTools];`;
+export const allTools = [...tenantTools, ...taskTools, ...articleTools, ...agentTools];`;
 
 export const webApiFile = `// apps/web/src/domains/task/api.ts — the only network boundary
 import type { z } from "zod";
@@ -178,7 +178,7 @@ export const tenantRoutes = (
         <Route index element={<DashboardPage />} />
         <Route path="settings" element={<TenantSettingsPage />} />
         {taskRoutes}      {/* ← drop a new domain's routes here */}
-        {imageRoutes}
+        {articleRoutes}
         {billingRoutes}
         {accountRoutes}
       </Route>
@@ -276,4 +276,3 @@ packages/shared/src/task.ts
 //   tenant/context/   TenantProvider + useTenant  ← pages read tenant here
 //
 // Base UI (@app/ui) is tenant-agnostic. Domains compose it; they don't reinvent it.`;
-

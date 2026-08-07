@@ -87,6 +87,38 @@
           }
         ]
       }
+    },
+    {
+      "files": ["packages/ui/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/**", "@app/web", "@app/api", "@app/shared", "apps/**"],
+                "message": "@app/ui stays app-neutral — no @/ aliases, apps, or product packages."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["packages/shared/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/**", "@app/web", "@app/api", "@app/ui", "apps/**"],
+                "message": "@app/shared is contracts only — no apps, UI, or @/ aliases."
+              }
+            ]
+          }
+        ]
+      }
     }
   ]
 }

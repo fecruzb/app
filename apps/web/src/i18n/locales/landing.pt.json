@@ -5,6 +5,7 @@
   "tryLiveDemo": "Experimentar o demo ao vivo",
   "nav": {
     "foundations": "Fundações",
+    "articles": "Artigos",
     "tour": "Tour",
     "ui": "UI"
   },
@@ -12,6 +13,15 @@
     "exploreFoundations": "Explorar fundações",
     "exploreTour": "Explorar o tour",
     "exploreUi": "Ver componentes"
+  },
+  "articles": {
+    "eyebrow": "Da comunidade",
+    "title": "Artigos",
+    "description": "Histórias publicadas pelos workspaces deste app — conteúdo privado do tenant, na vitrine pública. Compartilhe o link; crawlers veem título, descrição e capa.",
+    "empty": "Nenhum artigo publicado ainda. Entre, escreva um e clique em Publicar.",
+    "noCover": "Sem capa",
+    "back": "Todos os artigos",
+    "notFound": "Este artigo não existe ou não está mais público."
   },
   "ui": {
     "eyebrow": "Design system",
@@ -246,7 +256,7 @@
     "title": "Postgres, modelado em TypeScript puro",
     "bodyBefore": "A persistência é Postgres com Drizzle como ORM — sem linguagem de schema separada, sem console de ORM. Uma tabela é um ",
     "bodyCode": "pgTable",
-    "bodyAfter": " no domínio que a possui. Identidade, tenancy, catálogo de planos, usage de IA, images, convites de plataforma — depois tasks como o recurso de exemplo que você copia."
+    "bodyAfter": " no domínio que a possui. Identidade, tenancy, catálogo de planos, usage de IA, articles, convites de plataforma — depois tasks como o recurso de exemplo que você copia."
   },
   "resourceIntro": {
     "eyebrow": "Recurso de exemplo",
@@ -441,7 +451,7 @@
     "webRoutes": {
       "eyebrow": "As rotas do domínio",
       "title": "Seja dono do Route num arquivo",
-      "body": "Cada domínio exporta seu <Route> de routes.tsx — uma linha para tasks, o mesmo padrão para images, billing, account. O domínio decide o path e a page; ele não conhece o shell.",
+      "body": "Cada domínio exporta seu <Route> de routes.tsx — uma linha para tasks, o mesmo padrão para articles, billing, account. O domínio decide o path e a page; ele não conhece o shell.",
       "points": [
         "export const taskRoutes = <Route path=\"tasks\" element={<TasksPage />} />",
         "O mesmo papel de arquivo em todo domínio de feature",
@@ -453,7 +463,7 @@
       "title": "Compose sob o tenant",
       "body": "tenant/routes.tsx monta cada domínio sob :tenantSlug e AppLayout. Encaixe as rotas de um domínio novo nessa composição, adicione um item de nav, pronto. RequireAuth e TenantProvider ficam no shell — as pages não rechecam a sessão.",
       "points": [
-        "Compose {taskRoutes}, {imageRoutes}, … sob :tenantSlug",
+        "Compose {taskRoutes}, {articleRoutes}, … sob :tenantSlug",
         "Adicionar uma feature = exportar routes + compor + link na nav",
         "RequireAuth e TenantProvider envolvem o shell, não cada page"
       ]
@@ -573,14 +583,14 @@
         "Sem rotas HTTP aqui — o billing service lê o repository"
       ]
     },
-    "images": {
-      "eyebrow": "Mídia",
-      "title": "Metadados de imagem, bytes em outro lugar",
-      "body": "A tabela images guarda path, content type e size de uploads e arte gerada pelo agente, com escopo de tenant. O arquivo em si mora em object storage (disco local no dev, R2 em produção) — a row é só a proveniência.",
+    "articles": {
+      "eyebrow": "Conteúdo",
+      "title": "Artigos com Markdown e capa",
+      "body": "A tabela articles guarda título, corpo Markdown e metadados opcionais de capa, com escopo de tenant. Os bytes da capa moram em object storage (disco local no dev, R2 em produção) — a row é proveniência mais o texto.",
       "points": [
         "tenant_id com cascade; author_id set null no delete do user",
-        "path é a chave de storage, ex. <tenantId>/uploads/<uuid>.webp",
-        "Mesmo formato CRUD de tasks — copie ao adicionar outro tipo de mídia"
+        "cover_path é a chave de storage, ex. <tenantId>/uploads/<uuid>.webp",
+        "CRUD mais completo que tasks — lista/detalhe, upload e capas geradas pelo agente"
       ]
     },
     "platform": {

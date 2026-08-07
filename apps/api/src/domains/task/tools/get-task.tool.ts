@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { defineTool } from "@/agent/tool";
+import { toTaskToolSummary } from "../dto";
 import { taskRepository } from "../repository";
 
 /**
@@ -24,6 +25,6 @@ export const getTaskTool = defineTool({
     if (!row) throw new Error("Task not found — check the id with list_tasks");
 
     // -- Output ----------------------------------------------------------------
-    return { id: row.task.id, title: row.task.title, completed: row.task.completed };
+    return toTaskToolSummary(row);
   },
 });

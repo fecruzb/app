@@ -10,7 +10,7 @@ alwaysApply: false
 - Return JSON-serializable data; throw `Error` for expected failures — never format a protocol response
 - `summarize` only on write tools (becomes a chip in the chat UI); reads don't have it
 - **Domain tools** (`domains/*/tools/`) NEVER import MCP or OpenAI — lint bans the `openai` / MCP SDK packages; domains only know `@/agent/tool`
-- **Agent-owned tools** live in `agent/tools/` (e.g. `generate-image`) and may call `@/integrations/openai`. MCP SDK lives under `agent/mcp-server.ts`; the HTTP handler is `agent/routes/mcp.route.ts`. OpenAI client + loop live in `integrations/openai.ts`
+- **Agent-owned tools** live in `agent/tools/` (e.g. `generate-article-cover`) and may call `@/integrations/openai`. MCP SDK lives under `agent/mcp-server.ts`; the HTTP handler is `agent/routes/mcp.route.ts`. OpenAI client + loop live in `integrations/openai.ts`
 - Same JSDoc habit as routes: title / blank / `` `snake_case_name` `` / blank / description / `@returns` (and `@param` only if useful). Official tone — no "template/example"
 - `execute` body uses three section banners (same dash length as routes): `// -- Input ---`, `// -- Processing ---`, `// -- Output ---`. Input holds ctx/args locals; Processing holds repository/service work and throws; Output holds the return. Always include all three
 - Canonical domain example: `apps/api/src/domains/task/tools/create-task.tool.ts`

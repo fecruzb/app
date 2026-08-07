@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { TenantRole } from "./tenant";
 
 /** Product plan identifiers — catalog lives in the API; this is the contract. */
 export const planIds = ["free", "starter", "pro", "usage"] as const;
@@ -20,8 +21,6 @@ export type PlanDto = {
   aiPerSeatMicros: number;
   aiBilling: AiBillingMode;
 };
-
-import type { TenantRole } from "./tenant";
 
 /** One member's AI spend inside the tenant for the current period. */
 export type BillingMemberUsageDto = {

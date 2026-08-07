@@ -7,7 +7,7 @@ description: Release the App Base desktop apps (Tauri, macOS/Windows/Linux). The
 
 The desktop app (`apps/desktop`) is a thin Tauri shell around `apps/web`. A
 release ships per-OS installers **and** signed auto-update artifacts to the
-**same** Cloudflare R2 bucket as images (`CLOUDFLARE_MEDIA_BUCKET`), under the
+**same** Cloudflare R2 bucket as media (`CLOUDFLARE_MEDIA_BUCKET`), under the
 `desktop-releases/` prefix. Installed apps poll
 `desktop-releases/latest/latest.json` via `tauri-plugin-updater`.
 

@@ -5,13 +5,13 @@
  * call OpenAI directly (`agent/tools`). When creating a new domain, add its
  * array here.
  */
-import { imageTools } from "@/domains/images/tools";
+import { articleTools } from "@/domains/article/tools";
 import { taskTools } from "@/domains/task/tools";
 import { tenantTools } from "@/domains/tenant/tools";
 import { agentTools } from "./tools";
 import type { AgentTool } from "./tool";
 
-export const allTools: AgentTool[] = [...tenantTools, ...taskTools, ...imageTools, ...agentTools];
+export const allTools: AgentTool[] = [...tenantTools, ...taskTools, ...articleTools, ...agentTools];
 
 const byName = new Map(allTools.map((tool) => [tool.name, tool]));
 

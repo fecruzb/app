@@ -1,0 +1,1 @@
+CREATE INDEX "ai_usage_events_tenant_created_idx" ON "ai_usage_events" USING btree ("tenant_id","created_at");

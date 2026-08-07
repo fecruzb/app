@@ -8,8 +8,8 @@ import {
   CheckSquareIcon,
   ChevronsUpDownIcon,
   CreditCardIcon,
+  FileTextIcon,
   HomeIcon,
-  ImageIcon,
   LogOutIcon,
   MailWarningIcon,
   PlugIcon,
@@ -19,7 +19,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
-import { AgentFab } from "@/domains/tenant/components/agent-fab";
+import { AgentFab } from "@/domains/agent/components/agent-fab";
 import { Brand } from "@app/ui/brand";
 import { Button } from "@app/ui/button";
 import {
@@ -200,7 +200,12 @@ function Shell() {
   const items = [
     { to: `/app/${tenant.slug}`, end: true, icon: HomeIcon, label: t("nav.home") },
     { to: `/app/${tenant.slug}/tasks`, end: false, icon: CheckSquareIcon, label: t("nav.tasks") },
-    { to: `/app/${tenant.slug}/images`, end: false, icon: ImageIcon, label: t("nav.images") },
+    {
+      to: `/app/${tenant.slug}/articles`,
+      end: false,
+      icon: FileTextIcon,
+      label: t("nav.articles"),
+    },
     {
       to: `/app/${tenant.slug}/settings`,
       end: false,

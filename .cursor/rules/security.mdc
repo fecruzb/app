@@ -29,7 +29,7 @@ alwaysApply: true
 
 ## Input and errors
 
-- JSON bodies go through `parseBody(c, schema)` (Zod, from `@app/shared`); UUID params through `uuidParam`. Multipart / binary uploads (images, audio transcription) validate fields in-route instead
+- JSON bodies go through `parseBody(c, schema)` (Zod, from `@app/shared`); UUID params through `uuidParam`. Multipart / binary uploads (article covers, audio transcription) validate fields in-route instead
 - Client-facing errors stay generic: throw `HttpError(status, message)` with safe messages; unexpected errors already return a plain 500 via `errorHandler` — never surface stack traces, SQL or internal paths
 
 ## Git hygiene

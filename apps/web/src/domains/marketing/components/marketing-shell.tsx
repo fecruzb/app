@@ -25,6 +25,7 @@ export function MarketingShell({ children }: { children: ReactNode }) {
       nav={
         <>
           <HeaderNavLink to="/foundations">{t("landing.nav.foundations")}</HeaderNavLink>
+          <HeaderNavLink to="/articles">{t("landing.nav.articles")}</HeaderNavLink>
           <HeaderNavLink to="/tour">{t("landing.nav.tour")}</HeaderNavLink>
           <HeaderNavLink to="/ui">{t("landing.nav.ui")}</HeaderNavLink>
         </>

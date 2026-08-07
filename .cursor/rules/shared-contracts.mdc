@@ -7,19 +7,19 @@ alwaysApply: false
 # Shared contracts (`@app/shared` → `packages/shared`)
 
 One file per domain, re-exported from `src/index.ts`. Current modules: `app`, `auth`, `account`, `tenant`,
-`task`, `images`, `billing`, `admin`, `agent`. Both API and web import from `@app/shared` —
+`task`, `article`, `billing`, `admin`, `agent`. Both API and web import from `@app/shared` —
 this package is the single source of truth for request/response shapes. Change a shape here and
 whichever side you forgot stops compiling; that's the point.
 
-Resource domains (task, images, …) get their own `src/<domain>.ts`. Platform/support domains may
+Resource domains (task, article, …) get their own `src/<domain>.ts`. Platform/support domains may
 share a file when shapes are tightly coupled (e.g. auth session DTOs), but prefer a dedicated file
 once a domain has its own API surface (`account.ts` for profile / password / API keys). `usage` is
 API-only ledger code today — spend for the UI is on `TenantBillingDto` in `billing.ts`.
+`OkDto` / `ApiErrorBody` live in `app.ts`; invite accept returns `AcceptInviteResultDto` in `tenant.ts`.
 
 - Input validation: a descriptive Zod schema with real constraints (`trim`, `min`, `max`). Prefer
-  `<thing>InputSchema` for resource create/update bodies (e.g. `taskInputSchema`); auth/account
-  flows use intent names (`loginSchema`, `createApiKeySchema`). Multipart-only domains may ship
-  DTOs without an input schema (images)
+  `<thing>InputSchema` for resource create/update bodies (e.g. `taskInputSchema`, `articleInputSchema`); auth/account
+  flows use intent names (`loginSchema`, `createApiKeySchema`). Multipart cover uploads validate in-route (article)
 - Output: a plain `type XxxDto` with JSON-safe fields — dates are ISO **strings**, never `Date`; nullable fields are explicit (`string | null`)
 - Zod is the only runtime dependency. No imports from apps, no DB or HTTP knowledge here
 - New domain = new `src/<domain>.ts` + `export * from "./<domain>"` in `src/index.ts`

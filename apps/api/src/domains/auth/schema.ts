@@ -60,6 +60,8 @@ export const actionTokens = pgTable("action_tokens", {
  *
  * Programmatic access (e.g. MCP). Each key belongs to a user and is scoped to
  * one tenant. Only the hash is stored; `prefix` is the visible head in the UI.
+ * HTTP management is under `domains/account` — this table stays in auth because
+ * keys are credentials (same home as sessions).
  */
 export const apiKeys = pgTable("api_keys", {
   id: uuid("id").primaryKey().defaultRandom(),

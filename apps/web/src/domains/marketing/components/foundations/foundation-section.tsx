@@ -42,7 +42,7 @@ export interface MediaStore {
   remove(key: string): Promise<void>;
 }
 
-// domains/images/media.ts — the backend is picked once, at boot
+// domains/article/media.ts — the backend is picked once, at boot
 export const usingR2 = isR2Configured();
 export const mediaStore: MediaStore = usingR2
   ? r2Store    // integrations/r2.ts — Cloudflare R2, public URL

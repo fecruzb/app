@@ -1,5 +1,5 @@
-// Backend-neutral storage contract. Both the R2 integration and the images
-// domain depend on it, and neither may depend on the other.
+// Backend-neutral storage contract. Both the R2 integration and the article
+// domain's local store implement this so writeMedia stays backend-agnostic.
 
 /** Key = file path without the leading slash ("<tenantId>/uploads/x.webp"). */
 export interface MediaStore {

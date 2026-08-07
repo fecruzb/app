@@ -122,3 +122,39 @@
     }
   }
 }
+
+/*
+ * Milkdown Crepe — article body keeps the page column width.
+ * Block handles (+ / drag) hang into the left margin; they must not shrink content.
+ */
+.article-editor .milkdown {
+  background: transparent;
+  color: var(--foreground);
+}
+
+.article-editor .milkdown .ProseMirror {
+  /* Crepe ships padding: 60px 120px — kill it or body won't match the title. */
+  padding-block: 0 !important;
+  padding-inline: 0 !important;
+}
+
+/* Expand milkdown left of the column; pad prose so text still lines up with the title. */
+.article-editor--editable .milkdown {
+  margin-inline-start: -4.5rem;
+  width: calc(100% + 4.5rem);
+}
+
+.article-editor--editable .milkdown .ProseMirror {
+  padding-inline-start: 4.5rem !important;
+}
+
+@media (max-width: 767px) {
+  .article-editor--editable .milkdown {
+    margin-inline-start: -2.5rem;
+    width: calc(100% + 2.5rem);
+  }
+
+  .article-editor--editable .milkdown .ProseMirror {
+    padding-inline-start: 2.5rem !important;
+  }
+}

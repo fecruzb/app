@@ -5,6 +5,7 @@
   "tryLiveDemo": "Try the live demo",
   "nav": {
     "foundations": "Foundations",
+    "articles": "Articles",
     "tour": "Tour",
     "ui": "UI"
   },
@@ -12,6 +13,15 @@
     "exploreFoundations": "Explore foundations",
     "exploreTour": "Explore the tour",
     "exploreUi": "Browse components"
+  },
+  "articles": {
+    "eyebrow": "From the community",
+    "title": "Articles",
+    "description": "Stories published by workspaces on this app — private tenant content, surfaced on the public site. Share a link; crawlers see title, description, and cover.",
+    "empty": "No published articles yet. Sign in, write one, and hit Publish.",
+    "noCover": "No cover",
+    "back": "All articles",
+    "notFound": "This article is missing or no longer public."
   },
   "ui": {
     "eyebrow": "Design system",
@@ -246,7 +256,7 @@
     "title": "Postgres, modeled in plain TypeScript",
     "bodyBefore": "Persistence is Postgres with Drizzle as the ORM — no separate schema language, no ORM console. A table is a ",
     "bodyCode": "pgTable",
-    "bodyAfter": " in the domain that owns it. Identity, tenancy, the plan catalog, AI usage, images, platform invites — then tasks as the example resource you copy."
+    "bodyAfter": " in the domain that owns it. Identity, tenancy, the plan catalog, AI usage, articles, platform invites — then tasks as the example resource you copy."
   },
   "resourceIntro": {
     "eyebrow": "Example resource",
@@ -441,7 +451,7 @@
     "webRoutes": {
       "eyebrow": "The domain routes",
       "title": "Own your Route in one file",
-      "body": "Each domain exports its <Route> from routes.tsx — one line for tasks, same pattern for images, billing, account. The domain decides the path and the page; it doesn't know about the shell.",
+      "body": "Each domain exports its <Route> from routes.tsx — one line for tasks, same pattern for articles, billing, account. The domain decides the path and the page; it doesn't know about the shell.",
       "points": [
         "export const taskRoutes = <Route path=\"tasks\" element={<TasksPage />} />",
         "Same file role on every feature domain",
@@ -453,7 +463,7 @@
       "title": "Compose under the tenant",
       "body": "tenant/routes.tsx mounts every domain under :tenantSlug and AppLayout. Drop a new domain's routes into that composition, add a nav item, done. RequireAuth and TenantProvider sit on the shell — pages don't re-check the session.",
       "points": [
-        "Compose {taskRoutes}, {imageRoutes}, … under :tenantSlug",
+        "Compose {taskRoutes}, {articleRoutes}, … under :tenantSlug",
         "Adding a feature = export routes + compose + nav link",
         "RequireAuth and TenantProvider wrap the shell, not each page"
       ]
@@ -573,14 +583,14 @@
         "No HTTP routes here — billing service reads the repository"
       ]
     },
-    "images": {
-      "eyebrow": "Media",
-      "title": "Image metadata, bytes elsewhere",
-      "body": "The images table stores path, content type and size for tenant-scoped uploads and agent-generated art. The file itself lives in object storage (local disk in dev, R2 in production) — the row is just provenance.",
+    "articles": {
+      "eyebrow": "Content",
+      "title": "Articles with Markdown and a cover",
+      "body": "The articles table stores title, Markdown body, and optional cover metadata for tenant-scoped posts. Cover bytes live in object storage (local disk in dev, R2 in production) — the row is provenance plus the text.",
       "points": [
         "tenant_id cascade; author_id set null on user delete",
-        "path is the storage key, e.g. <tenantId>/uploads/<uuid>.webp",
-        "Same CRUD shape as tasks — copy when you add another media type"
+        "cover_path is the storage key, e.g. <tenantId>/uploads/<uuid>.webp",
+        "Richer CRUD than tasks — list/detail, upload, and agent-generated covers"
       ]
     },
     "platform": {

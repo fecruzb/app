@@ -10,6 +10,7 @@ import type { AppEnv } from "@/context";
 import { requireAuth } from "@/domains/auth/middleware";
 import { requireTenant } from "@/domains/tenant/middleware";
 import { chat } from "./chat.route";
+import { generateArticleCover } from "./generate-article-cover.route";
 import { mcp } from "./mcp.route";
 import { transcribe } from "./transcribe.route";
 
@@ -21,7 +22,8 @@ import { transcribe } from "./transcribe.route";
 export const agentRoutes = new Hono<AppEnv>()
   .use("*", requireAuth, requireTenant)
   .post("/", chat)
-  .post("/transcribe", transcribe);
+  .post("/transcribe", transcribe)
+  .post("/articles/:articleId/cover", generateArticleCover);
 
 /**
  * MCP route group

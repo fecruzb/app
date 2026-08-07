@@ -10,14 +10,14 @@ import { secureHeaders } from "hono/secure-headers";
 import { env } from "@/lib/env";
 import { errorHandler } from "@/lib/errors";
 import { hasOpenAiKey } from "@/integrations/openai";
-import type { AppConfig } from "@app/shared";
+import type { AppConfig, OkDto } from "@app/shared";
 import { agentRoutes, mcpRoutes } from "@/agent/routes";
 import { accountRoutes } from "@/domains/account/routes";
 import { adminRoutes, joinRoutes } from "@/domains/admin/routes";
 import { authRoutes } from "@/domains/auth/routes";
 import { billingRoutes } from "@/domains/billing/routes";
-import { imageRoutes } from "@/domains/images/routes";
-import { MEDIA_DIR, mediaPublicUrl, mediaStore, usingR2 } from "@/domains/images/media";
+import { articleRoutes, publicArticleRoutes } from "@/domains/article/routes";
+import { MEDIA_DIR, mediaPublicUrl, mediaStore, usingR2 } from "@/domains/article/media";
 import { taskRoutes } from "@/domains/task/routes";
 import { inviteRoutes, tenantRoutes } from "@/domains/tenant/routes";
 
@@ -39,7 +39,7 @@ if (env.corsOrigins.size > 0) {
 }
 
 // Unauthenticated utilities: health check and the public config the frontend reads on boot.
-app.get("/api/health", (c) => c.json({ ok: true }));
+app.get("/api/health", (c) => c.json({ ok: true } satisfies OkDto));
 app.get("/api/config", (c) =>
   c.json({
     selfSignupEnabled: env.selfSignupEnabled,
@@ -54,7 +54,8 @@ app.route("/api/admin", adminRoutes);
 app.route("/api/tenants", tenantRoutes);
 app.route("/api/tenants/:tenantId/billing", billingRoutes);
 app.route("/api/tenants/:tenantId/tasks", taskRoutes);
-app.route("/api/tenants/:tenantId/images", imageRoutes);
+app.route("/api/tenants/:tenantId/articles", articleRoutes);
+app.route("/api/articles", publicArticleRoutes);
 app.route("/api/tenants/:tenantId/agent", agentRoutes);
 app.route("/api/invites", inviteRoutes);
 app.route("/api/join", joinRoutes);

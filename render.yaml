@@ -5,6 +5,7 @@ services:
     name: app
     runtime: node
     plan: starter
+    # SPA only — desktop/mobile Tauri shells are built in GitHub Actions, not here.
     buildCommand: npm ci --include=dev && npm run build
     startCommand: npm start
     preDeployCommand: npm run db:migrate

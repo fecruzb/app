@@ -10,7 +10,7 @@ export {
   TenantTables,
   PlansCatalog,
   UsageTables,
-  ImageTables,
+  ArticleTables,
   PlatformTables,
   TaskTable,
 } from "./schema-tables";

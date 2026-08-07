@@ -41,7 +41,7 @@
   "nav": {
     "home": "Home",
     "tasks": "Tasks",
-    "images": "Images",
+    "articles": "Articles",
     "billing": "Billing",
     "integrations": "Integrations",
     "settings": "Settings",
@@ -123,17 +123,54 @@
     "updateFailed": "Failed to update task",
     "deleteFailed": "Failed to delete task"
   },
-  "images": {
-    "title": "Images",
-    "description": "Upload and manage the tenant's images",
+  "articles": {
+    "title": "Articles",
+    "description": "Markdown articles with optional cover images",
     "total": " · {{count}} total",
-    "upload": "Upload image",
-    "uploading": "Uploading...",
-    "empty": "No images yet. Upload the first one!",
-    "deleteTitle": "Delete image",
-    "deleteDescription": "This can't be undone.",
-    "uploadFailed": "Failed to upload image",
-    "deleteFailed": "Failed to delete image"
+    "placeholder": "New article title...",
+    "add": "Add",
+    "search": "Search articles...",
+    "empty": "No articles yet. Add the first one!",
+    "columnTitle": "Title",
+    "columnAuthor": "Author",
+    "columnUpdated": "Updated",
+    "paginationPrevious": "Previous",
+    "paginationNext": "Next",
+    "paginationPage": "Page {{page}} of {{pages}}",
+    "back": "Back to articles",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Article saved",
+    "unsaved": "Unsaved changes",
+    "titlePlaceholder": "Article title",
+    "bodyPlaceholder": "Write the article…",
+    "cover": "Cover",
+    "noCover": "No cover yet — generate one or upload an image",
+    "generateCover": "Generate",
+    "generatingCover": "Generating…",
+    "generateCoverFailed": "Failed to generate cover",
+    "uploadCover": "Upload",
+    "replaceCover": "Replace",
+    "removeCover": "Remove",
+    "removeCoverTitle": "Remove cover",
+    "removeCoverDescription": "Remove the cover image from this article?",
+    "byAuthor": "By {{name}}",
+    "deleteTitle": "Delete article",
+    "deleteDescription": "Delete \"{{title}}\"? This can't be undone.",
+    "createFailed": "Failed to create article",
+    "saveFailed": "Failed to save article",
+    "deleteFailed": "Failed to delete article",
+    "coverFailed": "Failed to update cover",
+    "notFound": "Article not found",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "published": "Published on the public site",
+    "unpublished": "Removed from the public site",
+    "publishFailed": "Failed to update publish state",
+    "viewPublic": "View public page",
+    "columnStatus": "Status",
+    "statusPublished": "Published",
+    "statusDraft": "Draft"
   },
   "account": {
     "title": "My account",
@@ -171,7 +208,8 @@
     "copied": "Copied to clipboard",
     "copyFailed": "Couldn't copy — copy it manually",
     "used": "used {{date}}",
-    "neverUsed": "never used"
+    "neverUsed": "never used",
+    "noKeys": "No API keys yet."
   },
   "settings": {
     "title": "Settings",
@@ -202,7 +240,8 @@
     "revokeInviteFailed": "Failed to revoke invite",
     "revokeInviteTitle": "Revoke invite",
     "revokeInviteDescription": "Revoke the invite to {{email}}?",
-    "expires": "expires {{date}}"
+    "expires": "expires {{date}}",
+    "noInvites": "No pending invites."
   },
   "billing": {
     "title": "Plan & billing",
@@ -289,7 +328,7 @@
     "suggestions": [
       "who belongs to this tenant?",
       "add a task to prepare tomorrow's meeting",
-      "generate an image of a lighthouse at sunset"
+      "generate an article about a lighthouse at sunset"
     ],
     "thinking": "Thinking...",
     "transcribing": "Transcribing...",
@@ -379,7 +418,8 @@
       "seatFree": "No seat charge",
       "aiIncluded": "{{amount}} AI included per member / month",
       "aiPassthrough": "AI usage passed through (no hard cap)",
-      "pspHint": "Ready to wire to Stripe or any payment provider — checkout only needs to set the tenant's planId."
+      "pspHint": "Ready to wire to Stripe or any payment provider — checkout only needs to set the tenant's planId.",
+      "empty": "No plans configured."
     }
   },
   "join": {

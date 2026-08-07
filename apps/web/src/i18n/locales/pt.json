@@ -41,7 +41,7 @@
   "nav": {
     "home": "Início",
     "tasks": "Tarefas",
-    "images": "Imagens",
+    "articles": "Artigos",
     "billing": "Cobrança",
     "integrations": "Integrações",
     "settings": "Configurações",
@@ -123,17 +123,54 @@
     "updateFailed": "Falha ao atualizar tarefa",
     "deleteFailed": "Falha ao excluir tarefa"
   },
-  "images": {
-    "title": "Imagens",
-    "description": "Envie e gerencie as imagens do tenant",
+  "articles": {
+    "title": "Artigos",
+    "description": "Artigos em Markdown com capa opcional",
     "total": " · {{count}} no total",
-    "upload": "Enviar imagem",
-    "uploading": "Enviando...",
-    "empty": "Nenhuma imagem ainda. Envie a primeira!",
-    "deleteTitle": "Excluir imagem",
-    "deleteDescription": "Isso não pode ser desfeito.",
-    "uploadFailed": "Falha ao enviar imagem",
-    "deleteFailed": "Falha ao excluir imagem"
+    "placeholder": "Título do novo artigo...",
+    "add": "Adicionar",
+    "search": "Buscar artigos...",
+    "empty": "Nenhum artigo ainda. Adicione o primeiro!",
+    "columnTitle": "Título",
+    "columnAuthor": "Autor",
+    "columnUpdated": "Atualizado",
+    "paginationPrevious": "Anterior",
+    "paginationNext": "Próxima",
+    "paginationPage": "Página {{page}} de {{pages}}",
+    "back": "Voltar aos artigos",
+    "save": "Salvar",
+    "saving": "Salvando…",
+    "saved": "Artigo salvo",
+    "unsaved": "Alterações não salvas",
+    "titlePlaceholder": "Título do artigo",
+    "bodyPlaceholder": "Escreva o artigo…",
+    "cover": "Capa",
+    "noCover": "Sem capa ainda — gere uma ou envie uma imagem",
+    "generateCover": "Gerar",
+    "generatingCover": "Gerando…",
+    "generateCoverFailed": "Falha ao gerar a capa",
+    "uploadCover": "Enviar",
+    "replaceCover": "Trocar",
+    "removeCover": "Remover",
+    "removeCoverTitle": "Remover capa",
+    "removeCoverDescription": "Remover a imagem de capa deste artigo?",
+    "byAuthor": "Por {{name}}",
+    "deleteTitle": "Excluir artigo",
+    "deleteDescription": "Excluir \"{{title}}\"? Isso não pode ser desfeito.",
+    "createFailed": "Falha ao criar artigo",
+    "saveFailed": "Falha ao salvar artigo",
+    "deleteFailed": "Falha ao excluir artigo",
+    "coverFailed": "Falha ao atualizar a capa",
+    "notFound": "Artigo não encontrado",
+    "publish": "Publicar",
+    "unpublish": "Despublicar",
+    "published": "Publicado no site",
+    "unpublished": "Removido do site público",
+    "publishFailed": "Falha ao atualizar a publicação",
+    "viewPublic": "Ver página pública",
+    "columnStatus": "Status",
+    "statusPublished": "Publicado",
+    "statusDraft": "Rascunho"
   },
   "account": {
     "title": "Minha conta",
@@ -171,7 +208,8 @@
     "copied": "Copiado para a área de transferência",
     "copyFailed": "Não foi possível copiar — copie manualmente",
     "used": "usada em {{date}}",
-    "neverUsed": "nunca usada"
+    "neverUsed": "nunca usada",
+    "noKeys": "Nenhuma chave de API ainda."
   },
   "settings": {
     "title": "Configurações",
@@ -202,7 +240,8 @@
     "revokeInviteFailed": "Falha ao revogar convite",
     "revokeInviteTitle": "Revogar convite",
     "revokeInviteDescription": "Revogar o convite para {{email}}?",
-    "expires": "expira em {{date}}"
+    "expires": "expira em {{date}}",
+    "noInvites": "Nenhum convite pendente."
   },
   "billing": {
     "title": "Plano e billing",
@@ -289,7 +328,7 @@
     "suggestions": [
       "quem faz parte deste tenant?",
       "adicione uma tarefa para preparar a reunião de amanhã",
-      "gere uma imagem de um farol ao pôr do sol"
+      "crie um artigo sobre um farol ao pôr do sol"
     ],
     "thinking": "Pensando...",
     "transcribing": "Transcrevendo...",
@@ -379,7 +418,8 @@
       "seatFree": "Sem cobrança por assento",
       "aiIncluded": "{{amount}} de IA incluída por membro / mês",
       "aiPassthrough": "Uso de IA repassado (sem teto rígido)",
-      "pspHint": "Pronto para ligar no Stripe ou qualquer meio de pagamento — o checkout só precisa definir o planId do tenant."
+      "pspHint": "Pronto para ligar no Stripe ou qualquer meio de pagamento — o checkout só precisa definir o planId do tenant.",
+      "empty": "Nenhum plano configurado."
     }
   },
   "join": {

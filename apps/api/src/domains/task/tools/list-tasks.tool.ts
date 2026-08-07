@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { defineTool } from "@/agent/tool";
+import { toTaskToolSummary } from "../dto";
 import { taskRepository } from "../repository";
 
 /**
@@ -24,11 +25,6 @@ export const listTasksTool = defineTool({
     const rows = await taskRepository.list(tenantId, search);
 
     // -- Output ----------------------------------------------------------------
-    return rows.map((r) => ({
-      id: r.task.id,
-      title: r.task.title,
-      completed: r.task.completed,
-      updatedAt: r.task.updatedAt.toISOString(),
-    }));
+    return rows.map((r) => toTaskToolSummary(r, { includeUpdatedAt: true }));
   },
 });

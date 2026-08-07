@@ -1,4 +1,5 @@
 import { toast } from "sonner";
+import type { ApiErrorBody } from "@app/shared";
 import { clearSessionToken, getSessionToken } from "./session-token";
 
 // App API client — the frontend's only network boundary.
@@ -46,7 +47,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
   if (!res.ok) {
     if (res.status === 401) clearSessionToken();
-    const body = (await res.json().catch(() => null)) as { error?: string } | null;
+    const body = (await res.json().catch(() => null)) as ApiErrorBody | null;
     throw new ApiError(res.status, body?.error ?? `Error ${res.status}`);
   }
   return (await res.json()) as T;

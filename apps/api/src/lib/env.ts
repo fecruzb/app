@@ -24,7 +24,7 @@ const schema = z.object({
   ASSISTANT_MODEL: z.string().default("gpt-4o-mini"),
   /** Speech-to-text model behind the assistant's voice input. */
   TRANSCRIBE_MODEL: z.string().default("gpt-4o-mini-transcribe"),
-  /** Image generation model behind the agent's generate_image tool. */
+  /** Image generation model behind the agent's generate_article_cover tool. */
   IMAGE_MODEL: z.string().default("gpt-image-1-mini"),
   MAIL_FROM: z.string().default("App Base <onboarding@resend.dev>"),
   /** When "false", accounts can only be created via invite. */

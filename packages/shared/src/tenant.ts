@@ -69,3 +69,8 @@ export type PublicInviteDto = {
   role: TenantRole;
   userExists: boolean;
 };
+
+/** Result of accepting an invite (redirect target). */
+export type AcceptInviteResultDto = {
+  tenantSlug: string;
+};

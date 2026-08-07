@@ -128,6 +128,65 @@ export const adminRepository = {
   },
 
   /**
+   * Find a tenant with members
+   *
+   * Same shape as listTenants for a single id.
+   *
+   * @param tenantId - Tenant id
+   * @returns Tenant with members, or null
+   */
+  async findTenantWithMembers(tenantId: string): Promise<TenantWithMemberCount | null> {
+    const [row] = await db
+      .select({
+        tenant: tenants,
+        memberCount: count(tenantMembers.userId),
+      })
+      .from(tenants)
+      .leftJoin(tenantMembers, eq(tenantMembers.tenantId, tenants.id))
+      .where(eq(tenants.id, tenantId))
+      .groupBy(tenants.id);
+    if (!row) return null;
+
+    const memberRows = await db
+      .select({
+        userId: users.id,
+        name: users.name,
+        email: users.email,
+        role: tenantMembers.role,
+        joinedAt: tenantMembers.createdAt,
+      })
+      .from(tenantMembers)
+      .innerJoin(users, eq(users.id, tenantMembers.userId))
+      .where(eq(tenantMembers.tenantId, tenantId))
+      .orderBy(asc(tenantMembers.createdAt));
+
+    return {
+      tenant: row.tenant,
+      memberCount: Number(row.memberCount),
+      members: memberRows,
+    };
+  },
+
+  /**
+   * Find a user with tenant count
+   *
+   * @param userId - User id
+   * @returns User with tenant count, or null
+   */
+  async findUserWithTenantCount(userId: string): Promise<UserWithTenantCount | null> {
+    const [row] = await db
+      .select({
+        user: users,
+        tenantCount: sql<number>`cast(count(${tenantMembers.tenantId}) as int)`,
+      })
+      .from(users)
+      .leftJoin(tenantMembers, eq(tenantMembers.userId, users.id))
+      .where(eq(users.id, userId))
+      .groupBy(users.id);
+    return row ?? null;
+  },
+
+  /**
    * Find a tenant by id
    *
    * @param tenantId - Tenant id

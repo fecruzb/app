@@ -5,6 +5,6 @@ export * from "./account";
 export * from "./tenant";
 export * from "./task";
 export * from "./agent";
-export * from "./images";
+export * from "./article";
 export * from "./admin";
 export * from "./billing";

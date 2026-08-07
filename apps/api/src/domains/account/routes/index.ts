@@ -3,6 +3,9 @@
  *
  * Wires handlers into the Hono route group. Tenant-independent. Individual
  * handlers live in `*.route.ts` beside this file.
+ *
+ * API keys: HTTP lives here; the `api_keys` table and mint/resolve logic stay
+ * in `domains/auth` (credentials). See api-structure.mdc.
  */
 import { Hono } from "hono";
 import type { AppEnv } from "@/context";

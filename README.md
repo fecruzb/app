@@ -38,7 +38,7 @@ Without `RESEND_API_KEY`, emails (verification, password reset, invites) are log
 - **Plans & billing**: code catalog (`free` / `starter` / `pro` / `usage`) on `tenants.plan_id` — seat limits and per-member AI allowances. Platform admin assigns the plan; tenants see a read-only Billing page. Ready to wire Stripe (or any PSP) later by setting `planId`
 - **Platform admin** (`/admin`): people, platform signup invites, tenants (with members + plan edit modal), and the plans catalog. Bootstrap with `PLATFORM_ADMIN_EMAILS`
 - **Public site**: landing with CTAs + auth screens, separate from the logged-in area
-- **Example resources**: `tasks` (to-do list) and `images` (uploads via MediaStore) — per-tenant, end to end
+- **Example resources**: `tasks` (to-do list) and `articles` (Markdown + cover via MediaStore) — per-tenant, end to end
 - **Agent + MCP**: a floating button in the app opens a chat with an assistant (OpenAI) that runs the MCP tools in the tenant context. The same tools are also exposed as a **remote MCP server** (`POST /api/mcp`) authenticated by a personal API key — plug Cursor (or any MCP client) into the published app
 - **API keys**: users mint tenant-scoped keys under _Integrations_ and plug the remote MCP server into Cursor (or any MCP client)
 - **`SELF_SIGNUP_ENABLED` flag**: turn off to operate invite-only
@@ -67,7 +67,7 @@ apps/api/src/
 │   │                     # emails, middleware, routes/, tools/
 │   ├── usage/            # AI spend ledger (per user × tenant × month); no HTTP routes
 │   ├── task/             # example resource (to-do list): schema, repository, dto, routes/, tools/
-│   └── images/           # example uploads: schema, repository, dto, routes/, tools/, media.ts
+│   └── article/          # articles (Markdown + cover): schema, repository, dto, routes/, tools/, media.ts
 └── db/                   # client, schema.ts (barrel for drizzle-kit), columns (audit), seed
 
 apps/web                  # React SPA (public pages + logged-in area) — single UI source

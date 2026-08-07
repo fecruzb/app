@@ -5,7 +5,7 @@ import { CheckIcon, DatabaseIcon } from "lucide-react";
 import { points } from "@/i18n";
 import {
   AuthTables,
-  ImageTables,
+  ArticleTables,
   PlansCatalog,
   PlatformTables,
   TenantTables,
@@ -22,7 +22,7 @@ export type DbGroup = {
 };
 
 function dbGroupCopy(
-  key: "identity" | "tenancy" | "billing" | "usage" | "images" | "platform",
+  key: "identity" | "tenancy" | "billing" | "usage" | "articles" | "platform",
   t: TFunction,
 ) {
   return {
@@ -56,9 +56,9 @@ function buildDbGroups(t: TFunction): DbGroup[] {
       visual: <UsageTables />,
     },
     {
-      id: "images",
-      ...dbGroupCopy("images", t),
-      visual: <ImageTables />,
+      id: "articles",
+      ...dbGroupCopy("articles", t),
+      visual: <ArticleTables />,
     },
     {
       id: "platform",
