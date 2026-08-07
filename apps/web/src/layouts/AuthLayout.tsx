@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { BoxIcon } from "lucide-react";
+import { AppLogo } from "@/brand/logo";
 import { AuthShell } from "@app/ui/auth-shell";
 import { Brand } from "@app/ui/brand";
 
@@ -21,7 +21,7 @@ export function AuthLayout({
     <AuthShell
       brand={
         <Link to="/">
-          <Brand icon={<BoxIcon className="size-5 text-primary" />}>{t("brand")}</Brand>
+          <Brand icon={<AppLogo />}>{t("brand")}</Brand>
         </Link>
       }
       title={title}

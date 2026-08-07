@@ -4,20 +4,17 @@
  */
 
 export const brandSnippet = `import { Link } from "react-router-dom";
-import { BoxIcon } from "lucide-react";
+import { AppLogo } from "@/brand/logo";
 import { Brand } from "@app/ui/brand";
 
 <Link to="/">
-  <Brand icon={<BoxIcon className="size-5 text-primary" />}>
-    App Base
+  <Brand icon={<AppLogo />}>
+    {t("brand")}
   </Brand>
 </Link>
 
-<Brand
-  icon={<BoxIcon className="size-5 shrink-0 text-primary" />}
-  subtitle="Platform admin"
->
-  App Base
+<Brand icon={<AppLogo />} subtitle="Platform admin">
+  {t("brand")}
 </Brand>`;
 
 export const navItemSnippet = `import { NavLink } from "react-router-dom";
@@ -41,6 +38,7 @@ import { NavItem } from "@app/ui/nav-item";
 </NavLink>`;
 
 export const siteHeaderSnippet = `import { Link } from "react-router-dom";
+import { AppLogo } from "@/brand/logo";
 import { Brand } from "@app/ui/brand";
 import { Button } from "@app/ui/button";
 import { NavItem } from "@app/ui/nav-item";
@@ -49,8 +47,8 @@ import { SiteHeader } from "@app/ui/site-header";
 <SiteHeader
   brand={
     <Link to="/">
-      <Brand icon={<BoxIcon className="size-5 text-primary" />}>
-        App Base
+      <Brand icon={<AppLogo />}>
+        {t("brand")}
       </Brand>
     </Link>
   }
@@ -75,6 +73,7 @@ export const sidebarSnippet = `import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@app/ui/resizable";
+import { AppLogo } from "@/brand/logo";
 import { Brand } from "@app/ui/brand";
 import { NavItem } from "@app/ui/nav-item";
 import {
@@ -89,8 +88,8 @@ import { UserMenuButton } from "@app/ui/user-menu-button";
   <ResizablePanel defaultSize={256} minSize={200} maxSize={400}>
     <Sidebar className="h-full">
       <SidebarHeader>
-        <Brand icon={<BoxIcon className="size-5 text-primary" />}>
-          App Base
+        <Brand icon={<AppLogo />}>
+          {t("brand")}
         </Brand>
       </SidebarHeader>
       <SidebarNav>

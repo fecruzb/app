@@ -1,5 +1,6 @@
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { brand } from "@app/shared";
 import { z } from "zod";
 
 const moduleDir = dirname(fileURLToPath(import.meta.url));
@@ -26,7 +27,7 @@ const schema = z.object({
   TRANSCRIBE_MODEL: z.string().default("gpt-4o-mini-transcribe"),
   /** Image generation model behind the agent's generate_article_cover tool. */
   IMAGE_MODEL: z.string().default("gpt-image-1-mini"),
-  MAIL_FROM: z.string().default("App Base <onboarding@resend.dev>"),
+  MAIL_FROM: z.string().default(brand.defaultMailFrom),
   /** When "false", accounts can only be created via invite. */
   SELF_SIGNUP_ENABLED: z
     .string()

@@ -103,11 +103,23 @@ Useful entry points:
 
 ## Deriving a new product
 
-1. Clone/copy this repo and rename it (`package.json`, `index.html`, "App Base" text, `render.yaml`)
-2. Replace the `tasks` resource with your domain: copy `apps/api/src/domains/task/` (schema → repository → routes → tools), export the schema in `db/schema.ts`, run `db:generate`, add the schemas to `packages/shared` and the page in web
-3. Adjust the plan catalog in `apps/api/src/domains/billing/plans.ts` and shared `packages/shared/src/billing.ts` if your pricing differs
-4. Adjust the landing (`apps/web/src/domains/marketing/pages/LandingPage.tsx` + `apps/web/src/i18n/locales/landing.*.json`)
-5. Set `RESEND_API_KEY` and `MAIL_FROM` for real emails; configure Cloudflare R2 (`CLOUDFLARE_*` / `R2_PUBLIC_BASE_URL`) if you need durable image storage on Render (otherwise media stays on the ephemeral local disk)
+### Day 1 — name and logo
+
+Product identity is centralized:
+
+1. Edit `packages/shared/src/brand.ts` (`displayName`, `tagline`, `mcpServerName`, `defaultMailFrom`)
+2. Swap the mark in `apps/web/src/brand/logo.tsx` and `apps/web/public/brand/logo.svg` (favicon / OG)
+3. Set `MAIL_FROM` in `.env` for real mail (defaults to `brand.defaultMailFrom`)
+
+UI copy that uses `{{brand}}` / `{{tagline}}`, SEO shell meta, invite emails, the agent prompt, and the MCP server name all follow `brand.ts`. Workspace packages (`@app/*`) can stay.
+
+### Next
+
+1. Replace the `tasks` resource with your domain: copy `apps/api/src/domains/task/` (schema → repository → routes → tools), export the schema in `db/schema.ts`, run `db:generate`, add the schemas to `packages/shared` and the page in web
+2. Adjust the plan catalog in `apps/api/src/domains/billing/plans.ts` and shared `packages/shared/src/billing.ts` if your pricing differs
+3. Rewrite landing marketing copy (`apps/web/src/i18n/locales/landing.*.json`) for your product story
+4. Desktop/mobile: Tauri `productName`, bundle `identifier`, and regenerate icons from one source (`tauri icon`)
+5. Set `RESEND_API_KEY` and configure Cloudflare R2 (`CLOUDFLARE_*` / `R2_PUBLIC_BASE_URL`) if you need durable image storage on Render (otherwise media stays on the ephemeral local disk)
 6. Deploy: push the repo to GitHub and create a Blueprint on Render pointing to `render.yaml`
 
 ## Environment variables
@@ -158,6 +170,8 @@ The API exposes a remote MCP server at `POST /api/mcp`, authenticated by a perso
   }
 }
 ```
+
+The server key (`app-base` above) is `brand.mcpServerName` in `packages/shared/src/brand.ts`.
 
 The client gets the same tools as the in-app agent, acting on that key's tenant. Revoke a key from the same screen to cut access.
 

@@ -4,6 +4,7 @@
  * Pure string helpers for injecting title / description / Open Graph tags into
  * the SPA shell. No domain or filesystem knowledge.
  */
+import { brand } from "@app/shared";
 
 export type HtmlMeta = {
   title: string;
@@ -38,7 +39,7 @@ function metaTag(attr: "name" | "property", key: string, content: string): strin
  * @returns HTML with meta tags updated
  */
 export function injectHtmlMeta(html: string, meta: HtmlMeta): string {
-  const siteName = meta.siteName ?? "App Base";
+  const siteName = meta.siteName ?? brand.displayName;
   const type = meta.type ?? "website";
   const locale = meta.locale ?? "en_US";
   const card = meta.image ? "summary_large_image" : "summary";

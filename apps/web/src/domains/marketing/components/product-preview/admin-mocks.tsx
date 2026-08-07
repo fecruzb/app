@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { BoxIcon, MailIcon } from "lucide-react";
+import { MailIcon } from "lucide-react";
+import { AppLogo } from "@/brand/logo";
 
 export function AdminShell({
   active,
@@ -21,7 +22,7 @@ export function AdminShell({
       <aside className="flex w-36 flex-col gap-3 border-r p-3">
         <div className="px-2">
           <p className="flex items-center gap-2 font-semibold">
-            <BoxIcon className="size-4 text-primary" />
+            <AppLogo className="size-4" />
             {t("landing.preview.admin.brand")}
           </p>
           <p className="mt-0.5 text-[10px] text-muted-foreground">

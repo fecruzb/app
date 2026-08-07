@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import {
-  BoxIcon,
   CheckIcon,
   CheckSquareIcon,
   ChevronsUpDownIcon,
@@ -12,6 +11,8 @@ import {
   Trash2Icon,
   UserIcon,
 } from "lucide-react";
+import { brand } from "@app/shared";
+import { AppLogo } from "@/brand/logo";
 import { Field } from "./field";
 import { Window } from "@app/ui/browser-window";
 
@@ -46,7 +47,7 @@ export function McpKeysMock() {
             <p className="font-mono text-[11px] leading-relaxed text-muted-foreground">
               {`{
   "mcpServers": {
-    "app-base": {
+    "${brand.mcpServerName}": {
       "url": "https://acme.app/api/mcp",
       "headers": { "Authorization": "Bearer abk_a1b2c3…" }
     }
@@ -72,7 +73,7 @@ export function ShellBody({ compact = false }: { compact?: boolean }) {
     <div className={`relative flex text-sm ${compact ? "min-h-64" : "min-h-72"}`}>
       <aside className={`flex flex-col gap-3 border-r p-3 ${compact ? "w-28" : "w-44"}`}>
         <div className="flex items-center gap-2 px-2 font-semibold">
-          <BoxIcon className="size-4" />
+          <AppLogo className="size-4" />
           {!compact ? t("brand") : null}
         </div>
         {!compact ? (

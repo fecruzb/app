@@ -1,7 +1,7 @@
 import { Trans, useTranslation } from "react-i18next";
 import { CopyIcon } from "lucide-react";
 import { toast } from "sonner";
-import type { CreatedApiKeyDto } from "@app/shared";
+import { brand, type CreatedApiKeyDto } from "@app/shared";
 import { Button } from "@app/ui/button";
 import { Label } from "@app/ui/label";
 
@@ -20,7 +20,7 @@ export function CreatedKeyPanel({ created }: { created: CreatedApiKeyDto }) {
   const mcpConfig = JSON.stringify(
     {
       mcpServers: {
-        "app-base": {
+        [brand.mcpServerName]: {
           url: `${window.location.origin}/api/mcp`,
           headers: { Authorization: `Bearer ${created.key}` },
         },

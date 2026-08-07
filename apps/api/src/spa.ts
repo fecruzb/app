@@ -9,6 +9,7 @@ import path from "node:path";
 import type { Context } from "hono";
 import { articleRepository } from "@/domains/article/repository";
 import { injectHtmlMeta } from "@/lib/html-meta";
+import { brand } from "@app/shared";
 import { env } from "@/lib/env";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -16,147 +17,146 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 /** English SEO for static marketing routes (crawlers; matches landing.en.json). */
 const MARKETING_META: Record<string, { title: string; description: string }> = {
   "/": {
-    title: "App Base — The starting point for your next SaaS",
+    title: `${brand.displayName} — ${brand.tagline}`,
     description:
       "Open-source multi-tenant SaaS template with auth, tenants, email, an AI agent, and a typed monorepo ready to become your product.",
   },
   "/code": {
-    title: "Project structure · App Base",
+    title: `Project structure · ${brand.displayName}`,
     description:
       "How the monorepo is laid out — workspaces, Turbo, one deploy — then dive into the API or web package.",
   },
   "/code/api": {
-    title: "API structure · App Base",
+    title: `API structure · ${brand.displayName}`,
     description:
       "apps/api domain layers — schema, repository, tools, DTOs, and routes — walked as a guided course.",
   },
   "/code/web": {
-    title: "Web structure · App Base",
+    title: `Web structure · ${brand.displayName}`,
     description: "apps/web — domains that mirror the API, with api.ts, pages, and routes.",
   },
   "/code/environment": {
-    title: "Environment · App Base",
+    title: `Environment · ${brand.displayName}`,
     description:
       "Validated .env, local Docker run, and Render deploy from one YAML — configure, run, and ship.",
   },
   "/code/database": {
-    title: "Database · App Base",
+    title: `Database · ${brand.displayName}`,
     description:
       "Postgres modeled in Drizzle — identity, tenancy, billing, usage, articles, and the example resource.",
   },
   "/code/storage": {
-    title: "Storage · App Base",
+    title: `Storage · ${brand.displayName}`,
     description:
       "MediaStore with Cloudflare R2 when configured, local disk fallback for development.",
   },
   "/code/i18n": {
-    title: "i18n · App Base",
+    title: `i18n · ${brand.displayName}`,
     description:
       "English and Portuguese locale files, useTranslation, and a live language switcher.",
   },
   "/product": {
-    title: "Product · App Base",
+    title: `Product · ${brand.displayName}`,
     description:
       "Auth, workspace, AI agent, account, tenants, billing, and platform admin — the assembled product, area by area.",
   },
   "/product/auth": {
-    title: "Auth · App Base",
+    title: `Auth · ${brand.displayName}`,
     description:
       "Sign in, registration with email verification, and password recovery — the auth surfaces you ship.",
   },
   "/product/workspace": {
-    title: "Workspace · App Base",
+    title: `Workspace · ${brand.displayName}`,
     description: "The tenant app shell — sidebar, switcher, and a home that isn't a blank page.",
   },
   "/product/agent": {
-    title: "AI agent · App Base",
+    title: `AI agent · ${brand.displayName}`,
     description: "In-app chat that calls tenant-scoped tools — the assistant that gets work done.",
   },
   "/product/account": {
-    title: "Account · App Base",
+    title: `Account · ${brand.displayName}`,
     description: "Profile, security, and MCP API keys — settings for the signed-in user.",
   },
   "/product/tenants": {
-    title: "Tenants · App Base",
+    title: `Tenants · ${brand.displayName}`,
     description: "Members and invites — bring the rest of the team into a workspace.",
   },
   "/product/billing": {
-    title: "Billing · App Base",
+    title: `Billing · ${brand.displayName}`,
     description: "Plans, seats, and AI entitlements — ready to wire to Stripe.",
   },
   "/product/admin": {
-    title: "Platform admin · App Base",
+    title: `Platform admin · ${brand.displayName}`,
     description: "People, invites, and tenants across the whole product from /admin.",
   },
   "/platforms": {
-    title: "Platforms · App Base",
+    title: `Platforms · ${brand.displayName}`,
     description:
       "One web app, five native shells — Tauri packages apps/web for Windows, Linux, macOS, iOS, and Android.",
   },
   "/platforms/windows": {
-    title: "Windows · App Base",
-    description:
-      "Ship the App Base SPA as a Windows desktop app via the Tauri shell and CI release pipeline.",
+    title: `Windows · ${brand.displayName}`,
+    description: `Ship the ${brand.displayName} SPA as a Windows desktop app via the Tauri shell and CI release pipeline.`,
   },
   "/platforms/linux": {
-    title: "Linux · App Base",
+    title: `Linux · ${brand.displayName}`,
     description: "AppImage builds from apps/desktop — same web UI, remote API, auto-update via R2.",
   },
   "/platforms/macos": {
-    title: "macOS · App Base",
+    title: `macOS · ${brand.displayName}`,
     description:
       "Universal macOS desktop shell around apps/web — DMG, updater, and GitHub Actions release.",
   },
   "/platforms/ios": {
-    title: "iOS · App Base",
+    title: `iOS · ${brand.displayName}`,
     description:
       "Tauri iOS packaging of apps/web — local Xcode builds with VITE_API_URL and hash routing.",
   },
   "/platforms/android": {
-    title: "Android · App Base",
+    title: `Android · ${brand.displayName}`,
     description:
       "The same thin Tauri mobile shell pattern for Android — one SPA, native container, remote API.",
   },
   "/ui": {
-    title: "User Interface · App Base",
+    title: `User Interface · ${brand.displayName}`,
     description: "The @app/ui kit — theming, shells, and the component catalog, split by category.",
   },
   "/ui/theming": {
-    title: "Theming · App Base",
+    title: `Theming · ${brand.displayName}`,
     description: "Theme tokens, palettes, and light/dark — live on the page.",
   },
   "/ui/brand": {
-    title: "Brand & nav · App Base",
+    title: `Brand & nav · ${brand.displayName}`,
     description: "Brand, NavItem, and SiteHeader — the marks that show up in every chrome.",
   },
   "/ui/shells": {
-    title: "Shells · App Base",
+    title: `Shells · ${brand.displayName}`,
     description:
       "Sidebar, Navbar, and Auth shells — the layout chrome for app, marketing, and login.",
   },
   "/ui/controls": {
-    title: "Controls · App Base",
+    title: `Controls · ${brand.displayName}`,
     description: "Buttons, badges, progress, and sliders — the interactive atoms.",
   },
   "/ui/forms": {
-    title: "Forms · App Base",
+    title: `Forms · ${brand.displayName}`,
     description:
       "Labels, inputs, combobox, checkboxes, radios, and switches — then a composed form.",
   },
   "/ui/overlays": {
-    title: "Overlays · App Base",
+    title: `Overlays · ${brand.displayName}`,
     description: "Cards, avatars, dialogs, and dropdowns — surfaces that float over the page.",
   },
   "/ui/data": {
-    title: "Data · App Base",
+    title: `Data · ${brand.displayName}`,
     description: "Tabs, DataTable, and page chrome — list screens and empty states.",
   },
   "/ui/charts": {
-    title: "Charts · App Base",
+    title: `Charts · ${brand.displayName}`,
     description: "Bar, line, and pie charts from @app/ui/chart.",
   },
   "/articles": {
-    title: "Articles · App Base",
+    title: `Articles · ${brand.displayName}`,
     description:
       "Stories published by workspaces on this app — browse the public catalog of shared posts.",
   },
@@ -210,7 +210,7 @@ export async function serveSpaHtml(c: Context, webDist: string) {
       const coverPath = row.article.coverPath ? `/media${row.article.coverPath}` : null;
       const description = excerpt(row.article.body) || MARKETING_META["/articles"]!.description;
       const html = injectHtmlMeta(shell, {
-        title: `${row.article.title} · App Base`,
+        title: `${row.article.title} · ${brand.displayName}`,
         description,
         url: `${origin}/articles/${row.article.id}`,
         image: absoluteMediaUrl(coverPath),

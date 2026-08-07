@@ -9,8 +9,10 @@ dist/
 # Local MCP client config may hold API keys — keep a personal copy, never commit.
 .cursor/mcp.json
 
-# Local media fallback (only used when R2 isn't configured) — dev-only, never committed.
-/apps/web/public/
+# Local media fallback (only used when R2 isn't configured) — ignore uploads,
+# but keep committed brand assets under public/brand/.
+/apps/web/public/*
+!/apps/web/public/brand/
 
 # Tauri / Cargo build artifacts (keep Cargo.lock committed)
 **/src-tauri/target/

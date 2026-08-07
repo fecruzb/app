@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import { brand } from "@app/shared";
 import en from "./locales/en.json";
 import pt from "./locales/pt.json";
 import landingEn from "./locales/landing.en.json";
@@ -45,7 +46,11 @@ void i18n.use(initReactI18next).init({
   },
   lng: detectLocale(),
   fallbackLng: "en",
-  interpolation: { escapeValue: false },
+  interpolation: {
+    escapeValue: false,
+    // Product identity from packages/shared — `{{brand}}` / `{{tagline}}` in locales.
+    defaultVariables: { brand: brand.displayName, tagline: brand.tagline },
+  },
 });
 
 if (typeof document !== "undefined") {

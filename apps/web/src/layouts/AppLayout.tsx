@@ -3,7 +3,6 @@ import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import {
-  BoxIcon,
   CheckIcon,
   CheckSquareIcon,
   ChevronsUpDownIcon,
@@ -20,6 +19,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { AgentFab } from "@/domains/agent/components/agent-fab";
+import { AppLogo } from "@/brand/logo";
 import { Brand } from "@app/ui/brand";
 import { Button } from "@app/ui/button";
 import {
@@ -169,7 +169,7 @@ function AppSidebar({
     <Sidebar>
       <SidebarHeader>
         <Link to="/">
-          <Brand icon={<BoxIcon className="size-5 shrink-0 text-primary" />}>{t("brand")}</Brand>
+          <Brand icon={<AppLogo />}>{t("brand")}</Brand>
         </Link>
       </SidebarHeader>
       <TenantSwitcher />

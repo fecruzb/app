@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  BoxIcon,
-  CheckSquareIcon,
-  HomeIcon,
-  LanguagesIcon,
-  PaletteIcon,
-  SettingsIcon,
-} from "lucide-react";
+import { CheckSquareIcon, HomeIcon, LanguagesIcon, PaletteIcon, SettingsIcon } from "lucide-react";
+import { AppLogo } from "@/brand/logo";
 import { Brand } from "@app/ui/brand";
 import { Button } from "@app/ui/button";
 import { NavItem } from "@app/ui/nav-item";
@@ -31,13 +25,8 @@ export function BrandNavSection() {
         code={brandSnippet}
       >
         <div className="flex flex-wrap items-start gap-8">
-          <Brand icon={<BoxIcon className="size-5 text-primary" />}>
-            {t("landing.ui.demo.brandName")}
-          </Brand>
-          <Brand
-            icon={<BoxIcon className="size-5 shrink-0 text-primary" />}
-            subtitle={t("landing.ui.demo.brandSubtitle")}
-          >
+          <Brand icon={<AppLogo />}>{t("landing.ui.demo.brandName")}</Brand>
+          <Brand icon={<AppLogo />} subtitle={t("landing.ui.demo.brandSubtitle")}>
             {t("landing.ui.demo.brandName")}
           </Brand>
         </div>
@@ -94,11 +83,7 @@ export function BrandNavSection() {
         <div className="overflow-hidden rounded-xl border">
           <SiteHeader
             className="static"
-            brand={
-              <Brand icon={<BoxIcon className="size-5 text-primary" />}>
-                {t("landing.ui.demo.brandName")}
-              </Brand>
-            }
+            brand={<Brand icon={<AppLogo />}>{t("landing.ui.demo.brandName")}</Brand>}
             nav={
               <>
                 <NavItem variant="header" active>

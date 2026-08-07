@@ -6,12 +6,13 @@
  */
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import { brand } from "@app/shared";
 import { logger } from "@/lib/logger";
 import { allTools } from "./registry";
 import { type AgentContext, ToolError } from "./tool";
 
 export function createMcpServer(ctx: AgentContext): McpServer {
-  const server = new McpServer({ name: "app-base", version: "1.0.0" });
+  const server = new McpServer({ name: brand.mcpServerName, version: "1.0.0" });
   for (const tool of allTools) {
     server.registerTool(
       tool.name,

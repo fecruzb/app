@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { BoxIcon } from "lucide-react";
+import { AppLogo } from "@/brand/logo";
 import { Field, SubmitButton } from "./field";
 import { Window } from "@app/ui/browser-window";
 
@@ -19,7 +19,7 @@ export function AuthBody({
   return (
     <div className="flex flex-col items-center gap-5 bg-muted/40 p-4 sm:p-8">
       <div className="flex items-center gap-2 font-semibold">
-        <BoxIcon className="size-5" />
+        <AppLogo />
         {t("brand")}
       </div>
       <div className="w-full max-w-xs rounded-xl border bg-card p-5 text-left shadow-sm sm:p-6">

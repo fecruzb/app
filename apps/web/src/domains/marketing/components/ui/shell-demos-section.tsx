@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import {
-  BoxIcon,
   CheckSquareIcon,
   HomeIcon,
   LanguagesIcon,
@@ -8,6 +7,7 @@ import {
   PaletteIcon,
   SettingsIcon,
 } from "lucide-react";
+import { AppLogo } from "@/brand/logo";
 import { AuthShell } from "@app/ui/auth-shell";
 import { Brand } from "@app/ui/brand";
 import { Button } from "@app/ui/button";
@@ -49,7 +49,7 @@ export function ShellDemosSection() {
           >
             <Sidebar className="h-full border-b-0 py-6">
               <SidebarHeader>
-                <Brand icon={<BoxIcon className="size-5 shrink-0 text-primary" />}>
+                <Brand icon={<AppLogo />}>
                   {t("landing.ui.demo.brandName")}
                 </Brand>
               </SidebarHeader>
@@ -111,7 +111,7 @@ export function ShellDemosSection() {
           sidebar={
             <Sidebar className="h-full border-b-0 py-6">
               <SidebarHeader>
-                <Brand icon={<BoxIcon className="size-5 shrink-0 text-primary" />}>
+                <Brand icon={<AppLogo />}>
                   {t("landing.ui.demo.brandName")}
                 </Brand>
               </SidebarHeader>
@@ -175,7 +175,7 @@ export function ShellDemosSection() {
           className="min-h-0"
           headerClassName="static"
           brand={
-            <Brand icon={<BoxIcon className="size-5 text-primary" />}>
+            <Brand icon={<AppLogo />}>
               {t("landing.ui.demo.brandName")}
             </Brand>
           }
@@ -230,7 +230,7 @@ export function ShellDemosSection() {
         <AuthShell
           className="min-h-0 py-10"
           brand={
-            <Brand icon={<BoxIcon className="size-5 text-primary" />}>
+            <Brand icon={<AppLogo />}>
               {t("landing.ui.demo.brandName")}
             </Brand>
           }

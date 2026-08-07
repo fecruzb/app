@@ -1,13 +1,7 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  ArrowLeftIcon,
-  BoxIcon,
-  Building2Icon,
-  CreditCardIcon,
-  MailIcon,
-  UsersIcon,
-} from "lucide-react";
+import { ArrowLeftIcon, Building2Icon, CreditCardIcon, MailIcon, UsersIcon } from "lucide-react";
+import { AppLogo } from "@/brand/logo";
 import { Brand } from "@app/ui/brand";
 import { NavItem } from "@app/ui/nav-item";
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarNav } from "@app/ui/sidebar";
@@ -30,10 +24,7 @@ export function AdminLayout() {
         <Sidebar>
           <SidebarHeader>
             <Link to="/admin">
-              <Brand
-                icon={<BoxIcon className="size-5 shrink-0 text-primary" />}
-                subtitle={t("admin.subtitle")}
-              >
+              <Brand icon={<AppLogo />} subtitle={t("admin.subtitle")}>
                 {t("admin.brand")}
               </Brand>
             </Link>

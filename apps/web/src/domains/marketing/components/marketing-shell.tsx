@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowRightIcon, BoxIcon } from "lucide-react";
+import { ArrowRightIcon } from "lucide-react";
+import { AppLogo } from "@/brand/logo";
 import { Brand } from "@app/ui/brand";
 import { Button } from "@app/ui/button";
 import { NavItem } from "@app/ui/nav-item";
@@ -26,7 +27,7 @@ export function MarketingShell({ children }: { children: ReactNode }) {
       headerClassName="border-b-0 bg-background/70"
       brand={
         <Link to="/">
-          <Brand icon={<BoxIcon className="size-5 text-primary" />}>{t("brand")}</Brand>
+          <Brand icon={<AppLogo />}>{t("brand")}</Brand>
         </Link>
       }
       nav={

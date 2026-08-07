@@ -6,10 +6,13 @@ alwaysApply: false
 
 # Shared contracts (`@app/shared` → `packages/shared`)
 
-One file per domain, re-exported from `src/index.ts`. Current modules: `app`, `auth`, `account`, `tenant`,
-`task`, `article`, `billing`, `admin`, `agent`. Both API and web import from `@app/shared` —
+One file per domain, re-exported from `src/index.ts`. Current modules: `app`, `brand`, `auth`, `account`,
+`tenant`, `task`, `article`, `billing`, `admin`, `agent`. Both API and web import from `@app/shared` —
 this package is the single source of truth for request/response shapes. Change a shape here and
 whichever side you forgot stops compiling; that's the point.
+
+`brand.ts` is product identity (`displayName`, `tagline`, `mcpServerName`, `defaultMailFrom`) — not a
+Zod contract. Day-1 rename starts there; the web mark lives in `apps/web/src/brand/`.
 
 Resource domains (task, article, …) get their own `src/<domain>.ts`. Platform/support domains may
 share a file when shapes are tightly coupled (e.g. auth session DTOs), but prefer a dedicated file

@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { DatabaseIcon, GitBranchIcon, ServerIcon } from "lucide-react";
+import { brand } from "@app/shared";
 import { Window } from "@app/ui/browser-window";
 
 export function EnvMock() {
@@ -13,7 +14,7 @@ export function EnvMock() {
       note: t("landing.preview.env.noResendNote"),
       optional: true,
     },
-    { key: "MAIL_FROM", value: "App Base <onboarding@resend.dev>", optional: true },
+    { key: "MAIL_FROM", value: brand.defaultMailFrom, optional: true },
     {
       key: "OPENAI_API_KEY",
       value: "sk-…",

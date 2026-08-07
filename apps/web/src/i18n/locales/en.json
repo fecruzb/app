@@ -1,5 +1,5 @@
 {
-  "brand": "App Base",
+  "brand": "{{brand}}",
   "common": {
     "email": "Email",
     "password": "Password",

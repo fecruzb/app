@@ -60,143 +60,143 @@
   },
   "seo": {
     "home": {
-      "title": "App Base — The starting point for your next SaaS",
+      "title": "{{brand}} — {{tagline}}",
       "description": "Open-source multi-tenant SaaS template with auth, tenants, email, an AI agent, and a typed monorepo ready to become your product."
     },
     "structure": {
-      "title": "Project structure · App Base",
+      "title": "Project structure · {{brand}}",
       "description": "How the monorepo is laid out — workspaces, Turbo, one deploy — then dive into the API or web package."
     },
     "structureApi": {
-      "title": "API structure · App Base",
+      "title": "API structure · {{brand}}",
       "description": "apps/api domain layers — schema, repository, tools, DTOs, and routes — walked as a guided course."
     },
     "structureWeb": {
-      "title": "Web structure · App Base",
+      "title": "Web structure · {{brand}}",
       "description": "apps/web — domains that mirror the API, with api.ts, pages, and routes."
     },
     "structureUi": {
-      "title": "User Interface · App Base",
+      "title": "User Interface · {{brand}}",
       "description": "The @app/ui kit — theming, shells, and the component catalog, split by category."
     },
     "structureEnvironment": {
-      "title": "Environment · App Base",
+      "title": "Environment · {{brand}}",
       "description": "Validated .env, local Docker run, and Render deploy from one YAML — configure, run, and ship."
     },
     "structureDatabase": {
-      "title": "Database · App Base",
+      "title": "Database · {{brand}}",
       "description": "Postgres modeled in Drizzle — identity, tenancy, billing, usage, articles, and the example resource."
     },
     "structureStorage": {
-      "title": "Storage · App Base",
+      "title": "Storage · {{brand}}",
       "description": "MediaStore with Cloudflare R2 when configured, local disk fallback for development."
     },
     "structureI18n": {
-      "title": "i18n · App Base",
+      "title": "i18n · {{brand}}",
       "description": "English and Portuguese locale files, useTranslation, and a live language switcher."
     },
     "tour": {
-      "title": "Product · App Base",
+      "title": "Product · {{brand}}",
       "description": "Auth, workspace, AI agent, account, tenants, billing, and platform admin — the assembled product, area by area."
     },
     "productAuth": {
-      "title": "Auth · App Base",
+      "title": "Auth · {{brand}}",
       "description": "Sign in, registration with email verification, and password recovery — the auth surfaces you ship."
     },
     "productWorkspace": {
-      "title": "Workspace · App Base",
+      "title": "Workspace · {{brand}}",
       "description": "The tenant app shell — sidebar, switcher, and a home that isn't a blank page."
     },
     "productAgent": {
-      "title": "AI agent · App Base",
+      "title": "AI agent · {{brand}}",
       "description": "In-app chat that calls tenant-scoped tools — the assistant that gets work done."
     },
     "productAccount": {
-      "title": "Account · App Base",
+      "title": "Account · {{brand}}",
       "description": "Profile, security, and MCP API keys — settings for the signed-in user."
     },
     "productTenants": {
-      "title": "Tenants · App Base",
+      "title": "Tenants · {{brand}}",
       "description": "Members and invites — bring the rest of the team into a workspace."
     },
     "productBilling": {
-      "title": "Billing · App Base",
+      "title": "Billing · {{brand}}",
       "description": "Plans, seats, and AI entitlements — ready to wire to Stripe."
     },
     "productAdmin": {
-      "title": "Platform admin · App Base",
+      "title": "Platform admin · {{brand}}",
       "description": "People, invites, and tenants across the whole product from /admin."
     },
     "ui": {
-      "title": "User Interface · App Base",
+      "title": "User Interface · {{brand}}",
       "description": "The @app/ui kit — theming, shells, and the component catalog, split by category."
     },
     "articles": {
-      "title": "Articles · App Base",
+      "title": "Articles · {{brand}}",
       "description": "Stories published by workspaces on this app — browse the public catalog of shared posts."
     },
     "articleFallback": {
-      "title": "Article · App Base",
-      "description": "A published story from a workspace on App Base."
+      "title": "Article · {{brand}}",
+      "description": "A published story from a workspace on {{brand}}."
     },
     "platforms": {
-      "title": "Platforms · App Base",
+      "title": "Platforms · {{brand}}",
       "description": "One web app, five native shells — Tauri packages apps/web for Windows, Linux, macOS, iOS, and Android."
     },
     "platformsWindows": {
-      "title": "Windows · App Base",
-      "description": "Ship the App Base SPA as a Windows desktop app via the Tauri shell and CI release pipeline."
+      "title": "Windows · {{brand}}",
+      "description": "Ship the {{brand}} SPA as a Windows desktop app via the Tauri shell and CI release pipeline."
     },
     "platformsLinux": {
-      "title": "Linux · App Base",
+      "title": "Linux · {{brand}}",
       "description": "AppImage builds from apps/desktop — same web UI, remote API, auto-update via R2."
     },
     "platformsMacos": {
-      "title": "macOS · App Base",
+      "title": "macOS · {{brand}}",
       "description": "Universal macOS desktop shell around apps/web — DMG, updater, and GitHub Actions release."
     },
     "platformsIos": {
-      "title": "iOS · App Base",
+      "title": "iOS · {{brand}}",
       "description": "Tauri iOS packaging of apps/web — local Xcode builds with VITE_API_URL and hash routing."
     },
     "platformsAndroid": {
-      "title": "Android · App Base",
+      "title": "Android · {{brand}}",
       "description": "The same thin Tauri mobile shell pattern for Android — one SPA, native container, remote API."
     },
     "userInterface": {
-      "title": "User Interface · App Base",
+      "title": "User Interface · {{brand}}",
       "description": "The @app/ui kit — theming, shells, and the component catalog, split by category."
     },
     "uiTheming": {
-      "title": "Theming · App Base",
+      "title": "Theming · {{brand}}",
       "description": "Theme tokens, palettes, and light/dark — live on the page."
     },
     "uiBrand": {
-      "title": "Brand & nav · App Base",
+      "title": "Brand & nav · {{brand}}",
       "description": "Brand, NavItem, and SiteHeader — the marks that show up in every chrome."
     },
     "uiShells": {
-      "title": "Shells · App Base",
+      "title": "Shells · {{brand}}",
       "description": "Sidebar, Navbar, and Auth shells — the layout chrome for app, marketing, and login."
     },
     "uiControls": {
-      "title": "Controls · App Base",
+      "title": "Controls · {{brand}}",
       "description": "Buttons, badges, progress, and sliders — the interactive atoms."
     },
     "uiForms": {
-      "title": "Forms · App Base",
+      "title": "Forms · {{brand}}",
       "description": "Labels, inputs, combobox, checkboxes, radios, and switches — then a composed form."
     },
     "uiOverlays": {
-      "title": "Overlays · App Base",
+      "title": "Overlays · {{brand}}",
       "description": "Cards, avatars, dialogs, and dropdowns — surfaces that float over the page."
     },
     "uiData": {
-      "title": "Data · App Base",
+      "title": "Data · {{brand}}",
       "description": "Tabs, DataTable, and page chrome — list screens and empty states."
     },
     "uiCharts": {
-      "title": "Charts · App Base",
+      "title": "Charts · {{brand}}",
       "description": "Bar, line, and pie charts from @app/ui/chart."
     }
   },
@@ -372,7 +372,7 @@
       "pageTitle": "Tasks",
       "pageDescription": "Canonical page chrome: title, optional description, then list or empty.",
       "empty": "No items yet. Create the first one to get started.",
-      "brandName": "App Base",
+      "brandName": "{{brand}}",
       "brandSubtitle": "Platform admin",
       "navHome": "Home",
       "navTasks": "Tasks",
@@ -463,7 +463,7 @@
   "hero": {
     "eyebrow": "Open-source SaaS boilerplate · React + Hono + Postgres",
     "title": "Stop rebuilding. Start shipping.",
-    "body": "Auth, tenants, email and an AI agent — already wired in a typed monorepo. Clone App Base and turn the groundwork into your product.",
+    "body": "Auth, tenants, email and an AI agent — already wired in a typed monorepo. Clone {{brand}} and turn the groundwork into your product.",
     "clone": "git clone https://github.com/fecruzb/app"
   },
   "nextSection": "Next section",
@@ -503,7 +503,7 @@
   "structureBuild": {
     "eyebrow": "Your turn",
     "title": "Everything above is the template. Now build yours.",
-    "body": "What you just walked is the model App Base ships ready — packages, env, database, storage, i18n. Your product starts when you add your own resources: a schema, a repository, routes and tools. The API page shows that pattern end to end with tasks — copy the folder, rename it, register it, ship.",
+    "body": "What you just walked is the model {{brand}} ships ready — packages, env, database, storage, i18n. Your product starts when you add your own resources: a schema, a repository, routes and tools. The API page shows that pattern end to end with tasks — copy the folder, rename it, register it, ship.",
     "cta": "See how to add a resource",
     "hint": "Schema → repository → tools → DTOs → routes — then mirror it on the web."
   },
@@ -602,7 +602,7 @@
     "skipDemo": "Or skip the demo — clone the repo and start building."
   },
   "footer": {
-    "copyright": "© {{year}} App Base",
+    "copyright": "© {{year}} {{brand}}",
     "builtWith": "Built with React, Hono and Postgres"
   },
   "theming": {
@@ -1236,8 +1236,8 @@
       "cta": "Accept invite"
     },
     "platformInviteEmail": {
-      "subject": "You're invited to App Base",
-      "heading": "You're invited to App Base",
+      "subject": "You're invited to {{brand}}",
+      "heading": "You're invited to {{brand}}",
       "bodyBefore": "{{name}} invited you to create an account and try the app. This invite expires in 7 days.",
       "cta": "Create your account"
     },
@@ -1424,7 +1424,7 @@
     "windows": {
       "eyebrow": "Windows",
       "title": "Windows from one tag",
-      "body": "Ship App Base as a signed Windows installer. The web app you already have — packaged by Tauri, released by GitHub Actions.",
+      "body": "Ship {{brand}} as a signed Windows installer. The web app you already have — packaged by Tauri, released by GitHub Actions.",
       "shell": {
         "eyebrow": "The running app",
         "title": "Same SPA, native window",

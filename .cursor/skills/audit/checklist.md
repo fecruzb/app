@@ -48,6 +48,7 @@ Canonical examples: `domains/task` (API + web), `packages/shared/src/task.ts`.
 - [ ] Reads: `useQuery`; writes: `useMutation` + invalidate; errors: `showApiError`
 - [ ] `PageHeader` / `PageLoading` / `EmptyState`; destructive via `useConfirm()` not `window.confirm`
 - [ ] UI copy via `t("…")`; keys in both locale files of the pair (`en`/`pt` or landing pair)
+- [ ] Product mark via `AppLogo` (`@/brand/logo`); display name / MCP id from `@app/shared` `brand` — not hardcoded "App Base" / Lucide stand-ins in shells
 - [ ] Colors via theme CSS variables — no hardcoded product palette in components
 - [ ] Imports: `@/` across domains/shell; `@app/ui` for base UI
 

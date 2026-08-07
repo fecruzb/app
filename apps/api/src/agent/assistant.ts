@@ -6,7 +6,7 @@
  * is and how it acts; the tool-calling loop lives in integrations/openai.
  */
 import { z } from "zod";
-import type { AgentMessage, AgentResult, AgentStreamEvent } from "@app/shared";
+import { brand, type AgentMessage, type AgentResult, type AgentStreamEvent } from "@app/shared";
 import { runToolLoop, type AiUsage, type LoopTool } from "@/integrations/openai";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
@@ -17,7 +17,7 @@ import { type AgentContext, ToolError } from "./tool";
 export type AssistantResult = AgentResult & { usage: AiUsage };
 
 function systemPrompt(ctx: AgentContext): string {
-  return `You are the App Base assistant inside the tenant "${ctx.tenantName}". You are talking to ${ctx.userName} (role: ${ctx.role}).
+  return `You are the ${brand.displayName} assistant inside the tenant "${ctx.tenantName}". You are talking to ${ctx.userName} (role: ${ctx.role}).
 
 You read and manage the tenant's content through the available tools (tenant info, members, tasks and articles).
 

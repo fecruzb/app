@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { BoxIcon, MailIcon } from "lucide-react";
+import { MailIcon } from "lucide-react";
+import { AppLogo } from "@/brand/logo";
 
 export function EmailBody({
   subject,
@@ -33,7 +34,7 @@ export function EmailBody({
       <div className="bg-muted/40 p-4 sm:p-6">
         <div className="mx-auto max-w-sm rounded-xl border bg-card p-5 text-center shadow-sm sm:p-6">
           <div className="mb-4 flex items-center justify-center gap-2 font-semibold">
-            <BoxIcon className="size-5" />
+            <AppLogo />
             {t("brand")}
           </div>
           <p className="text-base font-semibold">{heading}</p>
