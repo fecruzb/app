@@ -6,6 +6,8 @@ import { cn } from "@app/ui/lib/utils";
 type Density = "loose" | "normal" | "tight";
 
 type FeatureSplitProps = {
+  /** Anchor id for in-page chapter navigation. */
+  id?: string;
   eyebrow: ReactNode;
   title: ReactNode;
   body?: ReactNode;
@@ -46,6 +48,7 @@ const defaultVisualScale: Record<Density, number> = {
  * Alternating `flip` keeps long pages from reading as a wall.
  */
 export function FeatureSplit({
+  id,
   eyebrow,
   title,
   body,
@@ -64,6 +67,7 @@ export function FeatureSplit({
 
   return (
     <section
+      id={id}
       data-section
       className={cn(
         "scroll-mt-20 px-4",

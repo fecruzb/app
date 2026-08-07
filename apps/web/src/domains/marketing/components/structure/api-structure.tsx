@@ -3,21 +3,48 @@ import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { ServerIcon } from "lucide-react";
 import { points } from "@/i18n";
-import { CodeBlock } from "@app/ui/code-block";
 import { Explorer } from "@app/ui/explorer";
+import type { ExplorerNode } from "@app/ui/explorer";
 import { MarketingHero } from "../marketing-hero";
 import { DbGroupSection } from "./database-foundation";
-import { buildApiTree } from "./explorer-trees";
+import { ExplorerCodeCarousel, type CodeExample } from "./explorer-code-carousel";
+import { buildApiFolderTree, buildApiTree } from "./explorer-trees";
 import {
+  agentRegistryFile,
+  appMountFile,
+  constantsFile,
+  dbSchemaBarrelFile,
   dtoFile,
+  middlewareFile,
   repositoryMethodFile,
   repositoryOutlineFile,
   routeHandlerFile,
   routeMapFile,
   schemaFile,
+  serviceFile,
+  templateFile,
   toolFile,
   toolMapFile,
+  utilsFile,
 } from "./resource-snippets";
+
+type FolderKey =
+  | "domains"
+  | "lib"
+  | "integrations"
+  | "db"
+  | "agent"
+  | "app"
+  | "schema"
+  | "repository"
+  | "dto"
+  | "routes"
+  | "tools"
+  | "service"
+  | "middleware"
+  | "constants"
+  | "utils"
+  | "template";
 
 type ApiLayer = {
   id: string;
@@ -26,123 +53,134 @@ type ApiLayer = {
   body: string;
   points: string[];
   visual: ReactNode;
-  visualScale?: number;
 };
 
-type LayerKey =
-  | "schemaFile"
-  | "repository"
-  | "repositoryMethod"
-  | "tool"
-  | "toolMap"
-  | "dto"
-  | "route"
-  | "routeMap";
+/** One unit (code) + optional index/map of all units — same aggregator pattern. */
+const folderExamples: Partial<Record<FolderKey, CodeExample[]>> = {
+  db: [{ mode: "code", filename: "db/schema.ts", code: dbSchemaBarrelFile }],
+  agent: [{ mode: "code", filename: "agent/registry.ts", code: agentRegistryFile }],
+  app: [{ mode: "code", filename: "app.ts", code: appMountFile }],
+  schema: [{ mode: "code", filename: "domains/task/schema/tasks.schema.ts", code: schemaFile }],
+  // Zoom-in: Files → file (all methods) → one function
+  repository: [
+    { mode: "index", filename: "domains/task/repository.ts", code: repositoryOutlineFile },
+    { mode: "code", filename: "domains/task/repository.ts → list", code: repositoryMethodFile },
+  ],
+  dto: [{ mode: "code", filename: "domains/task/dto.ts", code: dtoFile }],
+  // Zoom-in: Files → route map → one handler
+  routes: [
+    { mode: "index", filename: "domains/task/routes/index.ts", code: routeMapFile },
+    {
+      mode: "code",
+      filename: "domains/task/routes/task.post.route.ts",
+      code: routeHandlerFile,
+    },
+  ],
+  // Zoom-in: Files → tool map → one tool
+  tools: [
+    { mode: "index", filename: "domains/task/tools/index.ts", code: toolMapFile },
+    { mode: "code", filename: "domains/task/tools/create-task.tool.ts", code: toolFile },
+  ],
+  service: [{ mode: "code", filename: "domains/auth/service.ts", code: serviceFile }],
+  middleware: [
+    {
+      mode: "code",
+      filename: "domains/auth/middleware/require-auth.middleware.ts",
+      code: middlewareFile,
+    },
+  ],
+  constants: [
+    { mode: "code", filename: "domains/billing/constants/plans.constants.ts", code: constantsFile },
+  ],
+  utils: [{ mode: "code", filename: "domains/tenant/utils/slug.utils.ts", code: utilsFile }],
+  template: [
+    {
+      mode: "code",
+      filename: "domains/auth/template/verify-email.template.ts",
+      code: templateFile,
+    },
+  ],
+};
 
-function layerCopy(key: LayerKey, t: TFunction) {
+function apiExplorer(t: TFunction, workspace: string, tree: ExplorerNode[]) {
+  return (
+    <Explorer
+      title={t("landing.structureIntro.preview.explorer")}
+      workspace={workspace}
+      ariaLabel={t("landing.moduleZoom.api.aria")}
+      tree={tree}
+    />
+  );
+}
+
+function folderVisual(key: FolderKey, t: TFunction): ReactNode {
+  const { workspace, tree } = buildApiFolderTree(key, t);
+  const explorer = apiExplorer(t, workspace, tree);
+  const examples = folderExamples[key];
+  if (!examples?.length) return explorer;
+  return <ExplorerCodeCarousel tree={explorer} examples={examples} />;
+}
+
+function folderBlock(key: FolderKey, t: TFunction): ApiLayer {
   return {
-    eyebrow: t(`landing.slices.${key}.eyebrow`),
-    title: t(`landing.slices.${key}.title`),
-    body: t(`landing.slices.${key}.body`),
-    points: points(t, `landing.slices.${key}.points`),
+    id: key,
+    eyebrow: t(`landing.apiCourse.folders.${key}.eyebrow`),
+    title: t(`landing.apiCourse.folders.${key}.title`),
+    body: t(`landing.apiCourse.folders.${key}.body`),
+    points: points(t, `landing.apiCourse.folders.${key}.points`),
+    visual: folderVisual(key, t),
   };
 }
 
-/** Folder overview — explorer in a side card (like Database groups). */
-function buildApiOverview(t: TFunction): ApiLayer {
+function buildOverview(t: TFunction): ApiLayer {
   return {
     id: "overview",
     eyebrow: t("landing.moduleZoom.api.layout.eyebrow"),
     title: t("landing.moduleZoom.api.layout.title"),
     body: t("landing.moduleZoom.api.layout.body"),
     points: points(t, "landing.moduleZoom.api.points"),
-    visual: (
-      <Explorer
-        title={t("landing.structureIntro.preview.explorer")}
-        workspace={t("landing.moduleZoom.api.workspace")}
-        ariaLabel={t("landing.moduleZoom.api.aria")}
-        tree={buildApiTree(t)}
-      />
-    ),
+    visual: apiExplorer(t, t("landing.moduleZoom.api.workspace"), buildApiTree(t)),
   };
 }
 
-/**
- * API domain layers in build order — each card shows a CodeBlock, not the explorer.
- * Overview → schema → method → repository → tool → tool map → DTOs → route → route map.
- */
-function buildApiLayers(t: TFunction): ApiLayer[] {
+/** Overview → src folders → domain folders. One block each. */
+function buildChapters(t: TFunction): { part?: string; layers: ApiLayer[] }[] {
   return [
-    buildApiOverview(t),
     {
-      id: "schema",
-      ...layerCopy("schemaFile", t),
-      visualScale: 0.72,
-      visual: (
-        <CodeBlock filename="domains/task/schema/tasks.schema.ts" code={schemaFile} lang="ts" />
-      ),
+      layers: [
+        buildOverview(t),
+        folderBlock("domains", t),
+        folderBlock("lib", t),
+        folderBlock("integrations", t),
+        folderBlock("db", t),
+        folderBlock("agent", t),
+        folderBlock("app", t),
+      ],
     },
     {
-      id: "repository-method",
-      ...layerCopy("repositoryMethod", t),
-      visualScale: 0.72,
-      visual: (
-        <CodeBlock
-          filename="domains/task/repository.ts → list"
-          code={repositoryMethodFile}
-          lang="ts"
-        />
-      ),
-    },
-    {
-      id: "repository",
-      ...layerCopy("repository", t),
-      visual: (
-        <CodeBlock filename="domains/task/repository.ts" code={repositoryOutlineFile} lang="ts" />
-      ),
-    },
-    {
-      id: "tool",
-      ...layerCopy("tool", t),
-      visualScale: 0.7,
-      visual: (
-        <CodeBlock filename="domains/task/tools/create-task.tool.ts" code={toolFile} lang="ts" />
-      ),
-    },
-    {
-      id: "tool-map",
-      ...layerCopy("toolMap", t),
-      visual: <CodeBlock filename="domains/task/tools/index.ts" code={toolMapFile} lang="ts" />,
-    },
-    {
-      id: "dto",
-      ...layerCopy("dto", t),
-      visual: <CodeBlock filename="domains/task/dto.ts" code={dtoFile} lang="ts" />,
-    },
-    {
-      id: "route",
-      ...layerCopy("route", t),
-      visualScale: 0.7,
-      visual: (
-        <CodeBlock
-          filename="domains/task/routes/task.post.route.ts"
-          code={routeHandlerFile}
-          lang="ts"
-        />
-      ),
-    },
-    {
-      id: "route-map",
-      ...layerCopy("routeMap", t),
-      visual: <CodeBlock filename="domains/task/routes/index.ts" code={routeMapFile} lang="ts" />,
+      part: "domain",
+      layers: [
+        folderBlock("schema", t),
+        folderBlock("repository", t),
+        folderBlock("dto", t),
+        folderBlock("routes", t),
+        folderBlock("tools", t),
+        folderBlock("service", t),
+        folderBlock("middleware", t),
+        folderBlock("constants", t),
+        folderBlock("utils", t),
+        folderBlock("template", t),
+      ],
     },
   ];
 }
 
-/** apps/api — compact intro + fluid splits (explorer, then code layers). */
+/** Backend API structure — one folder block at a time. */
 export function ApiStructure() {
   const { t, i18n } = useTranslation();
-  const layers = useMemo(() => buildApiLayers(t), [t, i18n.language]);
+  const chapters = useMemo(() => buildChapters(t), [t, i18n.language]);
+
+  let flipIndex = 0;
 
   return (
     <>
@@ -158,20 +196,36 @@ export function ApiStructure() {
         body={t("landing.moduleZoom.api.body")}
       />
 
-      {layers.map((layer, i) => (
-        <DbGroupSection
-          key={layer.id}
-          group={{
-            id: layer.id,
-            eyebrow: layer.eyebrow,
-            title: layer.title,
-            body: layer.body,
-            points: layer.points,
-            visual: layer.visual,
-            visualScale: layer.visualScale,
-          }}
-          flip={i % 2 === 1}
-        />
+      {chapters.map((chapter) => (
+        <div key={chapter.part ?? "src"}>
+          {chapter.part ? (
+            <MarketingHero
+              headingAs="h2"
+              eyebrow={t(`landing.apiCourse.parts.${chapter.part}.eyebrow`)}
+              title={t(`landing.apiCourse.parts.${chapter.part}.title`)}
+              body={t(`landing.apiCourse.parts.${chapter.part}.body`)}
+            />
+          ) : null}
+
+          {chapter.layers.map((layer) => {
+            const flip = flipIndex % 2 === 1;
+            flipIndex += 1;
+            return (
+              <DbGroupSection
+                key={layer.id}
+                group={{
+                  id: layer.id,
+                  eyebrow: layer.eyebrow,
+                  title: layer.title,
+                  body: layer.body,
+                  points: layer.points,
+                  visual: layer.visual,
+                }}
+                flip={flip}
+              />
+            );
+          })}
+        </div>
       ))}
     </>
   );

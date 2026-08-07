@@ -60,7 +60,7 @@ export function buildRepoTree(t: TFunction): ExplorerNode[] {
   ];
 }
 
-/** Zoom: apps/api — domains + lib + agent. */
+/** API overview — closed domains, task peeks one level. */
 export function buildApiTree(t: TFunction): ExplorerNode[] {
   const p = (key: string) => t(`landing.moduleZoom.api.hints.${key}`);
   return [
@@ -73,57 +73,441 @@ export function buildApiTree(t: TFunction): ExplorerNode[] {
           kind: "folder",
           hint: p("domains"),
           children: [
-            { name: "auth", kind: "folder" },
-            { name: "tenant", kind: "folder" },
+            { name: "auth", kind: "folder", hint: p("auth") },
+            { name: "tenant", kind: "folder", hint: p("tenant") },
             {
               name: "task",
               kind: "folder",
               hint: p("task"),
               active: true,
               children: [
-                {
-                  name: "schema",
-                  kind: "folder",
-                  children: [{ name: "tasks.schema.ts", kind: "file", active: true }],
-                },
+                { name: "schema", kind: "folder", active: true },
                 { name: "repository.ts", kind: "file" },
                 { name: "dto.ts", kind: "file" },
                 { name: "routes", kind: "folder" },
                 { name: "tools", kind: "folder" },
               ],
             },
-            { name: "article", kind: "folder" },
-            { name: "billing", kind: "folder" },
-            { name: "admin", kind: "folder" },
+            { name: "article", kind: "folder", hint: p("article") },
+            { name: "account", kind: "folder", hint: p("account") },
+            { name: "billing", kind: "folder", hint: p("billing") },
+            { name: "usage", kind: "folder", hint: p("usage") },
+            { name: "admin", kind: "folder", hint: p("admin") },
           ],
         },
-        {
-          name: "lib",
-          kind: "folder",
-          hint: p("lib"),
-          children: [
-            { name: "env.ts", kind: "file" },
-            { name: "crypto.ts", kind: "file" },
-            { name: "media-store.ts", kind: "file" },
-          ],
-        },
-        {
-          name: "agent",
-          kind: "folder",
-          hint: p("agent"),
-          children: [
-            { name: "assistant.ts", kind: "file" },
-            { name: "registry.ts", kind: "file" },
-            { name: "routes", kind: "folder" },
-          ],
-        },
+        { name: "lib", kind: "folder", hint: p("lib") },
         { name: "integrations", kind: "folder", hint: p("integrations") },
         { name: "db", kind: "folder", hint: p("db") },
-        { name: "app.ts", kind: "file" },
+        { name: "agent", kind: "folder", hint: p("agent") },
+        { name: "app.ts", kind: "file", hint: p("app") },
         { name: "server.ts", kind: "file" },
       ],
     },
   ];
+}
+
+type ApiFolderFocus =
+  | "domains"
+  | "lib"
+  | "integrations"
+  | "db"
+  | "agent"
+  | "app"
+  | "schema"
+  | "repository"
+  | "dto"
+  | "routes"
+  | "tools"
+  | "service"
+  | "middleware"
+  | "constants"
+  | "utils"
+  | "template";
+
+/** Collapsed sibling — visible for place-in-tree, quiet so focus stays clear. */
+function ctx(name: string, kind: "folder" | "file" = "folder"): ExplorerNode {
+  return { name, kind, muted: true };
+}
+
+/**
+ * src/ shell: focus expanded, every other top-level entry collapsed + muted.
+ * Shows where the piece sits without opening the whole tree.
+ */
+function srcShell(
+  focusName: string,
+  focus: ExplorerNode,
+  h: (k: string) => string,
+): ExplorerNode[] {
+  const slots: { name: string; kind: "folder" | "file"; hint?: string }[] = [
+    { name: "domains", kind: "folder", hint: h("domains") },
+    { name: "lib", kind: "folder", hint: h("lib") },
+    { name: "integrations", kind: "folder", hint: h("integrations") },
+    { name: "db", kind: "folder", hint: h("db") },
+    { name: "agent", kind: "folder", hint: h("agent") },
+    { name: "app.ts", kind: "file", hint: h("app") },
+    { name: "server.ts", kind: "file", hint: h("server") },
+  ];
+
+  return [
+    {
+      name: "src",
+      kind: "folder",
+      children: slots.map((slot) =>
+        slot.name === focusName
+          ? focus
+          : { name: slot.name, kind: slot.kind, hint: slot.hint, muted: true },
+      ),
+    },
+  ];
+}
+
+/**
+ * domains/<name>/ — open the focus domain only.
+ * Other domains collapse to a single muted "···" so the list stays short.
+ */
+function domainsShell(domainBody: ExplorerNode, h: (k: string) => string): ExplorerNode {
+  return {
+    name: "domains",
+    kind: "folder",
+    hint: h("domains"),
+    children: [domainBody, { name: "···", kind: "folder", muted: true, hint: h("moreDomains") }],
+  };
+}
+
+/** Roles inside a domain — only the focus expands; others stay collapsed + muted. */
+function domainRoles(
+  focusName: string,
+  focus: ExplorerNode,
+  h: (k: string) => string,
+): ExplorerNode[] {
+  const slots: { name: string; kind: "folder" | "file"; hint: string }[] = [
+    { name: "schema", kind: "folder", hint: h("schema") },
+    { name: "repository.ts", kind: "file", hint: h("repository") },
+    { name: "dto.ts", kind: "file", hint: h("dto") },
+    { name: "routes", kind: "folder", hint: h("routes") },
+    { name: "tools", kind: "folder", hint: h("tools") },
+    { name: "service.ts", kind: "file", hint: h("service") },
+    { name: "middleware", kind: "folder", hint: h("middleware") },
+    { name: "constants", kind: "folder", hint: h("constants") },
+    { name: "utils", kind: "folder", hint: h("utils") },
+    { name: "template", kind: "folder", hint: h("template") },
+  ];
+
+  return slots.map((slot) =>
+    slot.name === focusName
+      ? focus
+      : { name: slot.name, kind: slot.kind, hint: slot.hint, muted: true },
+  );
+}
+
+function inDomain(
+  domainName: string,
+  focusName: string,
+  focus: ExplorerNode,
+  h: (k: string) => string,
+): ExplorerNode[] {
+  return srcShell(
+    "domains",
+    domainsShell(
+      {
+        name: domainName,
+        kind: "folder",
+        active: true,
+        children: domainRoles(focusName, focus, h),
+      },
+      h,
+    ),
+    h,
+  );
+}
+
+/**
+ * Compact Explorer focused on one folder — path ancestors open, siblings
+ * collapsed + muted so you still see place-in-tree.
+ */
+export function buildApiFolderTree(
+  folder: ApiFolderFocus,
+  t: TFunction,
+): { workspace: string; tree: ExplorerNode[] } {
+  const h = (key: string) => t(`landing.apiCourse.folderHints.${key}`);
+  const workspace = t("landing.moduleZoom.api.workspace");
+
+  switch (folder) {
+    case "domains":
+      return {
+        workspace,
+        tree: srcShell(
+          "domains",
+          {
+            name: "domains",
+            kind: "folder",
+            hint: h("domains"),
+            active: true,
+            children: [
+              { name: "task", kind: "folder", hint: h("resource"), active: true },
+              { name: "auth", kind: "folder", hint: h("platform") },
+              { name: "account", kind: "folder", hint: h("routesOnly") },
+              { name: "billing", kind: "folder", hint: h("catalog") },
+              { name: "usage", kind: "folder", hint: h("ledger") },
+              ctx("admin"),
+            ],
+          },
+          h,
+        ),
+      };
+    case "lib":
+      return {
+        workspace,
+        tree: srcShell(
+          "lib",
+          {
+            name: "lib",
+            kind: "folder",
+            hint: h("lib"),
+            active: true,
+            children: [
+              { name: "env.ts", kind: "file", active: true },
+              { name: "crypto.ts", kind: "file" },
+              { name: "errors.ts", kind: "file" },
+              { name: "media-store.ts", kind: "file" },
+            ],
+          },
+          h,
+        ),
+      };
+    case "integrations":
+      return {
+        workspace,
+        tree: srcShell(
+          "integrations",
+          {
+            name: "integrations",
+            kind: "folder",
+            hint: h("integrations"),
+            active: true,
+            children: [
+              { name: "resend.ts", kind: "file", hint: h("email"), active: true },
+              { name: "openai.ts", kind: "file", hint: h("ai") },
+              { name: "r2.ts", kind: "file", hint: h("files") },
+            ],
+          },
+          h,
+        ),
+      };
+    case "db":
+      return {
+        workspace,
+        tree: srcShell(
+          "db",
+          {
+            name: "db",
+            kind: "folder",
+            hint: h("db"),
+            active: true,
+            children: [
+              { name: "schema.ts", kind: "file", hint: h("barrel"), active: true },
+              { name: "client.ts", kind: "file" },
+              { name: "columns.ts", kind: "file" },
+              { name: "seed.ts", kind: "file" },
+            ],
+          },
+          h,
+        ),
+      };
+    case "agent":
+      return {
+        workspace,
+        tree: srcShell(
+          "agent",
+          {
+            name: "agent",
+            kind: "folder",
+            hint: h("agent"),
+            active: true,
+            children: [
+              { name: "tool.ts", kind: "file", hint: h("toolDef"), active: true },
+              { name: "registry.ts", kind: "file", hint: h("registry") },
+              { name: "routes", kind: "folder", hint: h("chat") },
+              { name: "mcp-server.ts", kind: "file", hint: h("mcp") },
+            ],
+          },
+          h,
+        ),
+      };
+    case "app":
+      return {
+        workspace,
+        tree: srcShell("app.ts", { name: "app.ts", kind: "file", hint: h("app"), active: true }, h),
+      };
+    case "schema":
+      return {
+        workspace,
+        tree: inDomain(
+          "task",
+          "schema",
+          {
+            name: "schema",
+            kind: "folder",
+            hint: h("schema"),
+            active: true,
+            children: [
+              { name: "tasks.schema.ts", kind: "file", active: true },
+              { name: "index.ts", kind: "file" },
+            ],
+          },
+          h,
+        ),
+      };
+    case "repository":
+      return {
+        workspace,
+        tree: inDomain(
+          "task",
+          "repository.ts",
+          { name: "repository.ts", kind: "file", hint: h("repository"), active: true },
+          h,
+        ),
+      };
+    case "dto":
+      return {
+        workspace,
+        tree: inDomain(
+          "task",
+          "dto.ts",
+          { name: "dto.ts", kind: "file", hint: h("dto"), active: true },
+          h,
+        ),
+      };
+    case "routes":
+      return {
+        workspace,
+        tree: inDomain(
+          "task",
+          "routes",
+          {
+            name: "routes",
+            kind: "folder",
+            hint: h("routes"),
+            active: true,
+            children: [
+              { name: "index.ts", kind: "file", hint: h("routeMap"), active: true },
+              { name: "tasks.get.route.ts", kind: "file", hint: h("list") },
+              { name: "task.post.route.ts", kind: "file", hint: h("create") },
+              { name: "task.get.route.ts", kind: "file", hint: h("get") },
+            ],
+          },
+          h,
+        ),
+      };
+    case "tools":
+      return {
+        workspace,
+        tree: inDomain(
+          "task",
+          "tools",
+          {
+            name: "tools",
+            kind: "folder",
+            hint: h("tools"),
+            active: true,
+            children: [
+              { name: "index.ts", kind: "file", hint: h("toolMap"), active: true },
+              { name: "create-task.tool.ts", kind: "file", hint: h("action") },
+              { name: "list-tasks.tool.ts", kind: "file" },
+            ],
+          },
+          h,
+        ),
+      };
+    case "service":
+      return {
+        workspace,
+        tree: inDomain(
+          "auth",
+          "service.ts",
+          { name: "service.ts", kind: "file", hint: h("service"), active: true },
+          h,
+        ),
+      };
+    case "middleware":
+      return {
+        workspace,
+        tree: inDomain(
+          "auth",
+          "middleware",
+          {
+            name: "middleware",
+            kind: "folder",
+            hint: h("middleware"),
+            active: true,
+            children: [
+              { name: "require-auth.middleware.ts", kind: "file", active: true },
+              { name: "require-platform-admin.middleware.ts", kind: "file" },
+              { name: "index.ts", kind: "file" },
+            ],
+          },
+          h,
+        ),
+      };
+    case "constants":
+      return {
+        workspace,
+        tree: inDomain(
+          "billing",
+          "constants",
+          {
+            name: "constants",
+            kind: "folder",
+            hint: h("constants"),
+            active: true,
+            children: [
+              { name: "plans.constants.ts", kind: "file", active: true },
+              { name: "index.ts", kind: "file" },
+            ],
+          },
+          h,
+        ),
+      };
+    case "utils":
+      return {
+        workspace,
+        tree: inDomain(
+          "tenant",
+          "utils",
+          {
+            name: "utils",
+            kind: "folder",
+            hint: h("utils"),
+            active: true,
+            children: [
+              { name: "slug.utils.ts", kind: "file", active: true },
+              { name: "index.ts", kind: "file" },
+            ],
+          },
+          h,
+        ),
+      };
+    case "template":
+      return {
+        workspace,
+        tree: inDomain(
+          "auth",
+          "template",
+          {
+            name: "template",
+            kind: "folder",
+            hint: h("template"),
+            active: true,
+            children: [
+              { name: "verify-email.template.ts", kind: "file", active: true },
+              { name: "reset-password.template.ts", kind: "file" },
+              { name: "index.ts", kind: "file" },
+            ],
+          },
+          h,
+        ),
+      };
+  }
 }
 
 /** Zoom: apps/web — domains mirror the API. */

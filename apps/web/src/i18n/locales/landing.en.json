@@ -69,7 +69,7 @@
     },
     "structureApi": {
       "title": "API structure · {{brand}}",
-      "description": "apps/api domain layers — schema, repository, tools, DTOs, and routes — walked as a guided course."
+      "description": "Backend layout — domains, schema, repository, endpoints, DTOs, tools. One folder at a time."
     },
     "structureWeb": {
       "title": "Web structure · {{brand}}",
@@ -656,8 +656,8 @@
     "platformBody": "Env, database, object storage, and i18n — the pieces every feature leans on.",
     "api": {
       "path": "apps/api",
-      "title": "The Hono server",
-      "body": "Schema, repository, tools, DTOs, and routes — one domain folder walked top to bottom.",
+      "title": "Backend API",
+      "body": "Domains, schema, repository, endpoints, DTOs, tools — one folder each.",
       "cta": "Open the API"
     },
     "web": {
@@ -711,27 +711,35 @@
   "moduleZoom": {
     "api": {
       "eyebrow": "apps/api",
-      "title": "The Hono server",
-      "body": "Domains own schema, repository, routes and tools. Cross-cutting pieces live in lib/, agent/, and integrations/ — never scattered.",
+      "title": "Backend API",
+      "body": "Map first. Then each folder — role, boundary, keywords.",
       "layout": {
-        "eyebrow": "The tree",
+        "eyebrow": "Overview",
         "title": "One folder per domain",
-        "body": "Open apps/api and the map is the product: domains/ for features, lib/ for infra, agent/ and integrations/ for cross-cutting work — never a grab-bag of files."
+        "body": "domains/ = features. lib/ = infra. agent/ · integrations/ = shared surfaces. Closed here — opened next."
       },
       "points": [
-        "One folder per domain under domains/ — auth, tenant, task…",
-        "lib/ is pure infra (env, crypto, media) — domains import it, not the reverse",
-        "Agent tools sit beside the domain they act on"
+        "domains/ — one feature folder",
+        "lib/ — infra only (no reverse imports)",
+        "task/ — resource roles peek"
       ],
       "workspace": "apps/api",
-      "aria": "apps/api folder tree in a VS Code-style explorer",
+      "aria": "API source tree",
       "hints": {
-        "domains": "one folder per feature",
-        "task": "example resource",
-        "lib": "env, crypto, media",
-        "agent": "chat + MCP",
-        "integrations": "Resend, OpenAI, R2",
-        "db": "Drizzle client + seed"
+        "domains": "features",
+        "task": "resource",
+        "article": "resource + media",
+        "auth": "identity",
+        "tenant": "workspace",
+        "account": "routes-only",
+        "billing": "plans",
+        "usage": "ledger",
+        "admin": "platform",
+        "lib": "infra",
+        "agent": "assistant",
+        "integrations": "vendors",
+        "db": "database",
+        "app": "mounts"
       }
     },
     "web": {
@@ -771,6 +779,205 @@
         "composites": "tables, charts…",
         "theme": "ThemeProvider + tokens",
         "lib": "cn()"
+      }
+    }
+  },
+  "apiCourse": {
+    "carouselLabel": "Files, code, or index",
+    "slideTree": "Folder tree",
+    "slideCode": "One unit",
+    "slideIndex": "Full index — all methods / map",
+    "modeFiles": "Files",
+    "modeCode": "Code",
+    "modeIndex": "Index",
+    "parts": {
+      "domain": {
+        "eyebrow": "Inside a domain",
+        "title": "Fixed roles",
+        "body": "schema → repository → DTO → endpoints → tools. Optional: service · middleware · constants · utils · template."
+      }
+    },
+    "folderHints": {
+      "domains": "features",
+      "moreDomains": "other domains",
+      "lib": "infra",
+      "integrations": "vendors",
+      "db": "database",
+      "agent": "assistant",
+      "app": "mounts",
+      "server": "listen",
+      "context": "request types",
+      "schema": "tables",
+      "repository": "SQL",
+      "dto": "wire shape",
+      "routes": "endpoints",
+      "tools": "agent actions",
+      "service": "rules",
+      "middleware": "guards",
+      "constants": "statics",
+      "utils": "helpers",
+      "template": "outbound mail",
+      "resource": "CRUD",
+      "platform": "platform",
+      "routesOnly": "HTTP only",
+      "catalog": "plans",
+      "ledger": "no HTTP",
+      "email": "email",
+      "ai": "AI",
+      "files": "files",
+      "barrel": "exports",
+      "toolDef": "define tool",
+      "registry": "all tools",
+      "chat": "chat API",
+      "mcp": "remote tools",
+      "routeMap": "group",
+      "toolMap": "list",
+      "list": "list",
+      "create": "create",
+      "get": "get",
+      "action": "one action"
+    },
+    "folders": {
+      "domains": {
+        "eyebrow": "domains/",
+        "title": "Features",
+        "body": "One folder = one feature. Same name on the frontend.",
+        "points": [
+          "resource — schema · repository · DTO · endpoints · tools",
+          "platform — identity · workspace · admin",
+          "routes-only — HTTP surface, no tables",
+          "ledger / catalog — partial shapes OK"
+        ]
+      },
+      "lib": {
+        "eyebrow": "lib/",
+        "title": "Infra",
+        "body": "Shared primitives. No domain knowledge. Nothing imports back into lib/.",
+        "points": [
+          "env · crypto · errors",
+          "email layout · media store",
+          "domains import lib/ — never reverse"
+        ]
+      },
+      "integrations": {
+        "eyebrow": "integrations/",
+        "title": "Vendors",
+        "body": "External services. Thin wrappers. Only talk to lib/.",
+        "points": ["email provider", "AI provider", "object storage"]
+      },
+      "db": {
+        "eyebrow": "db/",
+        "title": "Database",
+        "body": "Client, shared columns, schema barrel, seed. Tables live in domains.",
+        "points": [
+          "schema.ts — re-exports domain tables",
+          "columns — timestamps helper",
+          "seed — demo data"
+        ]
+      },
+      "agent": {
+        "eyebrow": "agent/",
+        "title": "Assistant surface",
+        "body": "Chat + remote tools. Domains register tools; they don't own this folder.",
+        "points": [
+          "tool definition",
+          "registry — all tools",
+          "chat endpoints · remote tool protocol"
+        ]
+      },
+      "app": {
+        "eyebrow": "app.ts",
+        "title": "Mounts",
+        "body": "Wire every route group once. Server listens. Context = request types.",
+        "points": [
+          "tenant mounts — /tenants/:tenantId/…",
+          "public · invite · join · remote tools — second mounts",
+          "auth + tenant guards on the group"
+        ]
+      },
+      "schema": {
+        "eyebrow": "schema/",
+        "title": "Tables",
+        "body": "One table per file. Tenant-scoped. Index + type export.",
+        "points": [
+          "id · tenantId · timestamps",
+          "index on tenantId",
+          "migrations from schema — never hand-written"
+        ]
+      },
+      "repository": {
+        "eyebrow": "repository.ts",
+        "title": "SQL boundary",
+        "body": "All queries here. Every method takes tenantId. Returns rows — not DTOs.",
+        "points": [
+          "list · find · insert · update · delete",
+          "tenantId in every where",
+          "routes / tools call this — no SQL elsewhere"
+        ]
+      },
+      "dto": {
+        "eyebrow": "dto.ts",
+        "title": "Wire shape",
+        "body": "Map row → DTO. Explicit fields. Never spread a row.",
+        "points": [
+          "shared contract with the frontend",
+          "dates → ISO strings",
+          "secrets stay off the DTO"
+        ]
+      },
+      "routes": {
+        "eyebrow": "routes/",
+        "title": "Endpoints",
+        "body": "One file per endpoint. Group map in index. Guards once on the group.",
+        "points": [
+          "path.method.route.ts",
+          "Input → Processing → Output",
+          "tenant / user from context — never from body"
+        ]
+      },
+      "tools": {
+        "eyebrow": "tools/",
+        "title": "Agent actions",
+        "body": "One file per action. Same repository as endpoints. Registered in the assistant.",
+        "points": ["name · input · execute", "tenant / user from tool context", "index → registry"]
+      },
+      "service": {
+        "eyebrow": "service.ts",
+        "title": "Business rules",
+        "body": "Orchestration only. Plain CRUD skips this file.",
+        "points": [
+          "sessions · invites · seat checks",
+          "resource CRUD → repository direct",
+          "optional — add when needed"
+        ]
+      },
+      "middleware": {
+        "eyebrow": "middleware/",
+        "title": "Guards",
+        "body": "Auth · tenant · role. Applied once on the route group.",
+        "points": [
+          "one file per guard",
+          "sets user · tenant on context",
+          "endpoints never re-check session"
+        ]
+      },
+      "constants": {
+        "eyebrow": "constants/",
+        "title": "Statics",
+        "body": "TTLs · catalogs · limits. No helpers.",
+        "points": ["one topic per file", "plan catalog · cookie name · TTL", "logic → utils/"]
+      },
+      "utils": {
+        "eyebrow": "utils/",
+        "title": "Helpers",
+        "body": "Domain logic helpers. lib/ stays cross-cutting and pure.",
+        "points": ["slug · period · media paths", "domain-owned", "create folder with first file"]
+      },
+      "template": {
+        "eyebrow": "template/",
+        "title": "Outbound mail",
+        "body": "Subject + body. Service sends. Token only in the link.",
+        "points": ["verify · reset · invite", "one purpose per file", "never log raw tokens"]
       }
     }
   },

@@ -36,11 +36,7 @@ export function toTaskDto({ task, authorName }: TaskWithAuthor): TaskDto {
   };
 }`;
 
-export const schemaFile = `/**
- * Tasks
- *
- * One row per task. Scoped to a tenant; optional author (set null on user delete).
- */
+export const schemaFile = `/** Tasks — one row per task, tenant-scoped */
 export const tasks = pgTable(
   "tasks",
   {
@@ -58,15 +54,7 @@ export const tasks = pgTable(
 
 export type Task = typeof tasks.$inferSelect;`;
 
-export const repositoryMethodFile = `/**
- * List tasks
- *
- * Newest first; optional case-insensitive title search.
- *
- * @param tenantId - Tenant that owns the tasks
- * @param search - Optional case-insensitive title filter
- * @returns Tasks with author names, newest first
- */
+export const repositoryMethodFile = `/** List tasks — tenant-scoped, newest first */
 async list(tenantId: string, search?: string): Promise<TaskWithAuthor[]> {
   const where = search
     ? and(eq(tasks.tenantId, tenantId), ilike(tasks.title, \`%\${search}%\`))
@@ -79,17 +67,8 @@ async list(tenantId: string, search?: string): Promise<TaskWithAuthor[]> {
     .orderBy(desc(tasks.createdAt));
 }`;
 
-export const routeHandlerFile = `// routes/task.post.route.ts — filename mirrors POST / on the tasks mount
-/**
- * Create a task
- *
- * \`POST /api/tenants/:tenantId/tasks\`
- *
- * Inserts a task for the current tenant, attributed to the authenticated user.
- *
- * @param c - Authenticated tenant request context
- * @returns 201 with the created task DTO
- */
+export const routeHandlerFile = `// routes/task.post.route.ts — POST /api/tenants/:tenantId/tasks
+/** Create a task — 201 + task DTO */
 export async function createTask(c: AppContext) {
   // -- Input -----------------------------------------------------------------
   const data = await parseBody(c, taskInputSchema);
@@ -287,3 +266,104 @@ packages/shared/src/task.ts
 //   tenant/context/   TenantProvider + useTenant  ← pages read tenant here
 //
 // Base UI (@app/ui) is tenant-agnostic. Domains compose it; they don't reinvent it.`;
+
+export const middlewareFile = `// require-auth.middleware.ts → re-export from middleware/index.ts
+export const requireAuth = createMiddleware<AppEnv>(async (c, next) => {
+  const token = getCookie(c, SESSION_COOKIE) ?? bearerSessionToken(c);
+  if (!token) throw new HttpError(401, "Not authenticated");
+
+  const sessionUser = await getSessionUser(token);
+  if (!sessionUser) {
+    clearSessionCookie(c);
+    throw new HttpError(401, "Session expired");
+  }
+
+  c.set("user", sessionUser);
+  c.set("sessionToken", token);
+  await next();
+});
+
+// Tenant groups: .use("*", requireAuth, requireTenant) once in routes/index.ts`;
+
+export const constantsFile = `// constants/<topic>.constants.ts — static values only
+export const SESSION_COOKIE = "app_session";
+export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+// Catalogs live here too (billing/constants/plans.constants.ts)
+export const PLAN_CATALOG: readonly PlanDto[] = [ /* free · starter · pro */ ];
+
+// No helpers here — those go in utils/<topic>.utils.ts`;
+
+export const utilsFile = `// utils/slug.utils.ts — helpers WITH logic (not static catalogs)
+export function slugify(name: string): string { /* … */ }
+
+export async function uniqueSlug(name: string): Promise<string> {
+  const base = slugify(name);
+  let candidate = base;
+  for (;;) {
+    if (!(await tenantRepository.findTenantBySlug(candidate))) return candidate;
+    candidate = \`\${base}-\${Math.random().toString(36).slice(2, 6)}\`;
+  }
+}
+
+// Keep app-root lib/ for cross-cutting pure utilities.`;
+
+export const templateFile = `// template/verify-email.template.ts — outbound email today
+export function verifyEmailTemplate(name: string, url: string) {
+  return {
+    subject: "Confirm your email",
+    html: emailLayout(
+      "Confirm your email",
+      \`<p>Hi \${name}! Confirm your email…</p>\`,
+      "Confirm email",
+      url,
+    ),
+  };
+}
+
+// template/index.ts → services import from "./template"`;
+
+export const serviceFile = `// service.ts — ONLY when there's real business logic
+export async function createSession(c: Context, user: User): Promise<string> {
+  const token = generateToken();
+  await authRepository.insertSession({
+    userId: user.id,
+    tokenHash: hashToken(token),
+    expiresAt: new Date(Date.now() + SESSION_TTL_MS),
+  });
+  setSessionCookie(c, token);
+  return token;
+}
+
+// Plain CRUD skips this file — route/tool calls the repository directly.`;
+
+export const appMountFile = `// app.ts — each domain group mounts once
+app.route("/api/auth", authRoutes);
+app.route("/api/account", accountRoutes);
+app.route("/api/admin", adminRoutes);
+app.route("/api/tenants", tenantRoutes);
+app.route("/api/tenants/:tenantId/tasks", taskRoutes);
+app.route("/api/tenants/:tenantId/articles", articleRoutes);
+app.route("/api/articles", publicArticleRoutes);   // public surface
+app.route("/api/invites", inviteRoutes);           // token auth
+app.route("/api/mcp", mcpRoutes);                  // API-key Bearer
+
+// Tenant groups: requireAuth + requireTenant in routes/index.ts`;
+
+export const dbSchemaBarrelFile = `// db/schema.ts — barrel for migrations
+export * from "@/domains/auth/schema";
+export * from "@/domains/tenant/schema";
+export * from "@/domains/task/schema";
+export * from "@/domains/usage/schema";
+export * from "@/domains/article/schema";
+export * from "@/domains/admin/schema";
+// Tables live in domains — this file only re-exports.`;
+
+export const agentRegistryFile = `// agent/registry.ts — all tools in one list
+export const allTools = [
+  ...tenantTools,
+  ...taskTools,
+  ...articleTools,
+  ...agentTools,
+];
+// Domains export tools/; agent owns chat + remote protocol.`;

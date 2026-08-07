@@ -111,6 +111,7 @@ export function DatabaseFoundation() {
 export function DbGroupSection({ group, flip }: { group: DbGroup; flip: boolean }) {
   return (
     <FeatureSplit
+      id={group.id}
       density="tight"
       headingAs="h4"
       flip={flip}

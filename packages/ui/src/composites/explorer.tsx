@@ -22,6 +22,11 @@ export type ExplorerNode = {
   kind: "folder" | "file";
   /** Highlight one row like the open editor in the explorer. */
   active?: boolean;
+  /**
+   * Collapsed context around the focus — siblings / ancestors kept visible
+   * but quiet so the tree still shows where you are.
+   */
+  muted?: boolean;
   children?: ExplorerNode[];
 };
 
@@ -120,7 +125,8 @@ function TreeRow({ node, depth }: { node: ExplorerNode; depth: number }) {
       <div
         className={cn(
           "flex h-[18px] items-center gap-0.5 pr-1.5",
-          node.active ? "bg-[#37373d] text-white" : "hover:bg-white/[0.04]",
+          node.muted && !node.active && "opacity-[0.38]",
+          node.active ? "bg-[#37373d] text-white" : !node.muted && "hover:bg-white/[0.04]",
         )}
         style={{ paddingLeft: pad }}
       >
@@ -133,9 +139,9 @@ function TreeRow({ node, depth }: { node: ExplorerNode; depth: number }) {
         ) : (
           <span className="size-3 shrink-0" aria-hidden />
         )}
-        <FileGlyph node={node} open={Boolean(open && node.children?.length)} />
+        <FileGlyph node={node} open={Boolean(open && node.children?.length)} muted={node.muted} />
         <span className="min-w-0 flex-1 truncate">{node.name}</span>
-        {node.hint ? (
+        {node.hint && !node.muted ? (
           <span className="hidden max-w-[50%] truncate text-[9px] text-[#6b6b6b] sm:inline">
             {node.hint}
           </span>
@@ -152,13 +158,14 @@ function TreeRow({ node, depth }: { node: ExplorerNode; depth: number }) {
   );
 }
 
-function FileGlyph({ node, open }: { node: ExplorerNode; open: boolean }) {
+function FileGlyph({ node, open, muted }: { node: ExplorerNode; open: boolean; muted?: boolean }) {
+  const tone = muted ? "text-[#6b6b6b]" : undefined;
   if (node.kind === "folder") {
     const Icon = open ? FolderOpenIcon : FolderIcon;
-    return <Icon className="size-3 shrink-0 text-[#dcb67a]" aria-hidden />;
+    return <Icon className={cn("size-3 shrink-0", tone ?? "text-[#dcb67a]")} aria-hidden />;
   }
   if (node.name.endsWith(".json")) {
-    return <FileJsonIcon className="size-3 shrink-0 text-[#cbcb41]" aria-hidden />;
+    return <FileJsonIcon className={cn("size-3 shrink-0", tone ?? "text-[#cbcb41]")} aria-hidden />;
   }
   if (
     node.name.endsWith(".yaml") ||
@@ -166,7 +173,9 @@ function FileGlyph({ node, open }: { node: ExplorerNode; open: boolean }) {
     node.name.endsWith(".ts") ||
     node.name.endsWith(".tsx")
   ) {
-    return <FileCode2Icon className="size-3 shrink-0 text-[#519aba]" aria-hidden />;
+    return (
+      <FileCode2Icon className={cn("size-3 shrink-0", tone ?? "text-[#519aba]")} aria-hidden />
+    );
   }
   return <FileIcon className="size-3 shrink-0 text-[#6b6b6b]" aria-hidden />;
 }

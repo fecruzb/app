@@ -69,7 +69,7 @@
     },
     "structureApi": {
       "title": "Estrutura da API · {{brand}}",
-      "description": "Camadas do domínio em apps/api — schema, repository, tools, DTOs e rotas — percorridas como um curso guiado."
+      "description": "Layout do backend — domains, schema, repository, endpoints, DTOs, tools. Uma pasta por vez."
     },
     "structureWeb": {
       "title": "Estrutura do web · {{brand}}",
@@ -660,8 +660,8 @@
     "platformBody": "Env, banco, object storage e i18n — as peças em que toda feature se apoia.",
     "api": {
       "path": "apps/api",
-      "title": "O servidor Hono",
-      "body": "Schema, repository, tools, DTOs e rotas — um domínio percorrido de ponta a ponta.",
+      "title": "API backend",
+      "body": "Domains, schema, repository, endpoints, DTOs, tools — uma pasta cada.",
       "cta": "Abrir a API"
     },
     "web": {
@@ -715,27 +715,35 @@
   "moduleZoom": {
     "api": {
       "eyebrow": "apps/api",
-      "title": "O servidor Hono",
-      "body": "Domínios possuem schema, repository, routes e tools. Peças transversais ficam em lib/, agent/ e integrations/ — nunca espalhadas.",
+      "title": "API backend",
+      "body": "Mapa primeiro. Depois cada pasta — papel, fronteira, keywords.",
       "layout": {
-        "eyebrow": "A árvore",
+        "eyebrow": "Visão geral",
         "title": "Uma pasta por domínio",
-        "body": "Abra apps/api e o mapa é o produto: domains/ para features, lib/ para infra, agent/ e integrations/ para o transversal — nunca um saco de arquivos."
+        "body": "domains/ = features. lib/ = infra. agent/ · integrations/ = superfícies compartilhadas. Fechadas aqui — abertas a seguir."
       },
       "points": [
-        "Uma pasta por domínio em domains/ — auth, tenant, task…",
-        "lib/ é infra pura (env, crypto, media) — domains importam, nunca o contrário",
-        "Tools do agente ficam ao lado do domínio que elas usam"
+        "domains/ — uma pasta por feature",
+        "lib/ — só infra (sem import reverso)",
+        "task/ — peek dos papéis do recurso"
       ],
       "workspace": "apps/api",
-      "aria": "Árvore de apps/api num explorer estilo VS Code",
+      "aria": "Árvore do código da API",
       "hints": {
-        "domains": "uma pasta por feature",
-        "task": "recurso exemplo",
-        "lib": "env, crypto, media",
-        "agent": "chat + MCP",
-        "integrations": "Resend, OpenAI, R2",
-        "db": "client Drizzle + seed"
+        "domains": "features",
+        "task": "recurso",
+        "article": "recurso + mídia",
+        "auth": "identidade",
+        "tenant": "workspace",
+        "account": "só rotas",
+        "billing": "planos",
+        "usage": "ledger",
+        "admin": "plataforma",
+        "lib": "infra",
+        "agent": "assistente",
+        "integrations": "vendors",
+        "db": "banco",
+        "app": "mounts"
       }
     },
     "web": {
@@ -775,6 +783,209 @@
         "composites": "tabelas, gráficos…",
         "theme": "ThemeProvider + tokens",
         "lib": "cn()"
+      }
+    }
+  },
+  "apiCourse": {
+    "carouselLabel": "Files, código ou index",
+    "slideTree": "Árvore de pastas",
+    "slideCode": "Uma unidade",
+    "slideIndex": "Index completo — todos os métodos / mapa",
+    "modeFiles": "Files",
+    "modeCode": "Code",
+    "modeIndex": "Index",
+    "parts": {
+      "domain": {
+        "eyebrow": "Dentro do domínio",
+        "title": "Papéis fixos",
+        "body": "schema → repository → DTO → endpoints → tools. Opcional: service · middleware · constants · utils · template."
+      }
+    },
+    "folderHints": {
+      "domains": "features",
+      "moreDomains": "outros domains",
+      "lib": "infra",
+      "integrations": "vendors",
+      "db": "banco",
+      "agent": "assistente",
+      "app": "mounts",
+      "server": "listen",
+      "context": "tipos da request",
+      "schema": "tabelas",
+      "repository": "SQL",
+      "dto": "formato no fio",
+      "routes": "endpoints",
+      "tools": "ações do agente",
+      "service": "regras",
+      "middleware": "guards",
+      "constants": "estáticos",
+      "utils": "helpers",
+      "template": "e-mail de saída",
+      "resource": "CRUD",
+      "platform": "plataforma",
+      "routesOnly": "só HTTP",
+      "catalog": "planos",
+      "ledger": "sem HTTP",
+      "email": "e-mail",
+      "ai": "IA",
+      "files": "arquivos",
+      "barrel": "exports",
+      "toolDef": "define tool",
+      "registry": "todas as tools",
+      "chat": "API de chat",
+      "mcp": "tools remotas",
+      "routeMap": "grupo",
+      "toolMap": "lista",
+      "list": "list",
+      "create": "create",
+      "get": "get",
+      "action": "uma ação"
+    },
+    "folders": {
+      "domains": {
+        "eyebrow": "domains/",
+        "title": "Features",
+        "body": "Uma pasta = uma feature. Mesmo nome no frontend.",
+        "points": [
+          "resource — schema · repository · DTO · endpoints · tools",
+          "platform — identidade · workspace · admin",
+          "routes-only — superfície HTTP, sem tabelas",
+          "ledger / catalog — formatos parciais OK"
+        ]
+      },
+      "lib": {
+        "eyebrow": "lib/",
+        "title": "Infra",
+        "body": "Primitivos compartilhados. Sem conhecimento de domínio. Nada importa de volta para lib/.",
+        "points": [
+          "env · crypto · errors",
+          "layout de e-mail · media store",
+          "domains importam lib/ — nunca o inverso"
+        ]
+      },
+      "integrations": {
+        "eyebrow": "integrations/",
+        "title": "Vendors",
+        "body": "Serviços externos. Wrappers finos. Só falam com lib/.",
+        "points": ["provedor de e-mail", "provedor de IA", "object storage"]
+      },
+      "db": {
+        "eyebrow": "db/",
+        "title": "Banco",
+        "body": "Client, colunas compartilhadas, barrel do schema, seed. Tabelas vivem nos domains.",
+        "points": [
+          "schema.ts — reexporta tabelas dos domains",
+          "columns — helper de timestamps",
+          "seed — dados demo"
+        ]
+      },
+      "agent": {
+        "eyebrow": "agent/",
+        "title": "Superfície do assistente",
+        "body": "Chat + tools remotas. Domains registram tools; não donos desta pasta.",
+        "points": [
+          "definição de tool",
+          "registry — todas as tools",
+          "endpoints de chat · protocolo remoto"
+        ]
+      },
+      "app": {
+        "eyebrow": "app.ts",
+        "title": "Mounts",
+        "body": "Liga cada grupo de rotas uma vez. Server escuta. Context = tipos da request.",
+        "points": [
+          "mounts de tenant — /tenants/:tenantId/…",
+          "public · invite · join · tools remotas — segundos mounts",
+          "guards de auth + tenant no grupo"
+        ]
+      },
+      "schema": {
+        "eyebrow": "schema/",
+        "title": "Tabelas",
+        "body": "Uma tabela por arquivo. Escopo de tenant. Index + export do tipo.",
+        "points": [
+          "id · tenantId · timestamps",
+          "index em tenantId",
+          "migrations a partir do schema — nunca à mão"
+        ]
+      },
+      "repository": {
+        "eyebrow": "repository.ts",
+        "title": "Fronteira SQL",
+        "body": "Todas as queries aqui. Todo método recebe tenantId. Retorna rows — não DTOs.",
+        "points": [
+          "list · find · insert · update · delete",
+          "tenantId em todo where",
+          "routes / tools chamam isto — sem SQL em outro lugar"
+        ]
+      },
+      "dto": {
+        "eyebrow": "dto.ts",
+        "title": "Formato no fio",
+        "body": "Map row → DTO. Campos explícitos. Nunca spread de row.",
+        "points": [
+          "contrato compartilhado com o frontend",
+          "dates → strings ISO",
+          "segredos fora do DTO"
+        ]
+      },
+      "routes": {
+        "eyebrow": "routes/",
+        "title": "Endpoints",
+        "body": "Um arquivo por endpoint. Mapa do grupo no index. Guards uma vez no grupo.",
+        "points": [
+          "path.method.route.ts",
+          "Input → Processing → Output",
+          "tenant / user do context — nunca do body"
+        ]
+      },
+      "tools": {
+        "eyebrow": "tools/",
+        "title": "Ações do agente",
+        "body": "Um arquivo por ação. Mesmo repository dos endpoints. Registradas no assistente.",
+        "points": ["name · input · execute", "tenant / user do context da tool", "index → registry"]
+      },
+      "service": {
+        "eyebrow": "service.ts",
+        "title": "Regras de negócio",
+        "body": "Só orquestração. CRUD puro pula este arquivo.",
+        "points": [
+          "sessões · convites · assentos",
+          "CRUD de resource → repository direto",
+          "opcional — adicione quando precisar"
+        ]
+      },
+      "middleware": {
+        "eyebrow": "middleware/",
+        "title": "Guards",
+        "body": "Auth · tenant · role. Aplicados uma vez no grupo de rotas.",
+        "points": [
+          "um arquivo por guard",
+          "seta user · tenant no context",
+          "endpoints nunca rechecam sessão"
+        ]
+      },
+      "constants": {
+        "eyebrow": "constants/",
+        "title": "Estáticos",
+        "body": "TTLs · catálogos · limites. Sem helpers.",
+        "points": ["um tópico por arquivo", "catálogo de planos · cookie · TTL", "lógica → utils/"]
+      },
+      "utils": {
+        "eyebrow": "utils/",
+        "title": "Helpers",
+        "body": "Helpers com lógica do domínio. lib/ fica transversal e puro.",
+        "points": [
+          "slug · período · paths de mídia",
+          "dono do domínio",
+          "crie a pasta com o primeiro arquivo"
+        ]
+      },
+      "template": {
+        "eyebrow": "template/",
+        "title": "E-mail de saída",
+        "body": "Subject + body. Service envia. Token só no link.",
+        "points": ["verify · reset · invite", "um propósito por arquivo", "nunca logar tokens crus"]
       }
     }
   },
