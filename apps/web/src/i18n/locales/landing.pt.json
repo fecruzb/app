@@ -844,7 +844,7 @@
       "points": [
         "Mesmo nome de domínio em apps/api e apps/web — nunca espalhe uma feature",
         "Papéis na API: schema → repository → dto → routes → tools",
-        "Papéis no web: api.ts → pages/ → routes.tsx → components/ (context/hooks se precisar)",
+        "Papéis no web: api.ts → pages/ → routes.tsx → components/ (context/hooks; constants/utils opcionais como na API)",
         "packages/shared é o contrato contra o qual os dois lados compilam",
         "Fronteiras falham no lint, não só no code review"
       ]
@@ -943,10 +943,10 @@
     "webConvention": {
       "eyebrow": "O domínio React",
       "title": "Mesmo nome, papéis diferentes",
-      "body": "Depois da metade da API, o domínio web da mesma feature. api.ts é a fronteira de rede; pages/ são as telas de rota; routes.tsx exporta o <Route> do domínio; components/ guarda UI de produto só daquele domínio. context/ e hooks/ aparecem quando o domínio precisa de estado React compartilhado — auth e tenant já usam. UI base (Button, PageHeader, EmptyState, useConfirm…) vem de @app/ui; não existe dump em src/components/ no topo.",
+      "body": "Depois da metade da API, o domínio web da mesma feature. api.ts é a fronteira de rede; pages/ são as telas de rota; routes.tsx exporta o <Route> do domínio; components/ guarda UI de produto só daquele domínio. context/ e hooks/ aparecem quando o domínio precisa de estado React compartilhado — auth e tenant já usam. constants/ e utils/ opcionais seguem a API (valores estáticos vs helpers sem React); helpers React ficam em hooks/. UI base (Button, PageHeader, EmptyState, useConfirm…) vem de @app/ui; não existe dump em src/components/ no topo.",
       "points": [
         "domains/<feature>/ — api.ts, pages/, routes.tsx; components/ com a primeira peça de UI",
-        "context/<name>-provider.tsx junta Provider + useX; hooks/ para o resto",
+        "context/<name>-provider.tsx junta Provider + useX; hooks/ para React; constants/utils opcionais como na API",
         "UI de produto fica no domínio dono — nunca um dump compartilhado de components",
         "@app/ui é agnóstico de tenant; app/, layouts/, theme/, i18n/, lib/ são shell"
       ]

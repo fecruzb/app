@@ -256,6 +256,11 @@ apps/web/src/domains/task/
 //   context/<name>-provider.tsx   Provider + useX (auth, tenant, …)
 //   hooks/                        reusable hooks that aren't just useX
 
+// Same optional folders as the API (add with the first file — not empty):
+//   constants/<topic>.constants.ts   static values
+//   utils/<topic>.utils.ts           non-React helpers with logic
+//   (React helpers stay in hooks/; app-root lib/ stays cross-cutting)
+
 // Outside domains (shared shell, not product features):
 //   app/          App.tsx route map, config.ts
 //   layouts/      AppLayout, AuthLayout, RequireAuth

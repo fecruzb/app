@@ -15,8 +15,9 @@ Mirror the API: features live in `domains/<domain>/`, everything else is shared 
   - `pages/XxxPage.tsx` — route-level screens (PascalCase, one per file). Non-page route elements (e.g. redirects) may omit the `Page` suffix
   - `routes.tsx` — the domain's routes; **every domain with pages has one** (see routing below)
   - `components/` — domain UI (kebab-case): selects, FABs, layouts, marketing mocks… Create with the first non-page component; do not leave domain UI loose at the domain root
+  - Optional `constants/` / `utils/` — same roles as the API when the domain needs them: static values in `constants/<topic>.constants.ts`, non-React helpers with logic in `utils/<topic>.utils.ts` (+ `index.ts` barrels). React helpers stay in `hooks/`; app-root `lib/` stays cross-cutting infra (no domain knowledge). Do not invent these folders early
   - A domain may import another domain's `api`/context/components, but keep it minimal
-  - Do not create empty `context/` / `hooks/` / `components/` folders — add the folder when the first file lands
+  - Do not create empty `context/` / `hooks/` / `components/` / `constants/` / `utils/` folders — add the folder when the first file lands
   - Public marketing screens (landing, Code area, product tour, UI kit…) live in `domains/marketing/`.
     Treat it as the reference public module: `pages/` + `routes.tsx` + `hooks/` + `components/`
     split by concern (`landing/`, `structure/`, `foundations/`, `tour/`, `ui/`, `product-preview/`).

@@ -840,7 +840,7 @@
       "points": [
         "Same domain name on apps/api and apps/web — never scatter a feature",
         "API roles: schema → repository → dto → routes → tools",
-        "Web roles: api.ts → pages/ → routes.tsx → components/ (context/hooks as needed)",
+        "Web roles: api.ts → pages/ → routes.tsx → components/ (context/hooks; optional constants/utils like the API)",
         "packages/shared is the contract both sides compile against",
         "Boundaries fail the lint, not just code review"
       ]
@@ -939,10 +939,10 @@
     "webConvention": {
       "eyebrow": "The React domain",
       "title": "Same name, different roles",
-      "body": "After the API half, the web domain for the same feature. api.ts is the network boundary; pages/ are route screens; routes.tsx exports the domain's <Route>; components/ holds product UI for that domain only. context/ and hooks/ appear when the domain needs shared React state — auth and tenant already do. Base UI (Button, PageHeader, EmptyState, useConfirm…) comes from @app/ui; there is no top-level src/components/ dump.",
+      "body": "After the API half, the web domain for the same feature. api.ts is the network boundary; pages/ are route screens; routes.tsx exports the domain's <Route>; components/ holds product UI for that domain only. context/ and hooks/ appear when the domain needs shared React state — auth and tenant already do. Optional constants/ and utils/ match the API (static values vs non-React helpers); React helpers stay in hooks/. Base UI (Button, PageHeader, EmptyState, useConfirm…) comes from @app/ui; there is no top-level src/components/ dump.",
       "points": [
         "domains/<feature>/ — api.ts, pages/, routes.tsx; components/ with the first UI piece",
-        "context/<name>-provider.tsx co-locates Provider + useX; hooks/ for the rest",
+        "context/<name>-provider.tsx co-locates Provider + useX; hooks/ for React; optional constants/utils like the API",
         "Product UI stays in the owning domain — never a shared components dump",
         "@app/ui is tenant-agnostic; app/, layouts/, theme/, i18n/, lib/ are shell"
       ]
