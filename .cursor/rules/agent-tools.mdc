@@ -6,11 +6,11 @@ alwaysApply: false
 
 # Agent tools
 
-- One tool per file (`<action>.tool.ts`), built with `defineTool` from `@/agent/tool`; snake_case name (`create_task`)
+- One tool per file (`<action>.tool.ts`), built with `defineTool` from `@/agent/tool`; snake_case `name` (`create_task`) — file stem matches the tool name (`create-task.tool.ts`). Unlike HTTP routes (`path.method.route.ts`), tools stay action-named because they are not URL paths.
 - Return JSON-serializable data; throw `ToolError` (from `@/agent/tool`) for expected, caller-safe failures (`"Task not found — check the id with list_tasks"`) — never format a protocol response. The edges (`agent/mcp-server.ts`, `agent/assistant.ts`) surface a `ToolError` message verbatim and mask any other thrown error behind a generic message + server log, so a raw `Error` never leaks driver/SQL/internal details
 - `summarize` only on write tools (done chip in the chat UI); optional `progress` is the in-flight label while it runs; reads don't have either
 - **Domain tools** (`domains/*/tools/`) NEVER import MCP or OpenAI — lint bans the `openai` / MCP SDK packages; domains only know `@/agent/tool` (`defineTool` + `ToolError`)
-- **Agent-owned tools** live in `agent/tools/` (e.g. `generate-article-cover`) and may call `@/integrations/openai`. MCP SDK lives under `agent/mcp-server.ts`; the HTTP handler is `agent/routes/mcp.route.ts`. OpenAI client + loop live in `integrations/openai.ts`
+- **Agent-owned tools** live in `agent/tools/` (e.g. `generate-article-cover`) and may call `@/integrations/openai`. MCP SDK lives under `agent/mcp-server.ts`; the HTTP handler is `agent/routes/mcp.all.route.ts`. OpenAI client + loop live in `integrations/openai.ts`
 - Same JSDoc habit as routes: title / blank / `` `snake_case_name` `` / blank / description / `@returns` (and `@param` only if useful). Official tone — no "template/example"
 - `execute` body uses three section banners (same dash length as routes): `// -- Input -----------------------------------------------------------------`, `// -- Processing ------------------------------------------------------------`, `// -- Output ----------------------------------------------------------------`. Input holds ctx/args locals; Processing holds repository/service work and throws; Output holds the return. Always include all three
 - Canonical domain example: `apps/api/src/domains/task/tools/create-task.tool.ts`

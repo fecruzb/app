@@ -9,16 +9,16 @@ import { Hono } from "hono";
 import type { AppEnv } from "@/context";
 import { requireAuth } from "@/domains/auth/middleware";
 import { requireManager, requireTenant } from "../middleware";
-import { acceptInvite } from "./accept-invite.route";
-import { createInvite } from "./create-invite.route";
-import { getInvite } from "./get-invite.route";
-import { getTenant } from "./get-tenant.route";
-import { listInvites } from "./list-invites.route";
-import { listMembers } from "./list-members.route";
-import { removeMember } from "./remove-member.route";
-import { revokeInvite } from "./revoke-invite.route";
-import { updateMemberRole } from "./update-member-role.route";
-import { updateTenant } from "./update-tenant.route";
+import { acceptInvite } from "./invite.accept.post.public.route";
+import { getInvite } from "./invite.get.public.route";
+import { getTenant } from "./tenant.get.route";
+import { revokeInvite } from "./tenant.invites.invite.delete.route";
+import { listInvites } from "./tenant.invites.get.route";
+import { createInvite } from "./tenant.invites.post.route";
+import { removeMember } from "./tenant.members.member.delete.route";
+import { listMembers } from "./tenant.members.get.route";
+import { updateMemberRole } from "./tenant.members.member.patch.route";
+import { updateTenant } from "./tenant.patch.route";
 
 /**
  * Tenant route group

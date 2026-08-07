@@ -8,16 +8,16 @@ import { Hono } from "hono";
 import type { AppEnv } from "@/context";
 import { requireAuth } from "@/domains/auth/middleware";
 import { requireTenant } from "@/domains/tenant/middleware";
-import { createArticle } from "./create-article.route";
-import { deleteArticle } from "./delete-article.route";
-import { deleteArticleCover } from "./delete-article-cover.route";
-import { getArticle } from "./get-article.route";
-import { getPublicArticle } from "./get-public-article.route";
-import { listArticles } from "./list-articles.route";
-import { listPublicArticles } from "./list-public-articles.route";
-import { publishArticle } from "./publish-article.route";
-import { updateArticle } from "./update-article.route";
-import { uploadArticleCover } from "./upload-article-cover.route";
+import { deleteArticleCover } from "./article.cover.delete.route";
+import { uploadArticleCover } from "./article.cover.post.route";
+import { deleteArticle } from "./article.delete.route";
+import { getArticle } from "./article.get.route";
+import { updateArticle } from "./article.patch.route";
+import { createArticle } from "./article.post.route";
+import { publishArticle } from "./article.publish.post.route";
+import { listArticles } from "./articles.get.route";
+import { getPublicArticle } from "./article.get.public.route";
+import { listPublicArticles } from "./articles.get.public.route";
 
 /**
  * Article route group

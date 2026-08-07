@@ -20,7 +20,7 @@ Imports: `@/` alias for anything crossing a boundary; relative (`./`, `../`) onl
 
 Where to add:
 
-- Route: `domains/<d>/routes/<action>.route.ts` → register in `routes/index.ts`
+- Route: `domains/<d>/routes/<path>.<method>.route.ts` (relative to the Hono mount). Collection `/`: list = schema **plural** + method (`articles.get`), create = schema **singular** + method (`article.post`). Member `/:id` and nested paths use the singular (`article.get`, `article.cover.post`). Each `:param` → schema singular (`tenant.members.member.patch`). Second mounts in the same folder append a surface suffix before `.route.ts` (e.g. `articles.get.public.route.ts`, `invite.get.join.route.ts`). Handler export stays the action name (`createTask`).
 - Tool: `domains/<d>/tools/<action>.tool.ts` → register in `tools/index.ts` (and a new domain in `agent/registry.ts`)
 - Table: schema in the domain → export in `db/schema.ts` → `db:generate`
 - Env var: Zod schema in `lib/env.ts` + `.env.example` + `render.yaml` (when production needs it)

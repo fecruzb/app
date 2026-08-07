@@ -897,9 +897,10 @@
     },
     "route": {
       "eyebrow": "Serving HTTP",
-      "title": "One handler, one action",
-      "body": "Start here. A route file is a thin HTTP action — Input → Processing → Output. createTask validates with the shared schema, reads tenant and user from middleware context, calls the repository, and maps through the DTO. It never checks a session or resolves a tenant itself — that already ran on the group.",
+      "title": "One handler, one HTTP route",
+      "body": "Start here. A route file is named for the path and method relative to the mount — task.post.route.ts for POST /, tasks.get.route.ts for the list, task.get.route.ts for /:taskId. The handler stays a thin action (createTask): Input → Processing → Output. It validates with the shared schema, reads tenant and user from middleware context, calls the repository, and maps through the DTO. It never checks a session or resolves a tenant itself — that already ran on the group.",
       "points": [
+        "File name = path.method.route.ts (list plural, create/member singular)",
         "Handler sections: Input → Processing → Output",
         "Tenant from context, never from the request body",
         "parseBody + repository + toXxxDto — no SQL in the route"
@@ -912,7 +913,7 @@
       "points": [
         "Middleware once via .use — every route inherits auth + tenant",
         "One line per handler: .get(\"/\", listTasks), .post(\"/\", createTask)",
-        "Add a file, import it here, done"
+        "Add path.method.route.ts, import it here, done"
       ]
     },
     "tool": {

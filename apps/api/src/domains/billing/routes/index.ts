@@ -7,7 +7,7 @@ import { Hono } from "hono";
 import type { AppEnv } from "@/context";
 import { requireAuth } from "@/domains/auth/middleware";
 import { requireTenant } from "@/domains/tenant/middleware";
-import { getBilling } from "./get-billing.route";
+import { getBilling } from "./billing.get.route";
 
 /**
  * Billing route group

@@ -9,10 +9,10 @@ import { Hono } from "hono";
 import type { AppEnv } from "@/context";
 import { requireAuth } from "@/domains/auth/middleware";
 import { requireTenant } from "@/domains/tenant/middleware";
-import { chat } from "./chat.route";
-import { generateArticleCover } from "./generate-article-cover.route";
-import { mcp } from "./mcp.route";
-import { transcribe } from "./transcribe.route";
+import { generateArticleCover } from "./articles.article.cover.post.route";
+import { chat } from "./chat.post.route";
+import { mcp } from "./mcp.all.route";
+import { transcribe } from "./transcribe.post.route";
 
 /**
  * Agent route group

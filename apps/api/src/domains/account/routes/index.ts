@@ -10,11 +10,11 @@
 import { Hono } from "hono";
 import type { AppEnv } from "@/context";
 import { requireAuth } from "@/domains/auth/middleware";
-import { changePassword } from "./change-password.route";
-import { createApiKey } from "./create-api-key.route";
-import { listApiKeys } from "./list-api-keys.route";
-import { revokeApiKey } from "./revoke-api-key.route";
-import { updateProfile } from "./update-profile.route";
+import { listApiKeys } from "./api-keys.get.route";
+import { revokeApiKey } from "./api-keys.key.delete.route";
+import { createApiKey } from "./api-keys.post.route";
+import { changePassword } from "./password.patch.route";
+import { updateProfile } from "./profile.patch.route";
 
 /**
  * Account route group

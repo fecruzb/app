@@ -901,9 +901,10 @@
     },
     "route": {
       "eyebrow": "Servindo HTTP",
-      "title": "Um handler, uma ação",
-      "body": "Comece por aqui. Um arquivo de rota é uma ação HTTP fina — Input → Processing → Output. createTask valida com o schema compartilhado, lê tenant e user do context do middleware, chama o repository e mapeia pelo DTO. Nunca checa sessão nem resolve tenant sozinho — isso já rodou no grupo.",
+      "title": "Um handler, uma rota HTTP",
+      "body": "Comece por aqui. O arquivo de rota se nomeia pelo path e método relativos ao mount — task.post.route.ts para POST /, tasks.get.route.ts para a lista, task.get.route.ts para /:taskId. O handler continua uma ação fina (createTask): Input → Processing → Output. Valida com o schema compartilhado, lê tenant e user do context do middleware, chama o repository e mapeia pelo DTO. Nunca checa sessão nem resolve tenant sozinho — isso já rodou no grupo.",
       "points": [
+        "Nome do arquivo = path.method.route.ts (lista plural, create/membro singular)",
         "Seções do handler: Input → Processing → Output",
         "Tenant do context, nunca do body da request",
         "parseBody + repository + toXxxDto — sem SQL na rota"
@@ -916,7 +917,7 @@
       "points": [
         "Middleware uma vez via .use — toda rota herda auth + tenant",
         "Uma linha por handler: .get(\"/\", listTasks), .post(\"/\", createTask)",
-        "Adicione o arquivo, importe aqui, pronto"
+        "Adicione path.method.route.ts, importe aqui, pronto"
       ]
     },
     "tool": {

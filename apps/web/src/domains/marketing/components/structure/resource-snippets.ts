@@ -79,7 +79,8 @@ async list(tenantId: string, search?: string): Promise<TaskWithAuthor[]> {
     .orderBy(desc(tasks.createdAt));
 }`;
 
-export const routeHandlerFile = `/**
+export const routeHandlerFile = `// routes/task.post.route.ts — filename mirrors POST / on the tasks mount
+/**
  * Create a task
  *
  * \`POST /api/tenants/:tenantId/tasks\`

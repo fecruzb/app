@@ -18,7 +18,7 @@ Canonical examples: `domains/task` (API + web), `packages/shared/src/task.ts`.
 
 ## API (`api-structure.mdc`)
 
-- [ ] File names: `<action>.route.ts`, `<action>.tool.ts`, `repository.ts`, `dto.ts`, `service.ts` only when needed
+- [ ] File names: routes `<path>.<method>.route.ts` (mount-relative; list=plural, create/member=singular; `:param` → schema singular; see api-structure), `<action>.tool.ts`, `repository.ts`, `dto.ts`, `service.ts` only when needed
 - [ ] Handlers: `export async function <action>(c: AppContext)` — no `Route` suffix, no default export
 - [ ] Route/tool bodies have `// -- Input -----------------------------------------------------------------` / `// -- Processing ------------------------------------------------------------` / `// -- Output ----------------------------------------------------------------`
 - [ ] JSON via `parseBody(c, schema)` from `@app/shared`; UUIDs via `uuidParam`

@@ -8,11 +8,11 @@ import { Hono } from "hono";
 import type { AppEnv } from "@/context";
 import { requireAuth } from "@/domains/auth/middleware";
 import { requireTenant } from "@/domains/tenant/middleware";
-import { createTask } from "./create-task.route";
-import { deleteTask } from "./delete-task.route";
-import { getTask } from "./get-task.route";
-import { listTasks } from "./list-tasks.route";
-import { updateTask } from "./update-task.route";
+import { deleteTask } from "./task.delete.route";
+import { getTask } from "./task.get.route";
+import { updateTask } from "./task.patch.route";
+import { createTask } from "./task.post.route";
+import { listTasks } from "./tasks.get.route";
 
 /**
  * Task route group

@@ -39,7 +39,7 @@ Checklist (track progress):
 
 **5. DTO mapper** — `dto.ts` with `toXxxDto(row): XxxDto` (`.toISOString()` for dates). Never map inline inside a route.
 
-**6. Routes** — one file per action in `routes/<action>.route.ts`, handler `export async function <action>(c: AppContext)` (name = route action, no suffix, no default export). Body: Input → Processing → Output (`parseBody` → repository → `c.json(toXxxDto(...))`). UUID params via `uuidParam(c, "xxxId")`; expected failures via `throw new HttpError(status, message)`. Wire them in `routes/index.ts` (same role as `tools/index.ts`):
+**6. Routes** — one file per HTTP route in `routes/<path>.<method>.route.ts` (path relative to the mount; list `/` → plural e.g. `articles.get.route.ts`, create `/` → singular e.g. `article.post.route.ts`, member/nested → singular e.g. `article.get.route.ts`, `article.cover.post.route.ts`; `:params` → schema singular). Handler export stays the action name: `export async function <action>(c: AppContext)` (no `Route` suffix, no default export). Body: Input → Processing → Output (`parseBody` → repository → `c.json(toXxxDto(...))`). UUID params via `uuidParam(c, "xxxId")`; expected failures via `throw new HttpError(status, message)`. Wire them in `routes/index.ts` (same role as `tools/index.ts`):
 
 ```ts
 export const xxxRoutes = new Hono<AppEnv>()

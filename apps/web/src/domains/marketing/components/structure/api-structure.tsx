@@ -123,7 +123,7 @@ function buildApiLayers(t: TFunction): ApiLayer[] {
       visualScale: 0.7,
       visual: (
         <CodeBlock
-          filename="domains/task/routes/create-task.route.ts"
+          filename="domains/task/routes/task.post.route.ts"
           code={routeHandlerFile}
           lang="ts"
         />

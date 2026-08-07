@@ -9,16 +9,16 @@
 import { Hono } from "hono";
 import type { AppEnv } from "@/context";
 import { requireAuth, requirePlatformAdmin } from "@/domains/auth/middleware";
-import { acceptPlatformInvite } from "./accept-platform-invite.route";
-import { createPlatformInvite } from "./create-platform-invite.route";
-import { getPlatformInvite } from "./get-platform-invite.route";
-import { listPlatformInvites } from "./list-platform-invites.route";
-import { listPlans } from "./list-plans.route";
-import { listTenants } from "./list-tenants.route";
-import { listUsers } from "./list-users.route";
-import { revokePlatformInvite } from "./revoke-platform-invite.route";
-import { updateTenant } from "./update-tenant.route";
-import { updateUser } from "./update-user.route";
+import { listPlatformInvites } from "./invites.get.route";
+import { revokePlatformInvite } from "./invites.invite.delete.route";
+import { createPlatformInvite } from "./invites.post.route";
+import { acceptPlatformInvite } from "./invite.accept.post.join.route";
+import { getPlatformInvite } from "./invite.get.join.route";
+import { listPlans } from "./plans.get.route";
+import { listTenants } from "./tenants.get.route";
+import { updateTenant } from "./tenants.tenant.patch.route";
+import { listUsers } from "./users.get.route";
+import { updateUser } from "./users.user.patch.route";
 
 /**
  * Admin route group
