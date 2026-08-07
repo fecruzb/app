@@ -53,6 +53,54 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return (await res.json()) as T;
 }
 
+/**
+ * POST JSON and consume an NDJSON response one event at a time.
+ * Non-2xx responses still expect a JSON `{ error }` body (pre-stream failures).
+ */
+async function streamNdjson<T>(
+  path: string,
+  body: unknown,
+  onEvent: (event: T) => void,
+): Promise<void> {
+  const token = getSessionToken();
+  const headers = new Headers({ "Content-Type": "application/json" });
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+
+  const res = await fetch(apiUrl(path), {
+    method: "POST",
+    credentials: API_ORIGIN ? "include" : "same-origin",
+    headers,
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    if (res.status === 401) clearSessionToken();
+    const errBody = (await res.json().catch(() => null)) as ApiErrorBody | null;
+    throw new ApiError(res.status, errBody?.error ?? `Error ${res.status}`);
+  }
+  if (!res.body) throw new ApiError(500, "Empty response stream");
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      onEvent(JSON.parse(trimmed) as T);
+    }
+  }
+
+  const tail = buffer.trim();
+  if (tail) onEvent(JSON.parse(tail) as T);
+}
+
 export const api = {
   get: <T>(path: string) => request<T>(path),
   post: <T>(path: string, body?: unknown) =>
@@ -60,6 +108,7 @@ export const api = {
       method: "POST",
       body: body !== undefined ? JSON.stringify(body) : undefined,
     }),
+  streamNdjson,
   upload: <T>(path: string, form: FormData) => request<T>(path, { method: "POST", body: form }),
   patch: <T>(path: string, body: unknown) =>
     request<T>(path, { method: "PATCH", body: JSON.stringify(body) }),

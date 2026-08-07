@@ -15,6 +15,7 @@ export const deleteTaskTool = defineTool({
   name: "delete_task",
   description: "Deletes a task by id. Only use when the user explicitly asks.",
   inputSchema: { id: z.string().uuid() },
+  progress: () => "Deleting task…",
   summarize: () => "Task deleted",
   execute: async (ctx, { id }) => {
     // -- Input -----------------------------------------------------------------

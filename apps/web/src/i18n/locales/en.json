@@ -323,6 +323,10 @@
     "open": "Open assistant",
     "title": "Assistant",
     "clear": "Clear",
+    "maximize": "Expand assistant",
+    "restore": "Restore assistant size",
+    "minimize": "Minimize assistant",
+    "busy": "Assistant is working",
     "close": "Close",
     "intro": "Ask or request something about <strong>{{tenant}}</strong>. Examples:",
     "suggestions": [
@@ -331,6 +335,7 @@
       "generate an article about a lighthouse at sunset"
     ],
     "thinking": "Thinking...",
+    "working": "Running tools...",
     "transcribing": "Transcribing...",
     "recording": "Recording...",
     "placeholder": "Talk to the assistant...",

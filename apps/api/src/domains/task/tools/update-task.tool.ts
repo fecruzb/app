@@ -21,6 +21,7 @@ export const updateTaskTool = defineTool({
     title: taskInputSchema.shape.title,
     completed: taskInputSchema.shape.completed,
   },
+  progress: (args) => `Updating task: ${args.title}`,
   summarize: (args) => `Task updated: ${args.title}`,
   execute: async (ctx, { id, title, completed }) => {
     // -- Input -----------------------------------------------------------------

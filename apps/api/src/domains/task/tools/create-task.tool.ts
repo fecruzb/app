@@ -19,6 +19,7 @@ export const createTaskTool = defineTool({
     title: taskInputSchema.shape.title,
     completed: z.boolean().default(false),
   },
+  progress: (args) => `Creating task: ${args.title}`,
   summarize: (args) => `Task created: ${args.title}`,
   execute: async (ctx, { title, completed }) => {
     // -- Input -----------------------------------------------------------------

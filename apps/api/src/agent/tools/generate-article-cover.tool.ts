@@ -26,6 +26,7 @@ export const generateArticleCoverTool = defineTool({
     articleId: z.string().uuid(),
     prompt: z.string().trim().min(1).max(2000).optional(),
   },
+  progress: (args) => `Generating cover${args.prompt ? `: ${args.prompt.slice(0, 60)}` : "…"}`,
   summarize: (args) => `Cover generated${args.prompt ? `: ${args.prompt.slice(0, 60)}` : ""}`,
   execute: async (ctx, { articleId, prompt }) => {
     // -- Input -----------------------------------------------------------------

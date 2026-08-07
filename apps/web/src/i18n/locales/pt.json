@@ -323,6 +323,10 @@
     "open": "Abrir assistente",
     "title": "Assistente",
     "clear": "Limpar",
+    "maximize": "Expandir assistente",
+    "restore": "Restaurar tamanho do assistente",
+    "minimize": "Minimizar assistente",
+    "busy": "Assistente em andamento",
     "close": "Fechar",
     "intro": "Pergunte ou peça algo sobre <strong>{{tenant}}</strong>. Exemplos:",
     "suggestions": [
@@ -331,6 +335,7 @@
       "crie um artigo sobre um farol ao pôr do sol"
     ],
     "thinking": "Pensando...",
+    "working": "Executando ações...",
     "transcribing": "Transcrevendo...",
     "recording": "Gravando...",
     "placeholder": "Fale com o assistente...",

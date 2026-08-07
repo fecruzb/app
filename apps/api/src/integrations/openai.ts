@@ -209,6 +209,18 @@ export type ToolCallRecord = {
 
 export type LoopResult = { reply: string; calls: ToolCallRecord[]; usage: AiUsage };
 
+/** Progress hooks for a streaming chat UI — product code maps these to wire events. */
+export type LoopProgressEvent =
+  | { type: "model_start" }
+  | { type: "tool_start"; name: string; args: Record<string, unknown> }
+  | {
+      type: "tool_done";
+      name: string;
+      args: Record<string, unknown>;
+      text: string;
+      isError: boolean;
+    };
+
 type Message = OpenAI.Chat.Completions.ChatCompletionMessageParam;
 
 /**
@@ -221,9 +233,13 @@ export async function runToolLoop(opts: {
   messages: { role: "user" | "assistant"; content: string }[];
   tools: LoopTool[];
   maxRounds?: number;
+  onEvent?: (event: LoopProgressEvent) => void | Promise<void>;
 }): Promise<LoopResult> {
   const openai = getOpenAI();
   const byName = new Map(opts.tools.map((t) => [t.name, t]));
+  const emit = async (event: LoopProgressEvent) => {
+    await opts.onEvent?.(event);
+  };
 
   const openaiTools: OpenAI.Chat.Completions.ChatCompletionTool[] = opts.tools.map((t) => ({
     type: "function",
@@ -252,6 +268,7 @@ export async function runToolLoop(opts: {
   });
 
   for (let round = 0; round < (opts.maxRounds ?? 8); round++) {
+    await emit({ type: "model_start" });
     const response = await openai.chat.completions.create({
       model: opts.model,
       messages: chat,
@@ -276,6 +293,7 @@ export async function runToolLoop(opts: {
       const args = JSON.parse(call.function.arguments || "{}") as Record<string, unknown>;
       const tool = byName.get(call.function.name);
 
+      await emit({ type: "tool_start", name: call.function.name, args });
       const { text, isError } = tool
         ? await tool.run(args).catch((err: unknown) => ({
             text: err instanceof Error ? err.message : String(err),
@@ -284,6 +302,7 @@ export async function runToolLoop(opts: {
         : { text: `Unknown tool: ${call.function.name}`, isError: true };
 
       calls.push({ name: call.function.name, args, text, isError });
+      await emit({ type: "tool_done", name: call.function.name, args, text, isError });
       chat.push({ role: "tool", tool_call_id: call.id, content: text || "(empty)" });
     }
   }

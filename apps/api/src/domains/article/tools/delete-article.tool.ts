@@ -16,6 +16,7 @@ export const deleteArticleTool = defineTool({
   name: "delete_article",
   description: "Deletes an article by id. Only use when the user explicitly asks.",
   inputSchema: { id: z.string().uuid() },
+  progress: () => "Deleting article…",
   summarize: () => "Article deleted",
   execute: async (ctx, { id }) => {
     // -- Input -----------------------------------------------------------------

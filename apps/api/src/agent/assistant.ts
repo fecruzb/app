@@ -6,7 +6,7 @@
  * is and how it acts; the tool-calling loop lives in integrations/openai.
  */
 import { z } from "zod";
-import type { AgentMessage, AgentResult } from "@app/shared";
+import type { AgentMessage, AgentResult, AgentStreamEvent } from "@app/shared";
 import { runToolLoop, type AiUsage, type LoopTool } from "@/integrations/openai";
 import { env } from "@/lib/env";
 import { allTools, getTool } from "./registry";
@@ -28,22 +28,36 @@ How to act:
 - Only delete something (delete_task, delete_article) when explicitly asked.
 - If a request is too ambiguous to act safely, say what's missing in one sentence.
 
-Final answer: short and direct, without repeating technical ids.`;
+Final answer: short Markdown — use **bold**, lists, and inline \`code\` when they help. No technical ids. Cover urls stay as plain /media/... paths.`;
+}
+
+function toolSummary(
+  name: string,
+  args: Record<string, unknown>,
+  opts: { pending?: boolean; isError?: boolean; text?: string },
+): string {
+  if (opts.isError) return opts.text ?? name;
+  const tool = getTool(name);
+  if (opts.pending) return tool?.progress?.(args) ?? tool?.summarize?.(args) ?? name;
+  return tool?.summarize?.(args) ?? name;
 }
 
 /**
  * Run the assistant
  *
  * Executes the tool loop for the given conversation and returns the reply,
- * action chips, and token usage.
+ * action chips, and token usage. Optional `onEvent` streams progress for the
+ * chat UI (status + every tool call).
  *
  * @param ctx - Tenant and actor identity
  * @param messages - Conversation so far
+ * @param onEvent - Optional NDJSON progress sink
  * @returns Reply, UI action chips, and usage for metering
  */
 export async function runAssistant(
   ctx: AgentContext,
   messages: AgentMessage[],
+  onEvent?: (event: AgentStreamEvent) => void | Promise<void>,
 ): Promise<AssistantResult> {
   const tools: LoopTool[] = allTools.map((tool) => ({
     name: tool.name,
@@ -57,11 +71,43 @@ export async function runAssistant(
     },
   }));
 
+  let toolSeq = 0;
+  const openIds: string[] = [];
+
   const { reply, calls, usage } = await runToolLoop({
     model: env.assistantModel,
     system: systemPrompt(ctx),
     messages,
     tools,
+    onEvent: async (event) => {
+      if (!onEvent) return;
+      if (event.type === "model_start") {
+        await onEvent({ type: "status", status: "thinking" });
+        return;
+      }
+      if (event.type === "tool_start") {
+        const id = String(++toolSeq);
+        openIds.push(id);
+        await onEvent({ type: "status", status: "working" });
+        await onEvent({
+          type: "tool_start",
+          id,
+          tool: event.name,
+          summary: toolSummary(event.name, event.args, { pending: true }),
+        });
+        return;
+      }
+      const id = openIds.shift() ?? String(++toolSeq);
+      await onEvent({
+        type: "tool_done",
+        id,
+        summary: toolSummary(event.name, event.args, {
+          isError: event.isError,
+          text: event.text,
+        }),
+        isError: event.isError,
+      });
+    },
   });
 
   // Write tools (those with `summarize`) and errors become chips in the UI.

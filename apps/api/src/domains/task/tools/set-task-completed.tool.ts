@@ -18,6 +18,7 @@ export const setTaskCompletedTool = defineTool({
     id: z.string().uuid(),
     completed: z.boolean(),
   },
+  progress: (args) => (args.completed ? "Completing task…" : "Reopening task…"),
   summarize: (args) => (args.completed ? "Task completed" : "Task reopened"),
   execute: async (ctx, { id, completed }) => {
     // -- Input -----------------------------------------------------------------

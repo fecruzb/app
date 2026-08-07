@@ -20,6 +20,7 @@ export const createArticleTool = defineTool({
     title: articleInputSchema.shape.title,
     body: articleInputSchema.shape.body,
   },
+  progress: (args) => `Creating article: ${args.title}`,
   summarize: (args) => `Article created: ${args.title}`,
   execute: async (ctx, { title, body }) => {
     // -- Input -----------------------------------------------------------------

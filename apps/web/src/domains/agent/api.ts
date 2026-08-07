@@ -1,4 +1,4 @@
-import type { AgentMessage, AgentResult, AgentTranscriptDto } from "@app/shared";
+import type { AgentMessage, AgentStreamEvent, AgentTranscriptDto } from "@app/shared";
 import { api } from "@/lib/api";
 
 /**
@@ -16,8 +16,9 @@ function audioExtension(mimeType: string): string {
 
 /** In-app assistant chat and voice transcription (tenant-scoped agent routes). */
 export const agentApi = {
-  chat: (tenantId: string, messages: AgentMessage[]) =>
-    api.post<AgentResult>(`/tenants/${tenantId}/agent`, { messages }),
+  /** Streams NDJSON progress events; ends with `done` or `error`. */
+  chat: (tenantId: string, messages: AgentMessage[], onEvent: (event: AgentStreamEvent) => void) =>
+    api.streamNdjson<AgentStreamEvent>(`/tenants/${tenantId}/agent`, { messages }, onEvent),
 
   transcribe: (tenantId: string, audio: Blob) => {
     const form = new FormData();

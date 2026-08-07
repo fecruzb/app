@@ -21,6 +21,7 @@ export const updateArticleTool = defineTool({
     title: articleInputSchema.shape.title.optional(),
     body: articleInputSchema.shape.body.optional(),
   },
+  progress: (args) => `Updating article: ${args.title ?? args.id}`,
   summarize: (args) => `Article updated: ${args.title ?? args.id}`,
   execute: async (ctx, { id, title, body }) => {
     // -- Input -----------------------------------------------------------------
