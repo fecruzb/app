@@ -1,7 +1,7 @@
 import { HttpError, uuidParam } from "@/lib/errors";
 import type { AppContext } from "@/context";
 import { toArticleDto } from "../dto";
-import { removeMedia } from "../media";
+import { removeMedia } from "../utils";
 import { articleRepository } from "../repository";
 
 /**

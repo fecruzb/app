@@ -1,7 +1,7 @@
 import { verifyEmailSchema } from "@app/shared";
 import { HttpError, parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
-import { isEnvPlatformAdminEmail } from "../platform-admin";
+import { isEnvPlatformAdminEmail } from "../utils";
 import { authRepository } from "../repository";
 import { consumeActionToken } from "../service";
 

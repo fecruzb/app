@@ -2,7 +2,7 @@
 import { serve } from "@hono/node-server";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
-import { ensureMediaDir } from "@/domains/article/media";
+import { ensureMediaDir } from "@/domains/article/utils";
 import { app } from "@/app";
 
 // Local uploads need a real folder before serveStatic mounts (skipped when R2).

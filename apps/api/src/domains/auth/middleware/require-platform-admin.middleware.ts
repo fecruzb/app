@@ -1,7 +1,7 @@
 import { createMiddleware } from "hono/factory";
 import { HttpError } from "@/lib/errors";
 import type { AppEnv } from "@/context";
-import { isEffectivePlatformAdmin } from "../platform-admin";
+import { isEffectivePlatformAdmin } from "../utils";
 
 /**
  * Require platform admin

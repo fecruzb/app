@@ -2,8 +2,9 @@ import { createMiddleware } from "hono/factory";
 import { getCookie } from "hono/cookie";
 import { HttpError } from "@/lib/errors";
 import type { AppEnv } from "@/context";
-import { syncPlatformAdminFromEnv } from "../platform-admin";
-import { clearSessionCookie, getSessionUser, SESSION_COOKIE } from "../service";
+import { SESSION_COOKIE } from "../constants";
+import { clearSessionCookie, getSessionUser } from "../service";
+import { syncPlatformAdminFromEnv } from "../utils";
 import { bearerSessionToken } from "./bearer-session-token";
 
 /**

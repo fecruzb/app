@@ -11,7 +11,7 @@ Layers (boundaries enforced by lint in `.oxlintrc.json` — never violate):
 - `lib/` — pure utility; imports NOTHING from the app
 - `integrations/` — external service wrapper (openai, resend, r2); only uses `lib/`
 - `db/` — client, `schema.ts` (barrel), columns, seed
-- `domains/<d>/` — business: typically `schema/` (one `<table>.schema.ts` per table + `index.ts`), `repository.ts`, `service.ts`, `dto.ts`, `routes/` (handlers + `index.ts` route map), `tools/` (tools + `index.ts` registry), `template/` (outbound message templates — email today — one `<purpose>.template.ts` + `index.ts`), `middleware/` (one `<name>.middleware.ts` + `index.ts`; auth/tenant only today). Not every domain has every file — resource domains (`task`, `article`) are the full CRUD template; `account` is routes-only (HTTP for profile/password/API keys); `billing` has no schema/tools; `usage` tracks spend without HTTP routes
+- `domains/<d>/` — business: typically `schema/` (one `<table>.schema.ts` per table + `index.ts`), `repository.ts`, `service.ts`, `dto.ts`, `routes/` (handlers + `index.ts` route map), `tools/` (tools + `index.ts` registry), `template/` (outbound message templates — email today — one `<purpose>.template.ts` + `index.ts`), `middleware/` (one `<name>.middleware.ts` + `index.ts`; auth/tenant only today), optional `constants/` (static values — one `<topic>.constants.ts` + `index.ts`) and `utils/` (helpers with logic — one `<topic>.utils.ts` + `index.ts`; not app-root `@/lib`). Not every domain has every file — resource domains (`task`, `article`) are the full CRUD template; `account` is routes-only (HTTP for profile/password/API keys); `billing` has no schema/tools; `usage` tracks spend without HTTP routes
 - **API keys ownership**: credentials live in `auth` (table `api_keys`, repository + `createApiKey`/`resolveApiKey` in auth service). Account owns the user-facing HTTP surface (`/api/account/api-keys` + `account/dto.ts`) and checks membership before minting. Do not duplicate the table under account — keys are auth credentials, account is the management UI.
 - `agent/` — agent surface (not a domain); domains only import `@/agent/tool`. Agent-owned tools may live in `agent/tools/`
 - `app.ts` builds routes; `server.ts` starts the server; `context.ts` = request types
@@ -24,6 +24,8 @@ Where to add:
 - Tool: `domains/<d>/tools/<action>.tool.ts` → register in `tools/index.ts` (and a new domain in `agent/registry.ts`)
 - Template: `domains/<d>/template/<purpose>.template.ts` (email subject/HTML today) → re-export from `template/index.ts`; services import from `./template`
 - Middleware: `domains/<d>/middleware/<name>.middleware.ts` → re-export from `middleware/index.ts` (import path stays `@/domains/<d>/middleware`)
+- Constant: `domains/<d>/constants/<topic>.constants.ts` → re-export from `constants/index.ts` (TTLs, catalogs, limits — no helpers)
+- Util: `domains/<d>/utils/<topic>.utils.ts` → re-export from `utils/index.ts` (lookup/helpers with logic; keep app-root `lib/` for cross-cutting pure utilities)
 - Table: `domains/<d>/schema/<table>.schema.ts` (+ re-export from `schema/index.ts`) → ensure domain is exported in `db/schema.ts` → `db:generate`
 - Env var: Zod schema in `lib/env.ts` + `.env.example` + `render.yaml` (when production needs it)
 - Schema/DTO shared with web: `packages/shared/src/<domain>.ts`

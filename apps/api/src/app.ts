@@ -17,7 +17,7 @@ import { adminRoutes, joinRoutes } from "@/domains/admin/routes";
 import { authRoutes } from "@/domains/auth/routes";
 import { billingRoutes } from "@/domains/billing/routes";
 import { articleRoutes, publicArticleRoutes } from "@/domains/article/routes";
-import { MEDIA_DIR, mediaPublicUrl, mediaStore, usingR2 } from "@/domains/article/media";
+import { MEDIA_DIR, mediaPublicUrl, mediaStore, usingR2 } from "@/domains/article/utils";
 import { taskRoutes } from "@/domains/task/routes";
 import { inviteRoutes, tenantRoutes } from "@/domains/tenant/routes";
 import { serveSpaHtml } from "@/spa";

@@ -1,7 +1,8 @@
 import { getCookie } from "hono/cookie";
 import type { AppContext } from "@/context";
 import { bearerSessionToken } from "../middleware";
-import { clearSessionCookie, deleteSession, SESSION_COOKIE } from "../service";
+import { SESSION_COOKIE } from "../constants";
+import { clearSessionCookie, deleteSession } from "../service";
 
 /**
  * Log out

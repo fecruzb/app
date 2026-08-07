@@ -1124,7 +1124,7 @@
     "billing": {
       "eyebrow": "Planos",
       "title": "Entitlements moram num catálogo em código",
-      "body": "Não existe tabela de plans. domains/billing/plans.ts exporta PLAN_CATALOG — Free, Starter, Pro e Pay as you go — com limites de assentos e allowance de IA por membro. Tenants só guardam plan_id; o platform admin atribui. Depois, ligue o Stripe gravando o mesmo campo.",
+      "body": "Não existe tabela de plans. domains/billing/constants/plans.constants.ts exporta PLAN_CATALOG — Free, Starter, Pro e Pay as you go — com limites de assentos e allowance de IA por membro. Lookups ficam em billing/utils. Tenants só guardam plan_id; o platform admin atribui. Depois, ligue o Stripe gravando o mesmo campo.",
       "points": [
         "Quatro planos em código — edite o catálogo ao fazer o fork",
         "Assentos + IA included vs passthrough, resolvidos por getPlan(planId)",

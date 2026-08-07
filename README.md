@@ -82,7 +82,7 @@ Conventions:
 - **One route per file** in `domains/<domain>/routes/`, named `<path>.<method>.route.ts` relative to the mount (e.g. `articles.get.route.ts`, `article.post.route.ts`, `article.get.route.ts`, `article.cover.post.route.ts`; each `:param` → schema singular); `routes/index.ts` is the method + path + middlewares map (same role as `tools/index.ts`).
 - **One tool per file** in `domains/<domain>/tools/`, named `<action>.tool.ts` (e.g. `create-task.tool.ts`); the tool is self-describing (`summarize` marks a write and becomes a chip in the chat UI). Register the domain's array in `agent/registry.ts`. Agent-owned OpenAI tools live in `agent/tools/`.
 - **Tools are transport-neutral**: they return JSON-serializable data and throw `Error` for expected failures. `agent/mcp-server.ts` translates to MCP; `agent/assistant.ts` translates to the OpenAI loop. Domains never import the MCP/OpenAI SDK packages (lint blocks it); agent-owned tools may use `@/integrations/openai`.
-- **Name suffix = file role.** Single-role domain files keep the role name (`repository.ts`, `service.ts`); folders own their index (`schema/`, `routes/`, `tools/`, `template/`, `middleware/`); table/route/tool/template files carry the matching suffix (`.schema.ts`, `.route.ts`, `.tool.ts`, `.template.ts`).
+- **Name suffix = file role.** Single-role domain files keep the role name (`repository.ts`, `service.ts`); folders own their index (`schema/`, `routes/`, `tools/`, `template/`, `middleware/`, optional `constants/`, `utils/`); table/route/tool/template/constant/util files carry the matching suffix (`.schema.ts`, `.route.ts`, `.tool.ts`, `.template.ts`, `.constants.ts`, `.utils.ts`). Domain `utils/` is for domain helpers; app-root `lib/` stays cross-cutting pure utility.
 - **The repository owns the SQL** — routes and services don't write queries. Every tenant-scoped resource query filters by `tenantId`.
 - **Service only when there's real business logic** (sessions, tokens, invites, seat/AI gates…). Plain CRUD calls the repository straight from the route/tool — that's why `task` has no `service.ts` while `auth`/`tenant`/`billing` do. Once an operation gains a rule, create the service and route the HTTP handler and tool through it.
 - **Tenant isolation is safe by default** — each tenant-scoped domain's `routes/index.ts` applies `requireAuth`/`requireTenant` once (via `.use`), so every new route is isolated from the start.
@@ -97,7 +97,7 @@ Useful entry points:
 - `apps/api/src/app.ts` — all routes mounted in one place
 - `apps/api/src/domains/task/` + `apps/web/src/domains/task/pages/TasksPage.tsx` — a complete domain to copy
 - `apps/api/src/domains/billing/` — plan catalog, seat assert, AI assert, tenant billing snapshot
-- `apps/api/src/domains/tenant/middleware.ts` — tenant isolation
+- `apps/api/src/domains/tenant/middleware/` — tenant isolation
 - `apps/api/src/agent/registry.ts` — tools available to the agent and MCP
 - `apps/web/src/app/App.tsx` — SPA route map
 
@@ -117,7 +117,7 @@ UI copy that uses `{{brand}}` / `{{tagline}}`, SEO shell meta, invite emails, th
 ### Next
 
 1. Replace the `tasks` resource with your domain: copy `apps/api/src/domains/task/` (`schema/` → repository → routes → tools), ensure the domain is exported in `db/schema.ts`, run `db:generate`, add the contracts to `packages/shared` and the page in web
-2. Adjust the plan catalog in `apps/api/src/domains/billing/plans.ts` and shared `packages/shared/src/billing.ts` if your pricing differs
+2. Adjust the plan catalog in `apps/api/src/domains/billing/constants/plans.constants.ts` and shared `packages/shared/src/billing.ts` if your pricing differs
 3. Rewrite landing marketing copy (`apps/web/src/i18n/locales/landing.*.json`) for your product story
 4. Desktop/mobile: update bundle `identifier` and Cargo `authors` (`Your Name <you@example.com>` placeholders) if needed, and regenerate icons from one source (`tauri icon`)
 5. Set `RESEND_API_KEY` and configure Cloudflare R2 (`CLOUDFLARE_*` / `R2_PUBLIC_BASE_URL`) if you need durable image storage on Render (otherwise media stays on the ephemeral local disk)

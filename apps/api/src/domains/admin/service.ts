@@ -7,17 +7,15 @@ import { generateToken, hashPassword, hashToken } from "@/lib/crypto";
 import { sendEmail } from "@/integrations/resend";
 import { env } from "@/lib/env";
 import { HttpError } from "@/lib/errors";
-import { isEnvPlatformAdminEmail } from "@/domains/auth/platform-admin";
 import { authRepository } from "@/domains/auth/repository";
 import { buildMe, createSession } from "@/domains/auth/service";
+import { isEnvPlatformAdminEmail } from "@/domains/auth/utils";
 import type { MeDto } from "@app/shared";
 import { createTenantWithOwner } from "@/domains/tenant/service";
+import { PLATFORM_INVITE_TTL_MS } from "./constants";
 import { platformInviteTemplate } from "./template";
 import { adminRepository } from "./repository";
 import type { PlatformInvite } from "./schema";
-
-/** Platform invite link lifetime (7 days). */
-const PLATFORM_INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
  * Create a platform invite and email the join link

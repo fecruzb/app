@@ -1,18 +1,9 @@
 import { HttpError, uuidParam } from "@/lib/errors";
 import type { AppContext } from "@/context";
+import { ALLOWED_MIME_TYPES, MAX_UPLOAD_BYTES } from "../constants";
 import { toArticleDto } from "../dto";
-import { newUploadKey, removeMedia, writeMedia } from "../media";
 import { articleRepository } from "../repository";
-
-/** Allowed upload MIME types mapped to file extensions. */
-const ALLOWED_MIME_TYPES: Record<string, string> = {
-  "image/png": "png",
-  "image/jpeg": "jpg",
-  "image/webp": "webp",
-};
-
-/** Maximum upload size (12 MB). */
-const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
+import { newUploadKey, removeMedia, writeMedia } from "../utils";
 
 /**
  * Upload article cover

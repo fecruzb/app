@@ -144,7 +144,7 @@ export function TenantTables() {
 export function PlansCatalog() {
   const { t } = useTranslation();
   return (
-    <SchemaWindow label="domains/billing/plans.ts">
+    <SchemaWindow label="domains/billing/constants/plans.constants.ts">
       <TableCard
         name="free"
         columns={[

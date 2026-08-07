@@ -1120,7 +1120,7 @@
     "billing": {
       "eyebrow": "Plans",
       "title": "Entitlements live in a code catalog",
-      "body": "There is no plans table. domains/billing/plans.ts exports PLAN_CATALOG — Free, Starter, Pro, and Pay as you go — with seat caps and per-member AI allowances. Tenants only store plan_id; platform admin assigns it. Wire Stripe later by writing the same field.",
+      "body": "There is no plans table. domains/billing/constants/plans.constants.ts exports PLAN_CATALOG — Free, Starter, Pro, and Pay as you go — with seat caps and per-member AI allowances. Lookups live in billing/utils. Tenants only store plan_id; platform admin assigns it. Wire Stripe later by writing the same field.",
       "points": [
         "Four plans in code — edit the catalog when you fork",
         "Seats + AI included vs passthrough, resolved by getPlan(planId)",

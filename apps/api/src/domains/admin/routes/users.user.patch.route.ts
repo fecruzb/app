@@ -1,7 +1,7 @@
 import { updateAdminUserSchema } from "@app/shared";
 import { HttpError, parseBody, uuidParam } from "@/lib/errors";
 import type { AppContext } from "@/context";
-import { isEnvPlatformAdminEmail } from "@/domains/auth/platform-admin";
+import { isEnvPlatformAdminEmail } from "@/domains/auth/utils";
 import { authRepository } from "@/domains/auth/repository";
 import { toAdminUserDto } from "../dto";
 import { adminRepository } from "../repository";

@@ -9,7 +9,7 @@ import type {
   AdminUserDto,
   PublicPlatformInviteDto,
 } from "@app/shared";
-import { isEffectivePlatformAdmin } from "@/domains/auth/platform-admin";
+import { isEffectivePlatformAdmin } from "@/domains/auth/utils";
 import type {
   PlatformInviteWithInviter,
   TenantWithMemberCount,

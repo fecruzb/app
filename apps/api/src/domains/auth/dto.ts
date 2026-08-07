@@ -5,7 +5,7 @@
  * lives in `service.ts`. API key mappers live in `domains/account/dto.ts`.
  */
 import type { UserDto } from "@app/shared";
-import { isEffectivePlatformAdmin } from "./platform-admin";
+import { isEffectivePlatformAdmin } from "./utils";
 import type { User } from "./schema";
 
 /**

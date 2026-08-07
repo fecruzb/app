@@ -8,38 +8,7 @@ import type { TenantBillingDto } from "@app/shared";
 import { HttpError } from "@/lib/errors";
 import { tenantRepository } from "@/domains/tenant/repository";
 import { usageRepository } from "@/domains/usage/repository";
-import { getPlan } from "./plans";
-
-/**
- * Start of the current UTC calendar month
- *
- * @param now - Reference instant
- * @returns Month start
- */
-function monthStart(now: Date): Date {
-  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
-}
-
-/**
- * Start of the next UTC calendar month
- *
- * @param now - Reference instant
- * @returns Next month start
- */
-function monthEnd(now: Date): Date {
-  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
-}
-
-/**
- * Format micros as a short USD string
- *
- * @param micros - Amount in millionths of a dollar
- * @returns Display string like `"$1.23"`
- */
-function formatUsd(micros: number): string {
-  if (micros > 0 && micros < 10_000) return "<$0.01";
-  return `$${(micros / 1_000_000).toFixed(2)}`;
-}
+import { formatUsd, getPlan, monthEnd, monthStart } from "./utils";
 
 /**
  * Assert the tenant has a free seat for a new invite

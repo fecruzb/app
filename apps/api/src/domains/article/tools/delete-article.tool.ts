@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { defineTool, ToolError } from "@/agent/tool";
-import { removeMedia } from "../media";
+import { removeMedia } from "../utils";
 import { articleRepository } from "../repository";
 
 /**

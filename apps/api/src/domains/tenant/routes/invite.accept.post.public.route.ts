@@ -2,7 +2,8 @@ import { getCookie } from "hono/cookie";
 import { acceptInviteNewAccountSchema } from "@app/shared";
 import { parseBody } from "@/lib/errors";
 import type { AppContext } from "@/context";
-import { getSessionUser, SESSION_COOKIE, setSessionCookie } from "@/domains/auth/service";
+import { SESSION_COOKIE } from "@/domains/auth/constants";
+import { getSessionUser, setSessionCookie } from "@/domains/auth/service";
 import { acceptTenantInvite } from "../service";
 
 /**
@@ -28,9 +29,7 @@ export async function acceptInvite(c: AppContext) {
     rawToken: token,
     sessionUserId: sessionUser?.id ?? null,
     sessionUserEmail: sessionUser?.email ?? null,
-    loadNewAccount: sessionUser
-      ? undefined
-      : () => parseBody(c, acceptInviteNewAccountSchema),
+    loadNewAccount: sessionUser ? undefined : () => parseBody(c, acceptInviteNewAccountSchema),
   });
 
   // -- Output ----------------------------------------------------------------

@@ -7,7 +7,7 @@
 import { generateImage } from "@/integrations/openai";
 import { env } from "@/lib/env";
 import { articleCoverUrl } from "@/domains/article/dto";
-import { newUploadKey, removeMedia, writeMedia } from "@/domains/article/media";
+import { newUploadKey, removeMedia, writeMedia } from "@/domains/article/utils";
 import { articleRepository } from "@/domains/article/repository";
 import { usageRepository } from "@/domains/usage/repository";
 import { assertAiBudget } from "@/domains/billing/service";

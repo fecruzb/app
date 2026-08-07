@@ -1,5 +1,5 @@
 import type { AppContext } from "@/context";
-import { listPlans as planCatalog } from "@/domains/billing/plans";
+import { listPlans as planCatalog } from "@/domains/billing/utils";
 
 /**
  * List plans

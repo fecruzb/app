@@ -6,8 +6,8 @@
  * so an unverified signup cannot claim an env admin email.
  */
 import { env } from "@/lib/env";
-import { authRepository } from "./repository";
-import type { User } from "./schema";
+import { authRepository } from "../repository";
+import type { User } from "../schema";
 
 /** Whether this email is listed in PLATFORM_ADMIN_EMAILS. */
 export function isEnvPlatformAdminEmail(email: string): boolean {

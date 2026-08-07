@@ -12,19 +12,15 @@ import { sendEmail } from "@/integrations/resend";
 import { env } from "@/lib/env";
 import { toTenantSummary } from "@/domains/tenant/dto";
 import { tenantRepository } from "@/domains/tenant/repository";
+import { ACTION_TOKEN_TTL_MS, SESSION_COOKIE, SESSION_TTL_MS } from "./constants";
 import { toUserDto } from "./dto";
 import { resetPasswordTemplate, verifyEmailTemplate } from "./template";
-import { syncPlatformAdminFromEnv } from "./platform-admin";
 import { authRepository, type ApiKeyPrincipal } from "./repository";
 import type { ActionTokenPurpose, User } from "./schema";
+import { syncPlatformAdminFromEnv } from "./utils";
 
 export { dummyVerifyPassword, hashPassword, verifyPassword } from "@/lib/crypto";
-
-/** Cookie name for the opaque session token. */
-export const SESSION_COOKIE = "app_session";
-
-/** Session lifetime in milliseconds (30 days). */
-export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+export { SESSION_COOKIE, SESSION_TTL_MS } from "./constants";
 
 /** True when Origin is CORS-allow-listed and not the browser APP_URL (Tauri shells). */
 export function isCrossOriginShell(c: Context): boolean {
@@ -61,11 +57,6 @@ function sessionCookieOptions(c: Context): {
 export function meWithShellToken(c: Context, me: MeDto, sessionToken: string): AuthSessionDto {
   return isCrossOriginShell(c) ? { ...me, sessionToken } : me;
 }
-
-const TOKEN_TTL: Record<ActionTokenPurpose, number> = {
-  verify_email: 24 * 60 * 60 * 1000,
-  reset_password: 60 * 60 * 1000,
-};
 
 /**
  * Build me payload
@@ -181,7 +172,7 @@ export async function createActionToken(
     userId,
     purpose,
     tokenHash: hashToken(token),
-    expiresAt: new Date(Date.now() + TOKEN_TTL[purpose]),
+    expiresAt: new Date(Date.now() + ACTION_TOKEN_TTL_MS[purpose]),
   });
   return token;
 }
