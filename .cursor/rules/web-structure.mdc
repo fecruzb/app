@@ -21,8 +21,9 @@ Mirror the API: features live in `domains/<domain>/`, everything else is shared 
     Treat it as the reference public module: `pages/` + `routes.tsx` + `hooks/` + `components/`
     split by concern (`landing/`, `structure/`, `foundations/`, `tour/`, `ui/`, `product-preview/`).
     Public IA: Code at `/code` (+ `/code/...`), Product at `/product` (+ `/product/...`),
-    Platforms at `/platforms` (+ `/platforms/...` for Windows, Linux, macOS, iOS, Android).
-    Theming lives on the UI kit page (`/code/ui`). Code snippets in
+    Platforms at `/platforms` (+ `/platforms/...`), User Interface at `/ui`
+    (+ `/ui/theming|brand|shells|controls|forms|overlays|data|charts`).
+    Code snippets in
     `components/structure/resource-snippets.ts` mirror real repo conventions — if a convention
     changes, update those snippets too
   - Platform admin (`domains/admin/`) mounts at `/admin` outside `:tenantSlug` — gated by `me.user.isPlatformAdmin`
@@ -47,8 +48,9 @@ Framework-agnostic, tenant-agnostic base UI shared across web apps. Import per c
 `import { Button } from "@app/ui/button"` (flat public paths; source is grouped under
 `src/{lib,primitives,shell,composites,theme}`).
 
-- Primitives (`src/primitives/`): `avatar`, `badge`, `button`, `card`, `dialog`,
-  `dropdown-menu`, `input`, `label`, `resizable`, `table`, `tabs`, `textarea`
+- Primitives (`src/primitives/`): `avatar`, `badge`, `button`, `card`, `checkbox`,
+  `command`, `dialog`, `dropdown-menu`, `input`, `label`, `popover`, `progress`,
+  `radio-group`, `resizable`, `slider`, `switch`, `table`, `tabs`, `textarea`
 - Shell (`src/shell/`): `brand`, `nav-item`, `site-header`, `sidebar`,
   `sidebar-shell`, `navbar-shell`, `auth-shell`, `user-menu-button`
   - Pick a **layout shell** for chrome: `SidebarShell` (app/admin), `NavbarShell`
@@ -56,8 +58,10 @@ Framework-agnostic, tenant-agnostic base UI shared across web apps. Import per c
     `NavItem`) compose into those shells; app layouts stay thin (nav items + slots).
 - Composites (`src/composites/`): `browser-window` (`Window`/`WindowBar`), `chart/`
   (`BarChart`/`LineChart`/`PieChart` + low-level `ChartContainer`), `code-block/`
-  (follows `html.dark`), `content-scale` (zoom body inside chrome, never the shell),
-  `explorer` (VS Code tree chrome), `confirm-dialog` (`ConfirmProvider`/`useConfirm`),
+  (follows `html.dark`), `combobox` (searchable select / typeahead), `field`
+  (`Field`/`FieldLabel`/`FieldGroup` — vertical or horizontal form rows),
+  `content-scale` (zoom body inside chrome, never the shell), `explorer`
+  (VS Code tree chrome), `confirm-dialog` (`ConfirmProvider`/`useConfirm`),
   `data-table`, `empty-state`, `page-header`, `page-loading`
 - Theme (`src/theme/` → `@app/ui/theme`): `ThemeProvider`, `useTheme`, `defaultThemes`,
   `createTheme` — light/dark + built-in palettes; web may pass a custom `themes` list

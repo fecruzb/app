@@ -26,43 +26,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@app/ui/dropdown-menu";
-import { Input } from "@app/ui/input";
-import { Label } from "@app/ui/label";
-import { Textarea } from "@app/ui/textarea";
 import { UiDemoBlock } from "./ui-demo-block";
 import {
   avatarSnippet,
   cardSnippet,
   dialogSnippet,
   dropdownSnippet,
-  formSnippet,
 } from "./ui-snippets";
 
-/** Form fields, Card, Avatar, Dialog, and Dropdown demos. */
-export function FormOverlaySection() {
+/** Card, Avatar, Dialog, and Dropdown demos. */
+export function OverlaysSection() {
   const { t } = useTranslation();
 
   return (
     <>
-      <UiDemoBlock
-        title={t("landing.ui.sections.form.title")}
-        description={t("landing.ui.sections.form.description")}
-        importPath='import { Input } from "@app/ui/input"'
-        filename="form.tsx"
-        code={formSnippet}
-      >
-        <div className="mx-auto grid max-w-md gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="ui-demo-name">{t("landing.ui.demo.name")}</Label>
-            <Input id="ui-demo-name" placeholder={t("landing.ui.demo.namePlaceholder")} />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="ui-demo-notes">{t("landing.ui.demo.notes")}</Label>
-            <Textarea id="ui-demo-notes" placeholder={t("landing.ui.demo.notesPlaceholder")} />
-          </div>
-        </div>
-      </UiDemoBlock>
-
       <UiDemoBlock
         title={t("landing.ui.sections.card.title")}
         description={t("landing.ui.sections.card.description")}

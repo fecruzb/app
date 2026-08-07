@@ -12,34 +12,43 @@ import {
 import { cn } from "@app/ui/lib/utils";
 import { navItemVariants } from "@app/ui/nav-item";
 
-type CodeMenuItem = {
+type UiMenuItem = {
   to: string;
-  labelKey: "overview" | "api" | "web" | "environment" | "database" | "storage" | "i18n";
+  labelKey:
+    | "overview"
+    | "theming"
+    | "brand"
+    | "shells"
+    | "controls"
+    | "forms"
+    | "overlays"
+    | "data"
+    | "charts";
 };
 
-const packageItems: CodeMenuItem[] = [
-  { to: "/code", labelKey: "overview" },
-  { to: "/code/api", labelKey: "api" },
-  { to: "/code/web", labelKey: "web" },
+const foundationItems: UiMenuItem[] = [
+  { to: "/ui", labelKey: "overview" },
+  { to: "/ui/theming", labelKey: "theming" },
+  { to: "/ui/brand", labelKey: "brand" },
+  { to: "/ui/shells", labelKey: "shells" },
 ];
 
-const platformItems: CodeMenuItem[] = [
-  { to: "/code/environment", labelKey: "environment" },
-  { to: "/code/database", labelKey: "database" },
-  { to: "/code/storage", labelKey: "storage" },
-  { to: "/code/i18n", labelKey: "i18n" },
+const componentItems: UiMenuItem[] = [
+  { to: "/ui/controls", labelKey: "controls" },
+  { to: "/ui/forms", labelKey: "forms" },
+  { to: "/ui/overlays", labelKey: "overlays" },
+  { to: "/ui/data", labelKey: "data" },
+  { to: "/ui/charts", labelKey: "charts" },
 ];
 
 /**
- * “Code” is a split control: the painted pill navigates to the hub (or opens
- * the menu when already on Code); the chevron always toggles the package menu.
- * The dropdown anchors to the whole pill.
+ * “User Interface” split control — pill → hub; menu lists foundations then components.
  */
-export function CodeNavMenu() {
+export function UiNavMenu() {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
-  const active = pathname === "/code" || pathname.startsWith("/code/");
+  const active = pathname === "/ui" || pathname.startsWith("/ui/");
 
   function onPillClick(e: MouseEvent) {
     if (!active) return;
@@ -47,13 +56,13 @@ export function CodeNavMenu() {
     setOpen(true);
   }
 
-  function renderItems(items: CodeMenuItem[]) {
+  function renderItems(items: UiMenuItem[]) {
     return items.map(({ to, labelKey }) => {
       const itemActive = pathname === to;
       return (
         <DropdownMenuItem key={to} asChild>
           <Link to={to} className={itemActive ? "bg-accent text-accent-foreground" : undefined}>
-            {t(`landing.nav.codeMenu.${labelKey}`)}
+            {t(`landing.nav.uiMenu.${labelKey}`)}
           </Link>
         </DropdownMenuItem>
       );
@@ -70,20 +79,20 @@ export function CodeNavMenu() {
         </DropdownMenuTrigger>
 
         <Link
-          to="/code"
+          to="/ui"
           onClick={onPillClick}
           className="absolute inset-0 z-0 outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          aria-label={t("landing.nav.structure")}
+          aria-label={t("landing.nav.userInterface")}
         />
 
         <span className="relative z-10 pointer-events-none px-1.5 py-0.5" aria-hidden>
-          {t("landing.nav.structure")}
+          {t("landing.nav.userInterface")}
         </span>
 
         <button
           type="button"
           className="relative z-10 rounded-sm p-0.5 outline-none hover:bg-background/60 focus-visible:ring-2 focus-visible:ring-ring"
-          aria-label={t("landing.nav.codeMenu.open")}
+          aria-label={t("landing.nav.uiMenu.open")}
           aria-expanded={open}
           aria-haspopup="menu"
           onClick={(e) => {
@@ -96,10 +105,10 @@ export function CodeNavMenu() {
         </button>
       </div>
 
-      <DropdownMenuContent align="start" className="min-w-[11rem]">
-        {renderItems(packageItems)}
+      <DropdownMenuContent align="start" className="min-w-[12rem]">
+        {renderItems(foundationItems)}
         <DropdownMenuSeparator />
-        {renderItems(platformItems)}
+        {renderItems(componentItems)}
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -23,7 +23,7 @@ const MARKETING_META: Record<string, { title: string; description: string }> = {
   "/code": {
     title: "Project structure · App Base",
     description:
-      "How the monorepo is laid out — workspaces, Turbo, one deploy — then dive into the API, web, or UI package.",
+      "How the monorepo is laid out — workspaces, Turbo, one deploy — then dive into the API or web package.",
   },
   "/code/api": {
     title: "API structure · App Base",
@@ -33,11 +33,6 @@ const MARKETING_META: Record<string, { title: string; description: string }> = {
   "/code/web": {
     title: "Web structure · App Base",
     description: "apps/web — domains that mirror the API, with api.ts, pages, and routes.",
-  },
-  "/code/ui": {
-    title: "UI kit · App Base",
-    description:
-      "packages/ui folder layout, live theming, then the component catalog — primitives, shells, and composites.",
   },
   "/code/environment": {
     title: "Environment · App Base",
@@ -123,9 +118,42 @@ const MARKETING_META: Record<string, { title: string; description: string }> = {
       "The same thin Tauri mobile shell pattern for Android — one SPA, native container, remote API.",
   },
   "/ui": {
-    title: "UI kit · App Base",
+    title: "User Interface · App Base",
+    description: "The @app/ui kit — theming, shells, and the component catalog, split by category.",
+  },
+  "/ui/theming": {
+    title: "Theming · App Base",
+    description: "Theme tokens, palettes, and light/dark — live on the page.",
+  },
+  "/ui/brand": {
+    title: "Brand & nav · App Base",
+    description: "Brand, NavItem, and SiteHeader — the marks that show up in every chrome.",
+  },
+  "/ui/shells": {
+    title: "Shells · App Base",
     description:
-      "packages/ui folder layout, live theming, then the component catalog — primitives, shells, and composites.",
+      "Sidebar, Navbar, and Auth shells — the layout chrome for app, marketing, and login.",
+  },
+  "/ui/controls": {
+    title: "Controls · App Base",
+    description: "Buttons, badges, progress, and sliders — the interactive atoms.",
+  },
+  "/ui/forms": {
+    title: "Forms · App Base",
+    description:
+      "Labels, inputs, combobox, checkboxes, radios, and switches — then a composed form.",
+  },
+  "/ui/overlays": {
+    title: "Overlays · App Base",
+    description: "Cards, avatars, dialogs, and dropdowns — surfaces that float over the page.",
+  },
+  "/ui/data": {
+    title: "Data · App Base",
+    description: "Tabs, DataTable, and page chrome — list screens and empty states.",
+  },
+  "/ui/charts": {
+    title: "Charts · App Base",
+    description: "Bar, line, and pie charts from @app/ui/chart.",
   },
   "/articles": {
     title: "Articles · App Base",

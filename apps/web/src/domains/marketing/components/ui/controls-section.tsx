@@ -17,19 +17,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@app/ui/dropdown-menu";
+import { Progress } from "@app/ui/progress";
+import { Slider } from "@app/ui/slider";
 import { UserMenuButton } from "@app/ui/user-menu-button";
 import { UiDemoBlock } from "./ui-demo-block";
 import {
   badgeSnippet,
   buttonSnippet,
   iconButtonSnippet,
+  progressSnippet,
+  sliderSnippet,
   userMenuSnippet,
 } from "./ui-snippets";
 
-/** UserMenu, icon button, Button, and Badge demos. */
+/** UserMenu, icon button, Button, Badge, Progress, and Slider demos. */
 export function ControlsSection() {
   const { t } = useTranslation();
   const [darkDemo, setDarkDemo] = useState(false);
+  const [sliderValue, setSliderValue] = useState([20]);
 
   return (
     <>
@@ -124,6 +129,66 @@ export function ControlsSection() {
           <Badge variant="secondary">{t("landing.ui.demo.secondary")}</Badge>
           <Badge variant="outline">{t("landing.ui.demo.outline")}</Badge>
           <Badge variant="destructive">{t("landing.ui.demo.destructive")}</Badge>
+        </div>
+      </UiDemoBlock>
+
+      <UiDemoBlock
+        title={t("landing.ui.sections.progress.title")}
+        description={t("landing.ui.sections.progress.description")}
+        importPath='import { Progress } from "@app/ui/progress"'
+        filename="progress.tsx"
+        code={progressSnippet}
+      >
+        <div className="flex w-full max-w-md flex-col gap-6">
+          <Progress value={74} size="lg" />
+          <div className="divide-y rounded-lg border">
+            <div className="flex items-center justify-between gap-4 px-4 py-3">
+              <span className="text-sm font-medium">{t("landing.ui.demo.progressLabel1")}</span>
+              <Progress value={74} size="sm" showValue className="w-32" />
+            </div>
+            <div className="flex items-center justify-between gap-4 px-4 py-3">
+              <span className="text-sm font-medium">{t("landing.ui.demo.progressLabel2")}</span>
+              <Progress value={65} size="sm" showValue className="w-32" />
+            </div>
+            <div className="flex items-center justify-between gap-4 px-4 py-3">
+              <span className="text-sm font-medium">{t("landing.ui.demo.progressLabel3")}</span>
+              <Progress
+                value={43}
+                size="sm"
+                variant="destructive"
+                showValue
+                className="w-32"
+              />
+            </div>
+          </div>
+        </div>
+      </UiDemoBlock>
+
+      <UiDemoBlock
+        title={t("landing.ui.sections.slider.title")}
+        description={t("landing.ui.sections.slider.description")}
+        importPath='import { Slider } from "@app/ui/slider"'
+        filename="slider.tsx"
+        code={sliderSnippet}
+      >
+        <div className="w-full max-w-md space-y-3 rounded-2xl border bg-card p-5 shadow-xs">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm font-semibold">{t("landing.ui.demo.sliderTitle")}</p>
+            <Badge variant="outline">{t("landing.ui.demo.sliderBadge")}</Badge>
+          </div>
+          <Slider
+            value={sliderValue}
+            onValueChange={setSliderValue}
+            max={100}
+            step={1}
+            aria-label={t("landing.ui.demo.sliderTitle")}
+          />
+          <p className="text-right text-xs text-muted-foreground">
+            {t("landing.ui.demo.sliderHint")}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {t("landing.ui.demo.sliderFooter", { value: sliderValue[0] })}
+          </p>
         </div>
       </UiDemoBlock>
     </>

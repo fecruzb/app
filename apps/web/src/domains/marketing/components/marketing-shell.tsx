@@ -12,6 +12,7 @@ import { ThemeControls } from "@/theme/theme-controls";
 import { CodeNavMenu } from "./code-nav-menu";
 import { PlatformsNavMenu } from "./platforms/platforms-nav-menu";
 import { ProductNavMenu } from "./product-nav-menu";
+import { UiNavMenu } from "./ui/ui-nav-menu";
 import { NextSectionButton } from "./next-section-button";
 
 export function MarketingShell({ children }: { children: ReactNode }) {
@@ -33,6 +34,7 @@ export function MarketingShell({ children }: { children: ReactNode }) {
           <CodeNavMenu />
           <ProductNavMenu />
           <PlatformsNavMenu />
+          <UiNavMenu />
           <span aria-hidden className="mx-1.5 h-4 w-px shrink-0 bg-border" />
           <HeaderNavLink
             to="/articles"

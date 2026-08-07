@@ -10,7 +10,6 @@
       "overview": "Overview",
       "api": "API",
       "web": "Web",
-      "ui": "UI kit",
       "environment": "Environment",
       "database": "Database",
       "storage": "Storage",
@@ -28,7 +27,7 @@
       "admin": "Admin"
     },
     "tour": "Product",
-    "ui": "UI",
+    "ui": "User Interface",
     "articles": "Articles",
     "platforms": "Platforms",
     "platformsMenu": {
@@ -39,6 +38,19 @@
       "macos": "macOS",
       "ios": "iOS",
       "android": "Android"
+    },
+    "userInterface": "User Interface",
+    "uiMenu": {
+      "open": "Open User Interface menu",
+      "overview": "Overview",
+      "theming": "Theming",
+      "brand": "Brand & nav",
+      "shells": "Shells",
+      "controls": "Controls",
+      "forms": "Forms",
+      "overlays": "Overlays",
+      "data": "Data",
+      "charts": "Charts"
     }
   },
   "teasers": {
@@ -53,7 +65,7 @@
     },
     "structure": {
       "title": "Project structure · App Base",
-      "description": "How the monorepo is laid out — workspaces, Turbo, one deploy — then dive into the API, web, or UI package."
+      "description": "How the monorepo is laid out — workspaces, Turbo, one deploy — then dive into the API or web package."
     },
     "structureApi": {
       "title": "API structure · App Base",
@@ -64,8 +76,8 @@
       "description": "apps/web — domains that mirror the API, with api.ts, pages, and routes."
     },
     "structureUi": {
-      "title": "UI kit · App Base",
-      "description": "packages/ui folder layout, live theming, then the component catalog — primitives, shells, and composites."
+      "title": "User Interface · App Base",
+      "description": "The @app/ui kit — theming, shells, and the component catalog, split by category."
     },
     "structureEnvironment": {
       "title": "Environment · App Base",
@@ -116,8 +128,8 @@
       "description": "People, invites, and tenants across the whole product from /admin."
     },
     "ui": {
-      "title": "UI kit · App Base",
-      "description": "Base components from @app/ui — shadcn primitives and composites, themed by tokens, ready to ship with your product."
+      "title": "User Interface · App Base",
+      "description": "The @app/ui kit — theming, shells, and the component catalog, split by category."
     },
     "articles": {
       "title": "Articles · App Base",
@@ -150,6 +162,42 @@
     "platformsAndroid": {
       "title": "Android · App Base",
       "description": "The same thin Tauri mobile shell pattern for Android — one SPA, native container, remote API."
+    },
+    "userInterface": {
+      "title": "User Interface · App Base",
+      "description": "The @app/ui kit — theming, shells, and the component catalog, split by category."
+    },
+    "uiTheming": {
+      "title": "Theming · App Base",
+      "description": "Theme tokens, palettes, and light/dark — live on the page."
+    },
+    "uiBrand": {
+      "title": "Brand & nav · App Base",
+      "description": "Brand, NavItem, and SiteHeader — the marks that show up in every chrome."
+    },
+    "uiShells": {
+      "title": "Shells · App Base",
+      "description": "Sidebar, Navbar, and Auth shells — the layout chrome for app, marketing, and login."
+    },
+    "uiControls": {
+      "title": "Controls · App Base",
+      "description": "Buttons, badges, progress, and sliders — the interactive atoms."
+    },
+    "uiForms": {
+      "title": "Forms · App Base",
+      "description": "Labels, inputs, combobox, checkboxes, radios, and switches — then a composed form."
+    },
+    "uiOverlays": {
+      "title": "Overlays · App Base",
+      "description": "Cards, avatars, dialogs, and dropdowns — surfaces that float over the page."
+    },
+    "uiData": {
+      "title": "Data · App Base",
+      "description": "Tabs, DataTable, and page chrome — list screens and empty states."
+    },
+    "uiCharts": {
+      "title": "Charts · App Base",
+      "description": "Bar, line, and pie charts from @app/ui/chart."
     }
   },
   "articles": {
@@ -162,9 +210,9 @@
     "notFound": "This article is missing or no longer public."
   },
   "ui": {
-    "eyebrow": "Design system",
+    "eyebrow": "User Interface",
     "title": "One kit. Every surface.",
-    "body": "Base components from @app/ui — themes, shadcn primitives, and composites. Import per subpath, restyle through tokens, never hardcode colors.",
+    "body": "Base components from @app/ui — themes, shells, and composites. Import per subpath, restyle through tokens, never hardcode colors.",
     "sections": {
       "brand": {
         "title": "Brand",
@@ -210,9 +258,49 @@
         "title": "Badge",
         "description": "Compact labels for status, counts, and metadata."
       },
+      "progress": {
+        "title": "Progress",
+        "description": "Pill progress bar. Use alone or with showValue for bar + percent — compose labels and actions outside."
+      },
+      "slider": {
+        "title": "Slider",
+        "description": "Accessible range slider. Controlled with value={[n]}; compose title, badge, and helper text around it."
+      },
+      "label": {
+        "title": "Label",
+        "description": "Accessible field label. Pair with htmlFor matching the control id."
+      },
+      "input": {
+        "title": "Input",
+        "description": "Single-line text field. Shared border, height, and focus ring with the rest of the form kit."
+      },
+      "textarea": {
+        "title": "Textarea",
+        "description": "Multi-line text field. Same tokens as Input — taller by default."
+      },
+      "combobox": {
+        "title": "Combobox",
+        "description": "Searchable select with icons and optional groups. Same chrome as Input — drop-in for native <select>."
+      },
+      "field": {
+        "title": "Field",
+        "description": "Label + control layout. vertical stacks above the control; horizontal is a min-h-9 row that lines up with Input in grids."
+      },
+      "checkbox": {
+        "title": "Checkbox",
+        "description": "Boolean choice. Use Field orientation=\"horizontal\" so it aligns with Input height."
+      },
+      "radioGroup": {
+        "title": "RadioGroup",
+        "description": "Single choice from a set. orientation vertical (default) or horizontal for an inline row."
+      },
+      "switch": {
+        "title": "Switch",
+        "description": "On/off toggle. Same Field horizontal pairing as Checkbox — bottoms align next to Input."
+      },
       "form": {
-        "title": "Input, Label & Textarea",
-        "description": "Form controls styled to the same tokens as the rest of the kit."
+        "title": "Form",
+        "description": "All form controls stacked with Field — vertical fields, horizontal checks/toggles, and a grid row with Input + Switch."
       },
       "card": {
         "title": "Card",
@@ -340,7 +428,36 @@
       "tabsPlanUsageValue": "$12.40",
       "tabsManagePlan": "Manage plan",
       "chartDesktop": "Desktop",
-      "chartMobile": "Mobile"
+      "chartMobile": "Mobile",
+      "progressLabel1": "Data",
+      "progressLabel2": "Contact up to date",
+      "progressLabel3": "Meeting up to date",
+      "sliderTitle": "Relationship temperature",
+      "sliderBadge": "Cold",
+      "sliderHint": "Auto",
+      "sliderFooter": "Automatic calculation: {{value}}",
+      "comboboxLabel": "Platform",
+      "comboboxPlaceholder": "Select a platform…",
+      "comboboxSearch": "Search…",
+      "comboboxEmpty": "No platform found.",
+      "comboboxClear": "Clear",
+      "comboboxGroup": "Platform",
+      "comboboxWeb": "Web",
+      "comboboxMobile": "Mobile",
+      "comboboxDesktop": "Desktop",
+      "inputDisabled": "Disabled",
+      "textareaDisabled": "Disabled",
+      "fieldInlineHint": "Same row as Input — Field horizontal is h-9, so checkbox / radio / switch center with the control",
+      "checkboxTerms": "Accept terms",
+      "checkboxMarketing": "Send product updates",
+      "checkboxDisabled": "Disabled option",
+      "radioLabel": "Role",
+      "radioMember": "Member",
+      "radioAdmin": "Admin",
+      "radioOwner": "Owner (disabled)",
+      "switchNotifications": "Email notifications",
+      "switchDigest": "Weekly digest",
+      "switchDisabled": "Disabled toggle"
     }
   },
   "hero": {
@@ -1179,12 +1296,7 @@
       "description": "Example resource",
       "placeholder": "Add a task...",
       "add": "Add",
-      "items": [
-        "Design the schema",
-        "Wire the repository",
-        "Expose the route",
-        "Build the screen"
-      ],
+      "items": ["Design the schema", "Wire the repository", "Expose the route", "Build the screen"],
       "left": "Example resource with per-tenant CRUD · 2 of 4 left"
     },
     "account": {
@@ -1421,6 +1533,109 @@
           "Rename the application id when you fork the template"
         ]
       }
+    }
+  },
+  "uiIntro": {
+    "eyebrow": "User Interface",
+    "title": "One kit. Every surface.",
+    "body": "Base components from @app/ui — themes, shells, and composites. Import per subpath, restyle through tokens, never hardcode colors."
+  },
+  "uiLinks": {
+    "foundationEyebrow": "Foundations",
+    "foundationTitle": "Theme, brand, and chrome",
+    "foundationBody": "Start with tokens and shared chrome — what every screen inherits.",
+    "componentEyebrow": "Components",
+    "componentTitle": "Controls, forms, and data",
+    "componentBody": "The live catalog — each card opens one kit category.",
+    "theming": {
+      "eyebrow": "Theming",
+      "title": "Tokens and modes",
+      "body": "Built-in palettes, createTheme, and a live light/dark toggle.",
+      "cta": "Open theming"
+    },
+    "brand": {
+      "eyebrow": "Brand",
+      "title": "Mark and navigation",
+      "body": "Brand, NavItem, and SiteHeader on the same token system.",
+      "cta": "Open brand"
+    },
+    "shells": {
+      "eyebrow": "Shells",
+      "title": "Layout chrome",
+      "body": "SidebarShell, NavbarShell, and AuthShell — app, marketing, and login.",
+      "cta": "Open shells"
+    },
+    "controls": {
+      "eyebrow": "Controls",
+      "title": "Actions and feedback",
+      "body": "Button, Badge, Progress, Slider, and UserMenu.",
+      "cta": "Open controls"
+    },
+    "forms": {
+      "eyebrow": "Forms",
+      "title": "Fields and composition",
+      "body": "Input, Combobox, Checkbox, Radio, Switch, and a full form.",
+      "cta": "Open forms"
+    },
+    "overlays": {
+      "eyebrow": "Overlays",
+      "title": "Floating surfaces",
+      "body": "Card, Avatar, Dialog, and DropdownMenu.",
+      "cta": "Open overlays"
+    },
+    "data": {
+      "eyebrow": "Data",
+      "title": "Lists and pages",
+      "body": "Tabs, DataTable, PageHeader, EmptyState, and PageLoading.",
+      "cta": "Open data"
+    },
+    "charts": {
+      "eyebrow": "Charts",
+      "title": "Bar, line, and pie",
+      "body": "Simple charts from @app/ui/chart over Recharts.",
+      "cta": "Open charts"
+    }
+  },
+  "uiCategories": {
+    "theming": {
+      "eyebrow": "Theming",
+      "title": "Tokens that paint the app",
+      "body": "Change the palette or mode — the whole page follows. Extend the catalog with createTheme."
+    },
+    "brand": {
+      "eyebrow": "Brand & nav",
+      "title": "The mark in every chrome",
+      "body": "Same Brand and NavItem on marketing, app, and admin — only composition changes."
+    },
+    "shells": {
+      "eyebrow": "Shells",
+      "title": "Three layouts, one kit",
+      "body": "Sidebar for the app, Navbar for the public site, Auth for login — live demos with real chrome."
+    },
+    "controls": {
+      "eyebrow": "Controls",
+      "title": "Interactive atoms",
+      "body": "Buttons, badges, progress, and sliders — the same focus ring and tokens as the rest of the kit."
+    },
+    "forms": {
+      "eyebrow": "Forms",
+      "title": "Fields that line up",
+      "body": "Each control on its own, then a composed form to check height and rhythm."
+    },
+    "overlays": {
+      "eyebrow": "Overlays",
+      "title": "Surfaces over the page",
+      "body": "Cards, avatars, dialogs, and menus — containers when the interaction needs focus."
+    },
+    "data": {
+      "eyebrow": "Data",
+      "title": "Lists and page chrome",
+      "body": "Tabs, sortable tables, and the PageHeader / EmptyState / PageLoading trio."
+    },
+    "charts": {
+      "eyebrow": "Charts",
+      "title": "Simple charts",
+      "body": "BarChart, LineChart, and PieChart with a small API — colors from theme tokens."
     }
   }
 }

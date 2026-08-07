@@ -101,7 +101,7 @@ export function LandingPage() {
                 {t("landing.ui.body")}
               </p>
               <Button variant="outline" className="mt-6 w-fit" asChild>
-                <Link to="/code/ui">
+                <Link to="/ui">
                   {t("landing.teasers.exploreUi")} <ArrowRightIcon />
                 </Link>
               </Button>

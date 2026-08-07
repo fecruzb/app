@@ -197,18 +197,199 @@ export const badgeSnippet = `import { Badge } from "@app/ui/badge";
 <Badge variant="outline">Outline</Badge>
 <Badge variant="destructive">Destructive</Badge>`;
 
-export const formSnippet = `import { Input } from "@app/ui/input";
-import { Label } from "@app/ui/label";
+export const progressSnippet = `import { Progress } from "@app/ui/progress";
+
+<Progress value={74} />
+<Progress value={65} size="lg" />
+<Progress value={43} variant="destructive" showValue className="w-36" />`;
+
+export const sliderSnippet = `import { useState } from "react";
+import { Badge } from "@app/ui/badge";
+import { Slider } from "@app/ui/slider";
+
+const [value, setValue] = useState([20]);
+
+<div className="space-y-3 rounded-2xl border p-5 shadow-xs">
+  <div className="flex items-center justify-between gap-3">
+    <p className="text-sm font-semibold">Temperature</p>
+    <Badge variant="outline">Cold</Badge>
+  </div>
+  <Slider value={value} onValueChange={setValue} max={100} step={1} />
+  <p className="text-right text-xs text-muted-foreground">Auto</p>
+  <p className="text-sm text-muted-foreground">
+    Automatic: {value[0]}
+  </p>
+</div>`;
+
+export const labelSnippet = `import { Label } from "@app/ui/label";
+import { Input } from "@app/ui/input";
+
+<Label htmlFor="name">Name</Label>
+<Input id="name" placeholder="Ada Lovelace" />`;
+
+export const inputSnippet = `import { Input } from "@app/ui/input";
+
+<Input placeholder="Ada Lovelace" />
+<Input type="email" placeholder="ada@example.com" />
+<Input disabled placeholder="Disabled" />`;
+
+export const textareaSnippet = `import { Textarea } from "@app/ui/textarea";
+
+<Textarea placeholder="Optional notes…" />
+<Textarea disabled placeholder="Disabled" />`;
+
+export const comboboxSnippet = `import { useState } from "react";
+import { Combobox, type ComboboxOption } from "@app/ui/combobox";
+import { GlobeIcon, SmartphoneIcon, MonitorIcon } from "lucide-react";
+
+const options: ComboboxOption[] = [
+  { value: "web", label: "Web", icon: <GlobeIcon />, group: "Platform" },
+  { value: "mobile", label: "Mobile", icon: <SmartphoneIcon />, group: "Platform" },
+  { value: "desktop", label: "Desktop", icon: <MonitorIcon />, group: "Platform" },
+];
+
+const [value, setValue] = useState("web");
+
+<Combobox
+  options={options}
+  value={value}
+  onValueChange={setValue}
+  placeholder="Select a platform…"
+  searchPlaceholder="Search…"
+  emptyMessage="No platform found."
+  clearable
+/>`;
+
+export const checkboxSnippet = `import { Checkbox } from "@app/ui/checkbox";
+import { Field, FieldLabel } from "@app/ui/field";
+
+<Field orientation="horizontal">
+  <Checkbox id="terms" />
+  <FieldLabel htmlFor="terms">Accept terms</FieldLabel>
+</Field>`;
+
+export const radioGroupSnippet = `import { Field, FieldLabel } from "@app/ui/field";
+import { RadioGroup, RadioGroupItem } from "@app/ui/radio-group";
+
+{/* vertical (default) */}
+<RadioGroup defaultValue="member">
+  <Field orientation="horizontal">
+    <RadioGroupItem value="member" id="r-member" />
+    <FieldLabel htmlFor="r-member">Member</FieldLabel>
+  </Field>
+  <Field orientation="horizontal">
+    <RadioGroupItem value="admin" id="r-admin" />
+    <FieldLabel htmlFor="r-admin">Admin</FieldLabel>
+  </Field>
+</RadioGroup>
+
+{/* inline row */}
+<RadioGroup defaultValue="web" orientation="horizontal">
+  <Field orientation="horizontal">
+    <RadioGroupItem value="web" id="r-web" />
+    <FieldLabel htmlFor="r-web">Web</FieldLabel>
+  </Field>
+  <Field orientation="horizontal">
+    <RadioGroupItem value="mobile" id="r-mobile" />
+    <FieldLabel htmlFor="r-mobile">Mobile</FieldLabel>
+  </Field>
+</RadioGroup>`;
+
+export const switchSnippet = `import { Field, FieldLabel } from "@app/ui/field";
+import { Switch } from "@app/ui/switch";
+
+<Field orientation="horizontal">
+  <Switch id="notifications" />
+  <FieldLabel htmlFor="notifications">Email notifications</FieldLabel>
+</Field>`;
+
+export const fieldSnippet = `import { Checkbox } from "@app/ui/checkbox";
+import { Field, FieldGroup, FieldLabel } from "@app/ui/field";
+import { Input } from "@app/ui/input";
+import { RadioGroup, RadioGroupItem } from "@app/ui/radio-group";
+import { Switch } from "@app/ui/switch";
+
+{/* Same row — Input h-9 + Field horizontal h-9 */}
+<div className="flex items-center gap-3">
+  <Input className="min-w-0 flex-1" placeholder="Ada Lovelace" />
+  <Field orientation="horizontal">
+    <Checkbox id="terms" />
+    <FieldLabel htmlFor="terms">Accept terms</FieldLabel>
+  </Field>
+</div>
+
+<div className="flex items-center gap-3">
+  <Input className="min-w-0 flex-1" type="email" />
+  <RadioGroup defaultValue="member" orientation="horizontal">
+    <Field orientation="horizontal">
+      <RadioGroupItem value="member" id="r-member" />
+      <FieldLabel htmlFor="r-member">Member</FieldLabel>
+    </Field>
+    <Field orientation="horizontal">
+      <RadioGroupItem value="admin" id="r-admin" />
+      <FieldLabel htmlFor="r-admin">Admin</FieldLabel>
+    </Field>
+  </RadioGroup>
+</div>
+
+{/* Labeled input + toggle — items-end aligns the h-9 row with the input */}
+<div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
+  <Field>
+    <FieldLabel htmlFor="email">Email</FieldLabel>
+    <Input id="email" type="email" />
+  </Field>
+  <Field orientation="horizontal">
+    <Switch id="notify" />
+    <FieldLabel htmlFor="notify">Notify</FieldLabel>
+  </Field>
+</div>`;
+
+export const formSnippet = `import { useState } from "react";
+import { Button } from "@app/ui/button";
+import { Checkbox } from "@app/ui/checkbox";
+import { Combobox } from "@app/ui/combobox";
+import { Field, FieldGroup, FieldLabel } from "@app/ui/field";
+import { Input } from "@app/ui/input";
+import { RadioGroup, RadioGroupItem } from "@app/ui/radio-group";
+import { Switch } from "@app/ui/switch";
 import { Textarea } from "@app/ui/textarea";
 
-<div className="grid gap-2">
-  <Label htmlFor="name">Name</Label>
-  <Input id="name" placeholder="Ada Lovelace" />
-</div>
-<div className="grid gap-2">
-  <Label htmlFor="notes">Notes</Label>
-  <Textarea id="notes" placeholder="Optional notes…" />
-</div>`;
+<form className="grid gap-4">
+  <FieldGroup>
+    <Field>
+      <FieldLabel htmlFor="name">Name</FieldLabel>
+      <Input id="name" />
+    </Field>
+    <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
+      <Field>
+        <FieldLabel htmlFor="platform">Platform</FieldLabel>
+        <Combobox id="platform" options={options} value={platform} onValueChange={setPlatform} />
+      </Field>
+      <Field orientation="horizontal">
+        <Switch id="notify" checked={notify} onCheckedChange={setNotify} />
+        <FieldLabel htmlFor="notify">Notify</FieldLabel>
+      </Field>
+    </div>
+    <Field>
+      <FieldLabel>Role</FieldLabel>
+      <RadioGroup value={role} onValueChange={setRole} orientation="horizontal">
+        <Field orientation="horizontal">
+          <RadioGroupItem value="member" id="role-member" />
+          <FieldLabel htmlFor="role-member">Member</FieldLabel>
+        </Field>
+        <Field orientation="horizontal">
+          <RadioGroupItem value="admin" id="role-admin" />
+          <FieldLabel htmlFor="role-admin">Admin</FieldLabel>
+        </Field>
+      </RadioGroup>
+    </Field>
+    <Field orientation="horizontal">
+      <Checkbox id="terms" checked={terms} onCheckedChange={…} />
+      <FieldLabel htmlFor="terms">Accept terms</FieldLabel>
+    </Field>
+  </FieldGroup>
+  <Button type="submit">Continue</Button>
+</form>`;
 
 export const cardSnippet = `import {
   Card,
