@@ -23,16 +23,16 @@ type HubLink = {
 };
 
 const packageLinks: HubLink[] = [
-  { id: "api", to: "/structure/api", icon: ServerIcon, pathKey: true },
-  { id: "web", to: "/structure/web", icon: LayoutIcon, pathKey: true },
-  { id: "ui", to: "/structure/ui", icon: PaletteIcon, pathKey: true },
+  { id: "api", to: "/code/api", icon: ServerIcon, pathKey: true },
+  { id: "web", to: "/code/web", icon: LayoutIcon, pathKey: true },
+  { id: "ui", to: "/code/ui", icon: PaletteIcon, pathKey: true },
 ];
 
 const platformLinks: HubLink[] = [
-  { id: "environment", to: "/structure/environment", icon: SlidersIcon },
-  { id: "database", to: "/structure/database", icon: DatabaseIcon },
-  { id: "storage", to: "/structure/storage", icon: CloudIcon },
-  { id: "i18n", to: "/structure/i18n", icon: LanguagesIcon },
+  { id: "environment", to: "/code/environment", icon: SlidersIcon },
+  { id: "database", to: "/code/database", icon: DatabaseIcon },
+  { id: "storage", to: "/code/storage", icon: CloudIcon },
+  { id: "i18n", to: "/code/i18n", icon: LanguagesIcon },
 ];
 
 function HubCardGrid({ links }: { links: HubLink[] }) {

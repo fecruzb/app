@@ -20,7 +20,7 @@ export function StructureBuildCta() {
           {t("landing.structureBuild.body")}
         </p>
         <Button size="lg" className="mt-8" asChild>
-          <Link to="/structure/api">
+          <Link to="/code/api">
             {t("landing.structureBuild.cta")} <ArrowRightIcon />
           </Link>
         </Button>

@@ -12,7 +12,7 @@ export function StructureWebPage() {
   useDocumentMeta({
     title: t("landing.seo.structureWeb.title"),
     description: t("landing.seo.structureWeb.description"),
-    path: "/structure/web",
+    path: "/code/web",
   });
 
   const web = useMemo(() => buildWebPillar(t), [t, i18n.language]);

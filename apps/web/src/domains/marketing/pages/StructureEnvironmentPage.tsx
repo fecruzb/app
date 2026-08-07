@@ -18,7 +18,7 @@ export function StructureEnvironmentPage() {
   useDocumentMeta({
     title: t("landing.seo.structureEnvironment.title"),
     description: t("landing.seo.structureEnvironment.description"),
-    path: "/structure/environment",
+    path: "/code/environment",
   });
 
   const lang = i18n.language;

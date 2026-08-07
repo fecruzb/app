@@ -16,7 +16,7 @@ export function StructurePage() {
   useDocumentMeta({
     title: t("landing.seo.structure.title"),
     description: t("landing.seo.structure.description"),
-    path: "/structure",
+    path: "/code",
   });
 
   const monorepo = useMemo(() => buildMonorepoPillar(t), [t, i18n.language]);

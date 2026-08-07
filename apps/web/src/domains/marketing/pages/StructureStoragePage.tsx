@@ -15,7 +15,7 @@ export function StructureStoragePage() {
   useDocumentMeta({
     title: t("landing.seo.structureStorage.title"),
     description: t("landing.seo.structureStorage.description"),
-    path: "/structure/storage",
+    path: "/code/storage",
   });
 
   const storage = useMemo(() => buildStoragePillar(t), [t, i18n.language]);

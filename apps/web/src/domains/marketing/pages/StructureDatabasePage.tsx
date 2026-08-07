@@ -11,7 +11,7 @@ export function StructureDatabasePage() {
   useDocumentMeta({
     title: t("landing.seo.structureDatabase.title"),
     description: t("landing.seo.structureDatabase.description"),
-    path: "/structure/database",
+    path: "/code/database",
   });
 
   return (

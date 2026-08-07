@@ -10,7 +10,7 @@ export function StructureApiPage() {
   useDocumentMeta({
     title: t("landing.seo.structureApi.title"),
     description: t("landing.seo.structureApi.description"),
-    path: "/structure/api",
+    path: "/code/api",
   });
 
   return (

@@ -11,7 +11,7 @@ export function StructureI18nPage() {
   useDocumentMeta({
     title: t("landing.seo.structureI18n.title"),
     description: t("landing.seo.structureI18n.description"),
-    path: "/structure/i18n",
+    path: "/code/i18n",
   });
 
   return (

@@ -12,35 +12,31 @@ import {
 import { cn } from "@app/ui/lib/utils";
 import { navItemVariants } from "@app/ui/nav-item";
 
-type CodeMenuItem = {
+type PlatformsMenuItem = {
   to: string;
-  labelKey: "overview" | "api" | "web" | "ui" | "environment" | "database" | "storage" | "i18n";
+  labelKey: "overview" | "windows" | "linux" | "macos" | "ios" | "android";
 };
 
-const packageItems: CodeMenuItem[] = [
-  { to: "/code", labelKey: "overview" },
-  { to: "/code/api", labelKey: "api" },
-  { to: "/code/web", labelKey: "web" },
-  { to: "/code/ui", labelKey: "ui" },
+const desktopItems: PlatformsMenuItem[] = [
+  { to: "/platforms", labelKey: "overview" },
+  { to: "/platforms/windows", labelKey: "windows" },
+  { to: "/platforms/linux", labelKey: "linux" },
+  { to: "/platforms/macos", labelKey: "macos" },
 ];
 
-const platformItems: CodeMenuItem[] = [
-  { to: "/code/environment", labelKey: "environment" },
-  { to: "/code/database", labelKey: "database" },
-  { to: "/code/storage", labelKey: "storage" },
-  { to: "/code/i18n", labelKey: "i18n" },
+const mobileItems: PlatformsMenuItem[] = [
+  { to: "/platforms/ios", labelKey: "ios" },
+  { to: "/platforms/android", labelKey: "android" },
 ];
 
 /**
- * “Code” is a split control: the painted pill navigates to the hub (or opens
- * the menu when already on Code); the chevron always toggles the package menu.
- * The dropdown anchors to the whole pill.
+ * “Platforms” split control — pill → hub; menu lists desktop then mobile OS targets.
  */
-export function CodeNavMenu() {
+export function PlatformsNavMenu() {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
-  const active = pathname === "/code" || pathname.startsWith("/code/");
+  const active = pathname === "/platforms" || pathname.startsWith("/platforms/");
 
   function onPillClick(e: MouseEvent) {
     if (!active) return;
@@ -48,13 +44,13 @@ export function CodeNavMenu() {
     setOpen(true);
   }
 
-  function renderItems(items: CodeMenuItem[]) {
+  function renderItems(items: PlatformsMenuItem[]) {
     return items.map(({ to, labelKey }) => {
       const itemActive = pathname === to;
       return (
         <DropdownMenuItem key={to} asChild>
           <Link to={to} className={itemActive ? "bg-accent text-accent-foreground" : undefined}>
-            {t(`landing.nav.codeMenu.${labelKey}`)}
+            {t(`landing.nav.platformsMenu.${labelKey}`)}
           </Link>
         </DropdownMenuItem>
       );
@@ -71,20 +67,20 @@ export function CodeNavMenu() {
         </DropdownMenuTrigger>
 
         <Link
-          to="/code"
+          to="/platforms"
           onClick={onPillClick}
           className="absolute inset-0 z-0 outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          aria-label={t("landing.nav.structure")}
+          aria-label={t("landing.nav.platforms")}
         />
 
         <span className="relative z-10 pointer-events-none px-1.5 py-0.5" aria-hidden>
-          {t("landing.nav.structure")}
+          {t("landing.nav.platforms")}
         </span>
 
         <button
           type="button"
           className="relative z-10 rounded-sm p-0.5 outline-none hover:bg-background/60 focus-visible:ring-2 focus-visible:ring-ring"
-          aria-label={t("landing.nav.codeMenu.open")}
+          aria-label={t("landing.nav.platformsMenu.open")}
           aria-expanded={open}
           aria-haspopup="menu"
           onClick={(e) => {
@@ -98,9 +94,9 @@ export function CodeNavMenu() {
       </div>
 
       <DropdownMenuContent align="start" className="min-w-[11rem]">
-        {renderItems(packageItems)}
+        {renderItems(desktopItems)}
         <DropdownMenuSeparator />
-        {renderItems(platformItems)}
+        {renderItems(mobileItems)}
       </DropdownMenuContent>
     </DropdownMenu>
   );

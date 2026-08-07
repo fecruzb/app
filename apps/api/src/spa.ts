@@ -20,20 +20,112 @@ const MARKETING_META: Record<string, { title: string; description: string }> = {
     description:
       "Open-source multi-tenant SaaS template with auth, tenants, email, an AI agent, and a typed monorepo ready to become your product.",
   },
-  "/foundations": {
-    title: "Foundations · App Base",
+  "/code": {
+    title: "Project structure · App Base",
     description:
-      "Monorepo layout, database schema, theming, i18n, and one resource walked top to bottom — the groundwork already wired.",
+      "How the monorepo is laid out — workspaces, Turbo, one deploy — then dive into the API, web, or UI package.",
   },
-  "/tour": {
-    title: "Product tour · App Base",
+  "/code/api": {
+    title: "API structure · App Base",
     description:
-      "Auth, invites, workspace shell, tasks, billing, admin, email, and the AI agent — the assembled product, screen by screen.",
+      "apps/api domain layers — schema, repository, tools, DTOs, and routes — walked as a guided course.",
+  },
+  "/code/web": {
+    title: "Web structure · App Base",
+    description: "apps/web — domains that mirror the API, with api.ts, pages, and routes.",
+  },
+  "/code/ui": {
+    title: "UI kit · App Base",
+    description:
+      "packages/ui folder layout, live theming, then the component catalog — primitives, shells, and composites.",
+  },
+  "/code/environment": {
+    title: "Environment · App Base",
+    description:
+      "Validated .env, local Docker run, and Render deploy from one YAML — configure, run, and ship.",
+  },
+  "/code/database": {
+    title: "Database · App Base",
+    description:
+      "Postgres modeled in Drizzle — identity, tenancy, billing, usage, articles, and the example resource.",
+  },
+  "/code/storage": {
+    title: "Storage · App Base",
+    description:
+      "MediaStore with Cloudflare R2 when configured, local disk fallback for development.",
+  },
+  "/code/i18n": {
+    title: "i18n · App Base",
+    description:
+      "English and Portuguese locale files, useTranslation, and a live language switcher.",
+  },
+  "/product": {
+    title: "Product · App Base",
+    description:
+      "Auth, workspace, AI agent, account, tenants, billing, and platform admin — the assembled product, area by area.",
+  },
+  "/product/auth": {
+    title: "Auth · App Base",
+    description:
+      "Sign in, registration with email verification, and password recovery — the auth surfaces you ship.",
+  },
+  "/product/workspace": {
+    title: "Workspace · App Base",
+    description: "The tenant app shell — sidebar, switcher, and a home that isn't a blank page.",
+  },
+  "/product/agent": {
+    title: "AI agent · App Base",
+    description: "In-app chat that calls tenant-scoped tools — the assistant that gets work done.",
+  },
+  "/product/account": {
+    title: "Account · App Base",
+    description: "Profile, security, and MCP API keys — settings for the signed-in user.",
+  },
+  "/product/tenants": {
+    title: "Tenants · App Base",
+    description: "Members and invites — bring the rest of the team into a workspace.",
+  },
+  "/product/billing": {
+    title: "Billing · App Base",
+    description: "Plans, seats, and AI entitlements — ready to wire to Stripe.",
+  },
+  "/product/admin": {
+    title: "Platform admin · App Base",
+    description: "People, invites, and tenants across the whole product from /admin.",
+  },
+  "/platforms": {
+    title: "Platforms · App Base",
+    description:
+      "One web app, five native shells — Tauri packages apps/web for Windows, Linux, macOS, iOS, and Android.",
+  },
+  "/platforms/windows": {
+    title: "Windows · App Base",
+    description:
+      "Ship the App Base SPA as a Windows desktop app via the Tauri shell and CI release pipeline.",
+  },
+  "/platforms/linux": {
+    title: "Linux · App Base",
+    description: "AppImage builds from apps/desktop — same web UI, remote API, auto-update via R2.",
+  },
+  "/platforms/macos": {
+    title: "macOS · App Base",
+    description:
+      "Universal macOS desktop shell around apps/web — DMG, updater, and GitHub Actions release.",
+  },
+  "/platforms/ios": {
+    title: "iOS · App Base",
+    description:
+      "Tauri iOS packaging of apps/web — local Xcode builds with VITE_API_URL and hash routing.",
+  },
+  "/platforms/android": {
+    title: "Android · App Base",
+    description:
+      "The same thin Tauri mobile shell pattern for Android — one SPA, native container, remote API.",
   },
   "/ui": {
     title: "UI kit · App Base",
     description:
-      "Base components from @app/ui — shadcn primitives and composites, themed by tokens, ready to ship with your product.",
+      "packages/ui folder layout, live theming, then the component catalog — primitives, shells, and composites.",
   },
   "/articles": {
     title: "Articles · App Base",

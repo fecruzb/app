@@ -1,22 +1,20 @@
-import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { buildChapters, ChapterSection } from "../components/tour/chapter-section";
 import { ClosingSection } from "../components/tour/closing-section";
+import { ProductHubLinks } from "../components/tour/product-hub-links";
 import { useDocumentMeta } from "@/lib/document-meta";
 import { MarketingHero } from "../components/marketing-hero";
 import { MarketingShell } from "../components/marketing-shell";
 import { useReveal } from "../hooks/use-reveal";
 
-export function TourPage() {
-  const { t, i18n } = useTranslation();
+/** Product hub — intro + cards into auth, workspace, agent, and the rest. */
+export function ProductPage() {
+  const { t } = useTranslation();
   useReveal();
   useDocumentMeta({
     title: t("landing.seo.tour.title"),
     description: t("landing.seo.tour.description"),
-    path: "/tour",
+    path: "/product",
   });
-
-  const chapters = useMemo(() => buildChapters(t), [t, i18n.language]);
 
   return (
     <MarketingShell>
@@ -28,10 +26,7 @@ export function TourPage() {
         body={t("landing.tourIntro.body")}
       />
 
-      {chapters.map((chapter, i) => (
-        <ChapterSection key={chapter.id} chapter={chapter} flip={i % 2 === 1} />
-      ))}
-
+      <ProductHubLinks />
       <ClosingSection />
     </MarketingShell>
   );

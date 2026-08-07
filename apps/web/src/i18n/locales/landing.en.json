@@ -16,16 +16,35 @@
       "storage": "Storage",
       "i18n": "i18n"
     },
-    "foundations": "Foundations",
+    "productMenu": {
+      "open": "Open Product menu",
+      "overview": "Overview",
+      "auth": "Auth",
+      "workspace": "Workspace",
+      "agent": "AI agent",
+      "account": "Account",
+      "tenants": "Tenants",
+      "billing": "Billing",
+      "admin": "Admin"
+    },
     "tour": "Product",
     "ui": "UI",
-    "articles": "Articles"
+    "articles": "Articles",
+    "platforms": "Platforms",
+    "platformsMenu": {
+      "open": "Open Platforms menu",
+      "overview": "Overview",
+      "windows": "Windows",
+      "linux": "Linux",
+      "macos": "macOS",
+      "ios": "iOS",
+      "android": "Android"
+    }
   },
   "teasers": {
-    "exploreStructure": "Explore the structure",
-    "exploreFoundations": "Explore foundations",
-    "exploreTour": "Explore the tour",
-    "exploreUi": "Browse components"
+    "exploreStructure": "Explore the code",
+    "exploreTour": "Explore the product",
+    "exploreUi": "Browse the kit"
   },
   "seo": {
     "home": {
@@ -46,11 +65,7 @@
     },
     "structureUi": {
       "title": "UI kit · App Base",
-      "description": "packages/ui folder layout, then the live component catalog — primitives, shells, and composites."
-    },
-    "foundations": {
-      "title": "Foundations · App Base",
-      "description": "Theme tokens and brand packs — light, dark, and createTheme when you need your own accent."
+      "description": "packages/ui folder layout, live theming, then the component catalog — primitives, shells, and composites."
     },
     "structureEnvironment": {
       "title": "Environment · App Base",
@@ -69,8 +84,36 @@
       "description": "English and Portuguese locale files, useTranslation, and a live language switcher."
     },
     "tour": {
-      "title": "Product tour · App Base",
-      "description": "Auth, invites, workspace shell, tasks, billing, admin, email, and the AI agent — the assembled product, screen by screen."
+      "title": "Product · App Base",
+      "description": "Auth, workspace, AI agent, account, tenants, billing, and platform admin — the assembled product, area by area."
+    },
+    "productAuth": {
+      "title": "Auth · App Base",
+      "description": "Sign in, registration with email verification, and password recovery — the auth surfaces you ship."
+    },
+    "productWorkspace": {
+      "title": "Workspace · App Base",
+      "description": "The tenant app shell — sidebar, switcher, and a home that isn't a blank page."
+    },
+    "productAgent": {
+      "title": "AI agent · App Base",
+      "description": "In-app chat that calls tenant-scoped tools — the assistant that gets work done."
+    },
+    "productAccount": {
+      "title": "Account · App Base",
+      "description": "Profile, security, and MCP API keys — settings for the signed-in user."
+    },
+    "productTenants": {
+      "title": "Tenants · App Base",
+      "description": "Members and invites — bring the rest of the team into a workspace."
+    },
+    "productBilling": {
+      "title": "Billing · App Base",
+      "description": "Plans, seats, and AI entitlements — ready to wire to Stripe."
+    },
+    "productAdmin": {
+      "title": "Platform admin · App Base",
+      "description": "People, invites, and tenants across the whole product from /admin."
     },
     "ui": {
       "title": "UI kit · App Base",
@@ -83,6 +126,30 @@
     "articleFallback": {
       "title": "Article · App Base",
       "description": "A published story from a workspace on App Base."
+    },
+    "platforms": {
+      "title": "Platforms · App Base",
+      "description": "One web app, five native shells — Tauri packages apps/web for Windows, Linux, macOS, iOS, and Android."
+    },
+    "platformsWindows": {
+      "title": "Windows · App Base",
+      "description": "Ship the App Base SPA as a Windows desktop app via the Tauri shell and CI release pipeline."
+    },
+    "platformsLinux": {
+      "title": "Linux · App Base",
+      "description": "AppImage builds from apps/desktop — same web UI, remote API, auto-update via R2."
+    },
+    "platformsMacos": {
+      "title": "macOS · App Base",
+      "description": "Universal macOS desktop shell around apps/web — DMG, updater, and GitHub Actions release."
+    },
+    "platformsIos": {
+      "title": "iOS · App Base",
+      "description": "Tauri iOS packaging of apps/web — local Xcode builds with VITE_API_URL and hash routing."
+    },
+    "platformsAndroid": {
+      "title": "Android · App Base",
+      "description": "The same thin Tauri mobile shell pattern for Android — one SPA, native container, remote API."
     }
   },
   "articles": {
@@ -97,7 +164,7 @@
   "ui": {
     "eyebrow": "Design system",
     "title": "One kit. Every surface.",
-    "body": "Base components from @app/ui — shadcn primitives plus a few composites. Import per subpath, restyle through theme tokens, never hardcode colors.",
+    "body": "Base components from @app/ui — themes, shadcn primitives, and composites. Import per subpath, restyle through tokens, never hardcode colors.",
     "sections": {
       "brand": {
         "title": "Brand",
@@ -211,7 +278,7 @@
       "navTasks": "Tasks",
       "navSettings": "Settings",
       "navStructure": "Code",
-      "navFoundations": "Foundations",
+      "navArticles": "Articles",
       "navTour": "Product",
       "navUi": "UI",
       "headerActions": "Sign in",
@@ -297,11 +364,6 @@
       "turboHint": "task graph"
     }
   },
-  "foundationsIntro": {
-    "eyebrow": "Foundations",
-    "title": "Themes that recolor the whole app",
-    "body": "Light and dark palettes ship with @app/ui. Pick a primary, extend with createTheme — the kit follows tokens, not hard-coded colors."
-  },
   "structureEnvironment": {
     "eyebrow": "Environment",
     "title": "Configure. Run. Deploy.",
@@ -315,9 +377,93 @@
     "hint": "Schema → repository → tools → DTOs → routes — then mirror it on the web."
   },
   "tourIntro": {
-    "eyebrow": "The product tour",
+    "eyebrow": "The product",
     "title": "See the product before you build it",
-    "body": "Those foundations, rendered as real screens. Here's the tour, in the order you'd meet them: sign in, get set up, then step into the workspace and everything it ships with."
+    "body": "Auth, workspace, agent, account, tenants, billing, and admin — each area as real screens, the same surfaces your users will meet."
+  },
+  "productLinks": {
+    "eyebrow": "Product areas",
+    "title": "Pick an area to open",
+    "body": "Each page walks one product surface with live mocks — sign-in flows, the shell, the agent, settings, and more.",
+    "auth": {
+      "eyebrow": "Auth",
+      "title": "Sign in, sign up, recover",
+      "body": "Login, registration with email verification, and forgot-password — the full auth loop.",
+      "cta": "Open auth"
+    },
+    "workspace": {
+      "eyebrow": "Workspace",
+      "title": "A shell, not a blank page",
+      "body": "Sidebar, tenant switcher, and home — the workspace users land in after auth.",
+      "cta": "Open workspace"
+    },
+    "agent": {
+      "eyebrow": "AI agent",
+      "title": "A chat that gets things done",
+      "body": "In-app assistant with tenant-scoped tools — ask, watch tools run, ship the change.",
+      "cta": "Open the agent"
+    },
+    "account": {
+      "eyebrow": "Account",
+      "title": "Profile, security, MCP keys",
+      "body": "User settings and Integrations — where API keys for Cursor MCP live.",
+      "cta": "Open account"
+    },
+    "tenants": {
+      "eyebrow": "Tenants",
+      "title": "Members and invites",
+      "body": "Bring the team in — invite by email, roles, and the inbox that lands the link.",
+      "cta": "Open tenants"
+    },
+    "billing": {
+      "eyebrow": "Billing",
+      "title": "Plans and entitlements",
+      "body": "Seats and AI limits on plans — catalog ready for Stripe.",
+      "cta": "Open billing"
+    },
+    "admin": {
+      "eyebrow": "Admin",
+      "title": "Run the whole product",
+      "body": "Platform /admin — people, invites, and tenants across every workspace.",
+      "cta": "Open admin"
+    }
+  },
+  "productAreas": {
+    "auth": {
+      "eyebrow": "Auth",
+      "title": "Identity that just works",
+      "body": "Email and password, verification, and recovery — opaque sessions in an httpOnly cookie, no auth vendor."
+    },
+    "workspace": {
+      "eyebrow": "Workspace",
+      "title": "The app users live in",
+      "body": "After sign-in, a real shell: nav, tenant context, and a place to work — not an empty scaffold."
+    },
+    "agent": {
+      "eyebrow": "AI agent",
+      "title": "Tools inside the chat",
+      "body": "The floating assistant calls the same domain tools as MCP — scoped to the current tenant."
+    },
+    "account": {
+      "eyebrow": "Account",
+      "title": "Your settings",
+      "body": "Profile and password on Account; MCP API keys on Integrations — personal config in one place."
+    },
+    "tenants": {
+      "eyebrow": "Tenants",
+      "title": "Invite the team",
+      "body": "Workspace members and email invites — roles checked server-side, links that land in the inbox."
+    },
+    "billing": {
+      "eyebrow": "Billing",
+      "title": "Plans you can charge for",
+      "body": "Seat counts and AI entitlements on plans — the catalog your Stripe integration will drive."
+    },
+    "admin": {
+      "eyebrow": "Platform admin",
+      "title": "Operate the whole fleet",
+      "body": "Cross-tenant people, invites, and workspaces at /admin — gated by platform admin, never a tenant-route bypass."
+    }
   },
   "closing": {
     "title": "From here on, it's your code",
@@ -367,7 +513,6 @@
     "bodyCode": "tasks",
     "bodyAfter": " is the placeholder domain. Same name on API and web, fixed roles on each side, one shared contract in packages/shared. Walk the API (table → schema.ts → repository → route → tool), then the React domain (folder → api.ts → routes → page), and land on the screen. Copy that folder pair for your own resource."
   },
-  "showScreen": "Show screen {{n}}",
   "structureLinks": {
     "eyebrow": "Packages",
     "title": "Pick a package to open",
@@ -737,12 +882,27 @@
     "signUp": {
       "eyebrow": "Sign up",
       "title": "Registration that sets everything up",
-      "body": "Name, email, password. Each new user gets a personal tenant and a verification email automatically — the link is single-use and expires in 24 hours."
+      "body": "Name, email, password. Each new user gets a personal tenant automatically — no empty account sitting around waiting for a workspace."
     },
-    "recovery": {
-      "eyebrow": "Password recovery",
-      "title": "Forgot password, fully handled",
-      "body": "Request a reset link by email, then set a new password on a screen guarded by a short-lived, single-use token — validated server-side and hashed with scrypt."
+    "verifyEmail": {
+      "eyebrow": "Verify email",
+      "title": "A link lands in the inbox",
+      "body": "Sign-up sends a verification email with a single-use link that expires in 24 hours. Until they click it, the account stays unverified."
+    },
+    "forgotPassword": {
+      "eyebrow": "Forgot password",
+      "title": "Ask for a reset link",
+      "body": "Enter the email on /forgot-password. The server mints a short-lived token and sends the reset mail — same pattern as verification, different purpose."
+    },
+    "resetEmail": {
+      "eyebrow": "Reset email",
+      "title": "The inbox carries the token",
+      "body": "The message holds a one-time link. The raw token never hits the database — only its hash — so a leaked dump can't forge a reset."
+    },
+    "resetPassword": {
+      "eyebrow": "New password",
+      "title": "Set it on a guarded screen",
+      "body": "/reset-password validates the token server-side, then hashes the new password with scrypt and ends every other session for that user."
     },
     "shell": {
       "eyebrow": "The app shell",
@@ -759,20 +919,40 @@
       "title": "Profile, security, and where keys live",
       "body": "Every user manages their own profile and password from My account. API keys for the remote MCP server live under Integrations — same patterns you'll reuse for any personal settings you add."
     },
-    "team": {
-      "eyebrow": "Team & invites",
-      "title": "Bring the rest of the team",
-      "body": "Owners and admins invite by email and pick a role; members and pending invites live in settings, each revocable. The invite lands as a 7-day link in their inbox. Seat caps from the tenant plan block invites when the workspace is full."
+    "inviteMembers": {
+      "eyebrow": "Invite members",
+      "title": "Pick an email and a role",
+      "body": "Owners and admins invite from settings — members and pending invites in one place, each revocable. Seat caps from the tenant plan block invites when the workspace is full."
     },
-    "admin": {
-      "eyebrow": "Platform admin",
-      "title": "Run the whole product from /admin",
-      "body": "Orthogonal to tenant roles: platform admins see every account and workspace (with members listed on each tenant), invite people to sign up for the app (their own workspace — not yours), assign plans, and bootstrap access with PLATFORM_ADMIN_EMAILS."
+    "inviteEmail": {
+      "eyebrow": "Invite email",
+      "title": "A 7-day link in their inbox",
+      "body": "The invite lands as transactional email with a single-use link. Accepting it joins the workspace under the role you chose."
     },
-    "plans": {
-      "eyebrow": "Plans & billing",
-      "title": "Seats and AI entitlements, ready for Stripe",
-      "body": "Four plans in code — Free, Starter, Pro, and Pay as you go — with seat caps and per-member AI allowances. Platform admin assigns the plan; tenants see usage under Billing. Checkout later only needs to set planId. Wire Stripe or any payment provider when you're ready."
+    "adminPeople": {
+      "eyebrow": "People",
+      "title": "Every account on the platform",
+      "body": "Platform admins see every user across tenants — orthogonal to workspace roles. Bootstrap access with PLATFORM_ADMIN_EMAILS."
+    },
+    "adminInvites": {
+      "eyebrow": "Platform invites",
+      "title": "Invite people to the product",
+      "body": "Send a platform invite so someone can sign up for their own workspace — not join yours. Different from tenant member invites."
+    },
+    "adminInviteEmail": {
+      "eyebrow": "Invite inbox",
+      "title": "The platform invite lands here",
+      "body": "Same email machinery as tenant invites — a link, an expiry, a hash in the database — aimed at creating a new account and workspace."
+    },
+    "plansCatalog": {
+      "eyebrow": "Plans catalog",
+      "title": "Seats and AI entitlements in code",
+      "body": "Four plans — Free, Starter, Pro, and Pay as you go — with seat caps and per-member AI allowances. The catalog is data you own; wire Stripe when you're ready."
+    },
+    "plansAssign": {
+      "eyebrow": "Assign a plan",
+      "title": "Platform admin sets the tenant plan",
+      "body": "Pick a workspace and assign a planId. Tenants see usage under Billing; checkout later only needs to flip that field."
     },
     "mcp": {
       "eyebrow": "Bring your own tools",
@@ -985,7 +1165,12 @@
       "description": "Example resource",
       "placeholder": "Add a task...",
       "add": "Add",
-      "items": ["Design the schema", "Wire the repository", "Expose the route", "Build the screen"],
+      "items": [
+        "Design the schema",
+        "Wire the repository",
+        "Expose the route",
+        "Build the screen"
+      ],
       "left": "Example resource with per-tenant CRUD · 2 of 4 left"
     },
     "account": {
@@ -1039,6 +1224,189 @@
       "owner": "owner",
       "admin": "admin",
       "member": "member"
+    }
+  },
+  "platformsIntro": {
+    "eyebrow": "Platforms",
+    "title": "One UI. Five places it runs.",
+    "body": "apps/web is the product. Tauri wraps it as desktop and mobile shells — same React SPA, remote API, hash router — so Windows, Linux, macOS, iOS, and Android stay packaging, not forks."
+  },
+  "platformsOverview": {
+    "eyebrow": "Tauri shells",
+    "title": "Thin packaging around apps/web",
+    "body": "Desktop lives in apps/desktop; mobile in apps/mobile. Both Vite-build the web app with VITE_API_URL and VITE_ROUTER=hash. No product UI in the shells — features stay in apps/web so every platform ships the same screens.",
+    "points": [
+      "apps/desktop → Windows, Linux, macOS installers from GitHub Actions",
+      "apps/mobile → iOS via Xcode locally; same remote-API model for Android",
+      "WKWebView / native WebView use Bearer sessionToken when cookies won't stick on HTTP",
+      "Rename productName and identifier in tauri.conf.json when you fork"
+    ]
+  },
+  "platformsLinks": {
+    "eyebrow": "Pick a platform",
+    "title": "How each OS ships",
+    "body": "Desktop builds are CI-ready. Mobile follows the same shell pattern — open a page for the install story and the running app mock.",
+    "windows": {
+      "eyebrow": "Windows",
+      "title": "Setup.exe from CI",
+      "body": "Tauri desktop shell, signed updater payloads, and the Windows runner in release-desktop-windows.",
+      "cta": "Open Windows"
+    },
+    "linux": {
+      "eyebrow": "Linux",
+      "title": "AppImage on x64",
+      "body": "Same apps/desktop package — ubuntu runner builds AppImage and merges the updater manifest.",
+      "cta": "Open Linux"
+    },
+    "macos": {
+      "eyebrow": "macOS",
+      "title": "Universal DMG",
+      "body": "Apple Silicon and Intel targets, install script, and auto-update from R2.",
+      "cta": "Open macOS"
+    },
+    "ios": {
+      "eyebrow": "iOS",
+      "title": "Xcode + simulator",
+      "body": "apps/mobile Tauri iOS shell — local signing, LAN or deployed API for devices.",
+      "cta": "Open iOS"
+    },
+    "android": {
+      "eyebrow": "Android",
+      "title": "Same shell pattern",
+      "body": "Package the SPA in a Tauri Android container — one codebase, native WebView, remote API.",
+      "cta": "Open Android"
+    }
+  },
+  "platformsPreview": {
+    "agentPrompt": "List my open tasks",
+    "agentReply": "You have 2 open tasks in Acme. Want me to mark one done?",
+    "agentPlaceholder": "Ask the agent…"
+  },
+  "platforms": {
+    "windows": {
+      "eyebrow": "Windows",
+      "title": "Windows from one tag",
+      "body": "Ship App Base as a signed Windows installer. The web app you already have — packaged by Tauri, released by GitHub Actions.",
+      "shell": {
+        "eyebrow": "The running app",
+        "title": "Same SPA, native window",
+        "body": "On Windows the shell is a native window hosting the React app — sidebar, agent FAB, and tenant context identical to the browser.",
+        "points": [
+          "Product UI only in apps/web — the shell has no feature pages",
+          "Hash router so file:// / custom schemes don't break client routes",
+          "Session via Bearer token when Secure cookies can't persist"
+        ]
+      },
+      "build": {
+        "eyebrow": "Build & release",
+        "title": "Windows Setup.exe + updater",
+        "body": "Tag vX.Y.Z on main after bumping version in package.json and tauri.conf.json. CI builds, signs, and publishes to R2 under desktop-releases/.",
+        "points": [
+          "Workflow: release-desktop-windows.yml",
+          "Updater manifest merged into desktop-releases/latest/latest.json",
+          "npm run dev:desktop for local work against the API"
+        ]
+      }
+    },
+    "linux": {
+      "eyebrow": "Linux",
+      "title": "Linux AppImage",
+      "body": "Same desktop package, ubuntu runner — AppImage artifact and updater entry for linux-x86_64.",
+      "shell": {
+        "eyebrow": "The running app",
+        "title": "Same SPA, native window",
+        "body": "On Linux the shell is a native window hosting the React app — sidebar, agent FAB, and tenant context identical to the browser.",
+        "points": [
+          "Product UI only in apps/web — the shell has no feature pages",
+          "Hash router so file:// / custom schemes don't break client routes",
+          "Session via Bearer token when Secure cookies can't persist"
+        ]
+      },
+      "build": {
+        "eyebrow": "Build & release",
+        "title": "AppImage + updater",
+        "body": "Tag vX.Y.Z on main after bumping version in package.json and tauri.conf.json. CI builds, signs, and publishes to R2 under desktop-releases/.",
+        "points": [
+          "Workflow: release-desktop-linux.yml",
+          "Updater manifest merged into desktop-releases/latest/latest.json",
+          "npm run dev:desktop for local work against the API"
+        ]
+      }
+    },
+    "macos": {
+      "eyebrow": "macOS",
+      "title": "macOS universal build",
+      "body": "Apple Silicon and Intel in one pipeline — DMG, install script, and signed auto-update tarball.",
+      "shell": {
+        "eyebrow": "The running app",
+        "title": "Same SPA, native window",
+        "body": "On macOS the shell is a native window hosting the React app — sidebar, agent FAB, and tenant context identical to the browser.",
+        "points": [
+          "Product UI only in apps/web — the shell has no feature pages",
+          "Hash router so file:// / custom schemes don't break client routes",
+          "Session via Bearer token when Secure cookies can't persist"
+        ]
+      },
+      "build": {
+        "eyebrow": "Build & release",
+        "title": "Universal DMG + updater",
+        "body": "Tag vX.Y.Z on main after bumping version in package.json and tauri.conf.json. CI builds, signs, and publishes to R2 under desktop-releases/.",
+        "points": [
+          "Workflow: release-desktop-macos.yml",
+          "Updater manifest merged into desktop-releases/latest/latest.json",
+          "npm run dev:desktop for local work against the API"
+        ]
+      }
+    },
+    "ios": {
+      "eyebrow": "iOS",
+      "title": "Phone-sized, same product",
+      "body": "apps/mobile is a Tauri iOS shell around apps/web. No App Store CI in the template — you open Xcode, pick a Team, and run against a LAN or deployed API.",
+      "shell": {
+        "eyebrow": "On device",
+        "title": "The app in a phone cascade",
+        "body": "Login, home, and tasks are the same React screens — the cascade shows how the SPA feels as a native container, not a separate mobile codebase.",
+        "points": [
+          "VITE_API_URL + VITE_ROUTER=hash like desktop",
+          "Simulator can use localhost; physical devices need your Mac's LAN IP or Render",
+          "CORS_ORIGIN must allow tauri://localhost and https://tauri.localhost"
+        ]
+      },
+      "build": {
+        "eyebrow": "Local build",
+        "title": "Xcode is the release path (for now)",
+        "body": "Run ios:init once, then npm run dev:mobile or open the generated Xcode project. Signing and Apple team IDs stay product-specific — the template does not ship TestFlight CI.",
+        "points": [
+          "npm run ios:init -w @app/mobile generates src-tauri/gen/apple/",
+          "Rename com.appbase.mobile in tauri.conf.json when forking",
+          "Keep features in apps/web — mobile never forks the UI"
+        ]
+      }
+    },
+    "android": {
+      "eyebrow": "Android",
+      "title": "Same shell idea on Android",
+      "body": "Tauri's mobile story covers Android with the same thin-shell model: one SPA, native WebView, remote API. Treat apps/mobile as the packaging home — extend the iOS project pattern rather than cloning the product.",
+      "shell": {
+        "eyebrow": "On device",
+        "title": "Cascade of running screens",
+        "body": "Imagine the same login, workspace, and agent chat inside an Android WebView — no second design system, no separate React Native tree.",
+        "points": [
+          "Hash router + remote API keep deep links simple",
+          "Bearer session when cookie storage differs from the browser",
+          "UI tokens from @app/ui follow light/dark like every other surface"
+        ]
+      },
+      "build": {
+        "eyebrow": "Packaging",
+        "title": "Extend the mobile shell",
+        "body": "Start from the Tauri mobile tooling already used for iOS. Android Studio / SDK setup is product-specific; the invariant is unchanged — build apps/web into the native container.",
+        "points": [
+          "Do not duplicate domains under a separate Android UI package",
+          "Point VITE_API_URL at a reachable HTTPS API for devices",
+          "Rename the application id when you fork the template"
+        ]
+      }
     }
   }
 }

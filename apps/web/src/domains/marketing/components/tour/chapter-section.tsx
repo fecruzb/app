@@ -1,16 +1,26 @@
-import { useEffect, useState, type ComponentType } from "react";
+import { type ComponentType, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
-import { WindowBar } from "@app/ui/browser-window";
+import { Window } from "@app/ui/browser-window";
 import { FeatureSplit } from "../feature-split";
 import {
   AccountMock,
+  AdminInvitesBody,
+  AdminPeopleBody,
+  AdminPlansBody,
+  AdminTenantsPlanBody,
   AgentChatMock,
-  flows,
+  ForgotPasswordBody,
+  InviteEmailBody,
+  InviteMembersBody,
   LoginMock,
   McpKeysMock,
+  PlatformInviteEmailBody,
+  RegisterBody,
+  ResetEmailBody,
+  ResetPasswordBody,
   ShellMock,
-  type Screen,
+  VerifyEmailBody,
 } from "../product-preview";
 
 type Chapter = {
@@ -18,26 +28,29 @@ type Chapter = {
   eyebrow: string;
   title: string;
   body: string;
-  /** A single static mock… */
-  mock?: ComponentType;
-  /** …or a multi-screen flow that keeps the browser chrome fixed and swaps the body. */
-  flow?: Screen[];
+  mock: ComponentType;
 };
 
-function chapterCopy(
-  key:
-    | "signIn"
-    | "signUp"
-    | "recovery"
-    | "shell"
-    | "agent"
-    | "account"
-    | "team"
-    | "admin"
-    | "plans"
-    | "mcp",
-  t: TFunction,
-) {
+type ChapterKey =
+  | "signIn"
+  | "signUp"
+  | "verifyEmail"
+  | "forgotPassword"
+  | "resetEmail"
+  | "resetPassword"
+  | "shell"
+  | "agent"
+  | "account"
+  | "inviteMembers"
+  | "inviteEmail"
+  | "adminPeople"
+  | "adminInvites"
+  | "adminInviteEmail"
+  | "plansCatalog"
+  | "plansAssign"
+  | "mcp";
+
+function chapterCopy(key: ChapterKey, t: TFunction) {
   return {
     eyebrow: t(`landing.chapters.${key}.eyebrow`),
     title: t(`landing.chapters.${key}.title`),
@@ -45,99 +58,150 @@ function chapterCopy(
   };
 }
 
-// The product tour as a flow: land, sign up, recover, then step into the
-// workspace and each thing it ships with. Emails hang off the flow that sends
-// them rather than standing alone.
+/** Body inside browser chrome — inbox labels go through i18n. */
+function WindowMock({ label, children }: { label: string; children: ReactNode }) {
+  const { t } = useTranslation();
+  const bar = label === "inbox" ? t("landing.preview.window.inbox") : label;
+  return <Window label={bar}>{children}</Window>;
+}
+
+function RegisterMock() {
+  return (
+    <WindowMock label="/register">
+      <RegisterBody />
+    </WindowMock>
+  );
+}
+function VerifyEmailMock() {
+  return (
+    <WindowMock label="inbox">
+      <VerifyEmailBody />
+    </WindowMock>
+  );
+}
+function ForgotPasswordMock() {
+  return (
+    <WindowMock label="/forgot-password">
+      <ForgotPasswordBody />
+    </WindowMock>
+  );
+}
+function ResetEmailMock() {
+  return (
+    <WindowMock label="inbox">
+      <ResetEmailBody />
+    </WindowMock>
+  );
+}
+function ResetPasswordMock() {
+  return (
+    <WindowMock label="/reset-password">
+      <ResetPasswordBody />
+    </WindowMock>
+  );
+}
+function InviteMembersMock() {
+  return (
+    <WindowMock label="/app/acme/settings">
+      <InviteMembersBody />
+    </WindowMock>
+  );
+}
+function InviteEmailMock() {
+  return (
+    <WindowMock label="inbox">
+      <InviteEmailBody />
+    </WindowMock>
+  );
+}
+function AdminPeopleMock() {
+  return (
+    <WindowMock label="/admin/users">
+      <AdminPeopleBody />
+    </WindowMock>
+  );
+}
+function AdminInvitesMock() {
+  return (
+    <WindowMock label="/admin/invites">
+      <AdminInvitesBody />
+    </WindowMock>
+  );
+}
+function AdminInviteEmailMock() {
+  return (
+    <WindowMock label="inbox">
+      <PlatformInviteEmailBody />
+    </WindowMock>
+  );
+}
+function PlansCatalogMock() {
+  return (
+    <WindowMock label="/admin/plans">
+      <AdminPlansBody />
+    </WindowMock>
+  );
+}
+function PlansAssignMock() {
+  return (
+    <WindowMock label="/admin/tenants">
+      <AdminTenantsPlanBody />
+    </WindowMock>
+  );
+}
+
+export type ProductAreaId =
+  "auth" | "workspace" | "agent" | "account" | "tenants" | "billing" | "admin";
+
+const areaChapterIds: Record<ProductAreaId, readonly string[]> = {
+  auth: ["signIn", "signUp", "verifyEmail", "forgotPassword", "resetEmail", "resetPassword"],
+  workspace: ["shell"],
+  agent: ["agent"],
+  account: ["account", "mcp"],
+  tenants: ["inviteMembers", "inviteEmail"],
+  billing: ["plansCatalog", "plansAssign"],
+  admin: ["adminPeople", "adminInvites", "adminInviteEmail"],
+};
+
+/** One card per screen — no multi-step carousels. */
 export function buildChapters(t: TFunction): Chapter[] {
   return [
     { id: "signIn", ...chapterCopy("signIn", t), mock: LoginMock },
-    { id: "signUp", ...chapterCopy("signUp", t), flow: flows.register },
-    { id: "recovery", ...chapterCopy("recovery", t), flow: flows.recovery },
+    { id: "signUp", ...chapterCopy("signUp", t), mock: RegisterMock },
+    { id: "verifyEmail", ...chapterCopy("verifyEmail", t), mock: VerifyEmailMock },
+    { id: "forgotPassword", ...chapterCopy("forgotPassword", t), mock: ForgotPasswordMock },
+    { id: "resetEmail", ...chapterCopy("resetEmail", t), mock: ResetEmailMock },
+    { id: "resetPassword", ...chapterCopy("resetPassword", t), mock: ResetPasswordMock },
     { id: "shell", ...chapterCopy("shell", t), mock: ShellMock },
     { id: "agent", ...chapterCopy("agent", t), mock: AgentChatMock },
     { id: "account", ...chapterCopy("account", t), mock: AccountMock },
-    { id: "team", ...chapterCopy("team", t), flow: flows.invite },
-    { id: "admin", ...chapterCopy("admin", t), flow: flows.admin },
-    { id: "plans", ...chapterCopy("plans", t), flow: flows.plans },
+    { id: "inviteMembers", ...chapterCopy("inviteMembers", t), mock: InviteMembersMock },
+    { id: "inviteEmail", ...chapterCopy("inviteEmail", t), mock: InviteEmailMock },
+    { id: "adminPeople", ...chapterCopy("adminPeople", t), mock: AdminPeopleMock },
+    { id: "adminInvites", ...chapterCopy("adminInvites", t), mock: AdminInvitesMock },
+    { id: "adminInviteEmail", ...chapterCopy("adminInviteEmail", t), mock: AdminInviteEmailMock },
+    { id: "plansCatalog", ...chapterCopy("plansCatalog", t), mock: PlansCatalogMock },
+    { id: "plansAssign", ...chapterCopy("plansAssign", t), mock: PlansAssignMock },
     { id: "mcp", ...chapterCopy("mcp", t), mock: McpKeysMock },
   ];
 }
 
-/** One product-tour chapter: copy on one side, its mock (plus any email) on the other. */
+/** Chapters for one Product deep-dive page. */
+export function buildProductArea(area: ProductAreaId, t: TFunction): Chapter[] {
+  const ids = new Set(areaChapterIds[area]);
+  return buildChapters(t).filter((c) => ids.has(c.id));
+}
+
+/** One product chapter: copy on one side, a single static mock on the other. */
 export function ChapterSection({ chapter, flip }: { chapter: Chapter; flip: boolean }) {
+  const Mock = chapter.mock;
   return (
     <FeatureSplit
       flip={flip}
       eyebrow={chapter.eyebrow}
       title={chapter.title}
       body={chapter.body}
-      visual={<MockCarousel chapter={chapter} />}
+      visual={<Mock />}
     />
-  );
-}
-
-/**
- * A single-mock chapter renders its mock as-is. A flow chapter keeps the browser
- * chrome (frame + bar) fixed and only crossfades the body inside on a timer, so
- * alternating between screens never resizes the frame or jumps the layout.
- */
-function MockCarousel({ chapter }: { chapter: Chapter }) {
-  const { t } = useTranslation();
-  const screens = chapter.flow;
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    if (!screens || paused) return;
-    const id = setInterval(() => setIndex((i) => (i + 1) % screens.length), 3500);
-    return () => clearInterval(id);
-  }, [screens, paused]);
-
-  if (!screens) {
-    const Only = chapter.mock!;
-    return <Only />;
-  }
-
-  return (
-    <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
-        <WindowBar
-          label={
-            screens[index].label === "inbox"
-              ? t("landing.preview.window.inbox")
-              : screens[index].label
-          }
-        />
-        {/* Bodies share one grid cell: the tallest sets a fixed height, they crossfade in place. */}
-        <div className="grid w-full grid-cols-1">
-          {screens.map((screen, i) => {
-            const Body = screen.Body;
-            return (
-              <div
-                key={i}
-                aria-hidden={i !== index}
-                className={`col-start-1 row-start-1 min-w-0 transition-opacity duration-500 ${
-                  i === index ? "opacity-100" : "pointer-events-none opacity-0"
-                }`}
-              >
-                <Body />
-              </div>
-            );
-          })}
-        </div>
-      </div>
-      <div className="mt-3 flex gap-1.5">
-        {screens.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setIndex(i)}
-            aria-label={t("landing.showScreen", { n: i + 1 })}
-            className={`h-1.5 rounded-full transition-all ${
-              i === index ? "w-5 bg-primary" : "w-1.5 bg-muted-foreground/30"
-            }`}
-          />
-        ))}
-      </div>
-    </div>
   );
 }

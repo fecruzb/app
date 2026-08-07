@@ -12,35 +12,35 @@ import {
 import { cn } from "@app/ui/lib/utils";
 import { navItemVariants } from "@app/ui/nav-item";
 
-type CodeMenuItem = {
+type ProductMenuItem = {
   to: string;
-  labelKey: "overview" | "api" | "web" | "ui" | "environment" | "database" | "storage" | "i18n";
+  labelKey:
+    "overview" | "auth" | "workspace" | "agent" | "account" | "tenants" | "billing" | "admin";
 };
 
-const packageItems: CodeMenuItem[] = [
-  { to: "/code", labelKey: "overview" },
-  { to: "/code/api", labelKey: "api" },
-  { to: "/code/web", labelKey: "web" },
-  { to: "/code/ui", labelKey: "ui" },
+const primaryItems: ProductMenuItem[] = [
+  { to: "/product", labelKey: "overview" },
+  { to: "/product/auth", labelKey: "auth" },
+  { to: "/product/workspace", labelKey: "workspace" },
+  { to: "/product/agent", labelKey: "agent" },
 ];
 
-const platformItems: CodeMenuItem[] = [
-  { to: "/code/environment", labelKey: "environment" },
-  { to: "/code/database", labelKey: "database" },
-  { to: "/code/storage", labelKey: "storage" },
-  { to: "/code/i18n", labelKey: "i18n" },
+const secondaryItems: ProductMenuItem[] = [
+  { to: "/product/account", labelKey: "account" },
+  { to: "/product/tenants", labelKey: "tenants" },
+  { to: "/product/billing", labelKey: "billing" },
+  { to: "/product/admin", labelKey: "admin" },
 ];
 
 /**
- * “Code” is a split control: the painted pill navigates to the hub (or opens
- * the menu when already on Code); the chevron always toggles the package menu.
- * The dropdown anchors to the whole pill.
+ * “Product” split control — same pattern as Code: pill → hub, chevron opens
+ * the area menu; already-on-Product pill click opens the menu.
  */
-export function CodeNavMenu() {
+export function ProductNavMenu() {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
-  const active = pathname === "/code" || pathname.startsWith("/code/");
+  const active = pathname === "/product" || pathname.startsWith("/product/");
 
   function onPillClick(e: MouseEvent) {
     if (!active) return;
@@ -48,13 +48,13 @@ export function CodeNavMenu() {
     setOpen(true);
   }
 
-  function renderItems(items: CodeMenuItem[]) {
+  function renderItems(items: ProductMenuItem[]) {
     return items.map(({ to, labelKey }) => {
       const itemActive = pathname === to;
       return (
         <DropdownMenuItem key={to} asChild>
           <Link to={to} className={itemActive ? "bg-accent text-accent-foreground" : undefined}>
-            {t(`landing.nav.codeMenu.${labelKey}`)}
+            {t(`landing.nav.productMenu.${labelKey}`)}
           </Link>
         </DropdownMenuItem>
       );
@@ -71,20 +71,20 @@ export function CodeNavMenu() {
         </DropdownMenuTrigger>
 
         <Link
-          to="/code"
+          to="/product"
           onClick={onPillClick}
           className="absolute inset-0 z-0 outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          aria-label={t("landing.nav.structure")}
+          aria-label={t("landing.nav.tour")}
         />
 
         <span className="relative z-10 pointer-events-none px-1.5 py-0.5" aria-hidden>
-          {t("landing.nav.structure")}
+          {t("landing.nav.tour")}
         </span>
 
         <button
           type="button"
           className="relative z-10 rounded-sm p-0.5 outline-none hover:bg-background/60 focus-visible:ring-2 focus-visible:ring-ring"
-          aria-label={t("landing.nav.codeMenu.open")}
+          aria-label={t("landing.nav.productMenu.open")}
           aria-expanded={open}
           aria-haspopup="menu"
           onClick={(e) => {
@@ -98,9 +98,9 @@ export function CodeNavMenu() {
       </div>
 
       <DropdownMenuContent align="start" className="min-w-[11rem]">
-        {renderItems(packageItems)}
+        {renderItems(primaryItems)}
         <DropdownMenuSeparator />
-        {renderItems(platformItems)}
+        {renderItems(secondaryItems)}
       </DropdownMenuContent>
     </DropdownMenu>
   );

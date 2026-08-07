@@ -1,7 +1,20 @@
 /** Static, faithful mockups of the product UI — no data or app imports. */
 
 export { AgentChatMock } from "./agent-mock";
-export { LoginMock } from "./auth-mocks";
+export { ForgotPasswordBody, LoginMock, RegisterBody, ResetPasswordBody } from "./auth-mocks";
+export {
+  AdminInvitesBody,
+  AdminPeopleBody,
+  AdminPlansBody,
+  AdminTenantsPlanBody,
+} from "./admin-mocks";
+export {
+  InviteEmailBody,
+  PlatformInviteEmailBody,
+  ResetEmailBody,
+  VerifyEmailBody,
+} from "./email-mocks";
+export { InviteMembersBody } from "./invite-mocks";
 export { McpKeysMock, ShellMock, TasksMock, AccountMock } from "./shell-mocks";
 export type { Column } from "./schema-tables";
 export {
@@ -15,5 +28,3 @@ export {
   TaskTable,
 } from "./schema-tables";
 export { EnvMock, TerminalMock, RenderMock } from "./ops-mocks";
-export type { Screen } from "./flows";
-export { flows } from "./flows";

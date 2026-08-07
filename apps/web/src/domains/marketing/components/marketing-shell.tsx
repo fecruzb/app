@@ -10,6 +10,8 @@ import { useAppConfig } from "@/app/config";
 import { useAuth } from "@/domains/auth/context/auth-provider";
 import { ThemeControls } from "@/theme/theme-controls";
 import { CodeNavMenu } from "./code-nav-menu";
+import { PlatformsNavMenu } from "./platforms/platforms-nav-menu";
+import { ProductNavMenu } from "./product-nav-menu";
 import { NextSectionButton } from "./next-section-button";
 
 export function MarketingShell({ children }: { children: ReactNode }) {
@@ -29,8 +31,8 @@ export function MarketingShell({ children }: { children: ReactNode }) {
       nav={
         <>
           <CodeNavMenu />
-          <HeaderNavLink to="/tour">{t("landing.nav.tour")}</HeaderNavLink>
-          <HeaderNavLink to="/foundations">{t("landing.nav.foundations")}</HeaderNavLink>
+          <ProductNavMenu />
+          <PlatformsNavMenu />
           <span aria-hidden className="mx-1.5 h-4 w-px shrink-0 bg-border" />
           <HeaderNavLink
             to="/articles"

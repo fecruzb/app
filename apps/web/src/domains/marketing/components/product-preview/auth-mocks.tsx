@@ -50,6 +50,21 @@ function AuthScreen({
   );
 }
 
+export function LoginBody() {
+  const { t } = useTranslation();
+  return (
+    <AuthBody
+      title={t("landing.preview.login.title")}
+      description={t("landing.preview.login.description")}
+      footer={t("landing.preview.login.footer")}
+    >
+      <Field label={t("landing.preview.email")} value={t("landing.preview.sample.youEmail")} />
+      <Field label={t("landing.preview.password")} value="••••••••" mono />
+      <SubmitButton label={t("landing.preview.login.submit")} />
+    </AuthBody>
+  );
+}
+
 export function LoginMock() {
   const { t } = useTranslation();
   return (

@@ -188,7 +188,7 @@ export function ShellDemosSection() {
                 {t("landing.ui.demo.navTour")}
               </NavItem>
               <NavItem variant="header" active={false}>
-                {t("landing.ui.demo.navFoundations")}
+                {t("landing.ui.demo.navArticles")}
               </NavItem>
             </>
           }

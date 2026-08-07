@@ -60,7 +60,8 @@ export function McpKeysMock() {
   );
 }
 
-export function ShellMock() {
+/** App shell body without browser chrome — reuse inside DesktopAppFrame / PhoneFrame. */
+export function ShellBody({ compact = false }: { compact?: boolean }) {
   const { t } = useTranslation();
   const nav = [
     { icon: HomeIcon, label: t("landing.preview.nav.home"), active: true },
@@ -68,81 +69,68 @@ export function ShellMock() {
     { icon: SettingsIcon, label: t("landing.preview.nav.settings"), active: false },
   ];
   return (
-    <Window label="/app/acme">
-      <div className="relative flex min-h-72 text-sm">
-        <aside className="flex w-44 flex-col gap-3 border-r p-3">
-          <div className="flex items-center gap-2 px-2 font-semibold">
-            <BoxIcon className="size-4" />
-            {t("brand")}
-          </div>
+    <div className={`relative flex text-sm ${compact ? "min-h-64" : "min-h-72"}`}>
+      <aside className={`flex flex-col gap-3 border-r p-3 ${compact ? "w-28" : "w-44"}`}>
+        <div className="flex items-center gap-2 px-2 font-semibold">
+          <BoxIcon className="size-4" />
+          {!compact ? t("brand") : null}
+        </div>
+        {!compact ? (
           <div className="flex items-center justify-between rounded-md border px-3 py-1.5 text-xs">
             <span className="truncate">{t("landing.preview.sample.tenant")}</span>
             <ChevronsUpDownIcon className="size-3.5 text-muted-foreground" />
           </div>
-          <nav className="flex flex-1 flex-col gap-1">
-            {nav.map((item) => (
-              <div
-                key={item.label}
-                className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium ${
-                  item.active ? "bg-accent text-accent-foreground" : "text-muted-foreground"
-                }`}
-              >
-                <item.icon className="size-3.5" />
-                {item.label}
-              </div>
-            ))}
-          </nav>
-          <div className="flex items-center gap-2 rounded-md p-2">
-            <div className="flex size-7 items-center justify-center rounded-full bg-muted text-xs font-medium">
-              {t("landing.preview.sample.adaInitials")}
+        ) : null}
+        <nav className="flex flex-1 flex-col gap-1">
+          {nav.map((item) => (
+            <div
+              key={item.label}
+              className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium ${
+                item.active ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+              }`}
+            >
+              <item.icon className="size-3.5 shrink-0" />
+              {!compact ? item.label : null}
             </div>
-            <div className="min-w-0">
-              <p className="truncate text-xs font-medium">{t("landing.preview.sample.ada")}</p>
-              <p className="truncate text-[10px] text-muted-foreground">
-                {t("landing.preview.sample.adaEmail")}
-              </p>
-            </div>
+          ))}
+        </nav>
+      </aside>
+      <div className="min-w-0 flex-1 p-4">
+        <p className="text-sm font-semibold">
+          {t("landing.preview.shell.hi", { name: t("landing.preview.sample.adaFirst") })}
+        </p>
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          {t("landing.preview.shell.youreIn")}{" "}
+          <span className="font-medium text-foreground">{t("landing.preview.sample.tenant")}</span>
+        </p>
+        <div className={`mt-3 grid gap-2 ${compact ? "grid-cols-1" : "grid-cols-2"}`}>
+          <div className="rounded-lg border p-2.5">
+            <p className="text-[11px] font-semibold">{t("landing.preview.shell.members")}</p>
+            <p className="mt-1 text-[10px] text-muted-foreground">
+              {t("landing.preview.shell.peopleAccess")}
+            </p>
           </div>
-        </aside>
-        <div className="flex-1 p-5">
-          <p className="text-base font-semibold">
-            {t("landing.preview.shell.hi", { name: t("landing.preview.sample.adaFirst") })}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {t("landing.preview.shell.youreIn")}{" "}
-            <span className="font-medium text-foreground">
-              {t("landing.preview.sample.tenant")}
-            </span>
-            <span className="ml-1 rounded bg-muted px-1.5 py-0.5 text-[10px]">
-              {t("landing.preview.roles.owner")}
-            </span>
-          </p>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="rounded-lg border p-3">
-              <p className="text-xs font-semibold">{t("landing.preview.shell.members")}</p>
-              <p className="mt-1 text-[11px] text-muted-foreground">
-                {t("landing.preview.shell.peopleAccess")}
-              </p>
-              <p className="mt-3 flex items-center gap-1 text-[11px]">
-                {t("landing.preview.shell.manageMembers")} <CheckIcon className="size-3" />
-              </p>
-            </div>
-            <div className="rounded-lg border p-3">
-              <p className="text-xs font-semibold">{t("landing.preview.shell.tasksCount")}</p>
-              <p className="mt-1 text-[11px] text-muted-foreground">
+          {!compact ? (
+            <div className="rounded-lg border p-2.5">
+              <p className="text-[11px] font-semibold">{t("landing.preview.shell.tasksCount")}</p>
+              <p className="mt-1 text-[10px] text-muted-foreground">
                 {t("landing.preview.shell.exampleResource")}
               </p>
-              <p className="mt-3 flex items-center gap-1 text-[11px]">
-                {t("landing.preview.shell.viewTasks")} <CheckIcon className="size-3" />
-              </p>
             </div>
-          </div>
-        </div>
-
-        <div className="absolute bottom-4 right-4 flex size-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
-          <SparklesIcon className="size-5" />
+          ) : null}
         </div>
       </div>
+      <div className="absolute right-3 bottom-3 flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
+        <SparklesIcon className="size-4" />
+      </div>
+    </div>
+  );
+}
+
+export function ShellMock() {
+  return (
+    <Window label="/app/acme">
+      <ShellBody />
     </Window>
   );
 }

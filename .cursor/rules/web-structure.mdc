@@ -17,10 +17,13 @@ Mirror the API: features live in `domains/<domain>/`, everything else is shared 
   - `components/` — domain UI (kebab-case): selects, FABs, layouts, marketing mocks… Create with the first non-page component; do not leave domain UI loose at the domain root
   - A domain may import another domain's `api`/context/components, but keep it minimal
   - Do not create empty `context/` / `hooks/` / `components/` folders — add the folder when the first file lands
-  - Public marketing screens (landing, pricing, UI kit…) live in `domains/marketing/`. Treat it as
-    the reference public module: `pages/` + `routes.tsx` + `hooks/` + `components/` split by concern
-    (`landing/`, `foundations/`, `tour/`, `ui/`, `product-preview/`). Code snippets in
-    `components/foundations/resource-snippets.ts` mirror real repo conventions — if a convention
+  - Public marketing screens (landing, Code area, product tour, UI kit…) live in `domains/marketing/`.
+    Treat it as the reference public module: `pages/` + `routes.tsx` + `hooks/` + `components/`
+    split by concern (`landing/`, `structure/`, `foundations/`, `tour/`, `ui/`, `product-preview/`).
+    Public IA: Code at `/code` (+ `/code/...`), Product at `/product` (+ `/product/...`),
+    Platforms at `/platforms` (+ `/platforms/...` for Windows, Linux, macOS, iOS, Android).
+    Theming lives on the UI kit page (`/code/ui`). Code snippets in
+    `components/structure/resource-snippets.ts` mirror real repo conventions — if a convention
     changes, update those snippets too
   - Platform admin (`domains/admin/`) mounts at `/admin` outside `:tenantSlug` — gated by `me.user.isPlatformAdmin`
   - In-app agent chat UI lives under `domains/agent/` (`api` + `components` + `hooks`); composed from `AppLayout` as a FAB — no `routes.tsx` / page. Not under `tenant/`

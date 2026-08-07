@@ -16,16 +16,35 @@
       "storage": "Storage",
       "i18n": "i18n"
     },
-    "foundations": "Fundações",
+    "productMenu": {
+      "open": "Abrir menu Product",
+      "overview": "Visão geral",
+      "auth": "Auth",
+      "workspace": "Workspace",
+      "agent": "Agente de IA",
+      "account": "Account",
+      "tenants": "Tenants",
+      "billing": "Billing",
+      "admin": "Admin"
+    },
     "tour": "Product",
     "ui": "UI",
-    "articles": "Artigos"
+    "articles": "Artigos",
+    "platforms": "Plataformas",
+    "platformsMenu": {
+      "open": "Abrir menu Plataformas",
+      "overview": "Visão geral",
+      "windows": "Windows",
+      "linux": "Linux",
+      "macos": "macOS",
+      "ios": "iOS",
+      "android": "Android"
+    }
   },
   "teasers": {
-    "exploreStructure": "Explorar a estrutura",
-    "exploreFoundations": "Explorar fundações",
-    "exploreTour": "Explorar o tour",
-    "exploreUi": "Ver componentes"
+    "exploreStructure": "Explorar o código",
+    "exploreTour": "Explorar o produto",
+    "exploreUi": "Ver o kit"
   },
   "seo": {
     "home": {
@@ -46,11 +65,7 @@
     },
     "structureUi": {
       "title": "Kit de UI · App Base",
-      "description": "Layout das pastas de packages/ui e o catálogo ao vivo — primitives, shells e composites."
-    },
-    "foundations": {
-      "title": "Fundações · App Base",
-      "description": "Tokens de tema e brand packs — light, dark e createTheme quando precisar do próprio accent."
+      "description": "Layout das pastas de packages/ui, theming ao vivo e o catálogo — primitives, shells e composites."
     },
     "structureEnvironment": {
       "title": "Environment · App Base",
@@ -69,8 +84,36 @@
       "description": "Arquivos de locale em inglês e português, useTranslation e um seletor de idioma ao vivo."
     },
     "tour": {
-      "title": "Tour do produto · App Base",
-      "description": "Auth, convites, shell do workspace, tarefas, billing, admin, e-mail e o agente de IA — o produto montado, tela a tela."
+      "title": "Product · App Base",
+      "description": "Auth, workspace, agente de IA, account, tenants, billing e admin da plataforma — o produto montado, área a área."
+    },
+    "productAuth": {
+      "title": "Auth · App Base",
+      "description": "Login, cadastro com verificação de e-mail e recuperação de senha — as superfícies de auth que você entrega."
+    },
+    "productWorkspace": {
+      "title": "Workspace · App Base",
+      "description": "O shell do app do tenant — sidebar, switcher e um home que não é página em branco."
+    },
+    "productAgent": {
+      "title": "Agente de IA · App Base",
+      "description": "Chat no app que chama tools no escopo do tenant — o assistente que faz o trabalho."
+    },
+    "productAccount": {
+      "title": "Account · App Base",
+      "description": "Perfil, segurança e chaves MCP — configurações do usuário logado."
+    },
+    "productTenants": {
+      "title": "Tenants · App Base",
+      "description": "Membros e convites — traga o resto do time para o workspace."
+    },
+    "productBilling": {
+      "title": "Billing · App Base",
+      "description": "Planos, assentos e entitlements de IA — prontos para ligar no Stripe."
+    },
+    "productAdmin": {
+      "title": "Admin da plataforma · App Base",
+      "description": "Pessoas, convites e tenants em todo o produto a partir de /admin."
     },
     "ui": {
       "title": "Kit de UI · App Base",
@@ -83,6 +126,30 @@
     "articleFallback": {
       "title": "Artigo · App Base",
       "description": "Uma história publicada por um workspace no App Base."
+    },
+    "platforms": {
+      "title": "Plataformas · App Base",
+      "description": "Um web app, cinco shells nativos — o Tauri empacota apps/web para Windows, Linux, macOS, iOS e Android."
+    },
+    "platformsWindows": {
+      "title": "Windows · App Base",
+      "description": "Entregue o SPA do App Base como app desktop Windows via shell Tauri e pipeline de release no CI."
+    },
+    "platformsLinux": {
+      "title": "Linux · App Base",
+      "description": "Builds AppImage a partir de apps/desktop — a mesma UI web, API remota e auto-update via R2."
+    },
+    "platformsMacos": {
+      "title": "macOS · App Base",
+      "description": "Shell desktop universal no macOS em volta de apps/web — DMG, updater e release no GitHub Actions."
+    },
+    "platformsIos": {
+      "title": "iOS · App Base",
+      "description": "Empacotamento Tauri iOS de apps/web — builds locais no Xcode com VITE_API_URL e hash routing."
+    },
+    "platformsAndroid": {
+      "title": "Android · App Base",
+      "description": "O mesmo padrão de shell Tauri mobile para Android — um SPA, container nativo, API remota."
     }
   },
   "articles": {
@@ -97,7 +164,7 @@
   "ui": {
     "eyebrow": "Design system",
     "title": "Um kit. Todas as telas.",
-    "body": "Componentes base do @app/ui — primitives shadcn e alguns composites. Importe por subpath, restilize pelos tokens do tema, nunca fixe cores no código.",
+    "body": "Componentes base do @app/ui — temas, primitives shadcn e composites. Importe por subpath, restilize pelos tokens, nunca fixe cores no código.",
     "sections": {
       "brand": {
         "title": "Brand",
@@ -211,7 +278,7 @@
       "navTasks": "Tarefas",
       "navSettings": "Configurações",
       "navStructure": "Code",
-      "navFoundations": "Fundações",
+      "navArticles": "Artigos",
       "navTour": "Product",
       "navUi": "UI",
       "headerActions": "Entrar",
@@ -297,11 +364,6 @@
       "turboHint": "grafo de tasks"
     }
   },
-  "foundationsIntro": {
-    "eyebrow": "Fundações",
-    "title": "Temas que recolorizam o app inteiro",
-    "body": "Paletas light e dark vêm com o @app/ui. Escolha a primária, estenda com createTheme — o kit segue tokens, não cores hard-coded."
-  },
   "structureEnvironment": {
     "eyebrow": "Environment",
     "title": "Configure. Rode. Faça deploy.",
@@ -315,9 +377,93 @@
     "hint": "Schema → repository → tools → DTOs → rotas — depois espelhe no web."
   },
   "tourIntro": {
-    "eyebrow": "O tour do produto",
+    "eyebrow": "O produto",
     "title": "Veja o produto antes de construí-lo",
-    "body": "Essas fundações, renderizadas como telas de verdade. O tour, na ordem em que você as encontraria: entrar, configurar e então entrar no workspace com tudo o que ele já traz."
+    "body": "Auth, workspace, agente, account, tenants, billing e admin — cada área como telas de verdade, as mesmas superfícies que seus usuários vão encontrar."
+  },
+  "productLinks": {
+    "eyebrow": "Áreas do produto",
+    "title": "Escolha uma área para abrir",
+    "body": "Cada página percorre uma superfície do produto com mocks ao vivo — fluxos de auth, o shell, o agente, settings e mais.",
+    "auth": {
+      "eyebrow": "Auth",
+      "title": "Entrar, cadastrar, recuperar",
+      "body": "Login, cadastro com verificação de e-mail e esqueci a senha — o loop completo de auth.",
+      "cta": "Abrir auth"
+    },
+    "workspace": {
+      "eyebrow": "Workspace",
+      "title": "Um shell, não uma página em branco",
+      "body": "Sidebar, switcher de tenant e home — o workspace em que o usuário chega depois do auth.",
+      "cta": "Abrir workspace"
+    },
+    "agent": {
+      "eyebrow": "Agente de IA",
+      "title": "Um chat que faz as coisas",
+      "body": "Assistente no app com tools no escopo do tenant — peça, veja as tools rodarem, entregue a mudança.",
+      "cta": "Abrir o agente"
+    },
+    "account": {
+      "eyebrow": "Account",
+      "title": "Perfil, segurança, chaves MCP",
+      "body": "Settings do usuário e Integrations — onde ficam as API keys do MCP no Cursor.",
+      "cta": "Abrir account"
+    },
+    "tenants": {
+      "eyebrow": "Tenants",
+      "title": "Membros e convites",
+      "body": "Traga o time — convite por e-mail, papéis e a inbox que recebe o link.",
+      "cta": "Abrir tenants"
+    },
+    "billing": {
+      "eyebrow": "Billing",
+      "title": "Planos e entitlements",
+      "body": "Assentos e limites de IA nos planos — catálogo pronto para o Stripe.",
+      "cta": "Abrir billing"
+    },
+    "admin": {
+      "eyebrow": "Admin",
+      "title": "Opere o produto inteiro",
+      "body": "Platform /admin — pessoas, convites e tenants em todos os workspaces.",
+      "cta": "Abrir admin"
+    }
+  },
+  "productAreas": {
+    "auth": {
+      "eyebrow": "Auth",
+      "title": "Identidade que funciona",
+      "body": "E-mail e senha, verificação e recuperação — sessões opacas em cookie httpOnly, sem vendor de auth."
+    },
+    "workspace": {
+      "eyebrow": "Workspace",
+      "title": "O app em que o usuário vive",
+      "body": "Depois do login, um shell de verdade: nav, contexto de tenant e um lugar para trabalhar — não um scaffold vazio."
+    },
+    "agent": {
+      "eyebrow": "Agente de IA",
+      "title": "Tools dentro do chat",
+      "body": "O assistente flutuante chama as mesmas tools de domínio do MCP — no escopo do tenant atual."
+    },
+    "account": {
+      "eyebrow": "Account",
+      "title": "Suas configurações",
+      "body": "Perfil e senha em Account; chaves MCP em Integrations — config pessoal num só lugar."
+    },
+    "tenants": {
+      "eyebrow": "Tenants",
+      "title": "Convide o time",
+      "body": "Membros do workspace e convites por e-mail — papéis checados no servidor, links que caem na inbox."
+    },
+    "billing": {
+      "eyebrow": "Billing",
+      "title": "Planos que dá para cobrar",
+      "body": "Contagem de assentos e entitlements de IA nos planos — o catálogo que sua integração Stripe vai dirigir."
+    },
+    "admin": {
+      "eyebrow": "Admin da plataforma",
+      "title": "Opere a frota inteira",
+      "body": "Pessoas, convites e workspaces cross-tenant em /admin — gated por platform admin, nunca bypass de rota de tenant."
+    }
   },
   "closing": {
     "title": "A partir daqui, o código é seu",
@@ -367,7 +513,6 @@
     "bodyCode": "tasks",
     "bodyAfter": " é o domínio placeholder. Mesmo nome na API e no web, papéis fixos de cada lado, um contrato compartilhado em packages/shared. Percorra a API (tabela → schema.ts → repository → rota → tool), depois o domínio React (pasta → api.ts → routes → page), e chegue na tela. Copie esse par de pastas para o seu recurso."
   },
-  "showScreen": "Mostrar tela {{n}}",
   "structureLinks": {
     "eyebrow": "Pacotes",
     "title": "Escolha um pacote para abrir",
@@ -737,12 +882,27 @@
     "signUp": {
       "eyebrow": "Cadastro",
       "title": "Registro que já deixa tudo pronto",
-      "body": "Nome, e-mail, senha. Cada novo usuário ganha um tenant pessoal e um e-mail de verificação automaticamente — o link é de uso único e expira em 24 horas."
+      "body": "Nome, e-mail, senha. Cada novo usuário ganha um tenant pessoal automaticamente — sem conta vazia esperando um workspace."
     },
-    "recovery": {
-      "eyebrow": "Recuperação de senha",
-      "title": "Esqueci a senha, tratado por completo",
-      "body": "Peça um link de reset por e-mail e então defina uma nova senha numa tela protegida por um token de curta duração e uso único — validado no servidor e hasheado com scrypt."
+    "verifyEmail": {
+      "eyebrow": "Verificar e-mail",
+      "title": "O link chega na inbox",
+      "body": "O cadastro envia um e-mail de verificação com link de uso único que expira em 24 horas. Até clicar, a conta fica sem verificar."
+    },
+    "forgotPassword": {
+      "eyebrow": "Esqueci a senha",
+      "title": "Peça um link de reset",
+      "body": "Informe o e-mail em /forgot-password. O servidor cria um token de curta duração e manda o e-mail de reset — o mesmo padrão da verificação, outro propósito."
+    },
+    "resetEmail": {
+      "eyebrow": "E-mail de reset",
+      "title": "A inbox carrega o token",
+      "body": "A mensagem traz um link de uso único. O token cru nunca vai ao banco — só o hash — então um dump vazado não forja um reset."
+    },
+    "resetPassword": {
+      "eyebrow": "Nova senha",
+      "title": "Defina numa tela protegida",
+      "body": "/reset-password valida o token no servidor, hasheia a nova senha com scrypt e encerra as outras sessions desse usuário."
     },
     "shell": {
       "eyebrow": "O shell do app",
@@ -759,20 +919,40 @@
       "title": "Perfil, segurança e onde ficam as keys",
       "body": "Todo usuário gerencia o próprio perfil e senha em Minha conta. As API keys do MCP remoto ficam em Integrações — os mesmos padrões que você reusa para qualquer configuração pessoal."
     },
-    "team": {
-      "eyebrow": "Time e convites",
-      "title": "Traga o resto do time",
-      "body": "Owners e admins convidam por e-mail e escolhem um papel; membros e convites pendentes vivem em settings, cada um revogável. O convite chega como um link de 7 dias. O limite de assentos do plano bloqueia convites quando o workspace está cheio."
+    "inviteMembers": {
+      "eyebrow": "Convidar membros",
+      "title": "Escolha e-mail e papel",
+      "body": "Owners e admins convidam em settings — membros e convites pendentes no mesmo lugar, cada um revogável. O limite de assentos do plano bloqueia convites quando o workspace está cheio."
     },
-    "admin": {
-      "eyebrow": "Admin da plataforma",
-      "title": "Administre o produto inteiro em /admin",
-      "body": "Ortogonal aos roles de tenant: platform admins veem todas as contas e workspaces (com as pessoas listadas em cada tenant), convidam pessoas a se cadastrar no app (com o próprio workspace — não o seu), atribuem planos e bootstrapam acesso com PLATFORM_ADMIN_EMAILS."
+    "inviteEmail": {
+      "eyebrow": "E-mail de convite",
+      "title": "Um link de 7 dias na inbox",
+      "body": "O convite chega como e-mail transacional com link de uso único. Aceitar entra no workspace com o papel que você escolheu."
     },
-    "plans": {
-      "eyebrow": "Planos e billing",
-      "title": "Assentos e IA, prontos para o Stripe",
-      "body": "Quatro planos no código — Free, Starter, Pro e Pay as you go — com limite de assentos e IA por membro. O admin da plataforma atribui o plano; o tenant vê o uso em Billing. O checkout depois só precisa setar planId. Ligue Stripe ou qualquer meio de pagamento quando quiser."
+    "adminPeople": {
+      "eyebrow": "Pessoas",
+      "title": "Todas as contas da plataforma",
+      "body": "Platform admins veem todo usuário entre tenants — ortogonal aos roles do workspace. Bootstrap com PLATFORM_ADMIN_EMAILS."
+    },
+    "adminInvites": {
+      "eyebrow": "Convites da plataforma",
+      "title": "Convide gente para o produto",
+      "body": "Envie um convite de plataforma para alguém criar a própria conta e workspace — não entrar no seu. Diferente do convite de membro do tenant."
+    },
+    "adminInviteEmail": {
+      "eyebrow": "Inbox do convite",
+      "title": "O convite da plataforma chega aqui",
+      "body": "A mesma maquinaria de e-mail dos convites de tenant — link, expiração, hash no banco — focada em criar conta e workspace novos."
+    },
+    "plansCatalog": {
+      "eyebrow": "Catálogo de planos",
+      "title": "Assentos e IA no código",
+      "body": "Quatro planos — Free, Starter, Pro e Pay as you go — com limite de assentos e IA por membro. O catálogo é dado seu; ligue o Stripe quando quiser."
+    },
+    "plansAssign": {
+      "eyebrow": "Atribuir plano",
+      "title": "O admin da plataforma seta o plano do tenant",
+      "body": "Escolha um workspace e atribua um planId. O tenant vê o uso em Billing; o checkout depois só precisa virar esse campo."
     },
     "mcp": {
       "eyebrow": "Traga suas próprias tools",
@@ -985,7 +1165,12 @@
       "description": "Recurso de exemplo",
       "placeholder": "Adicionar uma tarefa...",
       "add": "Adicionar",
-      "items": ["Desenhar o schema", "Ligar o repository", "Expor a rota", "Construir a tela"],
+      "items": [
+        "Desenhar o schema",
+        "Ligar o repository",
+        "Expor a rota",
+        "Construir a tela"
+      ],
       "left": "Recurso de exemplo com CRUD por tenant · 2 de 4 restantes"
     },
     "account": {
@@ -1039,6 +1224,189 @@
       "owner": "owner",
       "admin": "admin",
       "member": "member"
+    }
+  },
+  "platformsIntro": {
+    "eyebrow": "Plataformas",
+    "title": "Uma UI. Cinco lugares onde ela roda.",
+    "body": "apps/web é o produto. O Tauri embrulha como shells desktop e mobile — o mesmo SPA React, API remota, hash router — para Windows, Linux, macOS, iOS e Android ficarem só packaging, não forks."
+  },
+  "platformsOverview": {
+    "eyebrow": "Shells Tauri",
+    "title": "Packaging fino em volta de apps/web",
+    "body": "Desktop mora em apps/desktop; mobile em apps/mobile. Os dois fazem Vite-build do web com VITE_API_URL e VITE_ROUTER=hash. Sem UI de produto nos shells — as features ficam em apps/web para toda plataforma entregar as mesmas telas.",
+    "points": [
+      "apps/desktop → instaladores Windows, Linux e macOS pelo GitHub Actions",
+      "apps/mobile → iOS via Xcode local; o mesmo modelo de API remota para Android",
+      "WKWebView / WebView nativo usam Bearer sessionToken quando cookies Secure não colam em HTTP",
+      "Renomeie productName e identifier no tauri.conf.json ao fazer fork"
+    ]
+  },
+  "platformsLinks": {
+    "eyebrow": "Escolha uma plataforma",
+    "title": "Como cada SO entrega",
+    "body": "Builds desktop já estão prontos no CI. Mobile segue o mesmo padrão de shell — abra a página para a história do install e o mock rodando.",
+    "windows": {
+      "eyebrow": "Windows",
+      "title": "Setup.exe pelo CI",
+      "body": "Shell Tauri desktop, payloads de updater assinados e o runner Windows no release-desktop-windows.",
+      "cta": "Abrir Windows"
+    },
+    "linux": {
+      "eyebrow": "Linux",
+      "title": "AppImage em x64",
+      "body": "O mesmo pacote apps/desktop — o runner ubuntu gera AppImage e faz merge no manifesto do updater.",
+      "cta": "Abrir Linux"
+    },
+    "macos": {
+      "eyebrow": "macOS",
+      "title": "DMG universal",
+      "body": "Targets Apple Silicon e Intel, script de install e auto-update a partir do R2.",
+      "cta": "Abrir macOS"
+    },
+    "ios": {
+      "eyebrow": "iOS",
+      "title": "Xcode + simulador",
+      "body": "Shell Tauri iOS em apps/mobile — signing local, API na LAN ou deployada para devices.",
+      "cta": "Abrir iOS"
+    },
+    "android": {
+      "eyebrow": "Android",
+      "title": "O mesmo padrão de shell",
+      "body": "Empacote o SPA num container Tauri Android — um codebase, WebView nativo, API remota.",
+      "cta": "Abrir Android"
+    }
+  },
+  "platformsPreview": {
+    "agentPrompt": "Liste minhas tasks abertas",
+    "agentReply": "Você tem 2 tasks abertas na Acme. Quer que eu marque uma como feita?",
+    "agentPlaceholder": "Pergunte ao agente…"
+  },
+  "platforms": {
+    "windows": {
+      "eyebrow": "Windows",
+      "title": "Windows a partir de uma tag",
+      "body": "Entregue o App Base como instalador Windows assinado. O web app que você já tem — empacotado pelo Tauri, publicado pelo GitHub Actions.",
+      "shell": {
+        "eyebrow": "O app rodando",
+        "title": "O mesmo SPA, janela nativa",
+        "body": "No Windows o shell é uma janela nativa hospedando o React — sidebar, FAB do agente e contexto de tenant idênticos ao browser.",
+        "points": [
+          "UI de produto só em apps/web — o shell não tem pages de feature",
+          "Hash router para schemes customizados não quebrarem rotas do client",
+          "Sessão via Bearer token quando cookies Secure não persistem"
+        ]
+      },
+      "build": {
+        "eyebrow": "Build e release",
+        "title": "Windows Setup.exe + updater",
+        "body": "Tagueie vX.Y.Z na main depois de bumparem a version em package.json e tauri.conf.json. O CI builda, assina e publica no R2 em desktop-releases/.",
+        "points": [
+          "Workflow: release-desktop-windows.yml",
+          "Manifesto do updater em desktop-releases/latest/latest.json",
+          "npm run dev:desktop para desenvolver contra a API"
+        ]
+      }
+    },
+    "linux": {
+      "eyebrow": "Linux",
+      "title": "AppImage no Linux",
+      "body": "O mesmo pacote desktop, runner ubuntu — artefato AppImage e entrada de updater para linux-x86_64.",
+      "shell": {
+        "eyebrow": "O app rodando",
+        "title": "O mesmo SPA, janela nativa",
+        "body": "No Linux o shell hospeda o React numa janela nativa — as mesmas telas do browser, sem fork de UI.",
+        "points": [
+          "UI de produto só em apps/web — o shell não tem pages de feature",
+          "Hash router para schemes customizados não quebrarem rotas do client",
+          "Sessão via Bearer token quando cookies Secure não persistem"
+        ]
+      },
+      "build": {
+        "eyebrow": "Build e release",
+        "title": "AppImage + updater",
+        "body": "Tagueie vX.Y.Z na main depois de bumparem a version. O CI no ubuntu gera AppImage e faz merge no manifesto.",
+        "points": [
+          "Workflow: release-desktop-linux.yml",
+          "Manifesto do updater em desktop-releases/latest/latest.json",
+          "npm run dev:desktop para desenvolver contra a API"
+        ]
+      }
+    },
+    "macos": {
+      "eyebrow": "macOS",
+      "title": "Build universal no macOS",
+      "body": "Apple Silicon e Intel num pipeline — DMG, script de install e tarball de auto-update assinado.",
+      "shell": {
+        "eyebrow": "O app rodando",
+        "title": "O mesmo SPA, janela nativa",
+        "body": "No macOS o shell é uma janela nativa com o React — traffic lights à parte, o produto é o de apps/web.",
+        "points": [
+          "UI de produto só em apps/web — o shell não tem pages de feature",
+          "Hash router para schemes customizados não quebrarem rotas do client",
+          "Sessão via Bearer token quando cookies Secure não persistem"
+        ]
+      },
+      "build": {
+        "eyebrow": "Build e release",
+        "title": "DMG universal + updater",
+        "body": "Tagueie vX.Y.Z na main. O workflow macos-15 gera DMG universal e artefatos de updater para aarch64 e x86_64.",
+        "points": [
+          "Workflow: release-desktop-macos.yml",
+          "Manifesto do updater em desktop-releases/latest/latest.json",
+          "npm run dev:desktop para desenvolver contra a API"
+        ]
+      }
+    },
+    "ios": {
+      "eyebrow": "iOS",
+      "title": "Tamanho de telefone, mesmo produto",
+      "body": "apps/mobile é um shell Tauri iOS em volta de apps/web. Sem CI de App Store no template — você abre o Xcode, escolhe o Team e roda contra API na LAN ou deployada.",
+      "shell": {
+        "eyebrow": "No device",
+        "title": "O app numa cascata de phones",
+        "body": "Login, home e tasks são as mesmas telas React — a cascata mostra o SPA como container nativo, não um codebase mobile separado.",
+        "points": [
+          "VITE_API_URL + VITE_ROUTER=hash como no desktop",
+          "Simulador pode usar localhost; device físico precisa do IP LAN do Mac ou Render",
+          "CORS_ORIGIN precisa permitir tauri://localhost e https://tauri.localhost"
+        ]
+      },
+      "build": {
+        "eyebrow": "Build local",
+        "title": "Xcode é o caminho de release (por agora)",
+        "body": "Rode ios:init uma vez, depois npm run dev:mobile ou abra o projeto Xcode gerado. Signing e Apple team IDs são do produto — o template não traz CI de TestFlight.",
+        "points": [
+          "npm run ios:init -w @app/mobile gera src-tauri/gen/apple/",
+          "Renomeie com.appbase.mobile no tauri.conf.json ao fazer fork",
+          "Features ficam em apps/web — mobile nunca faz fork da UI"
+        ]
+      }
+    },
+    "android": {
+      "eyebrow": "Android",
+      "title": "A mesma ideia de shell no Android",
+      "body": "A história mobile do Tauri cobre Android com o mesmo modelo de shell fino: um SPA, WebView nativo, API remota. Trate apps/mobile como a casa do packaging — estenda o padrão do iOS em vez de clonar o produto.",
+      "shell": {
+        "eyebrow": "No device",
+        "title": "Cascata de telas rodando",
+        "body": "Imagine o mesmo login, workspace e chat do agente dentro de um WebView Android — sem segundo design system, sem árvore React Native separada.",
+        "points": [
+          "Hash router + API remota mantêm deep links simples",
+          "Sessão Bearer quando o storage de cookie difere do browser",
+          "Tokens de UI do @app/ui seguem light/dark como em toda superfície"
+        ]
+      },
+      "build": {
+        "eyebrow": "Packaging",
+        "title": "Estenda o shell mobile",
+        "body": "Comece pela tooling Tauri mobile já usada no iOS. Setup de Android Studio / SDK é do produto; o invariante não muda — builde apps/web no container nativo.",
+        "points": [
+          "Não duplique domínios num pacote de UI Android separado",
+          "Aponte VITE_API_URL para uma API HTTPS alcançável nos devices",
+          "Renomeie o application id ao fazer fork do template"
+        ]
+      }
     }
   }
 }
