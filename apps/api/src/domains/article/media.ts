@@ -64,25 +64,40 @@ const backend: MediaStore = usingR2 ? r2Store : localStore;
 export const mediaStore = backend;
 
 /**
- * Prefixes a media key by tenant ("<tenantId>/uploads/x.webp"). Two tenants
- * can upload files with the same name — the prefix keeps one from
- * overwriting the other's object.
+ * Prefix a media key by tenant
+ *
+ * Produces `"<tenantId>/uploads/x.webp"`. Two tenants can upload files with
+ * the same relative name — the prefix keeps one from overwriting the other.
+ *
+ * @param tenantId - Owning tenant
+ * @param key - Relative key inside the tenant (leading slashes stripped)
+ * @returns Tenant-scoped storage key
  */
 export function tenantMediaKey(tenantId: string, key: string): string {
   return `${tenantId}/${key.replace(/^\/+/, "")}`;
 }
 
-/** A fresh key for a new upload, scoped to the tenant. */
+/**
+ * Allocate a fresh upload key
+ *
+ * @param tenantId - Owning tenant
+ * @param ext - File extension without the dot (e.g. `webp`)
+ * @returns Tenant-scoped key under `uploads/`
+ */
 export function newUploadKey(tenantId: string, ext: string): string {
   return tenantMediaKey(tenantId, `uploads/${randomUUID()}.${ext}`);
 }
 
 /**
- * Compresses and writes the image, returning its public path and the
- * compressed size (what's actually stored and served, not the upload size).
+ * Compress and write an image
  *
- * Compression lives here, not in the caller, so no upload path can ever
- * store the raw bytes by accident.
+ * Returns the public path and the compressed size (what is stored and served,
+ * not the upload size). Compression lives here so no upload path can store
+ * the raw bytes by accident.
+ *
+ * @param key - Tenant-scoped storage key (extension may be normalized)
+ * @param data - Raw uploaded bytes
+ * @returns Public path (`/…`) and compressed size in bytes
  */
 export async function writeMedia(
   key: string,
@@ -94,12 +109,23 @@ export async function writeMedia(
   return { path: `/${target}`, sizeBytes: compressed.byteLength };
 }
 
-/** Deletes the stored image at the given public path (best-effort). */
+/**
+ * Delete a stored image
+ *
+ * Best-effort — missing keys are ignored.
+ *
+ * @param path - Public path or storage key (leading slashes stripped)
+ */
 export async function removeMedia(path: string): Promise<void> {
   await mediaStore.remove(path.replace(/^\/+/, ""));
 }
 
-/** URL of the image on R2, or null when R2 is off (served locally instead). */
+/**
+ * Public R2 URL for a media path
+ *
+ * @param path - Public path or storage key
+ * @returns Absolute R2 URL, or null when R2 is off (local static serve)
+ */
 export function mediaPublicUrl(path: string): string | null {
   if (!usingR2) return null;
   return `${R2_PUBLIC_BASE_URL}/${path.replace(/^\/+/, "")}`;

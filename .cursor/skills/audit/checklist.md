@@ -20,7 +20,7 @@ Canonical examples: `domains/task` (API + web), `packages/shared/src/task.ts`.
 
 - [ ] File names: `<action>.route.ts`, `<action>.tool.ts`, `repository.ts`, `dto.ts`, `service.ts` only when needed
 - [ ] Handlers: `export async function <action>(c: AppContext)` — no `Route` suffix, no default export
-- [ ] Route/tool bodies have `// -- Input ---` / `// -- Processing ---` / `// -- Output ---`
+- [ ] Route/tool bodies have `// -- Input -----------------------------------------------------------------` / `// -- Processing ------------------------------------------------------------` / `// -- Output ----------------------------------------------------------------`
 - [ ] JSON via `parseBody(c, schema)` from `@app/shared`; UUIDs via `uuidParam`
 - [ ] Failures via `HttpError`; no stack/SQL leakage
 - [ ] All SQL in `repository.ts`; routes/tools/services do not query

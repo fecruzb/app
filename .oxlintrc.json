@@ -41,8 +41,14 @@
                 "message": "Domains don't import the application bootstrap."
               },
               {
-                "group": ["@modelcontextprotocol/**", "openai", "openai/**"],
-                "message": "Domains are transport-neutral — MCP/OpenAI live in agent/ and integrations/."
+                "group": [
+                  "@modelcontextprotocol/**",
+                  "openai",
+                  "openai/**",
+                  "@/integrations/openai",
+                  "@/integrations/openai/**"
+                ],
+                "message": "Domains are transport-neutral — MCP/OpenAI live in agent/ and integrations/ (agent-owned tools may use @/integrations/openai)."
               }
             ]
           }

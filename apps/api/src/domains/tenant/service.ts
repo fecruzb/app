@@ -12,7 +12,10 @@ import { HttpError } from "@/lib/errors";
 import { isEnvPlatformAdminEmail } from "@/domains/auth/platform-admin";
 import { authRepository } from "@/domains/auth/repository";
 import { createSession } from "@/domains/auth/service";
-import { assertSeatAvailableForAccept, assertSeatAvailableForInvite } from "@/domains/billing/service";
+import {
+  assertSeatAvailableForAccept,
+  assertSeatAvailableForInvite,
+} from "@/domains/billing/service";
 import { inviteTemplate } from "./emails";
 import { tenantRepository } from "./repository";
 import type { Tenant, TenantInvite, TenantMember } from "./schema";
@@ -111,6 +114,14 @@ export async function removeTenantMember(args: {
 
 /**
  * Update a member's role
+ *
+ * Only owners may grant or revoke the owner role. Demoting the last owner is
+ * rejected so the tenant always keeps at least one.
+ *
+ * @param args.tenantId - Tenant that owns the membership
+ * @param args.actorRole - Role of the caller (from middleware)
+ * @param args.targetUserId - Member whose role changes
+ * @param args.role - New role
  */
 export async function updateTenantMemberRole(args: {
   tenantId: string;
@@ -168,7 +179,11 @@ export async function createTenantInvite(args: {
     expiresAt: new Date(Date.now() + INVITE_TTL_MS),
   });
 
-  const { subject, html } = inviteTemplate(tenantName, inviterName, `${env.appUrl}/invite/${token}`);
+  const { subject, html } = inviteTemplate(
+    tenantName,
+    inviterName,
+    `${env.appUrl}/invite/${token}`,
+  );
   void sendEmail({ to: email, subject, html });
 
   return { invite, inviterName };

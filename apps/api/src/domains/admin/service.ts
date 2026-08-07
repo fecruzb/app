@@ -21,6 +21,14 @@ const PLATFORM_INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
  * Create a platform invite and email the join link
+ *
+ * Rejects when the email already has an account, replaces any prior pending
+ * invite for that address, and queues the join email (fire-and-forget).
+ *
+ * @param args.email - Invitee email
+ * @param args.inviterId - Platform admin creating the invite
+ * @param args.inviterName - Display name used in the email template
+ * @returns Inserted invite row and inviter name
  */
 export async function createPlatformInviteForEmail(args: {
   email: string;
@@ -50,7 +58,15 @@ export async function createPlatformInviteForEmail(args: {
 }
 
 /**
- * Accept a platform invite: create user, personal workspace, session
+ * Accept a platform invite
+ *
+ * Validates the raw token, creates the user (email already verified), a
+ * personal workspace, deletes the invite, and opens a session.
+ *
+ * @param args.rawToken - Token from the join URL
+ * @param args.name - Display name for the new account
+ * @param args.password - Password for the new account
+ * @returns Me payload and raw session token for the cookie/shell
  */
 export async function acceptPlatformInviteForToken(args: {
   rawToken: string;

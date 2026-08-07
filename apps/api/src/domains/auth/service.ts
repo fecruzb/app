@@ -13,10 +13,10 @@ import { env } from "@/lib/env";
 import { toTenantSummary } from "@/domains/tenant/dto";
 import { tenantRepository } from "@/domains/tenant/repository";
 import { toUserDto } from "./dto";
-import { verifyEmailTemplate } from "./emails";
+import { resetPasswordTemplate, verifyEmailTemplate } from "./emails";
 import { syncPlatformAdminFromEnv } from "./platform-admin";
 import { authRepository, type ApiKeyPrincipal } from "./repository";
-import type { ActionTokenPurpose, ApiKey, User } from "./schema";
+import type { ActionTokenPurpose, User } from "./schema";
 
 export { dummyVerifyPassword, hashPassword, verifyPassword } from "@/lib/crypto";
 
@@ -216,26 +216,60 @@ export async function sendVerificationEmail(user: User): Promise<void> {
 }
 
 /**
+ * Send a password-reset email
+ *
+ * Creates a reset_password token and queues the message (fire-and-forget send).
+ * No-op when the email does not match an account — callers still return a
+ * generic success so responses do not reveal whether the email exists.
+ *
+ * @param email - Address that may belong to a user
+ */
+export async function sendPasswordResetEmail(email: string): Promise<void> {
+  const user = await authRepository.findUserByEmail(email);
+  if (!user) return;
+
+  const token = await createActionToken(user.id, "reset_password");
+  const { subject, html } = resetPasswordTemplate(
+    user.name,
+    `${env.appUrl}/reset-password/${token}`,
+  );
+  void sendEmail({ to: user.email, subject, html });
+}
+
+/** API key metadata returned from creation — never includes `tokenHash`. */
+export type CreatedApiKeyRow = {
+  id: string;
+  name: string;
+  prefix: string;
+  tenantId: string;
+  lastUsedAt: Date | null;
+  expiresAt: Date | null;
+  createdAt: Date;
+};
+
+/**
  * Create an API key
  *
- * Inserts a tenant-scoped key and returns the row plus the raw secret (shown once).
+ * Inserts a tenant-scoped key and returns safe metadata plus the raw secret
+ * (shown once). The stored `tokenHash` never leaves this function.
  *
  * @param userId - Key owner
  * @param tenantId - Tenant the key is scoped to
  * @param name - Display name
- * @returns Inserted row and raw key
+ * @param expiresInDays - Optional lifetime in days; omit/null for no expiry
+ * @returns Safe key metadata and raw key
  */
 export async function createApiKey(
   userId: string,
   tenantId: string,
   name: string,
   expiresInDays?: number | null,
-): Promise<{ apiKey: ApiKey; key: string }> {
+): Promise<{ apiKey: CreatedApiKeyRow; key: string }> {
   const { key, prefix } = generateApiKey();
   const expiresAt = expiresInDays
     ? new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000)
     : null;
-  const apiKey = await authRepository.insertApiKey({
+  const row = await authRepository.insertApiKey({
     userId,
     tenantId,
     name,
@@ -243,7 +277,18 @@ export async function createApiKey(
     prefix,
     expiresAt,
   });
-  return { apiKey, key };
+  return {
+    apiKey: {
+      id: row.id,
+      name: row.name,
+      prefix: row.prefix,
+      tenantId: row.tenantId,
+      lastUsedAt: row.lastUsedAt,
+      expiresAt: row.expiresAt,
+      createdAt: row.createdAt,
+    },
+    key,
+  };
 }
 
 /**
