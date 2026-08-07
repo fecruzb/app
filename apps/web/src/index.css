@@ -110,6 +110,12 @@
   .reveal.reveal-delay {
     transition-delay: 0.12s;
   }
+  .reveal.reveal-delay-2 {
+    transition-delay: 0.22s;
+  }
+  .reveal.reveal-delay-3 {
+    transition-delay: 0.32s;
+  }
   .reveal.is-in {
     opacity: 1;
     transform: none;
@@ -124,37 +130,22 @@
 }
 
 /*
- * Milkdown Crepe — article body keeps the page column width.
- * Block handles (+ / drag) hang into the left margin; they must not shrink content.
+ * Milkdown Crepe — prose shares the page column (same left edge as title/cover).
+ * Crepe ships padding: 60px 120px for block-handle room; we kill that always.
+ * + / drag handles use position:fixed (see article-editor) so they paint in the
+ * margin without widening the editor or shifting read-mode layout.
  */
+.article-editor {
+  /* Abspos leftovers must not grow the scrollport / break mx-auto centering. */
+  overflow-x: clip;
+}
+
 .article-editor .milkdown {
   background: transparent;
   color: var(--foreground);
+  width: 100%;
 }
 
 .article-editor .milkdown .ProseMirror {
-  /* Crepe ships padding: 60px 120px — kill it or body won't match the title. */
-  padding-block: 0 !important;
-  padding-inline: 0 !important;
-}
-
-/* Expand milkdown left of the column; pad prose so text still lines up with the title. */
-.article-editor--editable .milkdown {
-  margin-inline-start: -4.5rem;
-  width: calc(100% + 4.5rem);
-}
-
-.article-editor--editable .milkdown .ProseMirror {
-  padding-inline-start: 4.5rem !important;
-}
-
-@media (max-width: 767px) {
-  .article-editor--editable .milkdown {
-    margin-inline-start: -2.5rem;
-    width: calc(100% + 2.5rem);
-  }
-
-  .article-editor--editable .milkdown .ProseMirror {
-    padding-inline-start: 2.5rem !important;
-  }
+  padding: 0 !important;
 }

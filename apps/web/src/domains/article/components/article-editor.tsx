@@ -50,7 +50,9 @@ function ArticleEditorInner({
         },
         [CrepeFeature.BlockEdit]: {
           blockHandle: {
+            // Sit in the left margin; fixed so they never expand layout width.
             getOffset: () => 8,
+            floatingUIOptions: { strategy: "fixed" },
           },
         },
       },
@@ -69,9 +71,6 @@ function ArticleEditorInner({
     <div
       className={cn(
         "article-editor",
-        // Gutter overhang: + / drag sit left of the text column so prose
-        // shares the same left edge as the title/cover above.
-        !readonly && "article-editor--editable",
         readonly && "pointer-events-none",
         className,
       )}

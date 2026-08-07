@@ -15,8 +15,8 @@ export function PublicArticlesPage() {
   });
 
   useDocumentMeta({
-    title: `${t("landing.articles.title")} · App Base`,
-    description: t("landing.articles.description"),
+    title: t("landing.seo.articles.title"),
+    description: t("landing.seo.articles.description"),
     path: "/articles",
   });
 

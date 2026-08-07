@@ -25,9 +25,16 @@ export function MarketingShell({ children }: { children: ReactNode }) {
       nav={
         <>
           <HeaderNavLink to="/foundations">{t("landing.nav.foundations")}</HeaderNavLink>
-          <HeaderNavLink to="/articles">{t("landing.nav.articles")}</HeaderNavLink>
           <HeaderNavLink to="/tour">{t("landing.nav.tour")}</HeaderNavLink>
           <HeaderNavLink to="/ui">{t("landing.nav.ui")}</HeaderNavLink>
+          <span aria-hidden className="mx-1.5 h-4 w-px shrink-0 bg-border" />
+          <HeaderNavLink
+            to="/articles"
+            example
+            className="border border-dashed border-border/80 font-normal hover:border-foreground/25 data-[active=true]:border-solid data-[active=true]:border-border data-[active=true]:bg-muted/50 data-[active=true]:text-foreground"
+          >
+            {t("landing.nav.articles")}
+          </HeaderNavLink>
         </>
       }
       actions={
@@ -67,11 +74,28 @@ export function MarketingShell({ children }: { children: ReactNode }) {
   );
 }
 
-function HeaderNavLink({ to, children }: { to: string; children: ReactNode }) {
+function HeaderNavLink({
+  to,
+  children,
+  className,
+  example = false,
+}: {
+  to: string;
+  children: ReactNode;
+  className?: string;
+  /** Softer outline style — live example, not part of the product tour. */
+  example?: boolean;
+}) {
   return (
     <NavLink to={to}>
       {({ isActive }) => (
-        <NavItem variant="header" active={isActive}>
+        <NavItem
+          variant="header"
+          // Example links style their own active state so they stay visually distinct.
+          active={example ? false : isActive}
+          data-active={isActive || undefined}
+          className={className}
+        >
           {children}
         </NavItem>
       )}

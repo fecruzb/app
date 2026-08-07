@@ -33,10 +33,13 @@ export function PublicArticlePage() {
   });
 
   useDocumentMeta({
-    title: article ? `${article.title} · App Base` : t("landing.articles.title"),
-    description: article ? excerpt(article.body) || t("landing.articles.description") : undefined,
+    title: article ? `${article.title} · App Base` : t("landing.seo.articleFallback.title"),
+    description: article
+      ? excerpt(article.body) || t("landing.seo.articles.description")
+      : t("landing.seo.articleFallback.description"),
     image: article?.coverUrl,
     path: article ? `/articles/${article.id}` : undefined,
+    type: "article",
   });
 
   const dateFmt = new Intl.DateTimeFormat(i18n.language, {
@@ -46,7 +49,7 @@ export function PublicArticlePage() {
   return (
     <MarketingShell>
       <article className="px-4 pt-10 pb-20">
-        <div className="mx-auto grid w-full max-w-3xl gap-8">
+        <div className="mx-auto grid w-full max-w-5xl gap-8">
           <Link
             to="/articles"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"

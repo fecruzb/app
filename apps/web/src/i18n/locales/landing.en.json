@@ -5,19 +5,45 @@
   "tryLiveDemo": "Try the live demo",
   "nav": {
     "foundations": "Foundations",
-    "articles": "Articles",
     "tour": "Tour",
-    "ui": "UI"
+    "ui": "UI",
+    "articles": "Articles"
   },
   "teasers": {
     "exploreFoundations": "Explore foundations",
     "exploreTour": "Explore the tour",
     "exploreUi": "Browse components"
   },
+  "seo": {
+    "home": {
+      "title": "App Base — The starting point for your next SaaS",
+      "description": "Open-source multi-tenant SaaS template with auth, tenants, email, an AI agent, and a typed monorepo ready to become your product."
+    },
+    "foundations": {
+      "title": "Foundations · App Base",
+      "description": "Monorepo layout, database schema, theming, i18n, and one resource walked top to bottom — the groundwork already wired."
+    },
+    "tour": {
+      "title": "Product tour · App Base",
+      "description": "Auth, invites, workspace shell, tasks, billing, admin, email, and the AI agent — the assembled product, screen by screen."
+    },
+    "ui": {
+      "title": "UI kit · App Base",
+      "description": "Base components from @app/ui — shadcn primitives and composites, themed by tokens, ready to ship with your product."
+    },
+    "articles": {
+      "title": "Articles · App Base",
+      "description": "Stories published by workspaces on this app — browse the public catalog of shared posts."
+    },
+    "articleFallback": {
+      "title": "Article · App Base",
+      "description": "A published story from a workspace on App Base."
+    }
+  },
   "articles": {
     "eyebrow": "From the community",
     "title": "Articles",
-    "description": "Stories published by workspaces on this app — private tenant content, surfaced on the public site. Share a link; crawlers see title, description, and cover.",
+    "description": "Stories published by workspaces on this app — private tenant content, surfaced on the public site.",
     "empty": "No published articles yet. Sign in, write one, and hit Publish.",
     "noCover": "No cover",
     "back": "All articles",

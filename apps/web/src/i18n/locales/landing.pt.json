@@ -5,19 +5,45 @@
   "tryLiveDemo": "Experimentar o demo ao vivo",
   "nav": {
     "foundations": "Fundações",
-    "articles": "Artigos",
     "tour": "Tour",
-    "ui": "UI"
+    "ui": "UI",
+    "articles": "Artigos"
   },
   "teasers": {
     "exploreFoundations": "Explorar fundações",
     "exploreTour": "Explorar o tour",
     "exploreUi": "Ver componentes"
   },
+  "seo": {
+    "home": {
+      "title": "App Base — O ponto de partida do seu próximo SaaS",
+      "description": "Template SaaS multi-tenant open-source com autenticação, tenants, e-mail, agente de IA e um monorepo tipado pronto para virar o seu produto."
+    },
+    "foundations": {
+      "title": "Fundações · App Base",
+      "description": "Layout do monorepo, schema do banco, temas, i18n e um recurso percorrido de ponta a ponta — o alicerce já conectado."
+    },
+    "tour": {
+      "title": "Tour do produto · App Base",
+      "description": "Auth, convites, shell do workspace, tarefas, billing, admin, e-mail e o agente de IA — o produto montado, tela a tela."
+    },
+    "ui": {
+      "title": "Kit de UI · App Base",
+      "description": "Componentes base do @app/ui — primitives shadcn e composites, estilizados por tokens, prontos para ir no seu produto."
+    },
+    "articles": {
+      "title": "Artigos · App Base",
+      "description": "Histórias publicadas pelos workspaces deste app — explore o catálogo público de posts compartilhados."
+    },
+    "articleFallback": {
+      "title": "Artigo · App Base",
+      "description": "Uma história publicada por um workspace no App Base."
+    }
+  },
   "articles": {
     "eyebrow": "Da comunidade",
     "title": "Artigos",
-    "description": "Histórias publicadas pelos workspaces deste app — conteúdo privado do tenant, na vitrine pública. Compartilhe o link; crawlers veem título, descrição e capa.",
+    "description": "Histórias publicadas pelos workspaces deste app — conteúdo privado do tenant, na vitrine pública.",
     "empty": "Nenhum artigo publicado ainda. Entre, escreva um e clique em Publicar.",
     "noCover": "Sem capa",
     "back": "Todos os artigos",

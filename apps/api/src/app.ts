@@ -20,6 +20,7 @@ import { articleRoutes, publicArticleRoutes } from "@/domains/article/routes";
 import { MEDIA_DIR, mediaPublicUrl, mediaStore, usingR2 } from "@/domains/article/media";
 import { taskRoutes } from "@/domains/task/routes";
 import { inviteRoutes, tenantRoutes } from "@/domains/tenant/routes";
+import { serveSpaHtml } from "@/spa";
 
 export const app = new Hono();
 
@@ -82,9 +83,11 @@ app.get("/media/*", (c) => c.notFound());
 
 // In production the API serves the built SPA (single origin → simple cookies).
 // In dev, Vite runs separately and proxies /api here.
+// Assets are static; HTML navigations go through serveSpaHtml so each route
+// gets the right title / Open Graph tags for link previews.
 if (env.isProduction) {
   const webDist = path.resolve(import.meta.dirname, "../../web/dist");
   const root = path.relative(process.cwd(), webDist);
-  app.use("*", serveStatic({ root }));
-  app.get("*", serveStatic({ root, path: "index.html" }));
+  app.use("/assets/*", serveStatic({ root }));
+  app.get("*", (c) => serveSpaHtml(c, webDist));
 }

@@ -7,6 +7,7 @@ import {
   FoundationSection,
 } from "../components/foundations/foundation-section";
 import { I18nSection } from "../components/foundations/i18n-section";
+import { useDocumentMeta } from "@/lib/document-meta";
 import { MarketingShell } from "../components/marketing-shell";
 import { ResourceSlice } from "../components/foundations/resource-slice";
 import { ThemingSection } from "../components/foundations/theming-section";
@@ -15,6 +16,11 @@ import { useReveal } from "../hooks/use-reveal";
 export function FoundationsPage() {
   const { t, i18n } = useTranslation();
   useReveal();
+  useDocumentMeta({
+    title: t("landing.seo.foundations.title"),
+    description: t("landing.seo.foundations.description"),
+    path: "/foundations",
+  });
 
   const lang = i18n.language;
   const monorepoPillar = useMemo(() => buildMonorepoPillar(t), [t, lang]);
