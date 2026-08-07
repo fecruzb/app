@@ -11,6 +11,7 @@ import {
 import { Brand } from "@app/ui/brand";
 import { NavItem } from "@app/ui/nav-item";
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarNav } from "@app/ui/sidebar";
+import { SidebarShell } from "@app/ui/sidebar-shell";
 import { ThemeControls } from "@/theme/theme-controls";
 
 export function AdminLayout() {
@@ -24,43 +25,44 @@ export function AdminLayout() {
   ];
 
   return (
-    <div className="flex h-svh flex-col overflow-hidden md:flex-row">
-      <Sidebar className="md:w-64 md:border-r">
-        <SidebarHeader>
-          <Link to="/admin">
-            <Brand
-              icon={<BoxIcon className="size-5 shrink-0 text-primary" />}
-              subtitle={t("admin.subtitle")}
-            >
-              {t("admin.brand")}
-            </Brand>
-          </Link>
-        </SidebarHeader>
-        <SidebarNav>
-          {items.map((item) => (
-            <NavLink key={item.to} to={item.to} end={item.end}>
+    <SidebarShell
+      sidebar={
+        <Sidebar>
+          <SidebarHeader>
+            <Link to="/admin">
+              <Brand
+                icon={<BoxIcon className="size-5 shrink-0 text-primary" />}
+                subtitle={t("admin.subtitle")}
+              >
+                {t("admin.brand")}
+              </Brand>
+            </Link>
+          </SidebarHeader>
+          <SidebarNav>
+            {items.map((item) => (
+              <NavLink key={item.to} to={item.to} end={item.end}>
+                {({ isActive }) => (
+                  <NavItem variant="sidebar" active={isActive} icon={<item.icon />}>
+                    {item.label}
+                  </NavItem>
+                )}
+              </NavLink>
+            ))}
+          </SidebarNav>
+          <SidebarFooter>
+            <ThemeControls className="w-full px-1" menuSide="top" menuAlign="bar" />
+            <NavLink to="/app">
               {({ isActive }) => (
-                <NavItem variant="sidebar" active={isActive} icon={<item.icon />}>
-                  {item.label}
+                <NavItem variant="sidebar" active={isActive} icon={<ArrowLeftIcon />}>
+                  {t("admin.backToApp")}
                 </NavItem>
               )}
             </NavLink>
-          ))}
-        </SidebarNav>
-        <SidebarFooter>
-          <ThemeControls className="w-full px-1" menuSide="top" menuAlign="bar" />
-          <NavLink to="/app">
-            {({ isActive }) => (
-              <NavItem variant="sidebar" active={isActive} icon={<ArrowLeftIcon />}>
-                {t("admin.backToApp")}
-              </NavItem>
-            )}
-          </NavLink>
-        </SidebarFooter>
-      </Sidebar>
-      <main className="mx-auto min-h-0 w-full max-w-4xl flex-1 overflow-y-auto p-4 md:p-8">
-        <Outlet />
-      </main>
-    </div>
+          </SidebarFooter>
+        </Sidebar>
+      }
+    >
+      <Outlet />
+    </SidebarShell>
   );
 }

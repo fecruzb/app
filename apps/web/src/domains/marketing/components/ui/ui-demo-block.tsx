@@ -1,15 +1,31 @@
 import type { ReactNode } from "react";
+import { cn } from "@app/ui/lib/utils";
+import { CodeBlock } from "../code-block";
+import { Window } from "../product-preview/window";
 
-/** One live demo block on the UI showcase page. */
+/** One live demo block on the UI showcase page — preview + usage snippet. */
 export function UiDemoBlock({
   title,
   description,
   importPath,
+  code,
+  filename = "example.tsx",
+  previewClassName,
+  browserLabel,
   children,
 }: {
   title: string;
   description: string;
   importPath: string;
+  code: string;
+  filename?: string;
+  /**
+   * Preview panel classes. With `browserLabel`, applied to the body inside the
+   * browser chrome (e.g. `h-[26rem]` for full-height shells).
+   */
+  previewClassName?: string;
+  /** When set, the preview sits inside the product-preview browser chrome. */
+  browserLabel?: string;
   children: ReactNode;
 }) {
   return (
@@ -22,7 +38,18 @@ export function UiDemoBlock({
             {importPath}
           </code>
         </div>
-        <div className="rounded-xl border bg-background p-6 sm:p-8">{children}</div>
+        <div className="flex flex-col gap-6">
+          {browserLabel ? (
+            <Window label={browserLabel}>
+              <div className={cn("min-h-0 bg-background", previewClassName)}>{children}</div>
+            </Window>
+          ) : (
+            <div className={cn("rounded-xl border bg-background p-6 sm:p-8", previewClassName)}>
+              {children}
+            </div>
+          )}
+          <CodeBlock filename={filename} code={code} lang="ts" />
+        </div>
       </div>
     </section>
   );

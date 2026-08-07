@@ -32,7 +32,19 @@
       },
       "sidebar": {
         "title": "Sidebar",
-        "description": "Slots do shell do app — header (brand), nav (itens), footer (toggles + menu do usuário)."
+        "description": "Slots do chrome do app — header (brand), nav (itens), footer (toggles + menu do usuário). Passe a árvore montada no SidebarShell."
+      },
+      "sidebarShell": {
+        "title": "SidebarShell",
+        "description": "Chrome do app com menu lateral + main. Passe um Sidebar montado; use resizable para o handle (app) ou omita para largura fixa (admin)."
+      },
+      "navbarShell": {
+        "title": "NavbarShell",
+        "description": "Chrome público com navbar no topo + main com scroll + footer opcional. Marketing e docs."
+      },
+      "authShell": {
+        "title": "AuthShell",
+        "description": "Chrome de auth centralizado: brand acima de um card (título / descrição / corpo) e footer opcional. Login, registro, recuperação."
       },
       "userMenu": {
         "title": "UserMenuButton",
@@ -73,6 +85,14 @@
       "page": {
         "title": "PageHeader, EmptyState & PageLoading",
         "description": "Os três blocos que toda página interna de lista usa."
+      },
+      "dataTable": {
+        "title": "DataTable",
+        "description": "Tabela por colunas com ordenação client-side (clique em qualquer header com sortValue) e paginação opcional. Passe os labels pelo app por causa do i18n; omita pageSize para renderizar todas as linhas."
+      },
+      "tabs": {
+        "title": "Tabs",
+        "description": "Abas compostas para páginas, cards ou dialogs — lista, triggers e painéis. Controladas ou não via value / defaultValue."
       }
     },
     "demo": {
@@ -116,9 +136,48 @@
       "userName": "Ada Lovelace",
       "userEmail": "ada@example.com",
       "userInitials": "AL",
+      "shellMain": "Conteúdo principal",
+      "shellHomeTitle": "Início",
+      "shellHomeBody": "Você está em Acme. Abra um recurso na barra lateral para começar.",
+      "shellHomeTasksHint": "Acompanhe o trabalho deste tenant.",
+      "shellHomeSettingsHint": "Membros, convites e preferências do workspace.",
+      "authTitle": "Entrar",
+      "authDescription": "Informe seu e-mail para continuar.",
+      "authFooter": "Não tem conta? Cadastre-se",
+      "authEmail": "E-mail",
+      "authSubmit": "Continuar",
       "language": "Idioma",
       "theme": "Tema",
-      "mode": "Modo"
+      "mode": "Modo",
+      "tableName": "Nome",
+      "tableEmail": "E-mail",
+      "tableRole": "Papel",
+      "tableRoleOwner": "Owner",
+      "tableRoleAdmin": "Admin",
+      "tableRoleMember": "Member",
+      "tablePrevious": "Anterior",
+      "tableNext": "Próxima",
+      "tablePage": "Página {{page}} de {{pages}}",
+      "tableEmpty": "Nenhuma linha ainda.",
+      "tabsAccount": "Conta",
+      "tabsSecurity": "Segurança",
+      "tabsBilling": "Cobrança",
+      "tabsAccountBody": "Nome, e-mail e avatar do perfil ficam aqui.",
+      "tabsSecurityBody": "Senha e sessões deste usuário.",
+      "tabsBillingBody": "Plano, assentos e uso de IA do workspace.",
+      "tabsSave": "Salvar alterações",
+      "tabsCurrentPassword": "Senha atual",
+      "tabsNewPassword": "Nova senha",
+      "tabsUpdatePassword": "Atualizar senha",
+      "tabsSessionsTitle": "Sessões ativas",
+      "tabsSessionsBody": "Este navegador · Conectado agora",
+      "tabsPlanTitle": "Plano Pro",
+      "tabsPlanBody": "5 assentos · Uso de IA cobrado mensalmente",
+      "tabsPlanSeats": "Assentos usados",
+      "tabsPlanSeatsValue": "3 de 5",
+      "tabsPlanUsage": "Gasto de IA este mês",
+      "tabsPlanUsageValue": "US$ 12,40",
+      "tabsManagePlan": "Gerenciar plano"
     }
   },
   "hero": {

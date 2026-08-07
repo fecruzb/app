@@ -32,7 +32,19 @@
       },
       "sidebar": {
         "title": "Sidebar",
-        "description": "App shell slots — header (brand), nav (items), footer (toggles + user menu)."
+        "description": "App chrome slots — header (brand), nav (items), footer (toggles + user menu). Pass the composed tree into SidebarShell."
+      },
+      "sidebarShell": {
+        "title": "SidebarShell",
+        "description": "App chrome with a lateral menu + main. Pass a composed Sidebar; set resizable for the drag handle (app) or omit it for a fixed width (admin)."
+      },
+      "navbarShell": {
+        "title": "NavbarShell",
+        "description": "Public chrome with a top navbar + scrolling main + optional footer. Marketing and docs pages."
+      },
+      "authShell": {
+        "title": "AuthShell",
+        "description": "Centered auth chrome: brand above a card (title / description / body) and an optional footer. Login, register, recovery."
       },
       "userMenu": {
         "title": "UserMenuButton",
@@ -73,6 +85,14 @@
       "page": {
         "title": "PageHeader, EmptyState & PageLoading",
         "description": "The three building blocks every internal list page uses."
+      },
+      "dataTable": {
+        "title": "DataTable",
+        "description": "Column-driven table with client-side sort (click any header that has sortValue) and optional pagination. Pass labels from the app for i18n; omit pageSize to render every row."
+      },
+      "tabs": {
+        "title": "Tabs",
+        "description": "Composable tabs for pages, cards, or dialogs — list, triggers, and content panels. Controlled or uncontrolled via value / defaultValue."
       }
     },
     "demo": {
@@ -116,9 +136,48 @@
       "userName": "Ada Lovelace",
       "userEmail": "ada@example.com",
       "userInitials": "AL",
+      "shellMain": "Main content",
+      "shellHomeTitle": "Home",
+      "shellHomeBody": "You're in Acme. Open a resource from the sidebar to get started.",
+      "shellHomeTasksHint": "Track work for this tenant.",
+      "shellHomeSettingsHint": "Members, invites, and workspace prefs.",
+      "authTitle": "Sign in",
+      "authDescription": "Enter your email to continue.",
+      "authFooter": "Don't have an account? Register",
+      "authEmail": "Email",
+      "authSubmit": "Continue",
       "language": "Language",
       "theme": "Theme",
-      "mode": "Mode"
+      "mode": "Mode",
+      "tableName": "Name",
+      "tableEmail": "Email",
+      "tableRole": "Role",
+      "tableRoleOwner": "Owner",
+      "tableRoleAdmin": "Admin",
+      "tableRoleMember": "Member",
+      "tablePrevious": "Previous",
+      "tableNext": "Next",
+      "tablePage": "Page {{page}} of {{pages}}",
+      "tableEmpty": "No rows yet.",
+      "tabsAccount": "Account",
+      "tabsSecurity": "Security",
+      "tabsBilling": "Billing",
+      "tabsAccountBody": "Profile name, email, and avatar live here.",
+      "tabsSecurityBody": "Password and session settings for this user.",
+      "tabsBillingBody": "Plan, seats, and AI usage for the workspace.",
+      "tabsSave": "Save changes",
+      "tabsCurrentPassword": "Current password",
+      "tabsNewPassword": "New password",
+      "tabsUpdatePassword": "Update password",
+      "tabsSessionsTitle": "Active sessions",
+      "tabsSessionsBody": "This browser · Signed in now",
+      "tabsPlanTitle": "Pro plan",
+      "tabsPlanBody": "5 seats · AI usage billed monthly",
+      "tabsPlanSeats": "Seats used",
+      "tabsPlanSeatsValue": "3 of 5",
+      "tabsPlanUsage": "AI spend this month",
+      "tabsPlanUsageValue": "$12.40",
+      "tabsManagePlan": "Manage plan"
     }
   },
   "hero": {

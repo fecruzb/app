@@ -14,9 +14,10 @@ Public import paths stay flat; source files live in category folders.
 ```
 packages/ui/src/
   lib/           cn + helpers
-  primitives/    shadcn building blocks (button, card, dialog, …)
-  shell/         app chrome (brand, nav-item, site-header, sidebar, user-menu-button)
-  composites/    higher-level patterns (page-header, empty-state, confirm-dialog, …)
+  primitives/    shadcn building blocks (button, card, dialog, table, …)
+  shell/         app chrome (brand, nav-item, site-header, sidebar,
+                 sidebar-shell, navbar-shell, auth-shell, user-menu-button)
+  composites/    higher-level patterns (data-table, page-header, empty-state, confirm-dialog, …)
 ```
 
 ## Rules
