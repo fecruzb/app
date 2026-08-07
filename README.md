@@ -119,7 +119,7 @@ UI copy that uses `{{brand}}` / `{{tagline}}`, SEO shell meta, invite emails, th
 1. Replace the `tasks` resource with your domain: copy `apps/api/src/domains/task/` (schema → repository → routes → tools), export the schema in `db/schema.ts`, run `db:generate`, add the schemas to `packages/shared` and the page in web
 2. Adjust the plan catalog in `apps/api/src/domains/billing/plans.ts` and shared `packages/shared/src/billing.ts` if your pricing differs
 3. Rewrite landing marketing copy (`apps/web/src/i18n/locales/landing.*.json`) for your product story
-4. Desktop/mobile: update bundle `identifier` if needed, and regenerate icons from one source (`tauri icon`)
+4. Desktop/mobile: update bundle `identifier` and Cargo `authors` (`Your Name <you@example.com>` placeholders) if needed, and regenerate icons from one source (`tauri icon`)
 5. Set `RESEND_API_KEY` and configure Cloudflare R2 (`CLOUDFLARE_*` / `R2_PUBLIC_BASE_URL`) if you need durable image storage on Render (otherwise media stays on the ephemeral local disk)
 6. Deploy: push the repo to GitHub and create a Blueprint on Render pointing to `render.yaml`
 

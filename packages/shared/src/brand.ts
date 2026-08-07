@@ -7,6 +7,19 @@
  * interpolates `{{brand}}` (and the `brand` i18n key) picks up `displayName`
  * via i18n defaultVariables.
  */
+
+/** R2 / installer filename stem: start alnum; then alnum, `.`, `_`, or `-` only. */
+const DESKTOP_ARTIFACT_BASENAME_RE = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
+
+function assertDesktopArtifactBasename(value: string): void {
+  if (!DESKTOP_ARTIFACT_BASENAME_RE.test(value)) {
+    throw new Error(
+      `brand.desktopArtifactBasename must be filesystem-safe ` +
+        `(^[A-Za-z0-9][A-Za-z0-9._-]*$): ${JSON.stringify(value)}`,
+    );
+  }
+}
+
 export const brand = {
   /** User-facing product name (shell, emails, SEO, agent). */
   displayName: "App Base",
@@ -21,9 +34,11 @@ export const brand = {
   repoUrl: "https://github.com/fecruzb/app",
   /**
    * Filename stem for desktop installers / R2 keys (`AppBase.dmg`,
-   * `AppBase-Windows-Setup.exe`, …). Keep filesystem-safe (no spaces).
+   * `AppBase-Windows-Setup.exe`, …). Must match `DESKTOP_ARTIFACT_BASENAME_RE`.
    */
   desktopArtifactBasename: "AppBase",
   /** Default `MAIL_FROM` when the env var is unset. */
   defaultMailFrom: "App Base <onboarding@resend.dev>",
 } as const;
+
+assertDesktopArtifactBasename(brand.desktopArtifactBasename);

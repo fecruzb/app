@@ -22,9 +22,12 @@ function writeJson(path, data) {
 
 /** Patch only `description` — leave `authors` alone (not product identity). */
 function patchCargoDescription(path, description) {
-  let text = readFileSync(path, "utf8");
-  text = text.replace(/^description = ".*"$/m, `description = ${tomlBasicString(description)}`);
-  writeFileSync(path, text);
+  const text = readFileSync(path, "utf8");
+  const re = /^description = ".*"$/m;
+  if (!re.test(text)) {
+    throw new Error(`description = "..." line not found in ${path}`);
+  }
+  writeFileSync(path, text.replace(re, `description = ${tomlBasicString(description)}`));
 }
 
 function patchShellAssignment(path, name, value) {

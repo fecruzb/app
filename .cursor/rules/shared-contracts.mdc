@@ -14,7 +14,8 @@ whichever side you forgot stops compiling; that's the point.
 `brand.ts` is product identity (`displayName`, `tagline`, `description`, `mcpServerName`,
 `repoUrl`, `desktopArtifactBasename`, `defaultMailFrom`) — not a Zod contract. Day-1 rename
 starts there; the web mark lives in `apps/web/src/brand/`; run `npm run sync:brand` for Tauri
-shells and the macOS install script.
+shells and the macOS install script. `desktopArtifactBasename` is validated at module load
+(filesystem-safe stem for installer / R2 keys).
 
 Resource domains (task, article, …) get their own `src/<domain>.ts`. Platform/support domains may
 share a file when shapes are tightly coupled (e.g. auth session DTOs), but prefer a dedicated file

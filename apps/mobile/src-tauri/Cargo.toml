@@ -2,7 +2,7 @@
 name = "app-base-mobile"
 version = "0.1.0"
 description = "App Base iOS shell"
-authors = ["App Base"]
+authors = ["Your Name <you@example.com>"]
 edition = "2021"
 
 [lib]

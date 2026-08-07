@@ -2,7 +2,7 @@
 name = "app-base-desktop"
 version = "0.1.0"
 description = "App Base desktop shell"
-authors = ["App Base"]
+authors = ["Your Name <you@example.com>"]
 edition = "2021"
 
 [lib]

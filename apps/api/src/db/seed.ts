@@ -6,7 +6,7 @@
  * written once to `apps/api/.seed-demo-password` (gitignored — never logged).
  */
 import { randomBytes } from "node:crypto";
-import { writeFileSync } from "node:fs";
+import { chmodSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { hashPassword } from "@/lib/crypto";
@@ -71,6 +71,8 @@ async function seed() {
     console.log("[seed] password from SEED_DEMO_PASSWORD (not printed)");
   } else {
     writeFileSync(SEED_PASSWORD_FILE, `${password}\n`, { mode: 0o600 });
+    // mode on writeFileSync only applies on create — force owner-only on overwrite too
+    chmodSync(SEED_PASSWORD_FILE, 0o600);
     console.log("[seed] password written to apps/api/.seed-demo-password (gitignored)");
   }
 }
