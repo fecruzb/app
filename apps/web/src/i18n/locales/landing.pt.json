@@ -467,7 +467,11 @@
   "hero": {
     "title": "Pare de reconstruir. Comece a entregar.",
     "body": "Auth, tenants, e-mail e um agente de IA — já ligados. Faça o seu.",
-    "clone": "git clone https://github.com/fecruzb/app"
+    "clone": "git clone {{repoUrl}}",
+    "copy": "Copiar comando de clone",
+    "copied": "Copiado para a área de transferência",
+    "copyFailed": "Não foi possível copiar — selecione o comando e copie manualmente",
+    "github": "Ver no GitHub"
   },
   "nextSection": "Próxima seção",
   "stackSection": {

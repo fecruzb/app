@@ -48,8 +48,12 @@ void i18n.use(initReactI18next).init({
   fallbackLng: "en",
   interpolation: {
     escapeValue: false,
-    // Product identity from packages/shared — `{{brand}}` / `{{tagline}}` in locales.
-    defaultVariables: { brand: brand.displayName, tagline: brand.tagline },
+    // Product identity from packages/shared — `{{brand}}` / `{{tagline}}` / `{{repoUrl}}`.
+    defaultVariables: {
+      brand: brand.displayName,
+      tagline: brand.tagline,
+      repoUrl: brand.repoUrl,
+    },
   },
 });
 

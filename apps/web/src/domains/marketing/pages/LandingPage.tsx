@@ -2,11 +2,15 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   ArrowRightIcon,
+  CopyIcon,
   FolderTreeIcon,
   LayoutDashboardIcon,
   PaletteIcon,
   TerminalIcon,
 } from "lucide-react";
+import { siGithub } from "simple-icons";
+import { toast } from "sonner";
+import { brand } from "@app/shared";
 import { Button } from "@app/ui/button";
 import { Card, CardContent } from "@app/ui/card";
 import { useAppConfig } from "@/app/config";
@@ -18,10 +22,20 @@ import { MarketingShell } from "../components/marketing-shell";
 import { StackSection } from "../components/landing/stack-section";
 import { useReveal } from "../hooks/use-reveal";
 
+async function copyToClipboard(text: string, copied: string, failed: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+    toast.success(copied);
+  } catch {
+    toast.error(failed);
+  }
+}
+
 export function LandingPage() {
   const { t } = useTranslation();
   const { me } = useAuth();
   const { selfSignupEnabled } = useAppConfig();
+  const cloneCommand = t("landing.hero.clone");
   useReveal();
   useDocumentMeta({
     title: t("landing.seo.home.title"),
@@ -37,10 +51,44 @@ export function LandingPage() {
         title={t("landing.hero.title")}
         body={t("landing.hero.body")}
       >
-        <div className="mx-auto flex w-fit max-w-full items-center gap-2 overflow-x-auto rounded-lg border bg-background/70 px-4 py-3 font-mono text-sm backdrop-blur-sm">
-          <TerminalIcon className="size-4 shrink-0 text-muted-foreground" />
-          <span className="text-muted-foreground">$</span>
-          <span className="whitespace-nowrap">{t("landing.hero.clone")}</span>
+        <div className="mx-auto flex w-full max-w-xl flex-col items-stretch gap-3 sm:max-w-none sm:w-fit sm:flex-row sm:items-center">
+          <div className="flex min-w-0 items-center gap-2 rounded-lg border bg-background/70 px-3 py-2 font-mono text-sm backdrop-blur-sm sm:px-4 sm:py-3">
+            <TerminalIcon className="size-4 shrink-0 text-muted-foreground" />
+            <span className="text-muted-foreground">$</span>
+            <span className="min-w-0 flex-1 truncate sm:flex-none sm:whitespace-nowrap">
+              {cloneCommand}
+            </span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="size-8 shrink-0"
+              onClick={() =>
+                void copyToClipboard(
+                  cloneCommand,
+                  t("landing.hero.copied"),
+                  t("landing.hero.copyFailed"),
+                )
+              }
+            >
+              <CopyIcon />
+              <span className="sr-only">{t("landing.hero.copy")}</span>
+            </Button>
+          </div>
+          <Button variant="outline" className="shrink-0 bg-background/70 backdrop-blur-sm" asChild>
+            <a href={brand.repoUrl} target="_blank" rel="noopener noreferrer">
+              <svg
+                role="img"
+                aria-hidden
+                viewBox="0 0 24 24"
+                className="size-4 fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d={siGithub.path} />
+              </svg>
+              {t("landing.hero.github")}
+            </a>
+          </Button>
         </div>
       </MarketingHero>
 

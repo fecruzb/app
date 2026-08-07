@@ -13,6 +13,8 @@ export const brand = {
   tagline: "The starting point for your next SaaS",
   /** MCP server key in client configs (`mcp.json`). */
   mcpServerName: "app-base",
+  /** Public GitHub repository (landing clone CTA, day-1 rename). */
+  repoUrl: "https://github.com/fecruzb/app",
   /** Default `MAIL_FROM` when the env var is unset. */
   defaultMailFrom: "App Base <onboarding@resend.dev>",
 } as const;

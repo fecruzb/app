@@ -463,7 +463,11 @@
   "hero": {
     "title": "Stop rebuilding. Start shipping.",
     "body": "Auth, tenants, email, and an AI agent — already wired. Make it yours.",
-    "clone": "git clone https://github.com/fecruzb/app"
+    "clone": "git clone {{repoUrl}}",
+    "copy": "Copy clone command",
+    "copied": "Copied to clipboard",
+    "copyFailed": "Couldn't copy — select the command and copy manually",
+    "github": "View on GitHub"
   },
   "nextSection": "Next section",
   "stackSection": {
