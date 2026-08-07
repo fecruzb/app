@@ -17,9 +17,11 @@ Mirror the API: features live in `domains/<domain>/`, everything else is shared 
   - `components/` — domain UI (kebab-case): selects, FABs, layouts, marketing mocks… Create with the first non-page component; do not leave domain UI loose at the domain root
   - A domain may import another domain's `api`/context/components, but keep it minimal
   - Do not create empty `context/` / `hooks/` / `components/` folders — add the folder when the first file lands
-  - Public marketing screens (landing, pricing…) live in `domains/marketing/`. The landing page
-    (`LandingPage.tsx`) embeds code snippets that mirror the repo's real conventions (repository,
-    route, tool, page template) — if a convention changes, update those snippets too
+  - Public marketing screens (landing, pricing, UI kit…) live in `domains/marketing/`. Treat it as
+    the reference public module: `pages/` + `routes.tsx` + `hooks/` + `components/` split by concern
+    (`landing/`, `foundations/`, `tour/`, `ui/`, `product-preview/`). Code snippets in
+    `components/foundations/resource-snippets.ts` mirror real repo conventions — if a convention
+    changes, update those snippets too
   - Platform admin (`domains/admin/`) mounts at `/admin` outside `:tenantSlug` — gated by `me.user.isPlatformAdmin`
   - AI spend UI lives under Billing; the API `usage` domain is ledger-only (no web mirror)
 - `app/` — application shell: `App.tsx` (route map), `config.ts` (`useAppConfig()` → `selfSignupEnabled`, `aiEnabled` — the server-driven flags), `NotFoundPage.tsx`

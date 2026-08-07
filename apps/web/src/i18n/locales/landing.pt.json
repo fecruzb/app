@@ -3,6 +3,85 @@
   "goToApp": "Ir para o app",
   "tryDemo": "Experimentar o demo",
   "tryLiveDemo": "Experimentar o demo ao vivo",
+  "nav": {
+    "foundations": "Fundações",
+    "tour": "Tour",
+    "ui": "UI"
+  },
+  "teasers": {
+    "exploreFoundations": "Explorar fundações",
+    "exploreTour": "Explorar o tour",
+    "exploreUi": "Ver componentes"
+  },
+  "ui": {
+    "eyebrow": "Design system",
+    "title": "O kit de UI que já vem no pacote",
+    "body": "Componentes base do @app/ui — primitives shadcn e alguns composites. Importe por subpath, restilize pelos tokens do tema, nunca fixe cores no código.",
+    "sections": {
+      "button": {
+        "title": "Button",
+        "description": "Ações primárias com variantes de hierarquia e tamanhos de densidade."
+      },
+      "badge": {
+        "title": "Badge",
+        "description": "Rótulos compactos para status, contagens e metadados."
+      },
+      "form": {
+        "title": "Input, Label & Textarea",
+        "description": "Controles de formulário no mesmo sistema de tokens do resto do kit."
+      },
+      "card": {
+        "title": "Card",
+        "description": "Superfície para conteúdo agrupado — slots de header, body e footer."
+      },
+      "avatar": {
+        "title": "Avatar",
+        "description": "Iniciais do usuário (ou imagem) em um fallback circular."
+      },
+      "dialog": {
+        "title": "Dialog",
+        "description": "Overlay modal para tarefas focadas. O label de fechar vem de fora por causa do i18n."
+      },
+      "dropdown": {
+        "title": "Dropdown menu",
+        "description": "Ações contextuais ancoradas a um trigger."
+      },
+      "page": {
+        "title": "PageHeader, EmptyState & PageLoading",
+        "description": "Os três blocos que toda página interna de lista usa."
+      }
+    },
+    "demo": {
+      "default": "Padrão",
+      "secondary": "Secundário",
+      "outline": "Outline",
+      "ghost": "Ghost",
+      "destructive": "Destrutivo",
+      "link": "Link",
+      "small": "Pequeno",
+      "large": "Grande",
+      "more": "Mais",
+      "name": "Nome",
+      "namePlaceholder": "Ada Lovelace",
+      "notes": "Notas",
+      "notesPlaceholder": "Notas opcionais…",
+      "cardTitle": "Plano do workspace",
+      "cardDescription": "Assentos e uso de IA deste tenant.",
+      "cardBody": "Cards são o container quando o usuário precisa agir sobre um grupo de campos relacionados.",
+      "continue": "Continuar",
+      "openDialog": "Abrir dialog",
+      "dialogTitle": "Confirmar ação",
+      "dialogDescription": "Dialogs escurecem o resto da página até você terminar ou fechar.",
+      "openMenu": "Abrir menu",
+      "menuLabel": "Ações",
+      "menuItem1": "Editar",
+      "menuItem2": "Duplicar",
+      "menuItem3": "Arquivar",
+      "pageTitle": "Tarefas",
+      "pageDescription": "Chrome canônico da página: título, descrição opcional, depois lista ou vazio.",
+      "empty": "Nenhum item ainda. Crie o primeiro para começar."
+    }
+  },
   "hero": {
     "eyebrow": "Boilerplate SaaS open-source · React + Hono + Postgres",
     "title": "O ponto de partida do seu próximo SaaS",

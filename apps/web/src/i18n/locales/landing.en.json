@@ -3,6 +3,85 @@
   "goToApp": "Go to app",
   "tryDemo": "Try the demo",
   "tryLiveDemo": "Try the live demo",
+  "nav": {
+    "foundations": "Foundations",
+    "tour": "Tour",
+    "ui": "UI"
+  },
+  "teasers": {
+    "exploreFoundations": "Explore foundations",
+    "exploreTour": "Explore the tour",
+    "exploreUi": "Browse components"
+  },
+  "ui": {
+    "eyebrow": "Design system",
+    "title": "The UI kit you ship with",
+    "body": "Base components from @app/ui — shadcn primitives plus a few composites. Import per subpath, restyle through theme tokens, never hardcode colors.",
+    "sections": {
+      "button": {
+        "title": "Button",
+        "description": "Primary actions with variants for hierarchy and sizes for density."
+      },
+      "badge": {
+        "title": "Badge",
+        "description": "Compact labels for status, counts, and metadata."
+      },
+      "form": {
+        "title": "Input, Label & Textarea",
+        "description": "Form controls styled to the same tokens as the rest of the kit."
+      },
+      "card": {
+        "title": "Card",
+        "description": "Surface for grouped content — header, body, and footer slots."
+      },
+      "avatar": {
+        "title": "Avatar",
+        "description": "User initials (or image) in a circular fallback."
+      },
+      "dialog": {
+        "title": "Dialog",
+        "description": "Modal overlay for focused tasks. Close label is passed in for i18n."
+      },
+      "dropdown": {
+        "title": "Dropdown menu",
+        "description": "Contextual actions anchored to a trigger."
+      },
+      "page": {
+        "title": "PageHeader, EmptyState & PageLoading",
+        "description": "The three building blocks every internal list page uses."
+      }
+    },
+    "demo": {
+      "default": "Default",
+      "secondary": "Secondary",
+      "outline": "Outline",
+      "ghost": "Ghost",
+      "destructive": "Destructive",
+      "link": "Link",
+      "small": "Small",
+      "large": "Large",
+      "more": "More",
+      "name": "Name",
+      "namePlaceholder": "Ada Lovelace",
+      "notes": "Notes",
+      "notesPlaceholder": "Optional notes…",
+      "cardTitle": "Workspace plan",
+      "cardDescription": "Seats and AI usage for this tenant.",
+      "cardBody": "Cards are the container when the user needs to act on a group of related fields.",
+      "continue": "Continue",
+      "openDialog": "Open dialog",
+      "dialogTitle": "Confirm action",
+      "dialogDescription": "Dialogs keep the rest of the page dimmed until you finish or dismiss.",
+      "openMenu": "Open menu",
+      "menuLabel": "Actions",
+      "menuItem1": "Edit",
+      "menuItem2": "Duplicate",
+      "menuItem3": "Archive",
+      "pageTitle": "Tasks",
+      "pageDescription": "Canonical page chrome: title, optional description, then list or empty.",
+      "empty": "No items yet. Create the first one to get started."
+    }
+  },
   "hero": {
     "eyebrow": "Open-source SaaS boilerplate · React + Hono + Postgres",
     "title": "The starting point for your next SaaS",
