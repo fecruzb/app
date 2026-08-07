@@ -31,7 +31,8 @@
     <script>
       try {
         var m = localStorage.getItem("app:mode");
-        if (m === "dark") {
+        // Default is dark (emerald); only skip when the user chose light.
+        if (m !== "light") {
           document.documentElement.classList.add("dark");
           document.documentElement.style.colorScheme = "dark";
         }

@@ -136,8 +136,8 @@ export const defaultThemes: Theme[] = [
   },
 ];
 
-export const DEFAULT_THEME = "mono";
-export const DEFAULT_MODE: Mode = "light";
+export const DEFAULT_THEME = "emerald";
+export const DEFAULT_MODE: Mode = "dark";
 
 export function getTheme(id: string, catalog: Theme[] = defaultThemes): Theme {
   return catalog.find((t) => t.id === id) ?? catalog[0] ?? defaultThemes[0];

@@ -5,7 +5,7 @@
 @source "../../../packages/ui/src";
 
 /*
- * Default token values (Mono / light). These are the fallback until
+ * Default token values (Emerald / light). These are the fallback until
  * ThemeProvider (`@app/ui/theme`) writes the chosen theme onto <html> — the
  * color tokens all live in packages/ui/src/theme/themes.ts.
  */
@@ -16,7 +16,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(0.6 0.14 163);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -28,14 +28,14 @@
   --destructive-foreground: oklch(0.985 0 0);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --ring: oklch(0.6 0.14 163);
   --radius: 0.625rem;
 }
 
 /*
- * Pre-hydration fallback so a dark reload doesn't flash white before
- * ThemeProvider writes the exact theme tokens. Kept in sync with darkBase in
- * packages/ui/src/theme/themes.ts (Mono dark).
+ * Pre-hydration fallback so the default dark mode doesn't flash light/mono
+ * before ThemeProvider writes the exact theme tokens. Kept in sync with
+ * emerald dark in packages/ui/src/theme/themes.ts.
  */
 .dark {
   --background: oklch(0.145 0 0);
@@ -44,8 +44,8 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: oklch(0.7 0.15 163);
+  --primary-foreground: oklch(0.145 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -56,7 +56,7 @@
   --destructive-foreground: oklch(0.985 0 0);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --ring: oklch(0.7 0.15 163);
 }
 
 @theme inline {
