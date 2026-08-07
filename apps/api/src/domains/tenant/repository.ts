@@ -343,17 +343,6 @@ export const tenantRepository = {
   },
 
   /**
-   * Delete an invite by id
-   *
-   * Used after accept, when tenant scope is already known.
-   *
-   * @param inviteId - Invite id
-   */
-  async deleteInviteById(inviteId: string): Promise<void> {
-    await db.delete(tenantInvites).where(eq(tenantInvites.id, inviteId));
-  },
-
-  /**
    * Find a valid invite by token
    *
    * Non-expired invite with its tenant, or null.

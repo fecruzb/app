@@ -4,8 +4,7 @@ import { HttpError } from "@/lib/errors";
 import type { AppEnv } from "@/context";
 import { SESSION_COOKIE } from "../constants";
 import { clearSessionCookie, getSessionUser } from "../service";
-import { syncPlatformAdminFromEnv } from "../utils";
-import { bearerSessionToken } from "./bearer-session-token";
+import { bearerSessionToken, syncPlatformAdminFromEnv } from "../utils";
 
 /**
  * Require authentication

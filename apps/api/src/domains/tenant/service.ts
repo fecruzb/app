@@ -194,7 +194,7 @@ export async function acceptTenantInvite(args: {
         role: invite.role,
       });
     }
-    await tenantRepository.deleteInviteById(invite.id);
+    await tenantRepository.deleteInvite(tenant.id, invite.id);
     return { tenantSlug: tenant.slug, status: 200, sessionToken: null };
   }
 
@@ -219,7 +219,7 @@ export async function acceptTenantInvite(args: {
     userId: user.id,
     role: invite.role,
   });
-  await tenantRepository.deleteInviteById(invite.id);
+  await tenantRepository.deleteInvite(tenant.id, invite.id);
 
   return {
     tenantSlug: tenant.slug,
