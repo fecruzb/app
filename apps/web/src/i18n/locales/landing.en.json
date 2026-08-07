@@ -241,6 +241,18 @@
       "tabs": {
         "title": "Tabs",
         "description": "Composable tabs for pages, cards, or dialogs — list, triggers, and content panels. Controlled or uncontrolled via value / defaultValue."
+      },
+      "barChart": {
+        "title": "BarChart",
+        "description": "Simple bar chart over Recharts. Pass rows, an index key, and one or more series keys — colors come from theme tokens (--chart-1…5)."
+      },
+      "lineChart": {
+        "title": "LineChart",
+        "description": "Same data shape as BarChart. Optional curve and dots; legend appears automatically with multiple series."
+      },
+      "pieChart": {
+        "title": "PieChart",
+        "description": "Pie or donut from { name, value } rows. Set innerRadius for a donut; legend and tooltip are on by default."
       }
     },
     "demo": {
@@ -326,7 +338,9 @@
       "tabsPlanSeatsValue": "3 of 5",
       "tabsPlanUsage": "AI spend this month",
       "tabsPlanUsageValue": "$12.40",
-      "tabsManagePlan": "Manage plan"
+      "tabsManagePlan": "Manage plan",
+      "chartDesktop": "Desktop",
+      "chartMobile": "Mobile"
     }
   },
   "hero": {
@@ -634,7 +648,7 @@
       "hints": {
         "primitives": "shadcn building blocks",
         "shell": "app chrome",
-        "composites": "tables, headers…",
+        "composites": "tables, charts…",
         "theme": "ThemeProvider + tokens",
         "lib": "cn()"
       }

@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { FoundationSection } from "../components/foundations/foundation-section";
 import { BrandNavSection } from "../components/ui/brand-nav-section";
+import { ChartsSection } from "../components/ui/charts-section";
 import { ControlsSection } from "../components/ui/controls-section";
 import { DataPageSection } from "../components/ui/data-page-section";
 import { FormOverlaySection } from "../components/ui/form-overlay-section";
@@ -34,6 +35,7 @@ export function StructureUiPage() {
         <ControlsSection />
         <FormOverlaySection />
         <DataPageSection />
+        <ChartsSection />
       </div>
     </MarketingShell>
   );

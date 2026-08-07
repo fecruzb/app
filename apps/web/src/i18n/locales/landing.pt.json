@@ -241,6 +241,18 @@
       "tabs": {
         "title": "Tabs",
         "description": "Abas compostas para páginas, cards ou dialogs — lista, triggers e painéis. Controladas ou não via value / defaultValue."
+      },
+      "barChart": {
+        "title": "BarChart",
+        "description": "Gráfico de barras simples sobre Recharts. Passe as linhas, uma chave de índice e uma ou mais séries — as cores vêm dos tokens do tema (--chart-1…5)."
+      },
+      "lineChart": {
+        "title": "LineChart",
+        "description": "Mesmo formato de dados do BarChart. Curve e dots opcionais; a legenda aparece sozinha com várias séries."
+      },
+      "pieChart": {
+        "title": "PieChart",
+        "description": "Pizza ou donut a partir de linhas { name, value }. Defina innerRadius para donut; legenda e tooltip vêm ligados por padrão."
       }
     },
     "demo": {
@@ -326,7 +338,9 @@
       "tabsPlanSeatsValue": "3 de 5",
       "tabsPlanUsage": "Gasto de IA este mês",
       "tabsPlanUsageValue": "US$ 12,40",
-      "tabsManagePlan": "Gerenciar plano"
+      "tabsManagePlan": "Gerenciar plano",
+      "chartDesktop": "Desktop",
+      "chartMobile": "Mobile"
     }
   },
   "hero": {
@@ -634,7 +648,7 @@
       "hints": {
         "primitives": "blocos shadcn",
         "shell": "chrome do app",
-        "composites": "tabelas, headers…",
+        "composites": "tabelas, gráficos…",
         "theme": "ThemeProvider + tokens",
         "lib": "cn()"
       }

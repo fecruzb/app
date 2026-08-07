@@ -54,7 +54,8 @@ Framework-agnostic, tenant-agnostic base UI shared across web apps. Import per c
   - Pick a **layout shell** for chrome: `SidebarShell` (app/admin), `NavbarShell`
     (marketing), or `AuthShell` (login). Atoms (`Sidebar`, `SiteHeader`, `Brand`,
     `NavItem`) compose into those shells; app layouts stay thin (nav items + slots).
-- Composites (`src/composites/`): `browser-window` (`Window`/`WindowBar`), `code-block/`
+- Composites (`src/composites/`): `browser-window` (`Window`/`WindowBar`), `chart/`
+  (`BarChart`/`LineChart`/`PieChart` + low-level `ChartContainer`), `code-block/`
   (follows `html.dark`), `content-scale` (zoom body inside chrome, never the shell),
   `explorer` (VS Code tree chrome), `confirm-dialog` (`ConfirmProvider`/`useConfirm`),
   `data-table`, `empty-state`, `page-header`, `page-loading`

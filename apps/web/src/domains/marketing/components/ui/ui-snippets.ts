@@ -353,3 +353,38 @@ export const tabsSnippet = `import { Tabs, TabsList, TabsTrigger, TabsContent } 
     {/* plan + usage */}
   </TabsContent>
 </Tabs>`;
+
+export const barChartSnippet = `import { BarChart } from "@app/ui/chart";
+
+const data = [
+  { month: "Jan", desktop: 186, mobile: 80 },
+  { month: "Feb", desktop: 305, mobile: 200 },
+  { month: "Mar", desktop: 237, mobile: 120 },
+];
+
+<BarChart
+  data={data}
+  index="month"
+  series={["desktop", "mobile"]}
+  seriesLabel={{ desktop: "Desktop", mobile: "Mobile" }}
+/>`;
+
+export const lineChartSnippet = `import { LineChart } from "@app/ui/chart";
+
+<LineChart
+  data={data}
+  index="month"
+  series={["desktop", "mobile"]}
+  seriesLabel={{ desktop: "Desktop", mobile: "Mobile" }}
+/>`;
+
+export const pieChartSnippet = `import { PieChart } from "@app/ui/chart";
+
+const data = [
+  { name: "Chrome", value: 275 },
+  { name: "Safari", value: 200 },
+  { name: "Firefox", value: 187 },
+];
+
+// innerRadius turns it into a donut
+<PieChart data={data} innerRadius={60} />`;

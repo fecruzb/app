@@ -31,6 +31,7 @@
     "./page-header": "./src/composites/page-header.tsx",
     "./page-loading": "./src/composites/page-loading.tsx",
     "./browser-window": "./src/composites/browser-window.tsx",
+    "./chart": "./src/composites/chart/index.tsx",
     "./code-block": "./src/composites/code-block/index.tsx",
     "./content-scale": "./src/composites/content-scale.tsx",
     "./explorer": "./src/composites/explorer.tsx",

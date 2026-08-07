@@ -199,6 +199,7 @@ export function buildUiTree(t: TFunction): ExplorerNode[] {
           kind: "folder",
           hint: p("composites"),
           children: [
+            { name: "chart", kind: "folder" },
             { name: "data-table.tsx", kind: "file" },
             { name: "page-header.tsx", kind: "file" },
             { name: "code-block", kind: "folder" },
