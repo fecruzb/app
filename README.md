@@ -59,12 +59,12 @@ apps/api/src/
 │                         # email layout, media-store, image-compress
 ├── integrations/         # external service wrappers: openai (client + tool loop), resend, r2
 ├── domains/
-│   ├── auth/             # schema, repository, service, dto, middleware, routes/, template/
+│   ├── auth/             # schema, repository, service, dto, middleware/, routes/, template/
 │   ├── account/          # routes/ (profile, password, API keys)
 │   ├── admin/            # platform admin: users, platform invites, tenants, plans, template/
 │   ├── billing/          # plan catalog + tenant billing snapshot + seat/AI asserts
 │   ├── tenant/           # tenants + members + invites: schema, repository, service,
-│   │                     # middleware, routes/, tools/, template/
+│   │                     # middleware/, routes/, tools/, template/
 │   ├── usage/            # AI spend ledger (per user × tenant × month); no HTTP routes
 │   ├── task/             # example resource (to-do list): schema, repository, dto, routes/, tools/
 │   └── article/          # articles (Markdown + cover): schema, repository, dto, routes/, tools/, media.ts
