@@ -28,6 +28,8 @@ export type ExplorerNode = {
 type ExplorerProps = {
   workspace: string;
   tree: ExplorerNode[];
+  /** Panel header label — caller supplies i18n (no product copy in @app/ui). */
+  title: string;
   ariaLabel: string;
   className?: string;
 };
@@ -38,7 +40,7 @@ type ExplorerProps = {
  *
  * Colors mimic the real editor chrome (same exception as browser-window traffic lights).
  */
-function Explorer({ workspace, tree, ariaLabel, className }: ExplorerProps) {
+function Explorer({ workspace, tree, title, ariaLabel, className }: ExplorerProps) {
   return (
     <div
       className={cn(
@@ -61,7 +63,7 @@ function Explorer({ workspace, tree, ariaLabel, className }: ExplorerProps) {
       <div className="flex min-w-0 flex-1 flex-col bg-[#252526]">
         <div className="flex items-center justify-between px-2 pt-1.5 pb-0.5">
           <span className="text-[10px] font-semibold tracking-wider text-[#bbbbbb] uppercase">
-            Explorer
+            {title}
           </span>
           <span className="text-[9px] tracking-widest text-[#6b6b6b]">···</span>
         </div>

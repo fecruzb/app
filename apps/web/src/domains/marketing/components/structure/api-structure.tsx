@@ -58,6 +58,7 @@ function buildApiOverview(t: TFunction): ApiLayer {
     points: points(t, "landing.moduleZoom.api.points"),
     visual: (
       <Explorer
+        title={t("landing.structureIntro.preview.explorer")}
         workspace={t("landing.moduleZoom.api.workspace")}
         ariaLabel={t("landing.moduleZoom.api.aria")}
         tree={buildApiTree(t)}

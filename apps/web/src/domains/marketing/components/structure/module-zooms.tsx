@@ -35,6 +35,7 @@ export function buildWebPillar(t: TFunction): Foundation {
     ...moduleCopy("web", t),
     visual: (
       <Explorer
+        title={t("landing.structureIntro.preview.explorer")}
         workspace={t("landing.moduleZoom.web.workspace")}
         ariaLabel={t("landing.moduleZoom.web.aria")}
         tree={buildWebTree(t)}
@@ -50,6 +51,7 @@ export function buildUiPillar(t: TFunction): Foundation {
     ...moduleCopy("ui", t),
     visual: (
       <Explorer
+        title={t("landing.structureIntro.preview.explorer")}
         workspace={t("landing.moduleZoom.ui.workspace")}
         ariaLabel={t("landing.moduleZoom.ui.aria")}
         tree={buildUiTree(t)}

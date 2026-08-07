@@ -8,6 +8,7 @@ export function MonorepoPreview({ className }: { className?: string }) {
   return (
     <Explorer
       className={className}
+      title={t("landing.structureIntro.preview.explorer")}
       workspace={t("landing.structureIntro.preview.workspace")}
       ariaLabel={t("landing.structureIntro.preview.aria")}
       tree={buildRepoTree(t)}

@@ -23,53 +23,53 @@ export type ComboboxOption = {
   group?: string;
 };
 
-export type ComboboxProps = {
+type ComboboxBaseProps = {
   options: ComboboxOption[];
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
-  /** Trigger placeholder when nothing is selected. */
-  placeholder?: string;
-  /** Search field placeholder inside the panel. */
-  searchPlaceholder?: string;
-  /** Shown when the filter yields no options. */
-  emptyMessage?: string;
+  /** Trigger placeholder when nothing is selected — caller supplies i18n. */
+  placeholder: string;
+  /** Search field placeholder inside the panel — caller supplies i18n. */
+  searchPlaceholder: string;
+  /** Shown when the filter yields no options — caller supplies i18n. */
+  emptyMessage: string;
   /** Hide the search field (plain picker). Defaults to `true` (typeahead on). */
   searchable?: boolean;
-  /** Show a clear control when a value is selected. */
-  clearable?: boolean;
   disabled?: boolean;
   className?: string;
   id?: string;
   /** Accessible name when no visible label is associated. */
   "aria-label"?: string;
-  /** Accessible label for the clear control (when `clearable`). */
-  clearLabel?: string;
   /** Width of the popover — defaults to match the trigger. */
   contentClassName?: string;
 };
+
+/** `clearLabel` is required when the clear control is shown. */
+export type ComboboxProps =
+  | (ComboboxBaseProps & { clearable?: false; clearLabel?: never })
+  | (ComboboxBaseProps & { clearable: true; clearLabel: string });
 
 /**
  * Searchable select that matches Input/Textarea chrome. Pass i18n strings for
  * placeholders / empty state from the app layer.
  */
-function Combobox({
-  options,
-  value: valueProp,
-  defaultValue = "",
-  onValueChange,
-  placeholder = "Select…",
-  searchPlaceholder = "Search…",
-  emptyMessage = "No results.",
-  searchable = true,
-  clearable = false,
-  disabled = false,
-  className,
-  id,
-  "aria-label": ariaLabel,
-  clearLabel = "Clear",
-  contentClassName,
-}: ComboboxProps) {
+function Combobox(props: ComboboxProps) {
+  const {
+    options,
+    value: valueProp,
+    defaultValue = "",
+    onValueChange,
+    placeholder,
+    searchPlaceholder,
+    emptyMessage,
+    searchable = true,
+    disabled = false,
+    className,
+    id,
+    "aria-label": ariaLabel,
+    contentClassName,
+  } = props;
   const [open, setOpen] = React.useState(false);
   const [uncontrolled, setUncontrolled] = React.useState(defaultValue);
   const value = valueProp ?? uncontrolled;
@@ -120,11 +120,11 @@ function Combobox({
           >
             {selected?.label ?? placeholder}
           </span>
-          {clearable && selected ? (
+          {props.clearable === true && selected ? (
             <span
               role="button"
               tabIndex={-1}
-              aria-label={clearLabel}
+              aria-label={props.clearLabel}
               className="rounded-sm opacity-60 hover:opacity-100"
               onClick={(event) => {
                 event.preventDefault();

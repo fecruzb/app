@@ -258,6 +258,7 @@ const [value, setValue] = useState("web");
   searchPlaceholder="Search…"
   emptyMessage="No platform found."
   clearable
+  clearLabel="Clear"
 />`;
 
 export const checkboxSnippet = `import { Checkbox } from "@app/ui/checkbox";
@@ -363,7 +364,15 @@ import { Textarea } from "@app/ui/textarea";
     <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
       <Field>
         <FieldLabel htmlFor="platform">Platform</FieldLabel>
-        <Combobox id="platform" options={options} value={platform} onValueChange={setPlatform} />
+        <Combobox
+          id="platform"
+          options={options}
+          value={platform}
+          onValueChange={setPlatform}
+          placeholder="Select a platform…"
+          searchPlaceholder="Search…"
+          emptyMessage="No platform found."
+        />
       </Field>
       <Field orientation="horizontal">
         <Switch id="notify" checked={notify} onCheckedChange={setNotify} />
@@ -509,9 +518,9 @@ const columns: DataTableColumn<Member>[] = [
   getRowId={(row) => row.id}
   pageSize={5}
   pagination={{
-    previousLabel: t("common.previous"),
-    nextLabel: t("common.next"),
-    pageLabel: (page, pages) => t("common.pageOf", { page, pages }),
+    previousLabel: t("landing.ui.demo.tablePrevious"),
+    nextLabel: t("landing.ui.demo.tableNext"),
+    pageLabel: (page, pages) => t("landing.ui.demo.tablePage", { page, pages }),
   }}
   empty={<EmptyState>No rows yet.</EmptyState>}
 />`;
