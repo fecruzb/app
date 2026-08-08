@@ -26,6 +26,13 @@ export {
 } from "./email-mocks";
 export { InviteMembersBody } from "./invite-mocks";
 export {
+  TenantIsolationMock,
+  TenantOptionalMock,
+  TenantGeneralMock,
+  TenantMembersMock,
+  TenantInvitesMock,
+} from "./tenant-mocks";
+export {
   McpKeysMock,
   McpCreatedKeyMock,
   McpExternalAgentMock,

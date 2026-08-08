@@ -128,7 +128,7 @@
     },
     "productTenants": {
       "title": "Tenants · {{brand}}",
-      "description": "Members and invites — bring the rest of the team into a workspace."
+      "description": "Turn a single-purpose app into a platform for many customers — or keep one workspace. Same template, both modes."
     },
     "productBilling": {
       "title": "Billing · {{brand}}",
@@ -1092,8 +1092,8 @@
     },
     "tenants": {
       "eyebrow": "Tenants",
-      "title": "Members and invites",
-      "body": "Bring the team in — invite by email, roles, and the inbox that lands the link.",
+      "title": "From one app to a platform",
+      "body": "One blog for yourself — or a platform of blogs for N customers. Tenants make that leap; you can still ship a single-product app.",
       "cta": "Open tenants"
     },
     "billing": {
@@ -1127,8 +1127,8 @@
     },
     "tenants": {
       "eyebrow": "Tenants",
-      "title": "Invite the team",
-      "body": "Workspace members and email invites — roles checked server-side, links that land in the inbox."
+      "title": "App → platform of apps",
+      "body": "Without tenants you ship one product for one org. With them, the same codebase serves N isolated customers as a service — a blog platform, a CRM for many companies, a task tool for many teams. Use both modes: one workspace or many."
     },
     "billing": {
       "eyebrow": "Billing",
@@ -1600,11 +1600,7 @@
         "eyebrow": "integrations/",
         "title": "Vendors",
         "body": "External services. Thin wrappers. Only talk to lib/.",
-        "points": [
-          "email provider",
-          "AI provider",
-          "object storage"
-        ]
+        "points": ["email provider", "AI provider", "object storage"]
       },
       "db": {
         "eyebrow": "db/",
@@ -1680,11 +1676,7 @@
         "eyebrow": "tools/",
         "title": "Agent actions",
         "body": "One file per action. Same repository as endpoints. Registered in the assistant.",
-        "points": [
-          "name · input · execute",
-          "tenant / user from tool context",
-          "index → registry"
-        ]
+        "points": ["name · input · execute", "tenant / user from tool context", "index → registry"]
       },
       "service": {
         "eyebrow": "service.ts",
@@ -1710,31 +1702,19 @@
         "eyebrow": "constants/",
         "title": "Statics",
         "body": "TTLs · catalogs · limits. No helpers.",
-        "points": [
-          "one topic per file",
-          "plan catalog · cookie name · TTL",
-          "logic → utils/"
-        ]
+        "points": ["one topic per file", "plan catalog · cookie name · TTL", "logic → utils/"]
       },
       "utils": {
         "eyebrow": "utils/",
         "title": "Helpers",
         "body": "Domain logic helpers. lib/ stays cross-cutting and pure.",
-        "points": [
-          "slug · period · media paths",
-          "domain-owned",
-          "create folder with first file"
-        ]
+        "points": ["slug · period · media paths", "domain-owned", "create folder with first file"]
       },
       "template": {
         "eyebrow": "template/",
         "title": "Outbound mail",
         "body": "Subject + body. Service sends. Token only in the link.",
-        "points": [
-          "verify · reset · invite",
-          "one purpose per file",
-          "never log raw tokens"
-        ]
+        "points": ["verify · reset · invite", "one purpose per file", "never log raw tokens"]
       }
     }
   },
@@ -1851,11 +1831,7 @@
         "eyebrow": "brand/",
         "title": "Mark",
         "body": "Product logo only. Display name lives in shared.",
-        "points": [
-          "logo.tsx + logo.css",
-          "Brand shell uses AppLogo",
-          "favicon in public/brand/"
-        ]
+        "points": ["logo.tsx + logo.css", "Brand shell uses AppLogo", "favicon in public/brand/"]
       },
       "api": {
         "eyebrow": "api.ts",
@@ -1921,11 +1897,7 @@
         "eyebrow": "constants/",
         "title": "Statics",
         "body": "Keys · catalogs · limits. Same role as the API. Optional.",
-        "points": [
-          "one topic per file",
-          "no helpers",
-          "create with the first file"
-        ]
+        "points": ["one topic per file", "no helpers", "create with the first file"]
       },
       "utils": {
         "eyebrow": "utils/",
@@ -2467,6 +2439,45 @@
       "membersDescription": "Who has access to this tenant",
       "you": "(you)"
     },
+    "tenants": {
+      "isolationLabel": "tenants · app → platform",
+      "singularLabel": "Without tenants",
+      "singularTitle": "One blog for one person",
+      "singularBody": "A single app, one customer's data — fine when you only serve yourself or one org.",
+      "plusTenants": "+ tenants",
+      "platformLabel": "With tenants",
+      "platformTitle": "A platform of blogs",
+      "blogAcme": "Acme Journal",
+      "blogAda": "Ada's Notes",
+      "blogAlan": "Alan Writes",
+      "examplesLabel": "Same idea for other products",
+      "examples": [
+        "Blog → blog platform",
+        "CRM → CRM for many companies",
+        "Tasks → workspace tool for many teams",
+        "Store → multi-vendor marketplace shell"
+      ],
+      "isolationFootnote": "Each tenant is an isolated customer environment on the same deploy. You can still run with one tenant only — the model supports both.",
+      "optionalLabel": "template · both modes",
+      "optionalKeepTitle": "Ship as a platform when…",
+      "optionalDropTitle": "Ship as one product when…",
+      "optionalKeep": [
+        "You sell to many customers on one app",
+        "Each customer needs private data",
+        "Seats / plans are per organization"
+      ],
+      "optionalDrop": [
+        "You're building for a single company",
+        "No need to onboard other orgs",
+        "One hard-coded workspace is enough"
+      ],
+      "optionalNote": "This template works for both. Keep multi-tenant to sell a platform, or ignore the switcher / use one tenant and treat it like a singular app — or delete the pieces you don't need.",
+      "settingsTitle": "Settings",
+      "settingsDescription": "Workspace name, members, and invites.",
+      "general": "General",
+      "pending": "Pending invites",
+      "expires": "Expires in 7 days"
+    },
     "nav": {
       "home": "Home",
       "tasks": "Tasks",
@@ -2493,12 +2504,7 @@
       "description": "Example resource",
       "placeholder": "Add a task...",
       "add": "Add",
-      "items": [
-        "Design the schema",
-        "Wire the repository",
-        "Expose the route",
-        "Build the screen"
-      ],
+      "items": ["Design the schema", "Wire the repository", "Expose the route", "Build the screen"],
       "left": "Example resource with per-tenant CRUD · 2 of 4 left"
     },
     "account": {
@@ -3313,6 +3319,103 @@
         "Current + new password",
         "PATCH /api/account/password",
         "Opened from the same My account page"
+      ]
+    }
+  },
+  "tenantsCourse": {
+    "parts": {
+      "team": {
+        "eyebrow": "Team",
+        "title": "Settings, members, and invites",
+        "body": "Inside a tenant: rename the workspace, manage who belongs, and send email invites with a role. The switcher appears only when someone is in more than one."
+      }
+    },
+    "concept": {
+      "eyebrow": "Why tenants",
+      "title": "Stop shipping one app — ship a platform",
+      "body": "Take a simple product — say a blog for one author — and add tenants: suddenly you have a blog platform, where Acme, Ada, and Alan each get their own isolated site on the same codebase. That's the point: not serving only one customer, but N customers as a service. Singular app → platform of something.",
+      "points": [
+        "One deploy, many customer environments",
+        "Blog → platform of blogs (same pattern for CRM, tasks, …)",
+        "Each tenant's data stays private",
+        "Users can still belong to more than one"
+      ]
+    },
+    "model": {
+      "eyebrow": "Data model",
+      "title": "tenants · members · invites",
+      "body": "tenants hold name, slug, and plan. tenant_members is the join with a role. tenant_invites store pending email links. Resource tables (tasks, articles, …) carry tenant_id — every query filters on it so Acme never sees Ada's posts.",
+      "points": [
+        "tenants — id, name, slug, plan_id",
+        "tenant_members — role per user",
+        "tenant_invites — email + expiry",
+        "Resources always scoped by tenantId"
+      ]
+    },
+    "optional": {
+      "eyebrow": "Both modes",
+      "title": "Platform for many — or one product for one",
+      "body": "Use tenants when you're selling a multi-customer service. Or run a single workspace and treat the app as a singular product for one org — hide the switcher, skip invites, even delete tenant code later. The template is ready for both; nothing forces the platform path.",
+      "points": [
+        "Platform mode = N tenants on one deploy",
+        "Singular mode = one workspace is enough",
+        "Ignore, hide, or remove what you don't need",
+        "Same starting point either way"
+      ]
+    },
+    "general": {
+      "eyebrow": "General",
+      "title": "Name the workspace",
+      "body": "Settings → General renames the tenant. Slug stays the URL segment under /app/:slug. Managers can leave when they're not the last owner.",
+      "points": [
+        "/app/:slug/settings",
+        "Rename with manager role",
+        "Slug identifies the workspace in URLs",
+        "Leave workspace when allowed"
+      ]
+    },
+    "members": {
+      "eyebrow": "Members",
+      "title": "Who belongs, and which role",
+      "body": "The members card lists everyone with access. Managers change roles (owner / admin / member) or remove people — checks stay on the server, never only in the UI.",
+      "points": [
+        "Avatar, name, email, role",
+        "Role changes for managers",
+        "Remove member with confirm",
+        "You can't demote yourself into a corner"
+      ]
+    },
+    "invites": {
+      "eyebrow": "Invites",
+      "title": "Bring someone in by email",
+      "body": "Owners and admins invite with an email + role. Pending invites are revocable. Seat caps from the plan block new invites when the workspace is full.",
+      "points": [
+        "Email + role form",
+        "Pending list with revoke",
+        "Seat limits from billing plan",
+        "Managers only"
+      ]
+    },
+    "inviteEmail": {
+      "eyebrow": "Inbox",
+      "title": "A 7-day link lands here",
+      "body": "Transactional email carries a single-use accept link. Accepting joins the tenant under the invited role — same mail stack as verify / reset.",
+      "points": [
+        "Subject names the workspace",
+        "Accept invite CTA",
+        "Expires in 7 days",
+        "Hash stored — raw token only in the link"
+      ]
+    },
+    "switcher": {
+      "eyebrow": "Switcher",
+      "title": "Jump when you have more than one",
+      "body": "If a user belongs to two or more tenants, the sidebar shows a switcher. One membership stays implicit — no chrome for a choice that isn't there.",
+      "points": [
+        "Hidden with a single tenant",
+        "Lists every membership",
+        "Navigates to /app/:slug",
+        "Covered on Workspace too"
       ]
     }
   }

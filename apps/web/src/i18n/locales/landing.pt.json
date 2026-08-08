@@ -124,7 +124,7 @@
     },
     "productTenants": {
       "title": "Tenants · {{brand}}",
-      "description": "Membros e convites — traga o resto do time para o workspace."
+      "description": "Transforme um app de propósito único numa plataforma pra muitos clientes — ou fique com um workspace. Mesmo template, os dois modos."
     },
     "productBilling": {
       "title": "Billing · {{brand}}",
@@ -970,8 +970,8 @@
     },
     "tenants": {
       "eyebrow": "Tenants",
-      "title": "Membros e convites",
-      "body": "Traga o time — convite por e-mail, papéis e a inbox que recebe o link.",
+      "title": "De um app a uma plataforma",
+      "body": "Um blog pra você — ou uma plataforma de blogs pra N clientes. Tenants fazem esse salto; ainda dá pra entregar um produto singular.",
       "cta": "Abrir tenants"
     },
     "billing": {
@@ -1005,8 +1005,8 @@
     },
     "tenants": {
       "eyebrow": "Tenants",
-      "title": "Convide o time",
-      "body": "Membros do workspace e convites por e-mail — papéis checados no servidor, links que caem na inbox."
+      "title": "App → plataforma de apps",
+      "body": "Sem tenants você entrega um produto pra uma org. Com eles, o mesmo código serve N clientes isolados como serviço — plataforma de blogs, CRM pra muitas empresas, tasks pra muitos times. Os dois modos: um workspace ou muitos."
     },
     "billing": {
       "eyebrow": "Billing",
@@ -1478,11 +1478,7 @@
         "eyebrow": "integrations/",
         "title": "Vendors",
         "body": "Serviços externos. Wrappers finos. Só falam com lib/.",
-        "points": [
-          "provedor de e-mail",
-          "provedor de IA",
-          "object storage"
-        ]
+        "points": ["provedor de e-mail", "provedor de IA", "object storage"]
       },
       "db": {
         "eyebrow": "db/",
@@ -1558,11 +1554,7 @@
         "eyebrow": "tools/",
         "title": "Ações do agente",
         "body": "Um arquivo por ação. Mesmo repository dos endpoints. Registradas no assistente.",
-        "points": [
-          "name · input · execute",
-          "tenant / user do context da tool",
-          "index → registry"
-        ]
+        "points": ["name · input · execute", "tenant / user do context da tool", "index → registry"]
       },
       "service": {
         "eyebrow": "service.ts",
@@ -1588,11 +1580,7 @@
         "eyebrow": "constants/",
         "title": "Estáticos",
         "body": "TTLs · catálogos · limites. Sem helpers.",
-        "points": [
-          "um tópico por arquivo",
-          "catálogo de planos · cookie · TTL",
-          "lógica → utils/"
-        ]
+        "points": ["um tópico por arquivo", "catálogo de planos · cookie · TTL", "lógica → utils/"]
       },
       "utils": {
         "eyebrow": "utils/",
@@ -1608,11 +1596,7 @@
         "eyebrow": "template/",
         "title": "E-mail de saída",
         "body": "Subject + body. Service envia. Token só no link.",
-        "points": [
-          "verify · reset · invite",
-          "um propósito por arquivo",
-          "nunca logar tokens crus"
-        ]
+        "points": ["verify · reset · invite", "um propósito por arquivo", "nunca logar tokens crus"]
       }
     }
   },
@@ -1729,11 +1713,7 @@
         "eyebrow": "brand/",
         "title": "Marca",
         "body": "Só o logo do produto. Nome de exibição fica no shared.",
-        "points": [
-          "logo.tsx + logo.css",
-          "shell Brand usa AppLogo",
-          "favicon em public/brand/"
-        ]
+        "points": ["logo.tsx + logo.css", "shell Brand usa AppLogo", "favicon em public/brand/"]
       },
       "api": {
         "eyebrow": "api.ts",
@@ -1799,11 +1779,7 @@
         "eyebrow": "constants/",
         "title": "Estáticos",
         "body": "Keys · catálogos · limites. Mesmo papel da API. Opcional.",
-        "points": [
-          "um tópico por arquivo",
-          "sem helpers",
-          "crie com o primeiro arquivo"
-        ]
+        "points": ["um tópico por arquivo", "sem helpers", "crie com o primeiro arquivo"]
       },
       "utils": {
         "eyebrow": "utils/",
@@ -2345,6 +2321,45 @@
       "membersDescription": "Quem tem acesso a este tenant",
       "you": "(você)"
     },
+    "tenants": {
+      "isolationLabel": "tenants · app → plataforma",
+      "singularLabel": "Sem tenants",
+      "singularTitle": "Um blog pra uma pessoa",
+      "singularBody": "Um app só, dados de um cliente — ok quando você serve só a si ou a uma org.",
+      "plusTenants": "+ tenants",
+      "platformLabel": "Com tenants",
+      "platformTitle": "Uma plataforma de blogs",
+      "blogAcme": "Acme Journal",
+      "blogAda": "Notas da Ada",
+      "blogAlan": "Alan Writes",
+      "examplesLabel": "A mesma ideia em outros produtos",
+      "examples": [
+        "Blog → plataforma de blogs",
+        "CRM → CRM pra muitas empresas",
+        "Tasks → tool de workspace pra muitos times",
+        "Loja → casca de marketplace multi-vendor"
+      ],
+      "isolationFootnote": "Cada tenant é o ambiente isolado de um cliente no mesmo deploy. Dá pra rodar com um tenant só — o modelo cobre os dois casos.",
+      "optionalLabel": "template · os dois modos",
+      "optionalKeepTitle": "Vire plataforma quando…",
+      "optionalDropTitle": "Fique num produto só quando…",
+      "optionalKeep": [
+        "Você vende pra muitos clientes num app",
+        "Cada cliente precisa de dados privados",
+        "Assentos / planos são por organização"
+      ],
+      "optionalDrop": [
+        "Você constrói pra uma empresa só",
+        "Não precisa onboardar outras orgs",
+        "Um workspace fixo basta"
+      ],
+      "optionalNote": "O template serve pros dois. Mantenha multi-tenant pra vender plataforma, ou ignore o switcher / use um tenant e trate como app singular — ou delete o que não precisar.",
+      "settingsTitle": "Configurações",
+      "settingsDescription": "Nome do workspace, membros e convites.",
+      "general": "Geral",
+      "pending": "Convites pendentes",
+      "expires": "Expira em 7 dias"
+    },
     "nav": {
       "home": "Início",
       "tasks": "Tarefas",
@@ -2371,12 +2386,7 @@
       "description": "Recurso de exemplo",
       "placeholder": "Adicionar uma tarefa...",
       "add": "Adicionar",
-      "items": [
-        "Desenhar o schema",
-        "Ligar o repository",
-        "Expor a rota",
-        "Construir a tela"
-      ],
+      "items": ["Desenhar o schema", "Ligar o repository", "Expor a rota", "Construir a tela"],
       "left": "Recurso de exemplo com CRUD por tenant · 2 de 4 restantes"
     },
     "account": {
@@ -3313,6 +3323,103 @@
         "Senha atual + nova",
         "PATCH /api/account/password",
         "Na mesma página Minha conta"
+      ]
+    }
+  },
+  "tenantsCourse": {
+    "parts": {
+      "team": {
+        "eyebrow": "Time",
+        "title": "Settings, membros e convites",
+        "body": "Dentro de um tenant: renomeie o workspace, gerencie quem faz parte e envie convites por e-mail com um papel. O switcher só aparece quando a pessoa está em mais de um."
+      }
+    },
+    "concept": {
+      "eyebrow": "Por que tenants",
+      "title": "Pare de entregar um app — entregue uma plataforma",
+      "body": "Pegue um produto simples — um blog pra um autor — e some tenants: de repente você tem uma plataforma de blogs, onde Acme, Ada e Alan cada um tem o site isolado no mesmo código. É isso: não servir só um cliente, e sim N clientes como serviço. App singular → plataforma de alguma coisa.",
+      "points": [
+        "Um deploy, muitos ambientes de cliente",
+        "Blog → plataforma de blogs (mesmo padrão pra CRM, tasks, …)",
+        "Dados de cada tenant ficam privados",
+        "Usuários ainda podem estar em mais de um"
+      ]
+    },
+    "model": {
+      "eyebrow": "Modelo de dados",
+      "title": "tenants · members · invites",
+      "body": "tenants guardam nome, slug e plano. tenant_members é o join com role. tenant_invites guarda links pendentes. Tabelas de recurso (tasks, articles, …) têm tenant_id — toda query filtra pra Acme nunca ver posts da Ada.",
+      "points": [
+        "tenants — id, name, slug, plan_id",
+        "tenant_members — role por usuário",
+        "tenant_invites — e-mail + expiry",
+        "Recursos sempre com escopo de tenantId"
+      ]
+    },
+    "optional": {
+      "eyebrow": "Os dois modos",
+      "title": "Plataforma pra muitos — ou um produto pra um",
+      "body": "Use tenants quando vende um serviço multi-cliente. Ou rode um workspace só e trate o app como produto singular pra uma org — esconda o switcher, pule convites, até delete o código de tenant depois. O template cobre os dois; nada obriga o caminho de plataforma.",
+      "points": [
+        "Modo plataforma = N tenants num deploy",
+        "Modo singular = um workspace basta",
+        "Ignore, esconda ou remova o que não precisar",
+        "Mesmo ponto de partida nos dois casos"
+      ]
+    },
+    "general": {
+      "eyebrow": "Geral",
+      "title": "Nomeie o workspace",
+      "body": "Settings → Geral renomeia o tenant. O slug continua no segmento /app/:slug. Managers podem sair quando não forem o último owner.",
+      "points": [
+        "/app/:slug/settings",
+        "Rename com role de manager",
+        "Slug identifica o workspace nas URLs",
+        "Sair do workspace quando permitido"
+      ]
+    },
+    "members": {
+      "eyebrow": "Membros",
+      "title": "Quem faz parte, e com qual papel",
+      "body": "O card de membros lista quem tem acesso. Managers mudam roles (owner / admin / member) ou removem — checks no server, nunca só na UI.",
+      "points": [
+        "Avatar, nome, e-mail, role",
+        "Troca de role pra managers",
+        "Remover membro com confirm",
+        "Você não se rebaixa sozinho pra um beco"
+      ]
+    },
+    "invites": {
+      "eyebrow": "Convites",
+      "title": "Traga alguém por e-mail",
+      "body": "Owners e admins convidam com e-mail + role. Convites pendentes são revogáveis. Cap de assentos do plano bloqueia novos convites quando o workspace está cheio.",
+      "points": [
+        "Form e-mail + role",
+        "Lista pendente com revoke",
+        "Limites de assento do plano",
+        "Só managers"
+      ]
+    },
+    "inviteEmail": {
+      "eyebrow": "Inbox",
+      "title": "Um link de 7 dias cai aqui",
+      "body": "E-mail transacional com link single-use. Aceitar entra no tenant no papel convidado — mesmo stack de mail do verify / reset.",
+      "points": [
+        "Assunto nomeia o workspace",
+        "CTA Accept invite",
+        "Expira em 7 dias",
+        "Hash no banco — token cru só no link"
+      ]
+    },
+    "switcher": {
+      "eyebrow": "Switcher",
+      "title": "Troque quando houver mais de um",
+      "body": "Se o usuário está em dois ou mais tenants, a sidebar mostra o switcher. Com um só, o ambiente fica implícito — sem chrome pra escolha que não existe.",
+      "points": [
+        "Oculto com um único tenant",
+        "Lista toda membership",
+        "Navega pra /app/:slug",
+        "Também no tour de Workspace"
       ]
     }
   }

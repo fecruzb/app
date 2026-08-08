@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import type { LucideIcon } from "lucide-react";
 import {
   BotIcon,
-  Building2Icon,
   CreditCardIcon,
   KeyRoundIcon,
   LayoutDashboardIcon,
@@ -16,32 +15,31 @@ import {
   type ProductAreaId,
 } from "../components/product/chapter-section";
 import { AgentProductStructure } from "../components/product/agent-structure";
+import { TenantsProductStructure } from "../components/product/tenants-structure";
 import { WorkspaceProductStructure } from "../components/product/workspace-structure";
 import { useDocumentMeta } from "@/lib/document-meta";
 import { MarketingHero } from "../components/marketing-hero";
 import { MarketingShell } from "../components/marketing-shell";
 import { useReveal } from "../hooks/use-reveal";
 
-const areaIcons: Record<Exclude<ProductAreaId, "account">, LucideIcon> = {
+const areaIcons: Record<Exclude<ProductAreaId, "account" | "tenants">, LucideIcon> = {
   auth: KeyRoundIcon,
   workspace: LayoutDashboardIcon,
   agent: BotIcon,
-  tenants: Building2Icon,
   billing: CreditCardIcon,
   admin: ShieldIcon,
 };
 
-const areaSeoKey: Record<Exclude<ProductAreaId, "account">, string> = {
+const areaSeoKey: Record<Exclude<ProductAreaId, "account" | "tenants">, string> = {
   auth: "productAuth",
   workspace: "productWorkspace",
   agent: "productAgent",
-  tenants: "productTenants",
   billing: "productBilling",
   admin: "productAdmin",
 };
 
 /** One Product deep-dive — compact hero + chapter FeatureSplits for that area. */
-export function ProductAreaPage({ area }: { area: Exclude<ProductAreaId, "account"> }) {
+export function ProductAreaPage({ area }: { area: Exclude<ProductAreaId, "account" | "tenants"> }) {
   const { t, i18n } = useTranslation();
   useReveal();
   const Icon = areaIcons[area];
@@ -115,8 +113,20 @@ export function ProductAgentPage() {
 export function ProductAccountPage() {
   return <Navigate to="/product/workspace" replace />;
 }
+/** Tenants — isolation concept, schema, optional template, members & invites. */
 export function ProductTenantsPage() {
-  return <ProductAreaPage area="tenants" />;
+  const { t } = useTranslation();
+  useReveal();
+  useDocumentMeta({
+    title: t("landing.seo.productTenants.title"),
+    description: t("landing.seo.productTenants.description"),
+    path: "/product/tenants",
+  });
+  return (
+    <MarketingShell>
+      <TenantsProductStructure />
+    </MarketingShell>
+  );
 }
 export function ProductBillingPage() {
   return <ProductAreaPage area="billing" />;

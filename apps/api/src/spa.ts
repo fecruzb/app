@@ -97,7 +97,8 @@ const MARKETING_META: Record<string, { title: string; description: string }> = {
   },
   "/product/tenants": {
     title: `Tenants · ${brand.displayName}`,
-    description: "Members and invites — bring the rest of the team into a workspace.",
+    description:
+      "Turn a single-purpose app into a platform for many customers — or keep one workspace. Same template, both modes.",
   },
   "/product/billing": {
     title: `Billing · ${brand.displayName}`,
