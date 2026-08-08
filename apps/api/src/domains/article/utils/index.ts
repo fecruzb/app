@@ -3,6 +3,7 @@
  *
  * Domain helpers with logic (media storage).
  */
+export { sniffImageExt } from "./image.utils";
 export {
   ensureMediaDir,
   MEDIA_DIR,

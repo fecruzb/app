@@ -7,8 +7,9 @@
  */
 import { generateArticleCoverSchema } from "@app/shared";
 import { z } from "zod";
+import { HttpError } from "@/lib/errors";
 import { generateAndAttachArticleCover } from "../generate-article-cover";
-import { defineTool } from "../tool";
+import { defineTool, ToolError } from "../tool";
 
 /**
  * Generate article cover
@@ -34,12 +35,24 @@ export const generateArticleCoverTool = defineTool({
     const { tenantId, userId } = ctx;
 
     // -- Processing ------------------------------------------------------------
-    const result = await generateAndAttachArticleCover({
-      tenantId,
-      userId,
-      articleId,
-      prompt,
-    });
+    let result: { id: string; coverUrl: string | null };
+    try {
+      result = await generateAndAttachArticleCover({
+        tenantId,
+        userId,
+        articleId,
+        prompt,
+      });
+    } catch (err) {
+      // Shared helper throws HttpError; map to ToolError at the tool edge.
+      if (err instanceof HttpError) {
+        if (err.status === 404) {
+          throw new ToolError("Article not found — check the id with list_articles");
+        }
+        throw new ToolError(err.message);
+      }
+      throw err;
+    }
 
     // -- Output ----------------------------------------------------------------
     return result;

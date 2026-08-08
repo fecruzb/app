@@ -2566,7 +2566,9 @@
       "colKey": "Key",
       "colValue": "Value",
       "manage": "Manage",
+      "shellTab": "Shell",
       "envTab": "Environment",
+      "scalingTab": "Scaling",
       "edit": "Edit",
       "envSubtitle": "Defina config e segredos; o código lê esses valores.",
       "envFootnote": "chaves sync: false se editam aqui — não no git.",
@@ -2622,7 +2624,9 @@
     },
     "openai": {
       "nav": "Platform",
+      "homeNav": "Home",
       "keysNav": "API keys",
+      "usageNav": "Usage",
       "keysTitle": "API keys",
       "keysSubtitle": "Crie e gerencie secret keys da OpenAI API.",
       "createKey": "Create new secret key",
@@ -2652,6 +2656,7 @@
     },
     "resend": {
       "workspace": "Workspace",
+      "emailsNav": "Emails",
       "keysNav": "API keys",
       "domainsNav": "Domains",
       "keysTitle": "API keys",

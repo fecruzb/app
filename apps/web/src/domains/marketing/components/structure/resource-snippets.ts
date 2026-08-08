@@ -452,29 +452,31 @@ export function verifyEmailTemplate(name: string, url: string) {
 // template/index.ts → services import from "./template"`;
 
 export const serviceFile = `// service.ts — ONLY when there's real business logic
-export async function createSession(c: Context, user: User): Promise<string> {
+export async function createSession(userId: string): Promise<string> {
   const token = generateToken();
   await authRepository.insertSession({
-    userId: user.id,
+    userId,
     tokenHash: hashToken(token),
     expiresAt: new Date(Date.now() + SESSION_TTL_MS),
   });
-  setSessionCookie(c, token);
-  return token;
+  return token; // routes call setSessionCookie(c, token)
 }
 
 // Plain CRUD skips this file — route/tool calls the repository directly.`;
 
 export const appMountFile = `// app.ts — each domain group mounts once
+app.route("/api/mcp", mcpRoutes);                  // API-key Bearer
 app.route("/api/auth", authRoutes);
 app.route("/api/account", accountRoutes);
 app.route("/api/admin", adminRoutes);
 app.route("/api/tenants", tenantRoutes);
+app.route("/api/tenants/:tenantId/billing", billingRoutes);
 app.route("/api/tenants/:tenantId/tasks", taskRoutes);
 app.route("/api/tenants/:tenantId/articles", articleRoutes);
 app.route("/api/articles", publicArticleRoutes);   // public surface
+app.route("/api/tenants/:tenantId/agent", agentRoutes);
 app.route("/api/invites", inviteRoutes);           // token auth
-app.route("/api/mcp", mcpRoutes);                  // API-key Bearer
+app.route("/api/join", joinRoutes);                // platform invite
 
 // Tenant groups: requireAuth + requireTenant in routes/index.ts`;
 

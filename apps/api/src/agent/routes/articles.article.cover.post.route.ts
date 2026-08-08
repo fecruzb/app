@@ -19,7 +19,7 @@ import { generateAndAttachArticleCover } from "../generate-article-cover";
  */
 export async function generateArticleCover(c: AppContext) {
   // -- Input -----------------------------------------------------------------
-  if (!hasOpenAiKey()) throw new HttpError(503, "AI is not configured");
+  if (!hasOpenAiKey()) throw new HttpError(503, "AI is not configured on this server");
   const tenant = c.get("tenant");
   const user = c.get("user");
   const articleId = uuidParam(c, "articleId");
@@ -38,8 +38,6 @@ export async function generateArticleCover(c: AppContext) {
     });
   } catch (err) {
     if (err instanceof HttpError) throw err;
-    const message = err instanceof Error ? err.message : "Failed to generate cover";
-    if (message === "Article not found") throw new HttpError(404, message);
     throw new HttpError(502, "Failed to generate cover");
   }
 

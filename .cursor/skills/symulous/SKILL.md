@@ -37,11 +37,22 @@ Always load this file before MCP calls. Never hardcode IDs from another product.
 
 ## Ticket buckets
 
-| Key | Project | Put tickets here when… |
-| --- | --- | --- |
-| `features` | Features | New work, enhancements, domains, product delivery |
-| `bugs` | Bugs | Something is broken or regressing |
-| `audits` | Audits | Review/audit/checklist work (conventions, security, structure) |
+| Key        | Project  | Put tickets here when…                                                                                        |
+| ---------- | -------- | ------------------------------------------------------------------------------------------------------------- |
+| `features` | Features | New work, enhancements, domains, product delivery                                                             |
+| `bugs`     | Bugs     | Something is broken or regressing                                                                             |
+| `audits`   | Audits   | Review/audit/checklist work (conventions, security, structure) — **required** for every audit run (see below) |
+
+### Audits board (required for every audit)
+
+When running a convention/structure/security audit (`.cursor/skills/audit/SKILL.md`):
+
+1. `create_task` on `projects.audits.short_id` at the start (title includes scope + date).
+2. Document the full findings in the task body (not only in chat).
+3. Remediations: note fixed vs deferred on the same ticket.
+4. `complete_task` when the audit (and any agreed fixes) are finished.
+
+Do not skip the ticket even for a clean Pass.
 
 ## Day-to-day
 
@@ -60,11 +71,11 @@ Do **not** create a task for every tiny edit — only agreed, actionable work. D
 
 ### Docs (settled only)
 
-| Doc | Update when |
-| --- | --- |
-| Overview | Product purpose or audience changes |
+| Doc          | Update when                                              |
+| ------------ | -------------------------------------------------------- |
+| Overview     | Product purpose or audience changes                      |
 | Architecture | Structure actually changed (domains added/removed, etc.) |
-| Decisions | A real design/product choice is settled |
+| Decisions    | A real design/product choice is settled                  |
 
 Prefer `append_to_doc` for new ADR sections. Use `propose_doc_change` / block edits for in-place fixes. Prefer `read_doc` before editing.
 

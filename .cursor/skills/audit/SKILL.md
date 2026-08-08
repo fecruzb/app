@@ -31,13 +31,27 @@ Copy and track:
 
 ```
 - [ ] 1. Resolve scope + list files
-- [ ] 2. Load relevant Cursor rules (and this checklist)
-- [ ] 3. Structural / naming / registration pass
-- [ ] 4. Security + tenant isolation pass
-- [ ] 5. Contracts, layers, i18n, UI package pass
-- [ ] 6. Run npm run lint && npm run typecheck
-- [ ] 7. Write the report
+- [ ] 2. Create Symulous Audits ticket (document as you go)
+- [ ] 3. Load relevant Cursor rules (and this checklist)
+- [ ] 4. Structural / naming / registration pass
+- [ ] 5. Security + tenant isolation pass
+- [ ] 6. Contracts, layers, i18n, UI package pass
+- [ ] 7. Run npm run lint && npm run typecheck
+- [ ] 8. Write the report into the ticket + chat
+- [ ] 9. complete_task when audit (+ agreed fixes) are done
 ```
+
+### Symulous (required)
+
+Findings live on the **Audits** project — never only in chat. Read `.symulous.json`, then:
+
+1. `create_task` on `projects.audits.short_id` with title like `Convention audit — <scope> (YYYY-MM-DD)`, `phase_name` usually `QA`, body seeded with scope.
+2. Put the full report in the task (`markdown` / `append_to_task`): Summary, Findings by severity (paths), checks run, out of scope.
+3. If the user asks to fix findings: `start_working`, remediate, note fixed vs deferred on the ticket, then `complete_task`.
+4. If the audit is report-only: `complete_task` after the report is on the ticket.
+5. In chat, link the task absolute `url`.
+
+See `.cursor/rules/symulous.mdc` (Audits section) and `.cursor/skills/symulous/SKILL.md`.
 
 ### 1. Resolve scope
 
@@ -133,7 +147,7 @@ Never read or print `.env` / secret values during the audit.
 
 Omit empty severity sections. If clean: say so and keep Summary short.
 
-End with whether you can apply fixes (only if the user wants).
+Mirror this report into the Symulous Audits ticket body. In chat, include the ticket `url` and whether you can apply fixes (only if the user wants).
 
 ## Triggers (examples)
 

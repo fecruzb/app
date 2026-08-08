@@ -20,11 +20,11 @@ If the file is missing or IDs are stale, follow the `symulous` skill to bootstra
 
 ## Ticket buckets (pick one project)
 
-| Project | Use for |
-| --- | --- |
-| **Features** | New capabilities, domains, enhancements, agreed delivery work |
-| **Bugs** | Defects, regressions, incorrect behavior |
-| **Audits** | Convention/structure/security reviews, checklist-driven pass/fail work |
+| Project      | Use for                                                                |
+| ------------ | ---------------------------------------------------------------------- |
+| **Features** | New capabilities, domains, enhancements, agreed delivery work          |
+| **Bugs**     | Defects, regressions, incorrect behavior                               |
+| **Audits**   | Convention/structure/security reviews, checklist-driven pass/fail work |
 
 Work-in-progress and delivery status live **only on tickets** (phases, comments, complete). Do not keep a Progress/changelog doc.
 
@@ -42,6 +42,17 @@ Docs are for things that should stay true after the work lands — not a running
 - **Starting / finishing work** → move phase / `start_working` / `complete_task`; note outcomes on the ticket.
 - **Design or product decision (settled)** → append a dated section to Decisions.
 - **Domain / structure change (landed)** → update Architecture.
+
+### Audits (required)
+
+Every convention / structure / security audit goes on the **Audits** board (`projects.audits.short_id`). Do not leave findings only in chat.
+
+1. **Start** — `create_task` on Audits (`phase_name`: usually `QA` or `Discovery`) with scope, verdict placeholder, and checklist.
+2. **While auditing** — put the full report in the task body (`markdown` on create, or `append_to_task` / `update_task`): Summary, Critical / Warning / Note with paths, checks run (lint/typecheck), out of scope.
+3. **While remediating** — `start_working`, note what was fixed vs deferred on the ticket (comment or append).
+4. **Finish** — when the audit (and any agreed fixes) are done, `complete_task`. Link the ticket `url` in the chat reply.
+
+Follow `.cursor/skills/audit/SKILL.md` for the audit workflow; this rule is the Symulous documentation invariant.
 
 Code conventions stay in `.cursor/rules` and the repo. Product knowledge stays in Symulous.
 

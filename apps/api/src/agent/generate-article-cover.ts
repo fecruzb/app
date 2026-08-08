@@ -6,6 +6,7 @@
  */
 import { generateImage } from "@/integrations/openai";
 import { env } from "@/lib/env";
+import { HttpError } from "@/lib/errors";
 import { articleCoverUrl } from "@/domains/article/dto";
 import { newUploadKey, removeMedia, writeMedia } from "@/domains/article/utils";
 import { articleRepository } from "@/domains/article/repository";
@@ -45,7 +46,7 @@ export async function generateAndAttachArticleCover(opts: {
   prompt?: string;
 }): Promise<{ id: string; coverUrl: string | null }> {
   const current = await articleRepository.find(opts.tenantId, opts.articleId);
-  if (!current) throw new Error("Article not found");
+  if (!current) throw new HttpError(404, "Article not found");
 
   if (opts.userId) await assertAiBudget(opts.userId, opts.tenantId);
 
@@ -67,7 +68,7 @@ export async function generateAndAttachArticleCover(opts: {
     coverContentType: "image/webp",
     coverSizeBytes: sizeBytes,
   });
-  if (!article) throw new Error("Article not found");
+  if (!article) throw new HttpError(404, "Article not found");
 
   if (opts.userId) {
     await usageRepository.insert({

@@ -23,7 +23,7 @@ const MAX_AUDIO_BYTES = 10_000_000;
 export async function transcribe(c: AppContext) {
   // -- Input -----------------------------------------------------------------
   if (!hasOpenAiKey()) {
-    throw new HttpError(503, "Agent unavailable — set OPENAI_API_KEY");
+    throw new HttpError(503, "AI is not configured on this server");
   }
   const user = c.get("user");
   const tenant = c.get("tenant");
@@ -31,7 +31,11 @@ export async function transcribe(c: AppContext) {
   // -- Processing ------------------------------------------------------------
   await assertAiBudget(user.id, tenant.id);
 
-  if (Number(c.req.header("content-length") ?? 0) > MAX_AUDIO_BYTES) {
+  const contentLengthHeader = c.req.header("content-length");
+  if (contentLengthHeader == null) {
+    throw new HttpError(411, "Content-Length required");
+  }
+  if (Number(contentLengthHeader) > MAX_AUDIO_BYTES) {
     throw new HttpError(413, "Recording too long");
   }
   const form = await c.req.formData();

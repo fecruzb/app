@@ -354,15 +354,21 @@ export function RenderEnvMock({
           <p className="mb-2 truncate text-[9px] font-semibold text-[#8a8a8a] uppercase">
             {t("landing.preview.render.manage")}
           </p>
-          {["Shell", "Environment", "Scaling"].map((item, i) => (
+          {(
+            [
+              "landing.preview.render.shellTab",
+              "landing.preview.render.envTab",
+              "landing.preview.render.scalingTab",
+            ] as const
+          ).map((key, i) => (
             <div
-              key={item}
+              key={key}
               className={cn(
                 "mb-0.5 truncate rounded-md px-1.5 py-1",
                 i === 1 ? "bg-[#5b21b6]/40 text-[#ddd6fe]" : "text-[#9a9a9a]",
               )}
             >
-              {i === 1 ? t("landing.preview.render.envTab") : item}
+              {t(key)}
             </div>
           ))}
         </aside>
@@ -494,8 +500,7 @@ export function R2BucketObjectsMock() {
       <div className="bg-white p-3 text-[10px] text-zinc-800">
         <div className="mb-2 flex flex-wrap items-center gap-2">
           <p className="text-xs font-semibold">
-            {t("landing.preview.r2.title")}{" "}
-            <span className="text-zinc-400">›</span>{" "}
+            {t("landing.preview.r2.title")} <span className="text-zinc-400">›</span>{" "}
             {t("landing.preview.sample.serviceApp")}
           </p>
           <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-medium text-emerald-700">
@@ -563,7 +568,9 @@ export function R2BucketSettingsMock() {
               </div>
             </div>
           </div>
-          <p className="mt-1.5 text-[9px] text-amber-700/90">{t("landing.preview.r2.publicNote")}</p>
+          <p className="mt-1.5 text-[9px] text-amber-700/90">
+            {t("landing.preview.r2.publicNote")}
+          </p>
         </div>
       </div>
     </Window>
@@ -579,7 +586,9 @@ export function R2ApiTokensMock() {
         <div className="mb-3 flex items-start justify-between gap-2">
           <div>
             <p className="text-xs font-semibold">{t("landing.preview.r2.tokensTitle")}</p>
-            <p className="mt-0.5 text-[9px] text-zinc-500">{t("landing.preview.r2.tokensSubtitle")}</p>
+            <p className="mt-0.5 text-[9px] text-zinc-500">
+              {t("landing.preview.r2.tokensSubtitle")}
+            </p>
           </div>
           <span className="inline-flex shrink-0 items-center gap-1 rounded-md bg-[#2563eb] px-2 py-1 text-[9px] font-semibold text-white">
             {t("landing.preview.r2.createToken")}
@@ -617,7 +626,9 @@ export function R2CreateTokenMock() {
         <p className="text-xs font-semibold">{t("landing.preview.r2.createTokenTitle")}</p>
         <div className="mt-2 space-y-2">
           <div>
-            <p className="text-[9px] font-medium text-zinc-500">{t("landing.preview.r2.tokenNameLabel")}</p>
+            <p className="text-[9px] font-medium text-zinc-500">
+              {t("landing.preview.r2.tokenNameLabel")}
+            </p>
             <div className="mt-0.5 rounded-md border border-zinc-200 px-2 py-1 font-mono text-[9px]">
               {t("landing.preview.r2.tokenName")}
             </div>
@@ -668,15 +679,21 @@ export function OpenAiKeysMock() {
           <p className="mb-2 truncate text-[9px] font-semibold text-[#8a8a8a] uppercase">
             {t("landing.preview.openai.nav")}
           </p>
-          {["Home", "API keys", "Usage"].map((item, i) => (
+          {(
+            [
+              "landing.preview.openai.homeNav",
+              "landing.preview.openai.keysNav",
+              "landing.preview.openai.usageNav",
+            ] as const
+          ).map((key, i) => (
             <div
-              key={item}
+              key={key}
               className={cn(
                 "mb-0.5 truncate rounded-md px-1.5 py-1",
                 i === 1 ? "bg-white/10 text-white" : "text-[#9a9a9a]",
               )}
             >
-              {i === 1 ? t("landing.preview.openai.keysNav") : item}
+              {t(key)}
             </div>
           ))}
         </aside>
@@ -710,7 +727,9 @@ export function OpenAiKeysMock() {
               <span className="text-[#c4c4c4]">{t("landing.preview.openai.permsAll")}</span>
             </div>
           </div>
-          <p className="mt-2 text-[9px] text-[#8a8a8a]">{t("landing.preview.openai.keysFootnote")}</p>
+          <p className="mt-2 text-[9px] text-[#8a8a8a]">
+            {t("landing.preview.openai.keysFootnote")}
+          </p>
         </div>
       </div>
     </Window>
@@ -781,7 +800,9 @@ export function OpenAiCreateKeyMock() {
               {t("landing.preview.openai.createSecret")}
             </span>
           </div>
-          <p className="mt-2 text-[9px] text-[#8a8a8a]">{t("landing.preview.openai.createFootnote")}</p>
+          <p className="mt-2 text-[9px] text-[#8a8a8a]">
+            {t("landing.preview.openai.createFootnote")}
+          </p>
         </div>
       </div>
     </Window>
@@ -798,19 +819,21 @@ export function ResendKeysMock() {
           <p className="mb-2 truncate text-[9px] font-semibold text-[#8a8a8a]">
             {t("landing.preview.resend.workspace")}
           </p>
-          {["Emails", "Domains", "API keys"].map((item, i) => (
+          {(
+            [
+              "landing.preview.resend.emailsNav",
+              "landing.preview.resend.domainsNav",
+              "landing.preview.resend.keysNav",
+            ] as const
+          ).map((key, i) => (
             <div
-              key={item}
+              key={key}
               className={cn(
                 "mb-0.5 truncate rounded-md px-1.5 py-1",
                 i === 2 ? "bg-white/10 text-white" : "text-[#9a9a9a]",
               )}
             >
-              {i === 2
-                ? t("landing.preview.resend.keysNav")
-                : i === 1
-                  ? t("landing.preview.resend.domainsNav")
-                  : item}
+              {t(key)}
             </div>
           ))}
         </aside>
@@ -834,7 +857,9 @@ export function ResendKeysMock() {
               <span className="text-[#c4c4c4]">{t("landing.preview.resend.sendingAccess")}</span>
             </div>
           </div>
-          <p className="mt-2 text-[9px] text-[#8a8a8a]">{t("landing.preview.resend.keysFootnote")}</p>
+          <p className="mt-2 text-[9px] text-[#8a8a8a]">
+            {t("landing.preview.resend.keysFootnote")}
+          </p>
         </div>
       </div>
     </Window>
@@ -852,7 +877,9 @@ export function ResendCreateKeyMock() {
           <p className="text-[11px] font-semibold">{t("landing.preview.resend.addKeyTitle")}</p>
           <div className="mt-2.5 space-y-2">
             <div>
-              <p className="text-[9px] font-medium text-[#8a8a8a]">{t("landing.preview.resend.colName")}</p>
+              <p className="text-[9px] font-medium text-[#8a8a8a]">
+                {t("landing.preview.resend.colName")}
+              </p>
               <div className="mt-0.5 rounded-md border border-white/15 px-2 py-1 text-[9px] text-[#c4c4c4]">
                 {brand.displayName}
               </div>
@@ -882,7 +909,9 @@ export function ResendCreateKeyMock() {
               {t("landing.preview.resend.add")}
             </span>
           </div>
-          <p className="mt-2 text-[9px] text-[#8a8a8a]">{t("landing.preview.resend.createFootnote")}</p>
+          <p className="mt-2 text-[9px] text-[#8a8a8a]">
+            {t("landing.preview.resend.createFootnote")}
+          </p>
         </div>
       </div>
     </Window>
@@ -933,7 +962,9 @@ export function ResendDomainsMock() {
             </div>
           ))}
         </div>
-        <p className="mt-2 text-[9px] text-[#8a8a8a]">{t("landing.preview.resend.domainsFootnote")}</p>
+        <p className="mt-2 text-[9px] text-[#8a8a8a]">
+          {t("landing.preview.resend.domainsFootnote")}
+        </p>
       </div>
     </Window>
   );
@@ -964,10 +995,7 @@ export function ResendDomainDetailMock() {
           {steps.map((step, i) => (
             <div key={step} className="flex min-w-0 flex-1 flex-col items-center gap-1">
               <span
-                className={cn(
-                  "size-2 rounded-full",
-                  i === 2 ? "bg-emerald-400" : "bg-white/30",
-                )}
+                className={cn("size-2 rounded-full", i === 2 ? "bg-emerald-400" : "bg-white/30")}
               />
               <span className="truncate text-center text-[8px] text-[#8a8a8a]">{step}</span>
             </div>
@@ -1043,7 +1071,9 @@ export function GodaddyDnsMock() {
             </div>
           ))}
         </div>
-        <p className="mt-2 text-[9px] text-zinc-500">{t("landing.preview.domain.godaddyFootnote")}</p>
+        <p className="mt-2 text-[9px] text-zinc-500">
+          {t("landing.preview.domain.godaddyFootnote")}
+        </p>
       </div>
     </Window>
   );
@@ -1107,7 +1137,9 @@ export function RenderAddDomainMock() {
         <div className="pointer-events-none absolute inset-0 bg-black/50" aria-hidden />
         <div className="relative mx-auto max-w-[16rem] rounded-xl border border-white/15 bg-[#1a1a1a] p-3 shadow-xl">
           <p className="text-[11px] font-semibold">{t("landing.preview.domain.addModalTitle")}</p>
-          <p className="mt-0.5 text-[9px] text-[#8a8a8a]">{t("landing.preview.domain.addModalSubtitle")}</p>
+          <p className="mt-0.5 text-[9px] text-[#8a8a8a]">
+            {t("landing.preview.domain.addModalSubtitle")}
+          </p>
           <div className="mt-2 flex gap-2 text-[8px] text-[#8a8a8a]">
             <span className="font-semibold text-white">{t("landing.preview.domain.step1")}</span>
             <span>→</span>
@@ -1149,15 +1181,21 @@ export function RenderDomainDnsMock() {
           </p>
           <div className="mt-2 space-y-1.5 rounded-lg border border-white/10 bg-[#121212] p-2">
             <div className="flex justify-between gap-2">
-              <span className="text-[9px] text-[#8a8a8a]">{t("landing.preview.domain.colType")}</span>
+              <span className="text-[9px] text-[#8a8a8a]">
+                {t("landing.preview.domain.colType")}
+              </span>
               <span className="font-mono text-[9px]">CNAME</span>
             </div>
             <div className="flex justify-between gap-2">
-              <span className="text-[9px] text-[#8a8a8a]">{t("landing.preview.domain.hostname")}</span>
+              <span className="text-[9px] text-[#8a8a8a]">
+                {t("landing.preview.domain.hostname")}
+              </span>
               <span className="font-mono text-[9px]">{t("landing.preview.domain.cnameHost")}</span>
             </div>
             <div className="flex justify-between gap-2">
-              <span className="text-[9px] text-[#8a8a8a]">{t("landing.preview.domain.target")}</span>
+              <span className="text-[9px] text-[#8a8a8a]">
+                {t("landing.preview.domain.target")}
+              </span>
               <span className="truncate font-mono text-[9px] text-[#a78bfa]">
                 {t("landing.preview.domain.onrenderHost")}
               </span>
