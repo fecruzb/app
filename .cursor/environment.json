@@ -1,0 +1,17 @@
+{
+  "name": "app-base",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "user": "ubuntu",
+  "install": "./.cursor/scripts/cloud-agent-install.sh",
+  "start": "./.cursor/scripts/cloud-agent-start.sh",
+  "terminals": [
+    {
+      "name": "dev",
+      "command": "npm run dev"
+    }
+  ],
+  "ports": [3000, 5050]
+}
