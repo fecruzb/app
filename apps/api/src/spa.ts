@@ -50,8 +50,23 @@ const MARKETING_META: Record<string, { title: string; description: string }> = {
     description:
       "MediaStore with Cloudflare R2 when configured, local disk fallback for development.",
   },
+  "/code/openai": {
+    title: `AI Agent · ${brand.displayName}`,
+    description:
+      "Optional OPENAI_API_KEY, the tool-calling loop, and how the in-app agent degrades without a key.",
+  },
+  "/code/resend": {
+    title: `Mailing · ${brand.displayName}`,
+    description:
+      "Optional RESEND_API_KEY, verified sending domain, and console fallback when the key is missing.",
+  },
+  "/code/domain": {
+    title: `Domain · ${brand.displayName}`,
+    description:
+      "Custom domain on Render: add the host, CNAME at your registrar, wait for the certificate, set APP_URL.",
+  },
   "/code/i18n": {
-    title: `i18n · ${brand.displayName}`,
+    title: `Translation · ${brand.displayName}`,
     description:
       "English and Portuguese locale files, useTranslation, and a live language switcher.",
   },

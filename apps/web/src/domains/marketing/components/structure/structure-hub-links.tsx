@@ -5,10 +5,13 @@ import {
   ArrowRightIcon,
   CloudIcon,
   DatabaseIcon,
+  GlobeIcon,
   LanguagesIcon,
   LayoutIcon,
+  MailIcon,
   ServerIcon,
   SlidersIcon,
+  SparklesIcon,
 } from "lucide-react";
 import { Button } from "@app/ui/button";
 import { Card, CardContent } from "@app/ui/card";
@@ -30,6 +33,9 @@ const platformLinks: HubLink[] = [
   { id: "environment", to: "/code/environment", icon: SlidersIcon },
   { id: "database", to: "/code/database", icon: DatabaseIcon },
   { id: "storage", to: "/code/storage", icon: CloudIcon },
+  { id: "openai", to: "/code/openai", icon: SparklesIcon },
+  { id: "resend", to: "/code/resend", icon: MailIcon },
+  { id: "domain", to: "/code/domain", icon: GlobeIcon },
   { id: "i18n", to: "/code/i18n", icon: LanguagesIcon },
 ];
 

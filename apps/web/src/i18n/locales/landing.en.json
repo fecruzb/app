@@ -13,7 +13,10 @@
       "environment": "Environment",
       "database": "Database",
       "storage": "Storage",
-      "i18n": "i18n"
+      "openai": "AI Agent",
+      "resend": "Mailing",
+      "i18n": "Translation",
+      "domain": "Domain"
     },
     "productMenu": {
       "open": "Open Product menu",
@@ -89,10 +92,18 @@
     },
     "structureStorage": {
       "title": "Storage · {{brand}}",
-      "description": "MediaStore with Cloudflare R2 when configured, local disk fallback for development."
+      "description": "MediaStore contract, local disk fallback, then Cloudflare R2 — bucket, public URL, tokens, and env vars."
+    },
+    "structureOpenai": {
+      "title": "AI Agent · {{brand}}",
+      "description": "Optional OPENAI_API_KEY, the tool-calling loop, and how the in-app agent degrades without a key."
+    },
+    "structureResend": {
+      "title": "Mailing · {{brand}}",
+      "description": "Optional RESEND_API_KEY, verified sending domain, and console fallback when the key is missing."
     },
     "structureI18n": {
-      "title": "i18n · {{brand}}",
+      "title": "Translation · {{brand}}",
       "description": "English and Portuguese locale files, useTranslation, and a live language switcher."
     },
     "tour": {
@@ -198,6 +209,10 @@
     "uiCharts": {
       "title": "Charts · {{brand}}",
       "description": "Bar, line, and pie charts from @app/ui/chart."
+    },
+    "structureDomain": {
+      "title": "Domain · {{brand}}",
+      "description": "Custom domain on Render: add the host, CNAME at your registrar, wait for the certificate, set APP_URL."
     }
   },
   "articles": {
@@ -651,6 +666,396 @@
       "visualCompose": "✔ postgres:16 on :5442 (local only)"
     }
   },
+  "structureStorage": {
+    "eyebrow": "Storage",
+    "title": "MediaStore. Disk. R2.",
+    "body": "One put/get interface for files. Local disk while you build; Cloudflare R2 when Render's filesystem would throw the bytes away."
+  },
+  "storageCourse": {
+    "parts": {
+      "r2": {
+        "eyebrow": "Cloudflare R2",
+        "title": "Bucket, public URL, credentials",
+        "body": "Create a bucket, turn on public access, mint an R2 token, then paste CLOUDFLARE_* and R2_PUBLIC_BASE_URL into Render. Domains keep calling mediaStore — only the backend changes."
+      }
+    },
+    "repoHints": {
+      "contract": "put · get · has · remove",
+      "r2": "S3 client",
+      "pick": "R2 or disk",
+      "env": "optional keys"
+    },
+    "overview": {
+      "eyebrow": "Overview",
+      "title": "Where file storage lives",
+      "body": "lib/media-store.ts is the contract. integrations/r2.ts talks S3 to Cloudflare. article/utils picks the backend at boot and compresses uploads. Closed here — opened next.",
+      "points": [
+        "media-store.ts — the interface",
+        "integrations/r2.ts — production backend",
+        "media.utils.ts — pick + writeMedia",
+        "optional CLOUDFLARE_* in .env"
+      ],
+      "workspace": "APP-BASE",
+      "aria": "Storage-related API files in a VS Code-style explorer"
+    },
+    "contract": {
+      "eyebrow": "MediaStore",
+      "title": "One interface for every file",
+      "body": "Domains never import the S3 SDK. They call put, get, has, remove on MediaStore. Keys stay tenant-scoped — the same relative path shape whether bytes land on disk or in R2.",
+      "points": [
+        "put · get · has · remove",
+        "key = tenantId/uploads/…",
+        "no S3 types in domains",
+        "swap backends without callers"
+      ]
+    },
+    "backends": {
+      "eyebrow": "Backends",
+      "title": "R2 when configured, disk otherwise",
+      "body": "isR2Configured() checks endpoint, keys, and public URL. Missing any piece → localStore under MEDIA_DIR. That keeps local setup zero-config and production durable.",
+      "points": [
+        "usingR2 picked once at boot",
+        "localStore for development",
+        "r2Store for Render",
+        "DB stores the same relative path"
+      ]
+    },
+    "write": {
+      "eyebrow": "writeMedia",
+      "title": "Compress, then put",
+      "body": "Uploads go through sharp → WebP before mediaStore.put. Callers get back a public path and compressed size — never raw upload bytes on disk or in the bucket.",
+      "points": [
+        "sharp → WebP on write",
+        "mediaStore.put after compress",
+        "path stored on the article row",
+        "articles already use this path"
+      ]
+    },
+    "local": {
+      "eyebrow": "Local disk",
+      "title": "Fine for dev, wrong for Render",
+      "body": "Without R2 credentials, files land under MEDIA_DIR (often apps/web/public). That works on your laptop. Render's disk is ephemeral — set R2 before you care about covers surviving a deploy.",
+      "points": [
+        "MEDIA_DIR default for local",
+        "no vendor account required",
+        "ephemeral on Render",
+        "same MediaStore API either way"
+      ],
+      "visualDir": "apps/web/public",
+      "visualEmpty": "(empty until you upload a cover)"
+    },
+    "r2Buckets": {
+      "eyebrow": "Buckets",
+      "title": "Create the app bucket",
+      "body": "In Cloudflare: R2 Object Storage → Create bucket. Name it to match CLOUDFLARE_MEDIA_BUCKET (default app). Note the Account ID — it appears in the S3 endpoint.",
+      "points": [
+        "R2 → Overview → Create bucket",
+        "name matches MEDIA_BUCKET",
+        "Account ID on the overview",
+        "API Tokens → Manage from here"
+      ]
+    },
+    "r2Objects": {
+      "eyebrow": "Objects",
+      "title": "Empty is fine — public access on",
+      "body": "The bucket starts empty; the API writes objects via S3. Enable public access so browsers can load covers from the public URL without the API proxying bytes.",
+      "points": [
+        "Objects tab — empty until uploads",
+        "Public access Enabled",
+        "API writes via S3, not drag-drop",
+        "app.ts redirects to the public URL"
+      ]
+    },
+    "r2Settings": {
+      "eyebrow": "Settings",
+      "title": "S3 API + public development URL",
+      "body": "Copy the S3 API host into CLOUDFLARE_S3_API (account endpoint, no secrets). Copy the public development URL (or a custom domain) into R2_PUBLIC_BASE_URL. Without that origin, isR2Configured stays false.",
+      "points": [
+        "S3 API → CLOUDFLARE_S3_API",
+        "pub-….r2.dev → R2_PUBLIC_BASE_URL",
+        "custom domain optional later",
+        "public URL required to enable R2"
+      ]
+    },
+    "r2Tokens": {
+      "eyebrow": "API tokens",
+      "title": "Credentials for the S3 client",
+      "body": "Create an account token with R2 Storage edit. Cloudflare shows an Access Key ID and Secret Access Key once — those become CLOUDFLARE_ACCESS_KEY_ID and CLOUDFLARE_SECRET_ACCESS_KEY on Render (sync: false).",
+      "points": [
+        "Manage account → API tokens",
+        "or R2 overview → Manage tokens",
+        "Access Key ID + Secret once",
+        "never commit the secret"
+      ]
+    },
+    "r2CreateToken": {
+      "eyebrow": "Create token",
+      "title": "Workers R2 Storage · Edit",
+      "body": "Filter permissions by r2, grant Workers R2 Storage Edit on the account, create the token, then copy the S3 credentials into env. Read-only is not enough for cover uploads.",
+      "points": [
+        "search permissions: r2",
+        "Workers R2 Storage → Edit",
+        "Entire account (or scoped)",
+        "paste keys into Render Environment"
+      ]
+    },
+    "r2Env": {
+      "eyebrow": "Env vars",
+      "title": "R2 keys on Render",
+      "body": "Paste CLOUDFLARE_* and R2_PUBLIC_BASE_URL in the Render Environment dashboard. Secrets use sync: false. Partial config counts as off — local disk until every piece is set.",
+      "points": [
+        "CLOUDFLARE_S3_API",
+        "ACCESS_KEY_ID + SECRET",
+        "MEDIA_BUCKET (default app)",
+        "R2_PUBLIC_BASE_URL"
+      ],
+      "visualFootnote": "sync: false on secrets; without the public URL, R2 stays off."
+    },
+    "r2Integration": {
+      "eyebrow": "integrations/r2.ts",
+      "title": "S3 against Cloudflare",
+      "body": "The R2 backend is a thin MediaStore over @aws-sdk/client-s3. region auto, endpoint from env. Domains stay on mediaStore — only this file knows about PutObjectCommand.",
+      "points": [
+        "layer: integrations/ only",
+        "isR2Configured gates the client",
+        "put/get/has/remove via S3",
+        "redirect, don't proxy"
+      ]
+    }
+  },
+  "structureOpenai": {
+    "eyebrow": "AI Agent",
+    "title": "Key. Loop. Agent.",
+    "body": "One optional secret powers the assistant. Without it the FAB hides and the rest of the app keeps working. With it, integrations/openai runs the tool loop and agent/assistant owns the product policy."
+  },
+  "openaiCourse": {
+    "parts": {
+      "keys": {
+        "eyebrow": "platform.openai.com",
+        "title": "Mint the secret, paste once",
+        "body": "Create a secret key in the OpenAI dashboard, set OPENAI_API_KEY on Render (sync: false), and the in-app agent lights up. Never commit the sk- value."
+      }
+    },
+    "repoHints": {
+      "sdk": "OpenAI client",
+      "assistant": "product policy",
+      "tools": "allTools registry",
+      "env": "optional key"
+    },
+    "overview": {
+      "eyebrow": "Overview",
+      "title": "Where the AI stack lives",
+      "body": "integrations/openai.ts owns the SDK and the tool-calling loop. agent/assistant.ts is product policy. Domain tools never import openai — lint enforces it. Closed here — opened next.",
+      "points": [
+        "integrations/openai.ts — SDK + loop",
+        "agent/assistant.ts — system prompt + chips",
+        "registry — same tools as MCP",
+        "OPENAI_API_KEY optional"
+      ],
+      "workspace": "APP-BASE",
+      "aria": "OpenAI and agent files in a VS Code-style explorer"
+    },
+    "hasKey": {
+      "eyebrow": "hasOpenAiKey",
+      "title": "Optional — degrade gracefully",
+      "body": "No key means the agent stays hidden and chat returns 503. Everything else — auth, tenants, tasks — keeps working. Same pattern as Resend and R2.",
+      "points": [
+        "hasOpenAiKey() gates the FAB",
+        "503 with a clear message",
+        "getOpenAI() only when needed",
+        "no vendor account required to develop"
+      ]
+    },
+    "loop": {
+      "eyebrow": "runToolLoop",
+      "title": "Model → tools → model",
+      "body": "The only file that imports the openai package. It runs chat completions with tools, executes each call, feeds results back, and returns usage for the billing ledger.",
+      "points": [
+        "only integrations/ imports openai",
+        "tool results go back to the model",
+        "usage → cost micros for billing",
+        "swap provider here without touching domains"
+      ]
+    },
+    "assistant": {
+      "eyebrow": "assistant.ts",
+      "title": "Policy, not the SDK",
+      "body": "runAssistant maps registry tools onto the loop, builds the system prompt from tenant context, and streams status chips. Tenant and user always come from ctx — never from the model inventing ids.",
+      "points": [
+        "allTools from the registry",
+        "tenant/user from middleware ctx",
+        "ToolError messages stay caller-safe",
+        "same tools as remote MCP"
+      ]
+    },
+    "keys": {
+      "eyebrow": "API keys",
+      "title": "Your keys on platform.openai.com",
+      "body": "Open API keys, create a secret for this product, keep it Active. The dashboard shows a masked sk-… — the full value appears only at creation.",
+      "points": [
+        "API keys in the left nav",
+        "one key per product (or env)",
+        "secret masked after create",
+        "track spend per key if you want"
+      ]
+    },
+    "createKey": {
+      "eyebrow": "Create secret key",
+      "title": "Name it, then copy once",
+      "body": "Create new secret key → name it after your product → Permissions All (or restrict later) → Create. Paste into OPENAI_API_KEY immediately; you will not see the full string again.",
+      "points": [
+        "+ Create new secret key",
+        "name = product identity",
+        "Permissions: All for the agent",
+        "copy → .env / Render once"
+      ]
+    },
+    "env": {
+      "eyebrow": "Env vars",
+      "title": "OPENAI_API_KEY on Render",
+      "body": "Open the web service → Environment → Edit. Paste the secret once with sync: false. ASSISTANT_MODEL is optional. Empty key → agent off; the rest of the app keeps working.",
+      "points": [
+        "OPENAI_API_KEY=sk-…",
+        "sync: false — never in git",
+        "ASSISTANT_MODEL optional",
+        "partial empty = agent off"
+      ],
+      "visualFootnote": "sync: false — paste OPENAI_API_KEY via Environment → Edit."
+    },
+    "chat": {
+      "eyebrow": "In-app chat",
+      "title": "What the key unlocks",
+      "body": "With the key set, the floating assistant can list and mutate tenant resources through tools. Product UI for the agent lives under /product/agent — this page is the credential and integration path.",
+      "points": [
+        "FAB only when the key exists",
+        "tools are tenant-scoped",
+        "chips show what ran",
+        "see /product/agent for the UX tour"
+      ]
+    }
+  },
+  "structureResend": {
+    "eyebrow": "Mailing",
+    "title": "Key. Domain. Inbox.",
+    "body": "Transactional email through one sendEmail helper. Without RESEND_API_KEY, messages log to the console. With a verified domain and a key, verify / reset / invite land in real inboxes."
+  },
+  "resendCourse": {
+    "parts": {
+      "dashboard": {
+        "eyebrow": "resend.com",
+        "title": "API key + verified domain",
+        "body": "Create a sending key, add DNS for your domain, then set RESEND_API_KEY and MAIL_FROM on Render. MAIL_FROM must use a domain Resend has verified."
+      }
+    },
+    "repoHints": {
+      "send": "sendEmail",
+      "layout": "HTML shell",
+      "callers": "auth · tenant · admin",
+      "env": "optional key"
+    },
+    "overview": {
+      "eyebrow": "Overview",
+      "title": "Where email lives",
+      "body": "integrations/resend.ts owns the HTTP call. lib/email.ts builds the HTML shell. Auth, tenant, and admin call sendEmail — they never import Resend. Closed here — opened next.",
+      "points": [
+        "integrations/resend.ts — deliver",
+        "lib/email.ts — layout + CTA",
+        "domains call sendEmail only",
+        "RESEND_API_KEY optional"
+      ],
+      "workspace": "APP-BASE",
+      "aria": "Resend and email files in a VS Code-style explorer"
+    },
+    "send": {
+      "eyebrow": "sendEmail",
+      "title": "Send or log — never block",
+      "body": "No key → log subject and size (never HTML — tokens live in links). With a key → POST to api.resend.com using MAIL_FROM. Fire-and-forget so the HTTP response stays fast.",
+      "points": [
+        "void sendEmail(…) from services",
+        "dev console fallback",
+        "Bearer RESEND_API_KEY",
+        "swap provider in one file"
+      ]
+    },
+    "layout": {
+      "eyebrow": "emailLayout",
+      "title": "One HTML shell for every CTA mail",
+      "body": "Verify, reset password, tenant invite, platform invite — same layout helper, different title/body/CTA. Keep tokens out of logs; they only appear inside the emailed link.",
+      "points": [
+        "title · body · CTA button",
+        "fallback plain URL",
+        "shared by auth and invites",
+        "no Resend imports here"
+      ]
+    },
+    "keys": {
+      "eyebrow": "API keys",
+      "title": "Create a sending key",
+      "body": "In Resend: API keys → Create. Prefer Sending access for production. The re_… token is shown once — that value is RESEND_API_KEY.",
+      "points": [
+        "API keys in the sidebar",
+        "token prefix re_…",
+        "Sending access is enough",
+        "never commit the token"
+      ]
+    },
+    "createKey": {
+      "eyebrow": "Add API Key",
+      "title": "Name, permission, domain scope",
+      "body": "Name the key after your product, pick Full or Sending access, scope to All domains or one verified domain, then Add. Paste into Render immediately.",
+      "points": [
+        "+ Create API key",
+        "name = product identity",
+        "Sending / Full access",
+        "copy → sync: false on Render"
+      ]
+    },
+    "domains": {
+      "eyebrow": "Domains",
+      "title": "Add the domain you send from",
+      "body": "MAIL_FROM must use a verified domain. Add domain in Resend, publish the DNS records they give you, wait until Status is Verified.",
+      "points": [
+        "Domains → Add domain",
+        "DNS at your registrar",
+        "Status: Verified",
+        "match MAIL_FROM host"
+      ]
+    },
+    "domainDetail": {
+      "eyebrow": "Verified",
+      "title": "Ready to send",
+      "body": "When DNS verifies, Resend marks the domain ready. From there MAIL_FROM like App Base <hello@mail.example.com> will deliver instead of bouncing.",
+      "points": [
+        "Domain added → DNS → Verified",
+        "green status means go",
+        "custom tracking optional",
+        "rotate keys without redoing DNS"
+      ]
+    },
+    "env": {
+      "eyebrow": "Env vars",
+      "title": "RESEND_API_KEY on Render",
+      "body": "Same Environment tab as other secrets. Set RESEND_API_KEY (sync: false) and MAIL_FROM to an address on a verified domain. No key → emails log to the console.",
+      "points": [
+        "RESEND_API_KEY=re_…",
+        "MAIL_FROM with verified domain",
+        "no key → console logs",
+        "sync: false for the secret"
+      ],
+      "visualFootnote": "sync: false on the key; MAIL_FROM uses a verified domain."
+    },
+    "inbox": {
+      "eyebrow": "What users get",
+      "title": "Invites and auth mail",
+      "body": "Same sendEmail path powers verify, reset, and invites. Product pages walk those flows; this page is the Resend credential and domain setup.",
+      "points": [
+        "tenant invite email",
+        "verify + reset password",
+        "platform invites too",
+        "see /product for the UX"
+      ]
+    }
+  },
   "structureBuild": {
     "eyebrow": "Your turn",
     "title": "Everything above is the template. Now build yours.",
@@ -965,7 +1370,7 @@
     "body": "Each deep-dive walks that package’s folders and conventions — same guided style as the monorepo overview above.",
     "platformEyebrow": "Runtime & data",
     "platformTitle": "How the app is wired",
-    "platformBody": "Env, database, object storage, and i18n — the pieces every feature leans on.",
+    "platformBody": "Env, database, object storage, OpenAI, Resend, custom domain, and i18n — the pieces every feature leans on.",
     "api": {
       "path": "apps/api",
       "title": "Backend API",
@@ -1002,11 +1407,29 @@
       "body": "One interface for uploads — Cloudflare R2 in production, local disk when you skip credentials.",
       "cta": "Open storage"
     },
+    "openai": {
+      "eyebrow": "AI Agent",
+      "title": "API key → agent loop",
+      "body": "Optional secret, tool-calling integration, and graceful hide when the key is missing.",
+      "cta": "Open AI Agent"
+    },
+    "resend": {
+      "eyebrow": "Mailing",
+      "title": "API key → real email",
+      "body": "Optional secret, verified domain, and console fallback when the key is missing.",
+      "cta": "Open Mailing"
+    },
     "i18n": {
-      "eyebrow": "i18n",
+      "eyebrow": "Translation",
       "title": "English and Portuguese",
       "body": "Locale JSON files and t() — switch language live and the whole UI follows.",
-      "cta": "Open i18n"
+      "cta": "Open Translation"
+    },
+    "domain": {
+      "eyebrow": "Domain",
+      "title": "CNAME → Render",
+      "body": "Add a custom host on Render, point a CNAME at your registrar, set APP_URL when the certificate is issued.",
+      "cta": "Open domain"
     }
   },
   "monorepo": {
@@ -1188,7 +1611,11 @@
         "eyebrow": "integrations/",
         "title": "Vendors",
         "body": "External services. Thin wrappers. Only talk to lib/.",
-        "points": ["email provider", "AI provider", "object storage"]
+        "points": [
+          "email provider",
+          "AI provider",
+          "object storage"
+        ]
       },
       "db": {
         "eyebrow": "db/",
@@ -1264,7 +1691,11 @@
         "eyebrow": "tools/",
         "title": "Agent actions",
         "body": "One file per action. Same repository as endpoints. Registered in the assistant.",
-        "points": ["name · input · execute", "tenant / user from tool context", "index → registry"]
+        "points": [
+          "name · input · execute",
+          "tenant / user from tool context",
+          "index → registry"
+        ]
       },
       "service": {
         "eyebrow": "service.ts",
@@ -1290,19 +1721,31 @@
         "eyebrow": "constants/",
         "title": "Statics",
         "body": "TTLs · catalogs · limits. No helpers.",
-        "points": ["one topic per file", "plan catalog · cookie name · TTL", "logic → utils/"]
+        "points": [
+          "one topic per file",
+          "plan catalog · cookie name · TTL",
+          "logic → utils/"
+        ]
       },
       "utils": {
         "eyebrow": "utils/",
         "title": "Helpers",
         "body": "Domain logic helpers. lib/ stays cross-cutting and pure.",
-        "points": ["slug · period · media paths", "domain-owned", "create folder with first file"]
+        "points": [
+          "slug · period · media paths",
+          "domain-owned",
+          "create folder with first file"
+        ]
       },
       "template": {
         "eyebrow": "template/",
         "title": "Outbound mail",
         "body": "Subject + body. Service sends. Token only in the link.",
-        "points": ["verify · reset · invite", "one purpose per file", "never log raw tokens"]
+        "points": [
+          "verify · reset · invite",
+          "one purpose per file",
+          "never log raw tokens"
+        ]
       }
     }
   },
@@ -1419,7 +1862,11 @@
         "eyebrow": "brand/",
         "title": "Mark",
         "body": "Product logo only. Display name lives in shared.",
-        "points": ["logo.tsx + logo.css", "Brand shell uses AppLogo", "favicon in public/brand/"]
+        "points": [
+          "logo.tsx + logo.css",
+          "Brand shell uses AppLogo",
+          "favicon in public/brand/"
+        ]
       },
       "api": {
         "eyebrow": "api.ts",
@@ -1485,7 +1932,11 @@
         "eyebrow": "constants/",
         "title": "Statics",
         "body": "Keys · catalogs · limits. Same role as the API. Optional.",
-        "points": ["one topic per file", "no helpers", "create with the first file"]
+        "points": [
+          "one topic per file",
+          "no helpers",
+          "create with the first file"
+        ]
       },
       "utils": {
         "eyebrow": "utils/",
@@ -2047,7 +2498,12 @@
       "description": "Example resource",
       "placeholder": "Add a task...",
       "add": "Add",
-      "items": ["Design the schema", "Wire the repository", "Expose the route", "Build the screen"],
+      "items": [
+        "Design the schema",
+        "Wire the repository",
+        "Expose the route",
+        "Build the screen"
+      ],
       "left": "Example resource with per-tenant CRUD · 2 of 4 left"
     },
     "account": {
@@ -2118,10 +2574,143 @@
       "updatedRecent": "Updated recently",
       "updatedOlder": "Updated earlier"
     },
+    "r2": {
+      "title": "R2 Object Storage",
+      "subtitle": "Object storage for files — zero egress fees.",
+      "createBucket": "Create bucket",
+      "colBucket": "Bucket",
+      "colObjects": "Objects",
+      "colSize": "Size",
+      "accountId": "Account ID",
+      "manageTokens": "API Tokens → Manage",
+      "sampleBucketOther": "media",
+      "publicEnabled": "Public access Enabled",
+      "tabObjects": "Objects",
+      "tabSettings": "Settings",
+      "emptyTitle": "Your bucket is ready. Add files to get started.",
+      "emptyBody": "The API uploads via the S3 API — drag-and-drop is optional.",
+      "general": "General",
+      "name": "Name",
+      "s3Api": "S3 API",
+      "publicDevUrl": "Public Development URL",
+      "publicNote": "Rate-limited · prefer a custom domain in production.",
+      "tokensTitle": "Account API tokens",
+      "tokensSubtitle": "Create credentials with R2 Storage access for the S3 client.",
+      "createToken": "Create Token",
+      "colToken": "Token",
+      "colPermissions": "Permissions",
+      "colCreated": "Created",
+      "tokenName": "R2 Account Token",
+      "tokenPerms": "Workers R2 Storage Edit",
+      "tokenCreated": "Recently",
+      "tokensFootnote": "Access Key ID + Secret are shown once — paste into Render.",
+      "createTokenTitle": "Create a token",
+      "tokenNameLabel": "Token name",
+      "permCatalog": "Workers R2 Data Catalog",
+      "permSql": "Workers R2 SQL",
+      "permStorage": "Workers R2 Storage",
+      "permEdit": "Edit",
+      "permNone": "—",
+      "createTokenFootnote": "Grant Storage Edit, create, then copy S3 keys into CLOUDFLARE_*."
+    },
+    "openai": {
+      "nav": "Platform",
+      "keysNav": "API keys",
+      "keysTitle": "API keys",
+      "keysSubtitle": "Create and manage secret keys for the OpenAI API.",
+      "createKey": "Create new secret key",
+      "colName": "Name",
+      "colStatus": "Status",
+      "colSecret": "Secret key",
+      "colPerms": "Permissions",
+      "active": "Active",
+      "permsAll": "All",
+      "permsRestricted": "Restricted",
+      "permsReadOnly": "Read only",
+      "keysFootnote": "Full sk-… value is shown once at creation — paste into OPENAI_API_KEY.",
+      "createTitle": "Create new secret key",
+      "ownedBy": "Owned by",
+      "you": "You",
+      "serviceAccount": "Service account",
+      "nameOptional": "Name",
+      "permissions": "Permissions",
+      "cancel": "Cancel",
+      "createSecret": "Create secret key",
+      "createFootnote": "Copy the secret immediately — it will not be shown again."
+    },
+    "resend": {
+      "workspace": "Workspace",
+      "keysNav": "API keys",
+      "domainsNav": "Domains",
+      "keysTitle": "API keys",
+      "createKey": "Create API key",
+      "colName": "Name",
+      "colToken": "Token",
+      "colPermission": "Permission",
+      "keyName": "Production",
+      "sendingAccess": "Sending access",
+      "keysFootnote": "Full re_… value is shown once — paste into RESEND_API_KEY.",
+      "addKeyTitle": "Add API Key",
+      "fullAccess": "Full access",
+      "domain": "Domain",
+      "allDomains": "All domains",
+      "cancel": "Cancel",
+      "add": "Add",
+      "createFootnote": "Copy the token immediately — it will not be shown again.",
+      "domainsTitle": "Domains",
+      "addDomain": "Add domain",
+      "colDomain": "Domain",
+      "colStatus": "Status",
+      "colRegion": "Region",
+      "sampleDomain": "mail.example.com",
+      "sampleDomainAlt": "app.example.com",
+      "verified": "Verified",
+      "region": "São Paulo (sa-east-1)",
+      "domainsFootnote": "MAIL_FROM must use a verified domain.",
+      "verifiedBanner": "Domain verified: ready to send emails.",
+      "stepAdded": "Domain added",
+      "stepDns": "DNS verified",
+      "stepVerified": "Domain verified",
+      "detailFootnote": "Publish Resend's DNS records at your registrar, then wait for Verified."
+    },
     "roles": {
       "owner": "owner",
       "admin": "admin",
       "member": "member"
+    },
+    "domain": {
+      "godaddyTitle": "DNS management",
+      "rootDomain": "example.com",
+      "addRecord": "Add new record",
+      "tabRecords": "DNS records",
+      "tabNameservers": "Nameservers",
+      "colType": "Type",
+      "colName": "Name",
+      "colData": "Data",
+      "cnameHost": "app",
+      "onrenderHost": "app-xxxx.onrender.com",
+      "customHost": "app.example.com",
+      "godaddyFootnote": "CNAME name=app → your service’s …onrender.com host.",
+      "renderTitle": "Custom Domains",
+      "addCustom": "Add Custom Domain",
+      "colDomain": "Domain",
+      "colVerified": "Status",
+      "colCert": "Certificate",
+      "verified": "Verified",
+      "certIssued": "Certificate Issued",
+      "renderSubdomain": "Render subdomain (fallback)",
+      "addModalTitle": "Add Custom Domain",
+      "addModalSubtitle": "Verify a new domain for your service.",
+      "step1": "1. Choose domain",
+      "step2": "2. Add DNS records",
+      "domainName": "Domain name",
+      "cancel": "Cancel",
+      "addDomain": "Add Domain",
+      "dnsModalTitle": "Custom Domain DNS Records",
+      "hostname": "Hostname",
+      "target": "Target",
+      "verifiedMsg": "We’ve verified app.example.com",
+      "certMsg": "We’ve issued a certificate for app.example.com"
     }
   },
   "platformsIntro": {
@@ -2408,6 +2997,85 @@
       "eyebrow": "Charts",
       "title": "Simple charts",
       "body": "BarChart, LineChart, and PieChart with a small API — colors from theme tokens."
+    }
+  },
+  "structureDomain": {
+    "eyebrow": "Domain",
+    "title": "Registrar. CNAME. Render.",
+    "body": "Point app.example.com at your Render service with a CNAME, verify the domain, get a TLS cert, then set APP_URL so cookies and magic links use your host."
+  },
+  "domainCourse": {
+    "overview": {
+      "eyebrow": "Overview",
+      "title": "One origin for the product",
+      "body": "This template is API + SPA on one host. A custom domain replaces the *.onrender.com URL for browsers — cookies, CORS, and emailed links all follow APP_URL.",
+      "points": [
+        "Add domain on Render first",
+        "CNAME at GoDaddy (or any DNS)",
+        "Wait Verified + certificate",
+        "Set APP_URL to the custom host"
+      ],
+      "visual1": "1. Render → Custom Domains → Add",
+      "visual2": "2. Copy CNAME target (…onrender.com)",
+      "visual3": "3. Registrar → CNAME name=app → target",
+      "visual4": "4. Wait Verified + Certificate Issued",
+      "visual5": "5. APP_URL=https://app.example.com"
+    },
+    "renderAdd": {
+      "eyebrow": "Render · Add",
+      "title": "Add the custom host",
+      "body": "Service → Settings → Custom Domains → Add Custom Domain. Enter app.example.com (or your subdomain). Render then shows the DNS records to create.",
+      "points": [
+        "Settings → Custom Domains",
+        "Domain name = app.example.com",
+        "Step 1 choose name → Step 2 DNS",
+        "Keep the *.onrender.com URL as fallback"
+      ]
+    },
+    "renderDns": {
+      "eyebrow": "Render · DNS",
+      "title": "The CNAME Render expects",
+      "body": "Hostname is usually the subdomain label (app). Target is your service’s onrender.com host. Create that exact CNAME at the registrar — then Render can verify and issue TLS.",
+      "points": [
+        "Type: CNAME",
+        "Hostname: app",
+        "Target: …onrender.com",
+        "Verified + certificate when DNS propagates"
+      ]
+    },
+    "godaddy": {
+      "eyebrow": "GoDaddy · DNS",
+      "title": "Create the CNAME at the registrar",
+      "body": "DNS management → Add new record → CNAME. Name = app (or www). Value = the onrender.com host from Render. Same idea on Cloudflare, Namecheap, Route 53 — only the UI changes.",
+      "points": [
+        "Adicionar novo registro / Add record",
+        "Type CNAME · Name app",
+        "Data = …onrender.com",
+        "TTL 1 hour is fine"
+      ]
+    },
+    "renderDone": {
+      "eyebrow": "Render · Done",
+      "title": "Verified + Certificate Issued",
+      "body": "When DNS matches, Render marks the domain Verified and issues a certificate. Traffic can use https://app.example.com — the onrender subdomain can stay enabled as a backup.",
+      "points": [
+        "Verified checkmark",
+        "Certificate Issued",
+        "https on the custom host",
+        "onrender.com still works if enabled"
+      ]
+    },
+    "env": {
+      "eyebrow": "APP_URL",
+      "title": "APP_URL on Render",
+      "body": "After the custom domain is Verified, set APP_URL (and CORS_ORIGIN if needed) in Environment → Edit so magic links and cookies use https://app.example.com.",
+      "points": [
+        "APP_URL=https://app.example.com",
+        "sync: false on Render",
+        "match the verified custom domain",
+        "redeploy / restart if links still use onrender"
+      ],
+      "visualFootnote": "APP_URL = your verified custom host (sync: false)."
     }
   }
 }

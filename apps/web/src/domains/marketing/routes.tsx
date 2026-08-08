@@ -25,6 +25,9 @@ import { StructureDatabasePage } from "./pages/StructureDatabasePage";
 import { StructureEnvironmentPage } from "./pages/StructureEnvironmentPage";
 import { StructureI18nPage } from "./pages/StructureI18nPage";
 import { StructurePage } from "./pages/StructurePage";
+import { StructureDomainPage } from "./pages/StructureDomainPage";
+import { StructureOpenaiPage } from "./pages/StructureOpenaiPage";
+import { StructureResendPage } from "./pages/StructureResendPage";
 import { StructureStoragePage } from "./pages/StructureStoragePage";
 import { StructureWebPage } from "./pages/StructureWebPage";
 import {
@@ -71,6 +74,9 @@ export const marketingRoutes = (
     <Route path="/code/environment" element={<StructureEnvironmentPage />} />
     <Route path="/code/database" element={<StructureDatabasePage />} />
     <Route path="/code/storage" element={<StructureStoragePage />} />
+    <Route path="/code/openai" element={<StructureOpenaiPage />} />
+    <Route path="/code/resend" element={<StructureResendPage />} />
+    <Route path="/code/domain" element={<StructureDomainPage />} />
     <Route path="/code/i18n" element={<StructureI18nPage />} />
 
     <Route path="/product" element={<ProductPage />} />

@@ -14,7 +14,17 @@ import { navItemVariants } from "@app/ui/nav-item";
 
 type CodeMenuItem = {
   to: string;
-  labelKey: "overview" | "api" | "web" | "environment" | "database" | "storage" | "i18n";
+  labelKey:
+    | "overview"
+    | "api"
+    | "web"
+    | "environment"
+    | "database"
+    | "storage"
+    | "openai"
+    | "resend"
+    | "domain"
+    | "i18n";
 };
 
 const packageItems: CodeMenuItem[] = [
@@ -27,6 +37,9 @@ const platformItems: CodeMenuItem[] = [
   { to: "/code/environment", labelKey: "environment" },
   { to: "/code/database", labelKey: "database" },
   { to: "/code/storage", labelKey: "storage" },
+  { to: "/code/openai", labelKey: "openai" },
+  { to: "/code/resend", labelKey: "resend" },
+  { to: "/code/domain", labelKey: "domain" },
   { to: "/code/i18n", labelKey: "i18n" },
 ];
 

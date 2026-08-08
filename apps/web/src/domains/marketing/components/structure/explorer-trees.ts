@@ -930,6 +930,181 @@ export function buildWebFolderTree(
   }
 }
 
+/** API files that define Resend email sending. */
+export function buildResendRepoTree(t: TFunction): ExplorerNode[] {
+  const h = (key: string) => t(`landing.resendCourse.repoHints.${key}`);
+  return [
+    {
+      name: "apps",
+      kind: "folder",
+      children: [
+        {
+          name: "api",
+          kind: "folder",
+          children: [
+            {
+              name: "src",
+              kind: "folder",
+              children: [
+                {
+                  name: "integrations",
+                  kind: "folder",
+                  hint: h("send"),
+                  children: [
+                    { name: "resend.ts", kind: "file", hint: h("send"), active: true },
+                  ],
+                },
+                {
+                  name: "lib",
+                  kind: "folder",
+                  hint: h("layout"),
+                  children: [
+                    { name: "email.ts", kind: "file", hint: h("layout") },
+                    { name: "env.ts", kind: "file", hint: h("env"), muted: true },
+                  ],
+                },
+                {
+                  name: "domains",
+                  kind: "folder",
+                  muted: true,
+                  children: [
+                    {
+                      name: "auth",
+                      kind: "folder",
+                      muted: true,
+                      children: [
+                        { name: "service.ts", kind: "file", hint: h("callers"), muted: true },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    { name: ".env.example", kind: "file", hint: h("env"), muted: true },
+  ];
+}
+
+/** API files that define OpenAI + the in-app assistant. */
+export function buildOpenAiRepoTree(t: TFunction): ExplorerNode[] {
+  const h = (key: string) => t(`landing.openaiCourse.repoHints.${key}`);
+  return [
+    {
+      name: "apps",
+      kind: "folder",
+      children: [
+        {
+          name: "api",
+          kind: "folder",
+          children: [
+            {
+              name: "src",
+              kind: "folder",
+              children: [
+                {
+                  name: "integrations",
+                  kind: "folder",
+                  hint: h("sdk"),
+                  children: [
+                    { name: "openai.ts", kind: "file", hint: h("sdk"), active: true },
+                  ],
+                },
+                {
+                  name: "agent",
+                  kind: "folder",
+                  hint: h("assistant"),
+                  children: [
+                    { name: "assistant.ts", kind: "file", hint: h("assistant") },
+                    { name: "registry.ts", kind: "file", hint: h("tools") },
+                    { name: "tool.ts", kind: "file" },
+                  ],
+                },
+                {
+                  name: "lib",
+                  kind: "folder",
+                  muted: true,
+                  children: [{ name: "env.ts", kind: "file", hint: h("env"), muted: true }],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    { name: ".env.example", kind: "file", hint: h("env"), muted: true },
+  ];
+}
+
+/** API files that define MediaStore + R2. */
+export function buildStorageRepoTree(t: TFunction): ExplorerNode[] {
+  const h = (key: string) => t(`landing.storageCourse.repoHints.${key}`);
+  return [
+    {
+      name: "apps",
+      kind: "folder",
+      children: [
+        {
+          name: "api",
+          kind: "folder",
+          children: [
+            {
+              name: "src",
+              kind: "folder",
+              children: [
+                {
+                  name: "lib",
+                  kind: "folder",
+                  hint: h("contract"),
+                  children: [
+                    { name: "media-store.ts", kind: "file", hint: h("contract"), active: true },
+                  ],
+                },
+                {
+                  name: "integrations",
+                  kind: "folder",
+                  hint: h("r2"),
+                  children: [{ name: "r2.ts", kind: "file", hint: h("r2") }],
+                },
+                {
+                  name: "domains",
+                  kind: "folder",
+                  muted: true,
+                  children: [
+                    {
+                      name: "article",
+                      kind: "folder",
+                      muted: true,
+                      children: [
+                        {
+                          name: "utils",
+                          kind: "folder",
+                          muted: true,
+                          children: [
+                            {
+                              name: "media.utils.ts",
+                              kind: "file",
+                              hint: h("pick"),
+                              muted: true,
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    { name: ".env.example", kind: "file", hint: h("env"), muted: true },
+  ];
+}
+
 /** Repo root files that define local + production environment. */
 export function buildEnvRepoTree(t: TFunction): ExplorerNode[] {
   const h = (key: string) => t(`landing.envCourse.repoHints.${key}`);

@@ -1,16 +1,12 @@
-import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  buildStoragePillar,
-  FoundationSection,
-} from "../components/foundations/foundation-section";
+import { StorageStructure } from "../components/structure/storage-structure";
 import { useDocumentMeta } from "@/lib/document-meta";
 import { MarketingShell } from "../components/marketing-shell";
 import { useReveal } from "../hooks/use-reveal";
 
-/** MediaStore + Cloudflare R2 (local disk fallback). */
+/** Storage course — MediaStore → local disk → Cloudflare R2. */
 export function StructureStoragePage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   useReveal();
   useDocumentMeta({
     title: t("landing.seo.structureStorage.title"),
@@ -18,11 +14,9 @@ export function StructureStoragePage() {
     path: "/code/storage",
   });
 
-  const storage = useMemo(() => buildStoragePillar(t), [t, i18n.language]);
-
   return (
     <MarketingShell>
-      <FoundationSection pillar={storage} flip={false} />
+      <StorageStructure />
     </MarketingShell>
   );
 }

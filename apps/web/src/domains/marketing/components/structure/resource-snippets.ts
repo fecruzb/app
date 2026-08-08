@@ -568,6 +568,173 @@ CREATE INDEX "articles_published_idx" ON "articles" USING btree ("published_at")
 --   ALTER TABLE "users" ADD COLUMN "is_platform_admin" boolean DEFAULT false NOT NULL;
 --   ALTER TABLE "tenants" ADD COLUMN "plan_id" text DEFAULT 'free' NOT NULL;`;
 
+/** MediaStore contract — apps/api/src/lib/media-store.ts */
+export const mediaStoreFile = `// lib/media-store.ts — the only interface domains touch for files
+export interface MediaStore {
+  put(key: string, data: Buffer): Promise<void>;
+  get(key: string): Promise<Buffer | null>;
+  has(key: string): Promise<boolean>;
+  remove(key: string): Promise<void>;
+}
+// Key = "<tenantId>/uploads/<uuid>.webp" — never a cross-tenant path`;
+
+/** Backend pick — article media utils (trimmed). */
+export const mediaBackendsFile = `// domains/article/utils/media.utils.ts
+import { isR2Configured, r2Store } from "@/integrations/r2";
+
+export const usingR2 = isR2Configured();
+const backend: MediaStore = usingR2 ? r2Store : localStore;
+
+export const mediaStore = backend;
+// No R2 env → local disk under MEDIA_DIR (fine for dev).
+// Render's disk is ephemeral — set CLOUDFLARE_* + R2_PUBLIC_BASE_URL in prod.`;
+
+/** writeMedia — compress then put. */
+export const writeMediaFile = `// domains/article/utils/media.utils.ts
+export async function writeMedia(key: string, data: Buffer) {
+  const target = withCompressedExt(key);       // → .webp
+  const compressed = await compressImage(data); // sharp
+  await mediaStore.put(target, compressed);
+  return { path: \`/\${target}\`, sizeBytes: compressed.byteLength };
+}
+// Callers never pick R2 vs disk — mediaStore already did.`;
+
+/** R2 integration — S3 client (trimmed). */
+export const r2IntegrationFile = `// integrations/r2.ts — S3 API against Cloudflare R2
+export function isR2Configured(): boolean {
+  return Boolean(ENDPOINT && ACCESS_KEY_ID && SECRET_ACCESS_KEY && R2_PUBLIC_BASE_URL);
+}
+
+export const r2Store: MediaStore = {
+  async put(key, data) {
+    await s3().send(new PutObjectCommand({
+      Bucket: BUCKET, Key: key, Body: data, ContentType: contentType(key),
+    }));
+  },
+  // has / get / remove — same S3 commands
+};
+// Server redirects to R2_PUBLIC_BASE_URL — it does not proxy bytes.`;
+
+/** Env vars for R2 — copy into Render after creating the bucket + token. */
+export const r2EnvFile = `# .env / Render Environment — all optional; missing → local disk
+CLOUDFLARE_S3_API=https://<account-id>.r2.cloudflarestorage.com
+CLOUDFLARE_ACCESS_KEY_ID=
+CLOUDFLARE_SECRET_ACCESS_KEY=
+CLOUDFLARE_MEDIA_BUCKET=app
+R2_PUBLIC_BASE_URL=https://pub-<hash>.r2.dev
+
+# Checklist:
+#   1. Create bucket (name matches CLOUDFLARE_MEDIA_BUCKET)
+#   2. Enable public access / copy R2_PUBLIC_BASE_URL
+#   3. Create R2 token → Access Key ID + Secret
+#   4. sync: false on Render for the secret keys`;
+
+/** OpenAI key gate — integrations/openai.ts */
+export const openAiKeyFile = `// integrations/openai.ts — only place that knows the OpenAI SDK
+export function hasOpenAiKey(): boolean {
+  return Boolean(env.openaiApiKey);
+}
+
+export function getOpenAI(): OpenAI {
+  if (!env.openaiApiKey) throw new Error("OPENAI_API_KEY not set");
+  return new OpenAI({ apiKey: env.openaiApiKey });
+}
+// Missing key → agent FAB hidden; chat returns 503. Nothing else breaks.`;
+
+/** Tool-calling loop — integrations/openai.ts (shape). */
+export const openAiLoopFile = `// integrations/openai.ts — model → tools → model
+export async function runToolLoop(opts: {
+  model: string;
+  system: string;
+  messages: { role: "user" | "assistant"; content: string }[];
+  tools: LoopTool[];
+}) {
+  // chat.completions.create with tools…
+  // execute each tool call → feed results back → until a final reply
+  return { reply, calls, usage }; // usage → billing ledger
+}
+// Domains never import "openai" — only @/agent/tool + this integration.`;
+
+/** In-app assistant policy — agent/assistant.ts (trimmed). */
+export const assistantFile = `// agent/assistant.ts — product policy; loop lives in integrations/openai
+export async function runAssistant(ctx, messages, onEvent?) {
+  const tools = allTools.map((tool) => ({
+    name: tool.name,
+    description: tool.description,
+    inputSchema: tool.inputSchema,
+    run: async (rawArgs) => {
+      const args = z.object(tool.inputSchema).parse(rawArgs);
+      const data = await tool.execute(ctx, args); // tenant from ctx
+      return { text: JSON.stringify(data ?? null) };
+    },
+  }));
+  return runToolLoop({ model: env.assistantModel, system: systemPrompt(ctx), messages, tools });
+}`;
+
+/** OPENAI_API_KEY in env — optional. */
+export const openAiEnvFile = `# .env / Render Environment
+OPENAI_API_KEY=sk-…                 # sync: false on Render
+ASSISTANT_MODEL=gpt-4o-mini         # optional override
+
+# No key?
+#   - agent FAB stays hidden
+#   - /api/.../agent/chat → 503
+#   - rest of the app works
+#
+# Checklist: create secret key → paste once → never commit`;
+
+/** Resend sendEmail — integrations/resend.ts */
+export const resendSendFile = `// integrations/resend.ts — only place that talks to Resend
+export async function sendEmail({ to, subject, html }) {
+  if (!env.resendApiKey) {
+    // Dev: log subject + size — never log HTML (tokens in links)
+    logger.info(\`[email] (dev, not sent) to: \${to} · \${subject}\`);
+    return;
+  }
+  await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { Authorization: \`Bearer \${env.resendApiKey}\`, … },
+    body: JSON.stringify({ from: env.mailFrom, to, subject, html }),
+  });
+}
+// Domains call sendEmail — they never import Resend.`;
+
+/** emailLayout — lib/email.ts shape. */
+export const resendLayoutFile = `// lib/email.ts — HTML shell for transactional mail
+export function emailLayout(title, bodyHtml, ctaLabel, ctaUrl) {
+  return \`<!doctype html>… CTA button … fallback link …\`;
+}
+// Auth / tenant / admin build body + CTA; sendEmail delivers.
+// Verify, reset, invite, platform invite — same layout.`;
+
+/** RESEND + MAIL_FROM env. */
+export const resendEnvFile = `# .env / Render Environment
+RESEND_API_KEY=re_…                 # sync: false on Render
+MAIL_FROM=App Base <hello@mail.example.com>
+
+# No key?
+#   - emails log to the API console (dev)
+#   - invites / verify / reset still "work" locally
+#
+# Production checklist:
+#   1. Add + verify domain in Resend
+#   2. Create API key (sending access)
+#   3. MAIL_FROM must use a verified domain`;
+
+/** Custom domain + APP_URL after CNAME → Render. */
+export const domainEnvFile = `# After CNAME at your registrar + Custom Domain on Render:
+APP_URL=https://app.example.com
+CORS_ORIGIN=https://app.example.com   # same origin in this template
+
+# Flow:
+#   1. Render → Settings → Custom Domains → Add
+#   2. Copy CNAME target (…onrender.com)
+#   3. Registrar DNS → CNAME name=app → that target
+#   4. Wait Verified + Certificate Issued
+#   5. Set APP_URL (sync: false) to the custom host
+#
+# Cookies / magic links use APP_URL — keep it in sync.`;
+
 /** Zod boot validation — apps/api/src/lib/env.ts (trimmed). */
 export const envSchemaFile = `// lib/env.ts — validated at boot; bad values exit(1)
 const schema = z.object({
