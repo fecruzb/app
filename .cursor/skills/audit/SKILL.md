@@ -38,18 +38,19 @@ Copy and track:
 - [ ] 6. Contracts, layers, i18n, UI package pass
 - [ ] 7. Run npm run lint && npm run typecheck
 - [ ] 8. Write the report into the ticket + chat
-- [ ] 9. complete_task when audit (+ agreed fixes) are done
+- [ ] 9. stop_working then complete_task when audit (+ agreed fixes) are done
 ```
 
 ### Symulous (required)
 
 Findings live on the **Audits** project — never only in chat. Read `.symulous.json`, then:
 
-1. `create_task` on `projects.audits.short_id` with title like `Convention audit — <scope> (YYYY-MM-DD)`, `phase_name` usually `QA`, body seeded with scope.
+1. `create_task` on `projects.audits.short_id` with title like `Convention audit — <scope> (YYYY-MM-DD)`, `phase_name` usually `QA`, body seeded with scope. Use a **stable scope name** (`full monorepo`, `apps/api`, `apps/web`, `git diff vs main`) — not transient labels like `uncommitted changes` unless that is the intentional, documented scope.
 2. Put the full report in the task (`markdown` / `append_to_task`): Summary, Findings by severity (paths), checks run, out of scope.
-3. If the user asks to fix findings: `start_working`, remediate, note fixed vs deferred on the ticket, then `complete_task`.
-4. If the audit is report-only: `complete_task` after the report is on the ticket.
-5. In chat, link the task absolute `url`.
+3. If remediating: `start_working`, fix, note fixed vs deferred on the ticket.
+4. Always finish with **`stop_working` then `complete_task`** (even for report-only). `complete_task` alone leaves the Working chip on the board.
+5. Prefer moving the phase to `Launch` when closing the audit.
+6. In chat, link the task absolute `url`.
 
 See `.cursor/rules/symulous.mdc` (Audits section) and `.cursor/skills/symulous/SKILL.md`.
 

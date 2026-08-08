@@ -50,9 +50,27 @@ When running a convention/structure/security audit (`.cursor/skills/audit/SKILL.
 1. `create_task` on `projects.audits.short_id` at the start (title includes scope + date).
 2. Document the full findings in the task body (not only in chat).
 3. Remediations: note fixed vs deferred on the same ticket.
-4. `complete_task` when the audit (and any agreed fixes) are finished.
+4. Finish with **`stop_working` then `complete_task`** (see Work claim hygiene). Prefer phase `Launch` once the audit is closed.
 
 Do not skip the ticket even for a clean Pass.
+
+### Work claim hygiene (required)
+
+`start_working` shows a live **Working** chip on the board. **`complete_task` does not clear that claim** — always call `stop_working` before (or immediately after) finishing, abandoning, or pausing a claimed ticket.
+
+Finish sequence for any claimed ticket:
+
+1. `stop_working`
+2. `complete_task` (or leave `todo` / `backlog` if deferred — never leave a `done` / `dropped` task still claimed)
+
+If you find a `done` or `dropped` task that still has `claimed_by` (via `read_task`), call `stop_working` on it — that is a consistency fix, not optional polish.
+
+### Ticket title hygiene
+
+Titles should name the **work**, not a transient git state:
+
+- Audits: `Convention audit — <stable scope> (YYYY-MM-DD)` — e.g. `full monorepo`, `apps/api`, `apps/web`. Prefer `git diff vs main` over `uncommitted changes` when that is the real scope.
+- Features / Bugs: short outcome-oriented titles; no "WIP", agent run ids, or branch names in the title.
 
 ## Day-to-day
 
@@ -63,9 +81,11 @@ Do not skip the ticket even for a clean Pass.
 3. Create agreed work with `create_task`:
    - `project_handle` = `projects.<bucket>.short_id`
    - `phase_name` from `phases` (usually `Discovery` for new items, `Development` when already in flight)
+   - `status`: use `todo` when the item is ready for an agent/human to pick up; `backlog` when not ready yet
    - optional `priority`, `markdown` body with acceptance notes
-4. While working: `start_working` / `move_task` / `comment_on_task` / `append_to_task`.
-5. When done: `complete_task` (and advance phase toward `Launch` when useful).
+4. Before implementing: `start_working` (and move to `doing` / phase `Development` when useful). Do not claim a ticket another agent already has (`claimed_by` set).
+5. While working: `move_task` / `comment_on_task` / `append_to_task` as needed.
+6. When done: **`stop_working` → `complete_task`** (advance phase toward `Launch` when useful).
 
 Do **not** create a task for every tiny edit — only agreed, actionable work. Do **not** maintain a Progress/changelog doc.
 
