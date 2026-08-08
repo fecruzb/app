@@ -116,7 +116,7 @@
     },
     "productAgent": {
       "title": "Agente de IA · {{brand}}",
-      "description": "Chat no app que chama tools no escopo do tenant — o assistente que faz o trabalho."
+      "description": "Assistant in-app: chips de tools, estados do FAB, voz, modo expandido e atalhos."
     },
     "productAccount": {
       "title": "Account · {{brand}}",
@@ -1007,7 +1007,7 @@
     "agent": {
       "eyebrow": "Agente de IA",
       "title": "Tools dentro do chat",
-      "body": "O assistente flutuante chama as mesmas tools de domínio do MCP — no escopo do tenant atual."
+      "body": "Assistant flutuante em todo tenant — chips no timeline, FAB minimizado, mic / ⌘J, compacto ou expandido. Mesmas tools do MCP."
     },
     "account": {
       "eyebrow": "Account",
@@ -2399,7 +2399,27 @@
       "placeholder": "Fale com o assistente…",
       "suggestion": "Adicione uma tarefa para preparar o standup de amanhã",
       "reply": "Claro — vou adicionar essa tarefa para você.",
-      "chip": "Tarefa criada: Preparar standup"
+      "chip": "Tarefa criada: Preparar standup",
+      "clear": "Limpar",
+      "thinking": "Pensando…",
+      "recording": "Gravando…",
+      "transcribing": "Transcrevendo…",
+      "chipPending": "Criando task…",
+      "chipDone": "Task criada: Preparar standup",
+      "chipError": "Task not found — check the id with list_tasks",
+      "chipsUser": "Crie a task do standup e marque a de ontem como feita",
+      "intro": "Peça algo sobre Acme. Exemplos:",
+      "suggestionA": "quem faz parte deste tenant?",
+      "suggestionB": "adicione uma task pra preparar a reunião de amanhã",
+      "suggestionC": "gere um article sobre um farol ao pôr do sol",
+      "audioHint": "Toque no mic ou ⌘J — fale e pare pra enviar.",
+      "shortcutsLabel": "Teclado",
+      "shortcutsTitle": "Atalhos do agent",
+      "shortcutVoice": "Iniciar / parar voz (pode ficar minimizado)",
+      "shortcutSendRec": "Finalizar gravação",
+      "shortcutEsc": "Restaurar tamanho, depois fechar",
+      "shortcutSend": "Enviar mensagem digitada",
+      "shortcutsNote": "Ctrl+J no Windows/Linux. Mic precisa de permissão."
     },
     "mcp": {
       "title": "API keys (MCP)",
@@ -3076,6 +3096,119 @@
         "redeploy se links ainda usarem onrender"
       ],
       "visualFootnote": "APP_URL = host custom verificado (sync: false)."
+    }
+  },
+  "agentCourse": {
+    "parts": {
+      "chat": {
+        "eyebrow": "Chat",
+        "title": "Conversa, tools, resposta",
+        "body": "O painel streama status e chips de tools como linhas próprias — depois a resposta final. Mesmas tools do MCP, no tenant atual."
+      },
+      "fab": {
+        "eyebrow": "FAB & voz",
+        "title": "Botão no canto que continua trabalhando",
+        "body": "Minimize pro FAB. A atividade vira uma pill. ⌘J grava sem abrir o painel; quando a resposta chega, o chat compacto reabre."
+      }
+    },
+    "chat": {
+      "eyebrow": "Painel",
+      "title": "Um chat que faz as coisas",
+      "body": "Peça ou comande. O assistant roda tools do domínio, mostra cada ação como chip e responde. Writes bem-sucedidas atualizam os dados do app.",
+      "points": [
+        "Painel flutuante em todo tenant",
+        "Chips de tool são linhas do timeline",
+        "Resposta final em Markdown",
+        "Conversa sobrevive ao minimize"
+      ]
+    },
+    "chips": {
+      "eyebrow": "Tool chips",
+      "title": "Pending, done, error",
+      "body": "tool_start mostra chip com spinner e progress. tool_done troca pro summarize com check — ou chip de erro se a tool falhou de forma segura.",
+      "points": [
+        "Pending — spinner + progress()",
+        "Done — check + summarize()",
+        "Error — chip vermelho, mensagem segura",
+        "Thinking… entre os passos"
+      ]
+    },
+    "empty": {
+      "eyebrow": "Empty state",
+      "title": "Sugestões pra começar",
+      "body": "Na primeira abertura: intro do tenant e prompts de um clique. Mic pronto quando o composer está vazio.",
+      "points": [
+        "Intro nomeia o tenant",
+        "Toque numa sugestão pra enviar",
+        "Mic quando não há texto",
+        "Send aparece quando você digita"
+      ]
+    },
+    "expanded": {
+      "eyebrow": "Expanded",
+      "title": "Quase tela cheia",
+      "body": "Maximize alarga o painel com backdrop. Esc ou restore volta pro compacto — Esc de novo fecha.",
+      "points": [
+        "Maximize / restore no header",
+        "Clique no backdrop restaura",
+        "Esc: expanded → compact → closed",
+        "Mesmo timeline nos dois tamanhos"
+      ]
+    },
+    "fab": {
+      "eyebrow": "FAB",
+      "title": "Sparkles no canto",
+      "body": "Com o painel fechado, o FAB fica no canto. Abra pra conversar; se o trabalho segue minimizado, o ícone gira e uma pill mostra o status.",
+      "points": [
+        "Oculto sem OPENAI_API_KEY",
+        "Sparkles quando idle",
+        "Clique abre o painel compacto",
+        "Pill de atividade enquanto trabalha"
+      ]
+    },
+    "fabBusy": {
+      "eyebrow": "FAB busy",
+      "title": "Trabalhando minimizado",
+      "body": "Minimize no meio do run: FAB com spinner e a atividade atual. Quando o turno termina, o painel compacto reabre com a resposta.",
+      "points": [
+        "Spinner no FAB",
+        "Pill = thinking ou tool",
+        "Painel reabre no done",
+        "Queries atualizam após writes"
+      ]
+    },
+    "fabRecording": {
+      "eyebrow": "Voice FAB",
+      "title": "⌘J sem abrir o painel",
+      "body": "Grave de qualquer lugar: ⌘/Ctrl+J no FAB (vermelho + stop). Enter ou ⌘J de novo finaliza; a clip é transcrita e enviada como mensagem.",
+      "points": [
+        "⌘/Ctrl+J liga/desliga captura",
+        "FAB vermelho + pill Recording…",
+        "Enter finaliza o clip",
+        "Painel abre quando a resposta chega"
+      ]
+    },
+    "audio": {
+      "eyebrow": "Mic no painel",
+      "title": "Grave no composer",
+      "body": "Composer vazio: botão de mic abre a barra de gravação. Cancele com × ou pare pra transcrever e enviar. Transcribing… desabilita o campo.",
+      "points": [
+        "Mic com composer vazio",
+        "Barra Recording… pulsando",
+        "Stop → transcrição no server",
+        "Precisa de permissão do mic"
+      ]
+    },
+    "shortcuts": {
+      "eyebrow": "Atalhos",
+      "title": "Teclado sem sair da página",
+      "body": "Voz e dismiss são globais enquanto o agent está disponível. Enter envia texto (Shift+Enter = nova linha).",
+      "points": [
+        "⌘/Ctrl+J — toggle de voz",
+        "Enter — fim da gravação / send",
+        "Esc — restore e depois fecha",
+        "Shift+Enter — nova linha"
+      ]
     }
   }
 }

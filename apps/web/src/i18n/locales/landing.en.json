@@ -120,7 +120,7 @@
     },
     "productAgent": {
       "title": "AI agent · {{brand}}",
-      "description": "In-app chat that calls tenant-scoped tools — the assistant that gets work done."
+      "description": "In-app assistant: tool chips, FAB states, voice capture, expanded mode, and shortcuts."
     },
     "productAccount": {
       "title": "Account · {{brand}}",
@@ -1129,7 +1129,7 @@
     "agent": {
       "eyebrow": "AI agent",
       "title": "Tools inside the chat",
-      "body": "The floating assistant calls the same domain tools as MCP — scoped to the current tenant."
+      "body": "Floating assistant in every tenant — tool chips in the timeline, FAB while minimized, mic / ⌘J voice, compact or expanded. Same tools as MCP."
     },
     "account": {
       "eyebrow": "Account",
@@ -2521,7 +2521,27 @@
       "placeholder": "Talk to the assistant…",
       "suggestion": "Add a task to prepare tomorrow's standup",
       "reply": "Sure — I'll add that task for you.",
-      "chip": "Task created: Prepare standup"
+      "chip": "Task created: Prepare standup",
+      "clear": "Clear",
+      "thinking": "Thinking…",
+      "recording": "Recording…",
+      "transcribing": "Transcribing…",
+      "chipPending": "Creating task…",
+      "chipDone": "Task created: Prepare standup",
+      "chipError": "Task not found — check the id with list_tasks",
+      "chipsUser": "Create the standup task and mark yesterday done",
+      "intro": "Ask or request something about Acme. Examples:",
+      "suggestionA": "who belongs to this tenant?",
+      "suggestionB": "add a task to prepare tomorrow's meeting",
+      "suggestionC": "generate an article about a lighthouse at sunset",
+      "audioHint": "Tap the mic or press ⌘J — speak, then stop to send.",
+      "shortcutsLabel": "Keyboard",
+      "shortcutsTitle": "Agent shortcuts",
+      "shortcutVoice": "Start / stop voice (minimized OK)",
+      "shortcutSendRec": "Finish recording while capturing",
+      "shortcutEsc": "Restore size, then close panel",
+      "shortcutSend": "Send typed message",
+      "shortcutsNote": "Ctrl+J on Windows/Linux. Mic needs browser permission."
     },
     "mcp": {
       "title": "API keys (MCP)",
@@ -3076,6 +3096,119 @@
         "redeploy / restart if links still use onrender"
       ],
       "visualFootnote": "APP_URL = your verified custom host (sync: false)."
+    }
+  },
+  "agentCourse": {
+    "parts": {
+      "chat": {
+        "eyebrow": "Chat",
+        "title": "Conversation, tools, reply",
+        "body": "The panel streams status and tool chips as their own rows — then the final answer. Same tools as MCP, scoped to the current tenant."
+      },
+      "fab": {
+        "eyebrow": "FAB & voice",
+        "title": "Corner button that keeps working",
+        "body": "Minimize to a FAB. Activity shows as a pill. ⌘J records without opening the panel; when the reply lands, the compact chat reopens."
+      }
+    },
+    "chat": {
+      "eyebrow": "Panel",
+      "title": "A chat that gets things done",
+      "body": "Ask or command. The assistant runs domain tools, shows each action as a chip, then answers. Write tools refresh the app data when they succeed.",
+      "points": [
+        "Floating panel in every tenant",
+        "Tool chips are timeline rows — not buried in the reply",
+        "Final answer as Markdown",
+        "Conversation survives minimize"
+      ]
+    },
+    "chips": {
+      "eyebrow": "Tool chips",
+      "title": "Pending, done, error",
+      "body": "tool_start shows a spinning chip with the progress label. tool_done swaps in the summarize text and a check — or an error chip if the tool failed safely.",
+      "points": [
+        "Pending — spinner + progress()",
+        "Done — check + summarize()",
+        "Error — red chip, caller-safe message",
+        "Thinking… status between steps"
+      ]
+    },
+    "empty": {
+      "eyebrow": "Empty state",
+      "title": "Suggestions to start",
+      "body": "First open shows an intro for the current tenant and one-click suggestion prompts. Mic is ready when the composer is empty.",
+      "points": [
+        "Intro names the tenant",
+        "Tap a suggestion to send",
+        "Mic when there is no text",
+        "Send appears once you type"
+      ]
+    },
+    "expanded": {
+      "eyebrow": "Expanded",
+      "title": "Near-fullscreen focus",
+      "body": "Maximize widens the panel with a dimmed backdrop. Esc or the restore control returns to compact — Esc again closes.",
+      "points": [
+        "Maximize / restore in the header",
+        "Backdrop click restores compact",
+        "Esc steps: expanded → compact → closed",
+        "Same timeline either size"
+      ]
+    },
+    "fab": {
+      "eyebrow": "FAB",
+      "title": "Sparkles in the corner",
+      "body": "When the panel is closed, a round FAB stays bottom-right. Open it to chat; while work continues minimized, the icon spins and a pill shows status.",
+      "points": [
+        "Hidden when OPENAI_API_KEY is missing",
+        "Sparkles when idle",
+        "Click to open compact panel",
+        "Activity pill while working minimized"
+      ]
+    },
+    "fabBusy": {
+      "eyebrow": "Busy FAB",
+      "title": "Still working while minimized",
+      "body": "Minimize mid-run: the FAB shows a spinner and the current activity (Thinking… or the tool progress). When the turn finishes, the compact panel opens again so you see the reply.",
+      "points": [
+        "Spinner on the FAB",
+        "Pill = thinking or tool summary",
+        "Panel reopens on done",
+        "Queries refresh after successful writes"
+      ]
+    },
+    "fabRecording": {
+      "eyebrow": "Voice FAB",
+      "title": "⌘J without opening the panel",
+      "body": "Hold a voice note from anywhere: ⌘/Ctrl+J starts recording on the FAB (destructive red + stop). Enter or ⌘J again finishes; the clip is transcribed, then sent as a user message.",
+      "points": [
+        "⌘/Ctrl+J toggles capture",
+        "Red FAB + Recording… pill",
+        "Enter finishes the clip",
+        "Panel opens when the reply arrives"
+      ]
+    },
+    "audio": {
+      "eyebrow": "Mic in panel",
+      "title": "Record inside the composer",
+      "body": "With an empty composer, the mic button starts an in-panel recording bar. Cancel with × or stop to transcribe and send. Transcribing… disables the field until text is ready.",
+      "points": [
+        "Mic when composer is empty",
+        "Pulsing Recording… bar",
+        "Stop → server transcription",
+        "Needs mic permission"
+      ]
+    },
+    "shortcuts": {
+      "eyebrow": "Shortcuts",
+      "title": "Keyboard without leaving the page",
+      "body": "Voice and dismiss are global while the agent is available. Enter sends typed messages (Shift+Enter for a newline).",
+      "points": [
+        "⌘/Ctrl+J — voice toggle",
+        "Enter — finish recording / send",
+        "Esc — restore then close",
+        "Shift+Enter — newline in the composer"
+      ]
     }
   }
 }

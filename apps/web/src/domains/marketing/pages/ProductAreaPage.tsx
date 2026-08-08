@@ -14,7 +14,8 @@ import {
   buildProductArea,
   ChapterSection,
   type ProductAreaId,
-} from "../components/tour/chapter-section";
+} from "../components/product/chapter-section";
+import { AgentProductStructure } from "../components/product/agent-structure";
 import { useDocumentMeta } from "@/lib/document-meta";
 import { MarketingHero } from "../components/marketing-hero";
 import { MarketingShell } from "../components/marketing-shell";
@@ -82,9 +83,23 @@ export function ProductAuthPage() {
 export function ProductWorkspacePage() {
   return <ProductAreaPage area="workspace" />;
 }
+
+/** AI Agent product tour — chat, chips, FAB, voice, shortcuts. */
 export function ProductAgentPage() {
-  return <ProductAreaPage area="agent" />;
+  const { t } = useTranslation();
+  useReveal();
+  useDocumentMeta({
+    title: t("landing.seo.productAgent.title"),
+    description: t("landing.seo.productAgent.description"),
+    path: "/product/agent",
+  });
+  return (
+    <MarketingShell>
+      <AgentProductStructure />
+    </MarketingShell>
+  );
 }
+
 export function ProductAccountPage() {
   return <ProductAreaPage area="account" />;
 }

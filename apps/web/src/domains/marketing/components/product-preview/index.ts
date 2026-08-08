@@ -1,6 +1,16 @@
 /** Static, faithful mockups of the product UI — no data or app imports. */
 
-export { AgentChatMock } from "./agent-mock";
+export {
+  AgentChatMock,
+  AgentChipsMock,
+  AgentEmptyMock,
+  AgentFabIdleMock,
+  AgentFabBusyMock,
+  AgentFabRecordingMock,
+  AgentAudioMock,
+  AgentExpandedMock,
+  AgentShortcutsMock,
+} from "./agent-mock";
 export { ForgotPasswordBody, LoginMock, RegisterBody, ResetPasswordBody } from "./auth-mocks";
 export {
   AdminInvitesBody,

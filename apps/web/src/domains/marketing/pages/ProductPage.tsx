@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { ClosingSection } from "../components/tour/closing-section";
-import { ProductHubLinks } from "../components/tour/product-hub-links";
+import { ClosingSection } from "../components/product/closing-section";
+import { ProductHubLinks } from "../components/product/product-hub-links";
 import { useDocumentMeta } from "@/lib/document-meta";
 import { MarketingHero } from "../components/marketing-hero";
 import { MarketingShell } from "../components/marketing-shell";
