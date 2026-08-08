@@ -1,0 +1,35 @@
+---
+description: Symulous is the system of record for this product's tasks and docs; how the agent must use the binding and MCP
+alwaysApply: true
+---
+
+# Symulous (product tasks + docs)
+
+This product is bound to a Symulous workspace. **Tasks and product documentation live there**, not as ad-hoc TODOs in chat or duplicate markdown in the repo.
+
+## Binding
+
+Read `.symulous.json` at the repo root before any Symulous call:
+
+- `organization_slug` / `workspace_slug` — product boundary (one workspace per product)
+- `project.short_id` — main delivery board
+- `phases` — board columns (default: Backlog → Doing → Done)
+- `docs.*` — short_ids for the seeded docs (Overview, Architecture, Decisions, Progress)
+
+If the file is missing or IDs are stale, follow the `symulous` skill to bootstrap or repair — do not invent workspace/project IDs.
+
+## When to write to Symulous
+
+- **Agreed, actionable work** → `create_task` on the bound project (`phase_name: Backlog` or `Doing`). Do not spam micro-todos.
+- **Starting / finishing work** → move phase / `start_working` / `complete_task`; add a short comment or body note when useful.
+- **Design or product decision** → append a dated section to Decisions.
+- **Domain / structure change** → update Architecture.
+- **Shipped milestone** → append to Progress (prefer linking the completed task URL).
+
+Code conventions stay in `.cursor/rules` and the repo. Product knowledge (why, status, decisions, delivery) stays in Symulous.
+
+## MCP usage
+
+Use the Symulous MCP (`user-symulous`). Always pass `organization_slug` and `workspace_slug` from the binding. Prefer `project_handle` / doc handles from `.symulous.json`. Discover tool schemas with MCP tool listing before calling. For links in chat (outside Symulous), use absolute `url` fields; inside Symulous bodies use `symulous_link`.
+
+Day-to-day workflows and bootstrap for a new product fork: `.cursor/skills/symulous/SKILL.md`.

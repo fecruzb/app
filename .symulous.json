@@ -1,0 +1,15 @@
+{
+  "organization_slug": "fecruzb",
+  "workspace_slug": "app-base",
+  "project": {
+    "short_id": "fzkoido7",
+    "name": "App Base"
+  },
+  "phases": ["Backlog", "Doing", "Done"],
+  "docs": {
+    "overview": "ahyeo5pr",
+    "architecture": "e5of9gvw",
+    "decisions": "nvfrhl33",
+    "progress": "i0mzat18"
+  }
+}

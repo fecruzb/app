@@ -23,6 +23,8 @@ Not every domain mirrors 1:1: `marketing` is web-only; `agent` is an API surface
 
 To add a feature/resource end to end, follow the checklist in the `add-feature` skill (`.cursor/skills/add-feature/SKILL.md`).
 
+Product tasks and docs live in Symulous (one workspace per product) — see `.symulous.json` and the `symulous` skill.
+
 ## Invariants — never break these
 
 - **Tenant isolation**: every tenant-scoped resource query filters by `tenantId`. On tenant-mounted routes and agent tools, the tenant comes from middleware context (`requireAuth`/`requireTenant`), never from user input. Cross-tenant platform admin queries live only under `/api/admin` gated by `requirePlatformAdmin` — never as a bypass of tenant routes
