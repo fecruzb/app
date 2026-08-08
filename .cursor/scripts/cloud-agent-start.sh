@@ -8,12 +8,17 @@ cd "$ROOT"
 
 npm run db:up
 
-for _ in $(seq 1 30); do
+for _ in $(seq 1 60); do
   if docker compose exec -T postgres pg_isready -U app -d app_base >/dev/null 2>&1; then
-    exit 0
+    break
   fi
   sleep 1
 done
 
-echo "Postgres did not become ready in time" >&2
-exit 1
+if ! docker compose exec -T postgres pg_isready -U app -d app_base >/dev/null 2>&1; then
+  echo "Postgres did not become ready in time" >&2
+  exit 1
+fi
+
+npm run db:migrate
+npm run db:seed

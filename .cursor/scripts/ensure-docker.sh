@@ -12,7 +12,7 @@ fi
 
 if ! pgrep -x dockerd >/dev/null 2>&1; then
   sudo dockerd --iptables=false >/tmp/dockerd.log 2>&1 &
-  for _ in $(seq 1 30); do
+  for _ in $(seq 1 60); do
     if [ -S /var/run/docker.sock ]; then
       sudo chmod 666 /var/run/docker.sock
       break
@@ -21,4 +21,8 @@ if ! pgrep -x dockerd >/dev/null 2>&1; then
   done
 fi
 
-docker info >/dev/null 2>&1
+if ! docker info >/dev/null 2>&1; then
+  echo "Docker daemon failed to start. Recent dockerd log:" >&2
+  tail -20 /tmp/dockerd.log >&2 || true
+  exit 1
+fi
