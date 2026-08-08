@@ -50,9 +50,22 @@ When running a convention/structure/security audit (`.cursor/skills/audit/SKILL.
 1. `create_task` on `projects.audits.short_id` at the start (title includes scope + date).
 2. Document the full findings in the task body (not only in chat).
 3. Remediations: note fixed vs deferred on the same ticket.
-4. Finish with **`stop_working` then `complete_task`** (see Work claim hygiene). Prefer phase `Launch` once the audit is closed.
+4. Finish with **`stop_working` then `complete_task`** (see Work claim hygiene). Set phase to **`Launch`** when the audit is closed (`update_task` `phase_name: "Launch"`).
 
 Do not skip the ticket even for a clean Pass.
+
+### Phase progression (required)
+
+Phases from `.symulous.json` / the board: **Discovery → Design → Development → QA → Launch**. Keep `phase_name` in sync with reality via `update_task` (not only status).
+
+| Situation                                              | Phase                                                        |
+| ------------------------------------------------------ | ------------------------------------------------------------ |
+| New ticket, not ready / exploring                      | `Discovery` (or `Design` if shaping only)                    |
+| Ready to implement / audit in progress                 | `Development` (Features/Bugs) or `QA` (Audits while running) |
+| PR open / awaiting human review                        | stay `Development` or `QA`; do not jump to `Launch`          |
+| Ticket `done` / `dropped` (work finished or abandoned) | **`Launch`**                                                 |
+
+Cleanup: any `done` / `dropped` task still on Discovery/Design/Development/QA → set `phase_name` to `Launch`.
 
 ### Work claim hygiene (required)
 
@@ -84,8 +97,8 @@ Titles should name the **work**, not a transient git state:
    - `status`: use `todo` when the item is ready for an agent/human to pick up; `backlog` when not ready yet
    - optional `priority`, `markdown` body with acceptance notes
 4. Before implementing: `start_working` (and move to `doing` / phase `Development` when useful). Do not claim a ticket another agent already has (`claimed_by` set).
-5. While working: `move_task` / `comment_on_task` / `append_to_task` as needed.
-6. When done: **`stop_working` → `complete_task`** (advance phase toward `Launch` when useful).
+5. While working: `comment_on_task` / `append_to_task` as needed; keep `phase_name` updated as work progresses.
+6. When done: set phase **`Launch`**, then **`stop_working` → `complete_task`**.
 
 Do **not** create a task for every tiny edit — only agreed, actionable work. Do **not** maintain a Progress/changelog doc.
 

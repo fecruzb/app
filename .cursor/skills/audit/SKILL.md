@@ -48,8 +48,8 @@ Findings live on the **Audits** project — never only in chat. Read `.symulous.
 1. `create_task` on `projects.audits.short_id` with title like `Convention audit — <scope> (YYYY-MM-DD)`, `phase_name` usually `QA`, body seeded with scope. Use a **stable scope name** (`full monorepo`, `apps/api`, `apps/web`, `git diff vs main`) — not transient labels like `uncommitted changes` unless that is the intentional, documented scope.
 2. Put the full report in the task (`markdown` / `append_to_task`): Summary, Findings by severity (paths), checks run, out of scope.
 3. If remediating: `start_working`, fix, note fixed vs deferred on the ticket.
-4. Always finish with **`stop_working` then `complete_task`** (even for report-only). `complete_task` alone leaves the Working chip on the board.
-5. Prefer moving the phase to `Launch` when closing the audit.
+4. Always finish with phase **`Launch`** (`update_task` `phase_name: "Launch"`), then **`stop_working` then `complete_task`** (even for report-only). `complete_task` alone leaves the Working chip; leaving phase on `QA` is incorrect for closed audits.
+5. While the audit is in flight, keep phase at `QA` (create with `QA`; remediations stay `QA` until closed).
 6. In chat, link the task absolute `url`.
 
 See `.cursor/rules/symulous.mdc` (Audits section) and `.cursor/skills/symulous/SKILL.md`.
