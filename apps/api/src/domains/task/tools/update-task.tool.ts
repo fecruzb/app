@@ -8,14 +8,14 @@ import { taskRepository } from "../repository";
  *
  * `update_task`
  *
- * Updates a task's title and optionally its completed state in the current tenant.
+ * Updates a task's title (required) and optionally its completed state.
  *
  * @returns `{ id, title, completed }` of the updated task
  */
 export const updateTaskTool = defineTool({
   name: "update_task",
   description:
-    "Updates a task's title and/or completed state. Read it first with get_task if you only want to change one field.",
+    "Updates a task's title (required) and optionally its completed state. To only toggle completed, use set_task_completed. Read with get_task first if you need the current title.",
   inputSchema: {
     id: z.string().uuid(),
     title: taskInputSchema.shape.title,

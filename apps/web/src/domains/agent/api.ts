@@ -1,4 +1,11 @@
-import type { AgentMessage, AgentStreamEvent, AgentTranscriptDto } from "@app/shared";
+import type { z } from "zod";
+import type {
+  AgentMessage,
+  AgentStreamEvent,
+  AgentTranscriptDto,
+  ArticleDto,
+} from "@app/shared";
+import { generateArticleCoverSchema } from "@app/shared";
 import { api } from "@/lib/api";
 
 /**
@@ -14,7 +21,7 @@ function audioExtension(mimeType: string): string {
   return "webm";
 }
 
-/** In-app assistant chat and voice transcription (tenant-scoped agent routes). */
+/** In-app assistant chat, voice transcription, and AI cover generation. */
 export const agentApi = {
   /** Streams NDJSON progress events; ends with `done` or `error`. */
   chat: (tenantId: string, messages: AgentMessage[], onEvent: (event: AgentStreamEvent) => void) =>
@@ -25,4 +32,11 @@ export const agentApi = {
     form.append("audio", audio, `recording.${audioExtension(audio.type)}`);
     return api.upload<AgentTranscriptDto>(`/tenants/${tenantId}/agent/transcribe`, form);
   },
+
+  /** `POST /tenants/:tenantId/agent/articles/:id/cover` — OpenAI-backed cover. */
+  generateCover: (
+    tenantId: string,
+    articleId: string,
+    body: z.infer<typeof generateArticleCoverSchema> = {},
+  ) => api.post<ArticleDto>(`/tenants/${tenantId}/agent/articles/${articleId}/cover`, body),
 };

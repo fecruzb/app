@@ -2,7 +2,6 @@ import type { z } from "zod";
 import {
   articleInputSchema,
   articlePublishSchema,
-  generateArticleCoverSchema,
   type ArticleDto,
   type PublicArticleDto,
   type PublicArticleSummaryDto,
@@ -25,11 +24,6 @@ export const articleApi = {
     form.append("file", file);
     return api.upload<ArticleDto>(`/tenants/${tenantId}/articles/${id}/cover`, form);
   },
-  generateCover: (
-    tenantId: string,
-    id: string,
-    body: z.infer<typeof generateArticleCoverSchema> = {},
-  ) => api.post<ArticleDto>(`/tenants/${tenantId}/agent/articles/${id}/cover`, body),
   deleteCover: (tenantId: string, id: string) =>
     api.delete<ArticleDto>(`/tenants/${tenantId}/articles/${id}/cover`),
   publish: (tenantId: string, id: string, body: z.infer<typeof articlePublishSchema>) =>

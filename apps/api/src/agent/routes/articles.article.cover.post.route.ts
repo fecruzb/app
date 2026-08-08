@@ -26,9 +26,6 @@ export async function generateArticleCover(c: AppContext) {
   const { prompt } = await parseBody(c, generateArticleCoverSchema);
 
   // -- Processing ------------------------------------------------------------
-  const current = await articleRepository.find(tenant.id, articleId);
-  if (!current) throw new HttpError(404, "Article not found");
-
   try {
     await generateAndAttachArticleCover({
       tenantId: tenant.id,

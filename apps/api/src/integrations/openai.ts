@@ -291,21 +291,31 @@ export async function runToolLoop(opts: {
 
     for (const call of toolCalls) {
       if (call.type !== "function") continue;
-      const args = JSON.parse(call.function.arguments || "{}") as Record<string, unknown>;
       const tool = byName.get(call.function.name);
 
+      // Soft-fail malformed tool JSON so one bad call doesn't abort the turn.
+      let args: Record<string, unknown> = {};
+      let parseFailed = false;
+      try {
+        args = JSON.parse(call.function.arguments || "{}") as Record<string, unknown>;
+      } catch {
+        parseFailed = true;
+      }
+
       await emit({ type: "tool_start", name: call.function.name, args });
-      const { text, isError } = tool
-        ? await tool.run(args).catch((err: unknown) => {
-            // `run` masks its own tool errors; a throw here is an invalid-args
-            // ZodError (safe, non-sensitive) or an unexpected failure we mask.
-            if (err instanceof ZodError) {
-              return { text: `Invalid arguments for ${call.function.name}.`, isError: true };
-            }
-            logger.error(`[openai] tool ${call.function.name} failed:`, err);
-            return { text: `Tool ${call.function.name} failed.`, isError: true };
-          })
-        : { text: `Unknown tool: ${call.function.name}`, isError: true };
+      const { text, isError } = parseFailed
+        ? { text: `Invalid arguments for ${call.function.name}.`, isError: true }
+        : tool
+          ? await tool.run(args).catch((err: unknown) => {
+              // `run` masks its own tool errors; a throw here is an invalid-args
+              // ZodError (safe, non-sensitive) or an unexpected failure we mask.
+              if (err instanceof ZodError) {
+                return { text: `Invalid arguments for ${call.function.name}.`, isError: true };
+              }
+              logger.error(`[openai] tool ${call.function.name} failed:`, err);
+              return { text: `Tool ${call.function.name} failed.`, isError: true };
+            })
+          : { text: `Unknown tool: ${call.function.name}`, isError: true };
 
       calls.push({ name: call.function.name, args, text, isError });
       await emit({ type: "tool_done", name: call.function.name, args, text, isError });

@@ -11,6 +11,7 @@ import { PageHeader } from "@app/ui/page-header";
 import { PageLoading } from "@app/ui/page-loading";
 import { useAppConfig } from "@/app/config";
 import { showApiError } from "@/lib/api";
+import { agentApi } from "@/domains/agent/api";
 import { useTenant } from "@/domains/tenant/context/tenant-provider";
 import { articleApi } from "../api";
 import { ArticleCoverField } from "../components/article-cover-field";
@@ -87,7 +88,7 @@ export function ArticlePage() {
         setBodyDraft(updated.body);
         setTitle(updated.title);
       }
-      return articleApi.generateCover(tenant.id, articleId);
+      return agentApi.generateCover(tenant.id, articleId);
     },
     onSuccess: () => {
       invalidate();
