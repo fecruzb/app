@@ -1,15 +1,24 @@
 {
   "organization_slug": "fecruzb",
   "workspace_slug": "app-base",
-  "project": {
-    "short_id": "fzkoido7",
-    "name": "App Base"
+  "projects": {
+    "audits": {
+      "short_id": "9g5x3tdx",
+      "name": "Audits"
+    },
+    "features": {
+      "short_id": "rfy5zu87",
+      "name": "Features"
+    },
+    "bugs": {
+      "short_id": "rfupsx1i",
+      "name": "Bugs"
+    }
   },
-  "phases": ["Backlog", "Doing", "Done"],
+  "phases": ["Discovery", "Design", "Development", "QA", "Launch"],
   "docs": {
     "overview": "ahyeo5pr",
     "architecture": "e5of9gvw",
-    "decisions": "nvfrhl33",
-    "progress": "i0mzat18"
+    "decisions": "nvfrhl33"
   }
 }
