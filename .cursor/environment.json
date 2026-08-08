@@ -13,5 +13,8 @@
       "command": "npm run dev"
     }
   ],
-  "ports": [3000, 5050]
+  "ports": [
+    { "name": "web", "port": 3000 },
+    { "name": "api", "port": 5050 }
+  ]
 }
