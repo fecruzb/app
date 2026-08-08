@@ -2,6 +2,8 @@
  * Code snippets shown in the resource walk — mirror real repo conventions.
  * If a convention changes, update the matching snippet here.
  */
+import { brand } from "@app/shared";
+
 export const repositoryOutlineFile = `// domains/task/repository.ts — one object, fixed CRUD names
 export const taskRepository = {
   async list(tenantId: string, search?: string): Promise<TaskWithAuthor[]> { /* … */ },
@@ -712,7 +714,7 @@ export function emailLayout(title, bodyHtml, ctaLabel, ctaUrl) {
 /** RESEND + MAIL_FROM env. */
 export const resendEnvFile = `# .env / Render Environment
 RESEND_API_KEY=re_…                 # sync: false on Render
-MAIL_FROM=App Base <hello@mail.example.com>
+MAIL_FROM=${brand.displayName} <hello@mail.example.com>
 
 # No key?
 #   - emails log to the API console (dev)

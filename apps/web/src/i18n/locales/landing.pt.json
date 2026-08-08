@@ -3101,7 +3101,7 @@
     "domainDetail": {
       "eyebrow": "Verified",
       "title": "Pronto para enviar",
-      "body": "Quando o DNS verifica, a Resend marca o domínio ready. Aí MAIL_FROM tipo App Base <hello@mail.example.com> entrega em vez de bounce.",
+      "body": "Quando o DNS verifica, a Resend marca o domínio ready. Aí MAIL_FROM tipo {{brand}} <hello@mail.example.com> entrega em vez de bounce.",
       "points": [
         "Domain added → DNS → Verified",
         "status verde = pode ir",

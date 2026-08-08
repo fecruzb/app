@@ -1024,7 +1024,7 @@
     "domainDetail": {
       "eyebrow": "Verified",
       "title": "Ready to send",
-      "body": "When DNS verifies, Resend marks the domain ready. From there MAIL_FROM like App Base <hello@mail.example.com> will deliver instead of bouncing.",
+      "body": "When DNS verifies, Resend marks the domain ready. From there MAIL_FROM like {{brand}} <hello@mail.example.com> will deliver instead of bouncing.",
       "points": [
         "Domain added → DNS → Verified",
         "green status means go",
