@@ -128,11 +128,11 @@
     },
     "productBilling": {
       "title": "Billing · {{brand}}",
-      "description": "Planos, assentos e entitlements de IA — prontos para ligar no Stripe."
+      "description": "Catálogo de planos no código, modelos de cobrança (assentos e IA), UI de Billing do tenant e como ligar Stripe (ou qualquer PSP) depois."
     },
     "productAdmin": {
       "title": "Admin da plataforma · {{brand}}",
-      "description": "Pessoas, convites e tenants em todo o produto a partir de /admin."
+      "description": "O control plane acima dos tenants — frota de clientes, pessoas, convites de plataforma e uma camada CMS que você pode crescer."
     },
     "ui": {
       "title": "Interface · {{brand}}",
@@ -976,14 +976,14 @@
     },
     "billing": {
       "eyebrow": "Billing",
-      "title": "Planos e entitlements",
-      "body": "Assentos e limites de IA nos planos — catálogo pronto para o Stripe.",
+      "title": "Planos, modelos, gateway depois",
+      "body": "Entitlements no código, cobrança por assento vs usage, página de Billing do tenant — e Stripe quando estiver pronto.",
       "cta": "Abrir billing"
     },
     "admin": {
       "eyebrow": "Admin",
-      "title": "Opere o produto inteiro",
-      "body": "Platform /admin — pessoas, convites e tenants em todos os workspaces.",
+      "title": "Control plane acima dos tenants",
+      "body": "Frota de workspaces-cliente, pessoas, convites de plataforma — e espaço pra virar CMS do produto inteiro.",
       "cta": "Abrir admin"
     }
   },
@@ -1010,13 +1010,13 @@
     },
     "billing": {
       "eyebrow": "Billing",
-      "title": "Planos que dá para cobrar",
-      "body": "Contagem de assentos e entitlements de IA nos planos — o catálogo que sua integração Stripe vai dirigir."
+      "title": "Cobre assentos e IA — depois ligue um PSP",
+      "body": "Planos vivem em PLAN_CATALOG (não numa tabela). Tenants guardam planId; assentos e budgets de IA já valem hoje. Checkout com Stripe ou outro gateway depois — webhooks só precisam escrever o mesmo campo."
     },
     "admin": {
       "eyebrow": "Admin da plataforma",
-      "title": "Opere a frota inteira",
-      "body": "Pessoas, convites e workspaces cross-tenant em /admin — gated por platform admin, nunca bypass de rota de tenant."
+      "title": "CMS e ops acima de cada tenant",
+      "body": "/admin é a camada acima dos workspaces-cliente — veja a frota (planos, assentos, uso), gerencie pessoas, convide orgs pro produto, atribua planos. Cresça pra conteúdo e config global que chega em todo tenant — não só billing."
     }
   },
   "closing": {
@@ -2298,6 +2298,46 @@
       "memberOne": "membro",
       "memberOther": "membros"
     },
+    "adminPlatform": {
+      "layerLabel": "admin · camada da plataforma",
+      "layerAdmin": "Plataforma",
+      "layerAdminTitle": "/admin — acima de cada cliente",
+      "layerAdminBody": "Gated por isPlatformAdmin. Pessoas, frota, convites, planos — e o que você adicionar pro produto inteiro.",
+      "layerTenants": "Tenants-cliente",
+      "fleetMetaA": "Starter · 3 assentos · IA ativa",
+      "fleetMetaB": "Free · 1 assento",
+      "fleetTenantC": "Northwind",
+      "fleetMetaC": "Pro · 7 assentos · uso alto",
+      "layerFootnote": "Nunca bypass de /api/tenants/:id — admin tem mount próprio em /api/admin.",
+      "fleetTitle": "Frota de clientes",
+      "fleetDescription": "Tenants como clientes — plano, assentos, gasto de IA e MRR estimado do catálogo.",
+      "colTenant": "Tenant",
+      "colPlan": "Plano",
+      "colSeats": "Assentos",
+      "colAi": "IA / mês",
+      "colMrr": "MRR",
+      "fleetNote": "A UI de hoje lista tenants + membros; colunas de gasto/MRR mostram a visão de ops que você pode crescer.",
+      "cmsLabel": "admin · cresça pra CMS",
+      "cmsTitle": "Conteúdo e config globais",
+      "cmsBody": "A mesma superfície /admin pode ter anúncios, feature flags e defaults que todo tenant lê — um CMS leve da camada da plataforma.",
+      "cmsAnnounce": "Banner de anúncio",
+      "cmsAnnounceBody": "Publique uma vez; todo workspace mostra até dismiss.",
+      "cmsFlags": "Feature flags",
+      "cmsFlagsBody": "Ligue uma capacidade na frota inteira sem redeploy por tenant.",
+      "cmsDefaults": "Locale / branding padrão",
+      "cmsDefaultsBody": "Defaults da plataforma que tenants herdam até override local.",
+      "cmsFansOut": "→ espalha pra todo tenant",
+      "cmsFootnote": "Ainda não são tabelas no template — o padrão é: domínio admin + rotas + UI, e tenants leem a config. Adicione quando o produto precisar.",
+      "growLabel": "admin · estenda",
+      "growHint": "Cresça /admin como qualquer domínio — roles fixos, mesmas regras de camada.",
+      "growSteps": [
+        "Tabela em domains/admin/schema (escopo de plataforma)",
+        "Repository + rotas em /api/admin com requirePlatformAdmin",
+        "Página + item de nav no shell Admin",
+        "Opcional: tenants GET da config publicada"
+      ],
+      "growFootnote": "Planos de billing são uma preocupação do admin — não a única. Trate /admin como control plane do produto."
+    },
     "plans": {
       "title": "Planos",
       "description": "Catálogo no código — assentos e direitos de IA",
@@ -2311,6 +2351,62 @@
       "usageDetail": "$10 / assento · IA repassada",
       "changePlan": "Mudar plano",
       "pspHint": "Pronto para Stripe ou qualquer PSP — o checkout seta o planId"
+    },
+    "billing": {
+      "modelsLabel": "billing · modelos de cobrança",
+      "modelsHint": "Misture isso no PLAN_CATALOG — cada plano escolhe assentos, IA inclusa ou passthrough.",
+      "modelSeatsTitle": "Assinatura por assento",
+      "modelSeatsBody": "pricePerSeatMicros × membros. Cap com maxSeats (null = ilimitado). Convites contam no budget de assentos.",
+      "modelSeatsBadge": "pricePerSeatMicros",
+      "modelAiTitle": "Allowance de IA inclusa",
+      "modelAiBody": "aiBilling: included — cada membro ganha aiPerSeatMicros por mês UTC. assertAiBudget devolve 402 quando a cota acaba.",
+      "modelAiBadge": "aiBilling: included",
+      "modelUsageTitle": "Pay as you go (passthrough)",
+      "modelUsageBody": "aiBilling: passthrough — sem teto duro de IA; o gasto fica em ai_usage_events pra você faturar depois.",
+      "modelUsageBadge": "aiBilling: passthrough",
+      "overview": "Visão geral",
+      "overviewHint": "Starter — assentos e IA inclusa no mês atual.",
+      "seatPrice": "$5 / assento",
+      "statSeats": "Assentos",
+      "seatsValue": "2 / 3",
+      "statAi": "IA neste mês",
+      "aiValue": "$4.60 / $15",
+      "statResets": "Renova",
+      "resetsValue": "1 mar",
+      "membersTitle": "Uso por membro",
+      "aiCap": "$5",
+      "changePlanHint": "Desabilitado até um PSP escrever planId — o admin pode mudar hoje.",
+      "gatewayLabel": "pagamentos · depois",
+      "gatewayTitle": "Conecte Stripe (ou qualquer PSP)",
+      "gatewayBody": "Não há SDK Stripe no template. Quando ligar um, mantenha o catálogo no código e trate planId como único campo de sync.",
+      "gatewayStepMap": "Mapeie Products → plan ids",
+      "gatewayStepMapBody": "Product / Price do Stripe alinham com free, starter, pro, usage — ou o catálogo que você renomear.",
+      "gatewayStepCheckout": "Checkout / Customer Portal",
+      "gatewayStepCheckoutBody": "O cliente escolhe o plano; o success path não inventa outro catálogo — seta tenants.plan_id.",
+      "gatewayStepWebhook": "Webhook → planId",
+      "gatewayStepWebhookBody": "invoice.paid / subscription.updated → atualiza a row do tenant. Entitlements já leem do PLAN_CATALOG.",
+      "gatewayFootnote": "webhook → tenants.plan_id = \"pro\"  // essa é a costura",
+      "inCodeHint": "Entitlements são dados seus em TypeScript — não uma tabela de plans pra migrar.",
+      "inCodeLines": [
+        "Edite PLAN_CATALOG ao forkar",
+        "tenants guardam só planId",
+        "Assentos bloqueiam convites quando cheios",
+        "Budget de IA antes do gasto do agent"
+      ],
+      "optionalLabel": "template · sua economia",
+      "optionalKeepTitle": "Mantenha / customize quando…",
+      "optionalDropTitle": "Simplifique quando…",
+      "optionalKeep": [
+        "Você vende assentos ou cotas de IA",
+        "Quer cards de plano antes do Stripe",
+        "Admin atribui planos na mão no começo"
+      ],
+      "optionalDrop": [
+        "Ainda sem tiers pagos",
+        "Esconda Billing e pule asserts",
+        "Delete o ledger de usage se não usar"
+      ],
+      "optionalNote": "Mude preços em plans.constants.ts e planIds no shared. Ligue um gateway quando a receita importar — não antes."
     },
     "invites": {
       "title": "Convites",
@@ -3420,6 +3516,221 @@
         "Lista toda membership",
         "Navega pra /app/:slug",
         "Também no tour de Workspace"
+      ]
+    }
+  },
+  "billingCourse": {
+    "parts": {
+      "surfaces": {
+        "eyebrow": "Superfícies",
+        "title": "Catálogo admin, assign, Billing do tenant",
+        "body": "Platform admins veem os planos e setam planId no tenant. No workspace, Billing mostra assentos, gasto de IA e um changer de plano desabilitado até ligar um PSP."
+      },
+      "gateway": {
+        "eyebrow": "Pagamentos depois",
+        "title": "Um campo pro Stripe — ou qualquer gateway",
+        "body": "Não reconstrua o catálogo no PSP. Mapeie products pra plan ids, rode Checkout e deixe webhooks escreverem tenants.plan_id. Entitlements já funcionam."
+      }
+    },
+    "concept": {
+      "eyebrow": "Por que assim",
+      "title": "Entitlements no código, não numa tabela de plans",
+      "body": "PLAN_CATALOG é TypeScript seu — assentos, preço, allowance de IA, included vs passthrough. Tenants guardam só planId. Dá pra enforced limites e mostrar Billing antes de existir qualquer provedor de pagamento.",
+      "points": [
+        "Sem migration de plans pra cuidar",
+        "Fork = editar o arquivo do catálogo",
+        "planId é a única escolha persistida",
+        "Cobre depois sem redesenhar entitlements"
+      ]
+    },
+    "catalog": {
+      "eyebrow": "Catálogo",
+      "title": "Free · Starter · Pro · Pay as you go",
+      "body": "Quatro planos iniciais: caps de assento (1 / 3 / 10 / ∞), $0–$10 por assento, $5 de IA inclusa por membro — ou passthrough sem teto duro no usage.",
+      "points": [
+        "maxSeats · pricePerSeatMicros",
+        "aiPerSeatMicros · aiBilling",
+        "free → starter → pro → usage",
+        "Cards a partir do arquivo de constants"
+      ]
+    },
+    "models": {
+      "eyebrow": "Modelos",
+      "title": "Como você pode cobrar",
+      "body": "Misture assinatura por assento, budgets de IA inclusa e passthrough metered. O plano usage é o pay-as-you-go; Free/Starter/Pro incluem um pool mensal de IA por assento.",
+      "points": [
+        "Assentos = membros + convites pendentes",
+        "IA inclusa → 402 quando acaba",
+        "Passthrough → meter, fatura depois",
+        "Compose modelos por linha do plano"
+      ]
+    },
+    "adminCatalog": {
+      "eyebrow": "Admin · Plans",
+      "title": "Veja o catálogo em /admin/plans",
+      "body": "Platform admins veem o mesmo PLAN_CATALOG da API — ids, blurb de assentos e IA, e o lembrete de que o PSP só precisa setar planId.",
+      "points": [
+        "GET /api/admin/plans",
+        "Cards batem com o arquivo de constants",
+        "Hint de PSP na página",
+        "Sem CMS de pricing separado"
+      ]
+    },
+    "assign": {
+      "eyebrow": "Admin · Assign",
+      "title": "Sete o plano do tenant na mão",
+      "body": "Até existir Checkout, platform admins mudam planId no tenant (dialog de edit). É o mesmo write que o webhook vai fazer depois.",
+      "points": [
+        "PATCH /api/admin/tenants/:id",
+        "planId do catálogo",
+        "Mudança de entitlement na hora",
+        "Preview da costura do PSP"
+      ]
+    },
+    "tenantUi": {
+      "eyebrow": "Billing do tenant",
+      "title": "O que o cliente vê",
+      "body": "/app/:slug/billing — overview (assentos, IA, reset do período), barras por membro e changer de plano desabilitado com hint de “ligar um PSP”.",
+      "points": [
+        "GET /api/tenants/:id/billing",
+        "Stats de assento + IA do mês",
+        "Meters de gasto por membro",
+        "Upgrade espera pagamentos"
+      ]
+    },
+    "usage": {
+      "eyebrow": "Ledger",
+      "title": "ai_usage_events",
+      "body": "Cada chamada de IA cobrável appenda uma row (tokens, cost_micros, user, tenant). Billing agrega o mês UTC atual — sem API HTTP de usage separada.",
+      "points": [
+        "Log de gasto append-only",
+        "cost_micros em USD × 1e6",
+        "Alimenta assertAiBudget + UI de Billing",
+        "Domínio usage/ — só API"
+      ]
+    },
+    "gateway": {
+      "eyebrow": "Gateway",
+      "title": "Stripe (ou Paddle, Lemon…) quando estiver pronto",
+      "body": "Mapeie products do PSP pra plan ids → Checkout / Portal → webhook atualiza tenants.plan_id. Mantenha PLAN_CATALOG como source of truth dos limites; o gateway nunca vira um segundo catálogo.",
+      "points": [
+        "Qualquer PSP que faça webhook",
+        "Um campo de sync: planId",
+        "Sem SDK Stripe no template",
+        "Assign no admin prova o caminho hoje"
+      ]
+    },
+    "optional": {
+      "eyebrow": "Sua economia",
+      "title": "Edite preços — ou pule tiers pagos",
+      "body": "Mude micros e caps em plans.constants.ts (+ planIds no shared). Ou esconda Billing, afrouxe asserts e delete usage se ainda não cobra. Ligue um gateway quando o dinheiro importar — não antes.",
+      "points": [
+        "Fork do catálogo à vontade",
+        "Assign manual funciona pré-Stripe",
+        "Drope IA / assentos se não usar",
+        "Mesma costura pra todo PSP"
+      ]
+    }
+  },
+  "adminCourse": {
+    "parts": {
+      "ops": {
+        "eyebrow": "Operações",
+        "title": "Pessoas, convites de plataforma, planos",
+        "body": "O que já existe em /admin: toda conta, convites pro produto (não pro seu tenant) e o catálogo de planos que você atribui aos workspaces-cliente."
+      },
+      "grow": {
+        "eyebrow": "Cresça a superfície",
+        "title": "De console de ops a CMS da plataforma",
+        "body": "Admin é dinâmico — adicione anúncios globais, flags ou defaults que todo tenant consome. Mesmo padrão de domínio; responsabilidades mais largas."
+      }
+    },
+    "concept": {
+      "eyebrow": "Por que /admin",
+      "title": "Uma camada acima de cada tenant",
+      "body": "Tenants isolam clientes. Platform admin fica acima: um lugar pra ver a frota, gerenciar quem opera o produto e (depois) publicar conteúdo ou config pra todos os workspaces. É o control plane — ortogonal a owner/admin/member dentro de um tenant.",
+      "points": [
+        "Acima dos tenants — não dentro de um",
+        "Gated por isPlatformAdmin / PLATFORM_ADMIN_EMAILS",
+        "Mount próprio: /api/admin + UI /admin",
+        "Nunca bypass de rotas de tenant"
+      ]
+    },
+    "fleet": {
+      "eyebrow": "Frota",
+      "title": "Tenants como seus clientes",
+      "body": "A lista de tenants é o overview de clientes — workspace, plano, assentos, gasto de IA, sinal comercial. Cresça colunas (uso, MRR, health) conforme a ops precisa; a página já é o hub.",
+      "points": [
+        "GET /api/admin/tenants",
+        "Plano + membership de relance",
+        "Edite planId sem entrar no tenant",
+        "Casa natural pra rollups de uso / receita"
+      ]
+    },
+    "people": {
+      "eyebrow": "Pessoas",
+      "title": "Toda conta no produto",
+      "body": "Lista cross-tenant de usuários — status de verify, conceder ou revogar platform admin (exceto e-mails travados no env). Separado dos papéis de workspace.",
+      "points": [
+        "GET /api/admin/users",
+        "Tornar / remover platform admin",
+        "Bootstrap com PLATFORM_ADMIN_EMAILS",
+        "Ortogonal aos roles de tenant"
+      ]
+    },
+    "invites": {
+      "eyebrow": "Convites de plataforma",
+      "title": "Onboarde orgs no produto",
+      "body": "Diferente de Settings → Convidar membros. Um convite de plataforma deixa alguém criar a própria conta e workspace pessoal — cresce a frota, não entra na Acme.",
+      "points": [
+        "Tabela platform_invites (sem tenantId)",
+        "POST /api/admin/invites",
+        "Aceite em /join/:token",
+        "Cria user + tenant pessoal"
+      ]
+    },
+    "inviteEmail": {
+      "eyebrow": "Inbox",
+      "title": "“Experimente o app” cai aqui",
+      "body": "Mesmo stack de mail transacional dos convites de tenant — intenção diferente: criar conta no produto, não entrar num workspace existente.",
+      "points": [
+        "Link single-use de 7 dias",
+        "Hash no banco",
+        "CTA → /join/:token",
+        "Revogue em /admin/invites"
+      ]
+    },
+    "plans": {
+      "eyebrow": "Ops comerciais",
+      "title": "Planos pelo olhar do admin",
+      "body": "Veja PLAN_CATALOG e atribua planId num tenant. Billing conta a história econômica; Admin é onde operadores aplicam na frota sem PSP ainda.",
+      "points": [
+        "/admin/plans + /admin/tenants",
+        "Assign manual hoje",
+        "Mesmo write que o webhook fará",
+        "Ops, não o único trabalho do admin"
+      ]
+    },
+    "cms": {
+      "eyebrow": "CMS da plataforma",
+      "title": "Conteúdo e config pra todo tenant",
+      "body": "Imagine anúncios, feature flags ou branding padrão geridos uma vez e lidos por todos os workspaces. É o crescimento natural de /admin — um CMS leve na camada da plataforma, não enterrado num tenant-cliente.",
+      "points": [
+        "Publique uma vez → espalha",
+        "Override local no tenant quando precisar",
+        "Mesma nav admin, páginas novas",
+        "Adicione quando o produto precisar"
+      ]
+    },
+    "grow": {
+      "eyebrow": "Estenda",
+      "title": "Adicione superfícies como qualquer domínio",
+      "body": "Schema em domains/admin, rotas em /api/admin com requirePlatformAdmin, página + nav no shell Admin — opcionalmente um GET do lado do tenant da config publicada. Billing é uma preocupação; a superfície continua aberta.",
+      "points": [
+        "Roles fixos: schema · repo · routes · pages",
+        "Tabelas de plataforma (sem tenantId)",
+        "Nav cresce com o produto",
+        "Control plane, não só cobrança"
       ]
     }
   }

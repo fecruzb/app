@@ -132,11 +132,11 @@
     },
     "productBilling": {
       "title": "Billing · {{brand}}",
-      "description": "Plans, seats, and AI entitlements — ready to wire to Stripe."
+      "description": "Plan catalog in code, seat and AI charge models, tenant billing UI, and how to plug Stripe (or any PSP) later."
     },
     "productAdmin": {
       "title": "Platform admin · {{brand}}",
-      "description": "People, invites, and tenants across the whole product from /admin."
+      "description": "The control plane above tenants — customer fleet, people, platform invites, and a CMS layer you can grow."
     },
     "ui": {
       "title": "User Interface · {{brand}}",
@@ -1098,14 +1098,14 @@
     },
     "billing": {
       "eyebrow": "Billing",
-      "title": "Plans and entitlements",
-      "body": "Seats and AI limits on plans — catalog ready for Stripe.",
+      "title": "Plans, models, gateway later",
+      "body": "Entitlements in code, seat vs usage billing, the tenant Billing page — then wire Stripe when you're ready.",
       "cta": "Open billing"
     },
     "admin": {
       "eyebrow": "Admin",
-      "title": "Run the whole product",
-      "body": "Platform /admin — people, invites, and tenants across every workspace.",
+      "title": "Control plane above tenants",
+      "body": "Fleet of customer workspaces, people, platform invites — and room to grow into a CMS for the whole product.",
       "cta": "Open admin"
     }
   },
@@ -1132,13 +1132,13 @@
     },
     "billing": {
       "eyebrow": "Billing",
-      "title": "Plans you can charge for",
-      "body": "Seat counts and AI entitlements on plans — the catalog your Stripe integration will drive."
+      "title": "Charge for seats and AI — then plug a PSP",
+      "body": "Plans live in PLAN_CATALOG (not a plans table). Tenants store planId; seats and AI budgets enforce today. Checkout with Stripe or any gateway later — webhooks only need to write the same field."
     },
     "admin": {
       "eyebrow": "Platform admin",
-      "title": "Operate the whole fleet",
-      "body": "Cross-tenant people, invites, and workspaces at /admin — gated by platform admin, never a tenant-route bypass."
+      "title": "CMS and ops above every tenant",
+      "body": "/admin is the layer above customer workspaces — see the fleet (plans, seats, usage), manage people, invite orgs onto the product, assign plans. Grow it into global content and config that fans out to every tenant — not only billing."
     }
   },
   "closing": {
@@ -2416,6 +2416,46 @@
       "memberOne": "member",
       "memberOther": "members"
     },
+    "adminPlatform": {
+      "layerLabel": "admin · platform layer",
+      "layerAdmin": "Platform",
+      "layerAdminTitle": "/admin — above every customer",
+      "layerAdminBody": "Gated by isPlatformAdmin. People, fleet, invites, plans — and anything you add for the whole product.",
+      "layerTenants": "Customer tenants",
+      "fleetMetaA": "Starter · 3 seats · AI active",
+      "fleetMetaB": "Free · 1 seat",
+      "fleetTenantC": "Northwind",
+      "fleetMetaC": "Pro · 7 seats · high usage",
+      "layerFootnote": "Never a bypass of /api/tenants/:id — admin is its own mount under /api/admin.",
+      "fleetTitle": "Customer fleet",
+      "fleetDescription": "Tenants as clients — plan, seats, AI spend, and estimated MRR from the catalog.",
+      "colTenant": "Tenant",
+      "colPlan": "Plan",
+      "colSeats": "Seats",
+      "colAi": "AI / mo",
+      "colMrr": "MRR",
+      "fleetNote": "Live UI today lists tenants + members; spend/MRR columns show the ops view you can grow into.",
+      "cmsLabel": "admin · grow into CMS",
+      "cmsTitle": "Global content & config",
+      "cmsBody": "Same /admin surface can hold announcements, feature flags, and defaults that every tenant reads — a light CMS for the platform layer.",
+      "cmsAnnounce": "Announcement banner",
+      "cmsAnnounceBody": "Publish once; every workspace shows the message until dismissed.",
+      "cmsFlags": "Feature flags",
+      "cmsFlagsBody": "Toggle a capability for the whole fleet without redeploying each tenant.",
+      "cmsDefaults": "Default locale / branding",
+      "cmsDefaultsBody": "Platform defaults tenants inherit until they override locally.",
+      "cmsFansOut": "→ fans out to every tenant",
+      "cmsFootnote": "Not shipped as tables yet — the pattern is: admin domain + routes + UI, then tenants read the config. Add when your product needs it.",
+      "growLabel": "admin · extend",
+      "growHint": "Grow /admin like any other domain — fixed roles, same layer rules.",
+      "growSteps": [
+        "Add a table under domains/admin/schema (platform-scoped)",
+        "Repository + routes on /api/admin with requirePlatformAdmin",
+        "Page + nav item in the Admin shell",
+        "Optional: tenants GET the published config"
+      ],
+      "growFootnote": "Billing plans are one admin concern — not the only one. Treat /admin as the product's control plane."
+    },
     "plans": {
       "title": "Plans",
       "description": "Catalog in code — seats and AI entitlements",
@@ -2429,6 +2469,62 @@
       "usageDetail": "$10 / seat · AI passthrough",
       "changePlan": "Change plan",
       "pspHint": "Ready for Stripe or any PSP — checkout sets planId"
+    },
+    "billing": {
+      "modelsLabel": "billing · charge models",
+      "modelsHint": "Mix these in PLAN_CATALOG — each plan picks seats, included AI, or passthrough.",
+      "modelSeatsTitle": "Per-seat subscription",
+      "modelSeatsBody": "pricePerSeatMicros × members. Caps with maxSeats (null = unlimited). Invites count toward the seat budget.",
+      "modelSeatsBadge": "pricePerSeatMicros",
+      "modelAiTitle": "Included AI allowance",
+      "modelAiBody": "aiBilling: included — each member gets aiPerSeatMicros per UTC month. assertAiBudget returns 402 when the pool is empty.",
+      "modelAiBadge": "aiBilling: included",
+      "modelUsageTitle": "Pay as you go (passthrough)",
+      "modelUsageBody": "aiBilling: passthrough — no hard AI cap; spend is metered in ai_usage_events for you to invoice later.",
+      "modelUsageBadge": "aiBilling: passthrough",
+      "overview": "Overview",
+      "overviewHint": "Starter — seats and included AI for the current month.",
+      "seatPrice": "$5 / seat",
+      "statSeats": "Seats",
+      "seatsValue": "2 / 3",
+      "statAi": "AI this month",
+      "aiValue": "$4.60 / $15",
+      "statResets": "Resets",
+      "resetsValue": "Mar 1",
+      "membersTitle": "Member usage",
+      "aiCap": "$5",
+      "changePlanHint": "Disabled until a PSP writes planId — admin can change it today.",
+      "gatewayLabel": "payments · later",
+      "gatewayTitle": "Connect Stripe (or any PSP)",
+      "gatewayBody": "No Stripe SDK ships in the template. When you wire one, keep the catalog in code and treat planId as the only sync field.",
+      "gatewayStepMap": "Map Products → plan ids",
+      "gatewayStepMapBody": "Stripe Product / Price ids align with free, starter, pro, usage — or your renamed catalog.",
+      "gatewayStepCheckout": "Checkout / Customer Portal",
+      "gatewayStepCheckoutBody": "Customer picks a plan; success path doesn't invent a second catalog — it sets tenants.plan_id.",
+      "gatewayStepWebhook": "Webhook → planId",
+      "gatewayStepWebhookBody": "invoice.paid / subscription.updated → update the tenant row. Entitlements already read from PLAN_CATALOG.",
+      "gatewayFootnote": "webhook → tenants.plan_id = \"pro\"  // that's the seam",
+      "inCodeHint": "Entitlements are data you own in TypeScript — not a plans table to migrate.",
+      "inCodeLines": [
+        "Edit PLAN_CATALOG when forking",
+        "tenants store only planId",
+        "Seats block invites when full",
+        "AI budget enforced before agent spend"
+      ],
+      "optionalLabel": "template · your economics",
+      "optionalKeepTitle": "Keep / customize when…",
+      "optionalDropTitle": "Simplify when…",
+      "optionalKeep": [
+        "You sell seats or AI quotas",
+        "You want plan cards before Stripe",
+        "Admin assigns plans manually at first"
+      ],
+      "optionalDrop": [
+        "No paid tiers yet",
+        "Hide Billing nav + skip asserts",
+        "Delete usage ledger if unused"
+      ],
+      "optionalNote": "Change prices in plans.constants.ts and shared planIds. Wire a gateway when revenue matters — not before."
     },
     "invites": {
       "title": "Invites",
@@ -3416,6 +3512,221 @@
         "Lists every membership",
         "Navigates to /app/:slug",
         "Covered on Workspace too"
+      ]
+    }
+  },
+  "billingCourse": {
+    "parts": {
+      "surfaces": {
+        "eyebrow": "Surfaces",
+        "title": "Admin catalog, assign, tenant Billing",
+        "body": "Platform admins browse plans and set planId on a tenant. Inside the workspace, Billing shows seats, AI spend, and a plan changer that stays disabled until a PSP is wired."
+      },
+      "gateway": {
+        "eyebrow": "Payments later",
+        "title": "One field for Stripe — or any gateway",
+        "body": "Don't rebuild the catalog in the PSP. Map products to plan ids, run Checkout, and let webhooks write tenants.plan_id. Entitlements already work."
+      }
+    },
+    "concept": {
+      "eyebrow": "Why this shape",
+      "title": "Entitlements in code, not a plans table",
+      "body": "PLAN_CATALOG is TypeScript you own — seats, seat price, AI allowance, included vs passthrough. Tenants only store planId. You can enforce limits and show Billing before any payment provider exists.",
+      "points": [
+        "No plans migration to babysit",
+        "Fork = edit the catalog file",
+        "planId is the only persisted choice",
+        "Charge later without redesigning entitlements"
+      ]
+    },
+    "catalog": {
+      "eyebrow": "Catalog",
+      "title": "Free · Starter · Pro · Pay as you go",
+      "body": "Four starter plans: seat caps (1 / 3 / 10 / ∞), $0–$10 per seat, $5 included AI per member — or passthrough with no hard AI cap on usage.",
+      "points": [
+        "maxSeats · pricePerSeatMicros",
+        "aiPerSeatMicros · aiBilling",
+        "free → starter → pro → usage",
+        "Shown as table cards from the constants file"
+      ]
+    },
+    "models": {
+      "eyebrow": "Models",
+      "title": "How you can charge",
+      "body": "Mix seat subscriptions, included AI budgets, and metered passthrough. The usage plan is the pay-as-you-go shape; Free/Starter/Pro include a monthly AI pool per seat.",
+      "points": [
+        "Seats = members + pending invites",
+        "Included AI → 402 when empty",
+        "Passthrough → meter, invoice later",
+        "Compose models per plan row"
+      ]
+    },
+    "adminCatalog": {
+      "eyebrow": "Admin · Plans",
+      "title": "Browse the catalog at /admin/plans",
+      "body": "Platform admins see the same PLAN_CATALOG the API uses — ids, seat and AI blurbs, and a reminder that a PSP only needs to set planId.",
+      "points": [
+        "GET /api/admin/plans",
+        "Cards match the constants file",
+        "PSP hint on the page",
+        "No separate pricing CMS"
+      ]
+    },
+    "assign": {
+      "eyebrow": "Admin · Assign",
+      "title": "Set a tenant's plan by hand",
+      "body": "Until Checkout exists, platform admins change planId on a tenant (edit dialog). That's the same write a webhook will do later.",
+      "points": [
+        "PATCH /api/admin/tenants/:id",
+        "planId from the catalog",
+        "Immediate entitlement change",
+        "Preview of the PSP seam"
+      ]
+    },
+    "tenantUi": {
+      "eyebrow": "Tenant Billing",
+      "title": "What customers see",
+      "body": "/app/:slug/billing — overview (seats, AI, period reset), per-member usage bars, and a disabled plan changer with a “wire a PSP” hint.",
+      "points": [
+        "GET /api/tenants/:id/billing",
+        "Seat + AI stats for the month",
+        "Member spend meters",
+        "Upgrade UI waits for payments"
+      ]
+    },
+    "usage": {
+      "eyebrow": "Ledger",
+      "title": "ai_usage_events",
+      "body": "Every billable AI call appends a row (tokens, cost_micros, user, tenant). Billing aggregates the current UTC month — no separate usage HTTP API.",
+      "points": [
+        "Append-only spend log",
+        "cost_micros in USD × 1e6",
+        "Feeds assertAiBudget + Billing UI",
+        "Domain usage/ — API-only"
+      ]
+    },
+    "gateway": {
+      "eyebrow": "Gateway",
+      "title": "Stripe (or Paddle, Lemon… ) when you're ready",
+      "body": "Map PSP products to plan ids → Checkout / Portal → webhook updates tenants.plan_id. Keep PLAN_CATALOG as source of truth for limits; the gateway never becomes a second catalog.",
+      "points": [
+        "Any PSP that can webhook",
+        "One sync field: planId",
+        "No Stripe SDK in the template",
+        "Admin assign proves the path today"
+      ]
+    },
+    "optional": {
+      "eyebrow": "Your economics",
+      "title": "Edit prices — or skip paid tiers",
+      "body": "Change micros and seat caps in plans.constants.ts (+ shared planIds). Or hide Billing, loosen asserts, and delete usage if you're not charging yet. Wire a gateway when money matters — not before.",
+      "points": [
+        "Fork the catalog freely",
+        "Manual plan assign works pre-Stripe",
+        "Drop AI / seats if unused",
+        "Same seam for every PSP"
+      ]
+    }
+  },
+  "adminCourse": {
+    "parts": {
+      "ops": {
+        "eyebrow": "Operations",
+        "title": "People, platform invites, plans",
+        "body": "What ships today under /admin: every account, invites onto the product (not into your tenant), and the plan catalog you assign to customer workspaces."
+      },
+      "grow": {
+        "eyebrow": "Grow the surface",
+        "title": "From ops console to platform CMS",
+        "body": "Admin is dynamic — add global announcements, flags, or defaults that every tenant consumes. Same domain pattern; wider product responsibilities."
+      }
+    },
+    "concept": {
+      "eyebrow": "Why /admin",
+      "title": "A layer above every tenant",
+      "body": "Tenants isolate customers. Platform admin sits above them: one place to see the fleet, manage who can operate the product, and (later) publish content or config for all workspaces. It's the control plane — orthogonal to owner/admin/member inside a tenant.",
+      "points": [
+        "Above tenants — not inside one",
+        "Gated by isPlatformAdmin / PLATFORM_ADMIN_EMAILS",
+        "Own mount: /api/admin + /admin UI",
+        "Never a bypass of tenant routes"
+      ]
+    },
+    "fleet": {
+      "eyebrow": "Fleet",
+      "title": "Tenants as your customers",
+      "body": "The tenants list is your client overview — workspace, plan, seats, AI spend, commercial signal. Grow columns (usage, MRR, health) as ops needs deepen; the page already exists as the hub.",
+      "points": [
+        "GET /api/admin/tenants",
+        "Plan + membership at a glance",
+        "Edit planId without entering the tenant",
+        "Natural home for usage / revenue rollups"
+      ]
+    },
+    "people": {
+      "eyebrow": "People",
+      "title": "Every account on the product",
+      "body": "Cross-tenant user list — verify status, grant or revoke platform admin (except env-locked emails). Separate from workspace roles.",
+      "points": [
+        "GET /api/admin/users",
+        "Make / remove platform admin",
+        "PLATFORM_ADMIN_EMAILS bootstrap",
+        "Orthogonal to tenant roles"
+      ]
+    },
+    "invites": {
+      "eyebrow": "Platform invites",
+      "title": "Onboard orgs onto the product",
+      "body": "Different from Settings → Invite members. A platform invite lets someone create their own account and personal workspace — growing the fleet, not joining Acme.",
+      "points": [
+        "platform_invites table (no tenantId)",
+        "POST /api/admin/invites",
+        "Accept at /join/:token",
+        "Creates user + personal tenant"
+      ]
+    },
+    "inviteEmail": {
+      "eyebrow": "Inbox",
+      "title": "“Try the app” lands here",
+      "body": "Same transactional mail stack as tenant invites — different intent: create an account on the product, not join an existing workspace.",
+      "points": [
+        "7-day single-use link",
+        "Hash in the database",
+        "CTA → /join/:token",
+        "Revoke from /admin/invites"
+      ]
+    },
+    "plans": {
+      "eyebrow": "Commercial ops",
+      "title": "Plans from the admin lens",
+      "body": "Browse PLAN_CATALOG and assign planId on a tenant. Billing owns the economics story; Admin is where operators apply it across the fleet without a PSP yet.",
+      "points": [
+        "/admin/plans + /admin/tenants",
+        "Manual assign today",
+        "Same write a webhook will do",
+        "Ops, not the only admin job"
+      ]
+    },
+    "cms": {
+      "eyebrow": "Platform CMS",
+      "title": "Content and config for every tenant",
+      "body": "Imagine announcements, feature flags, or default branding managed once and read by all workspaces. That's the natural growth of /admin — a light CMS on the platform layer, not buried inside one customer tenant.",
+      "points": [
+        "Publish once → fans out",
+        "Tenant-local override when needed",
+        "Same admin nav, new pages",
+        "Add when the product needs it"
+      ]
+    },
+    "grow": {
+      "eyebrow": "Extend",
+      "title": "Add surfaces like any domain",
+      "body": "Schema under domains/admin, routes on /api/admin with requirePlatformAdmin, page + nav in the Admin shell — optionally a tenant-facing read of published config. Billing is one concern; the surface stays open.",
+      "points": [
+        "Fixed roles: schema · repo · routes · pages",
+        "Platform-scoped tables (no tenantId)",
+        "Nav grows with your product",
+        "Control plane, not only charging"
       ]
     }
   }

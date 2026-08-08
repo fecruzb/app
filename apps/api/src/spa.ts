@@ -102,11 +102,13 @@ const MARKETING_META: Record<string, { title: string; description: string }> = {
   },
   "/product/billing": {
     title: `Billing · ${brand.displayName}`,
-    description: "Plans, seats, and AI entitlements — ready to wire to Stripe.",
+    description:
+      "Plan catalog in code, seat and AI charge models, tenant billing UI, and how to plug Stripe (or any PSP) later.",
   },
   "/product/admin": {
     title: `Platform admin · ${brand.displayName}`,
-    description: "People, invites, and tenants across the whole product from /admin.",
+    description:
+      "The control plane above tenants — customer fleet, people, platform invites, and a CMS layer you can grow.",
   },
   "/platforms": {
     title: `Platforms · ${brand.displayName}`,

@@ -1,20 +1,14 @@
 import { useMemo } from "react";
 import { Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import type { LucideIcon } from "lucide-react";
-import {
-  BotIcon,
-  CreditCardIcon,
-  KeyRoundIcon,
-  LayoutDashboardIcon,
-  ShieldIcon,
-} from "lucide-react";
+import { KeyRoundIcon } from "lucide-react";
 import {
   buildProductArea,
   ChapterSection,
-  type ProductAreaId,
 } from "../components/product/chapter-section";
+import { AdminProductStructure } from "../components/product/admin-structure";
 import { AgentProductStructure } from "../components/product/agent-structure";
+import { BillingProductStructure } from "../components/product/billing-structure";
 import { TenantsProductStructure } from "../components/product/tenants-structure";
 import { WorkspaceProductStructure } from "../components/product/workspace-structure";
 import { useDocumentMeta } from "@/lib/document-meta";
@@ -22,33 +16,15 @@ import { MarketingHero } from "../components/marketing-hero";
 import { MarketingShell } from "../components/marketing-shell";
 import { useReveal } from "../hooks/use-reveal";
 
-const areaIcons: Record<Exclude<ProductAreaId, "account" | "tenants">, LucideIcon> = {
-  auth: KeyRoundIcon,
-  workspace: LayoutDashboardIcon,
-  agent: BotIcon,
-  billing: CreditCardIcon,
-  admin: ShieldIcon,
-};
-
-const areaSeoKey: Record<Exclude<ProductAreaId, "account" | "tenants">, string> = {
-  auth: "productAuth",
-  workspace: "productWorkspace",
-  agent: "productAgent",
-  billing: "productBilling",
-  admin: "productAdmin",
-};
-
-/** One Product deep-dive — compact hero + chapter FeatureSplits for that area. */
-export function ProductAreaPage({ area }: { area: Exclude<ProductAreaId, "account" | "tenants"> }) {
+/** Thin chapter page — Auth only; other Product areas use dedicated course structures. */
+export function ProductAreaPage({ area }: { area: "auth" }) {
   const { t, i18n } = useTranslation();
   useReveal();
-  const Icon = areaIcons[area];
-  const seo = areaSeoKey[area];
 
   useDocumentMeta({
-    title: t(`landing.seo.${seo}.title`),
-    description: t(`landing.seo.${seo}.description`),
-    path: `/product/${area}`,
+    title: t("landing.seo.productAuth.title"),
+    description: t("landing.seo.productAuth.description"),
+    path: "/product/auth",
   });
 
   const chapters = useMemo(() => buildProductArea(area, t), [area, t, i18n.language]);
@@ -59,12 +35,12 @@ export function ProductAreaPage({ area }: { area: Exclude<ProductAreaId, "accoun
         headingAs="h2"
         eyebrow={
           <>
-            <Icon className="size-4" />
-            {t(`landing.productAreas.${area}.eyebrow`)}
+            <KeyRoundIcon className="size-4" />
+            {t("landing.productAreas.auth.eyebrow")}
           </>
         }
-        title={t(`landing.productAreas.${area}.title`)}
-        body={t(`landing.productAreas.${area}.body`)}
+        title={t("landing.productAreas.auth.title")}
+        body={t("landing.productAreas.auth.body")}
       />
 
       {chapters.map((chapter, i) => (
@@ -128,9 +104,33 @@ export function ProductTenantsPage() {
     </MarketingShell>
   );
 }
+/** Billing — plan catalog, charge models, tenant UI, PSP later. */
 export function ProductBillingPage() {
-  return <ProductAreaPage area="billing" />;
+  const { t } = useTranslation();
+  useReveal();
+  useDocumentMeta({
+    title: t("landing.seo.productBilling.title"),
+    description: t("landing.seo.productBilling.description"),
+    path: "/product/billing",
+  });
+  return (
+    <MarketingShell>
+      <BillingProductStructure />
+    </MarketingShell>
+  );
 }
+/** Admin — platform layer above tenants: fleet, people, invites, CMS growth. */
 export function ProductAdminPage() {
-  return <ProductAreaPage area="admin" />;
+  const { t } = useTranslation();
+  useReveal();
+  useDocumentMeta({
+    title: t("landing.seo.productAdmin.title"),
+    description: t("landing.seo.productAdmin.description"),
+    path: "/product/admin",
+  });
+  return (
+    <MarketingShell>
+      <AdminProductStructure />
+    </MarketingShell>
+  );
 }
