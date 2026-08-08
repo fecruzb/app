@@ -73,7 +73,7 @@ const MARKETING_META: Record<string, { title: string; description: string }> = {
   "/product": {
     title: `Product · ${brand.displayName}`,
     description:
-      "Auth, workspace, AI agent, account, tenants, billing, and platform admin — the assembled product, area by area.",
+      "Auth, workspace, AI agent, tenants, billing, and platform admin — the assembled product, area by area.",
   },
   "/product/auth": {
     title: `Auth · ${brand.displayName}`,
@@ -82,15 +82,18 @@ const MARKETING_META: Record<string, { title: string; description: string }> = {
   },
   "/product/workspace": {
     title: `Workspace · ${brand.displayName}`,
-    description: "The tenant app shell — sidebar, switcher, and a home that isn't a blank page.",
+    description:
+      "Authenticated shell — sidebar, tenant switcher, user menu, logout, and My account.",
   },
   "/product/agent": {
     title: `AI agent · ${brand.displayName}`,
-    description: "In-app chat that calls tenant-scoped tools — the assistant that gets work done.",
+    description:
+      "In-app assistant plus MCP API keys for external agents like Claude Code and Cursor.",
   },
   "/product/account": {
-    title: `Account · ${brand.displayName}`,
-    description: "Profile, security, and MCP API keys — settings for the signed-in user.",
+    title: `Workspace · ${brand.displayName}`,
+    description:
+      "Authenticated shell — sidebar, tenant switcher, user menu, logout, and My account.",
   },
   "/product/tenants": {
     title: `Tenants · ${brand.displayName}`,

@@ -14,8 +14,7 @@ import { navItemVariants } from "@app/ui/nav-item";
 
 type ProductMenuItem = {
   to: string;
-  labelKey:
-    "overview" | "auth" | "workspace" | "agent" | "account" | "tenants" | "billing" | "admin";
+  labelKey: "overview" | "auth" | "workspace" | "agent" | "tenants" | "billing" | "admin";
 };
 
 const primaryItems: ProductMenuItem[] = [
@@ -26,7 +25,6 @@ const primaryItems: ProductMenuItem[] = [
 ];
 
 const secondaryItems: ProductMenuItem[] = [
-  { to: "/product/account", labelKey: "account" },
   { to: "/product/tenants", labelKey: "tenants" },
   { to: "/product/billing", labelKey: "billing" },
   { to: "/product/admin", labelKey: "admin" },

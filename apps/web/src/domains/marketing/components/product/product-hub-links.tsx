@@ -9,14 +9,13 @@ import {
   KeyRoundIcon,
   LayoutDashboardIcon,
   ShieldIcon,
-  UserCogIcon,
 } from "lucide-react";
 import { Button } from "@app/ui/button";
 import { Card, CardContent } from "@app/ui/card";
 import type { ProductAreaId } from "./chapter-section";
 
 type HubLink = {
-  id: ProductAreaId;
+  id: Exclude<ProductAreaId, "account">;
   to: string;
   icon: LucideIcon;
 };
@@ -25,7 +24,6 @@ const links: HubLink[] = [
   { id: "auth", to: "/product/auth", icon: KeyRoundIcon },
   { id: "workspace", to: "/product/workspace", icon: LayoutDashboardIcon },
   { id: "agent", to: "/product/agent", icon: BotIcon },
-  { id: "account", to: "/product/account", icon: UserCogIcon },
   { id: "tenants", to: "/product/tenants", icon: Building2Icon },
   { id: "billing", to: "/product/billing", icon: CreditCardIcon },
   { id: "admin", to: "/product/admin", icon: ShieldIcon },

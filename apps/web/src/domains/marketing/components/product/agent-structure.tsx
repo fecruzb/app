@@ -14,6 +14,9 @@ import {
   AgentFabIdleMock,
   AgentFabRecordingMock,
   AgentShortcutsMock,
+  McpCreatedKeyMock,
+  McpExternalAgentMock,
+  McpKeysMock,
 } from "../product-preview";
 import { DbGroupSection, type DbGroup } from "../structure/database-foundation";
 
@@ -26,7 +29,10 @@ type CourseKey =
   | "fabRecording"
   | "audio"
   | "expanded"
-  | "shortcuts";
+  | "shortcuts"
+  | "mcp"
+  | "mcpCreated"
+  | "mcpExternal";
 
 function courseBlock(key: CourseKey, t: TFunction, visual: ReactNode): DbGroup {
   return {
@@ -58,13 +64,22 @@ function buildFab(t: TFunction): DbGroup[] {
   ];
 }
 
+function buildMcp(t: TFunction): DbGroup[] {
+  return [
+    courseBlock("mcp", t, <McpKeysMock />),
+    courseBlock("mcpCreated", t, <McpCreatedKeyMock />),
+    courseBlock("mcpExternal", t, <McpExternalAgentMock />),
+  ];
+}
+
 /**
- * Product → AI Agent tour: chat, tool chips, FAB states, voice, shortcuts.
+ * Product → AI Agent tour: in-app chat/FAB, then MCP keys for external agents.
  */
 export function AgentProductStructure() {
   const { t, i18n } = useTranslation();
   const chat = useMemo(() => buildChat(t), [t, i18n.language]);
   const fab = useMemo(() => buildFab(t), [t, i18n.language]);
+  const mcp = useMemo(() => buildMcp(t), [t, i18n.language]);
 
   let flipIndex = 0;
 
@@ -96,6 +111,19 @@ export function AgentProductStructure() {
       />
 
       {fab.map((group) => {
+        const flip = flipIndex % 2 === 1;
+        flipIndex += 1;
+        return <DbGroupSection key={group.id} group={group} flip={flip} />;
+      })}
+
+      <MarketingHero
+        headingAs="h2"
+        eyebrow={t("landing.agentCourse.parts.mcp.eyebrow")}
+        title={t("landing.agentCourse.parts.mcp.title")}
+        body={t("landing.agentCourse.parts.mcp.body")}
+      />
+
+      {mcp.map((group) => {
         const flip = flipIndex % 2 === 1;
         flipIndex += 1;
         return <DbGroupSection key={group.id} group={group} flip={flip} />;

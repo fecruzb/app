@@ -112,15 +112,15 @@
     },
     "productWorkspace": {
       "title": "Workspace · {{brand}}",
-      "description": "O shell do app do tenant — sidebar, switcher e um home que não é página em branco."
+      "description": "Shell autenticado — sidebar, switcher de tenant, menu do usuário, logout e Minha conta."
     },
     "productAgent": {
       "title": "Agente de IA · {{brand}}",
-      "description": "Assistant in-app: chips de tools, estados do FAB, voz, modo expandido e atalhos."
+      "description": "Assistant in-app e chaves MCP para agentes externos como Claude Code e Cursor."
     },
     "productAccount": {
-      "title": "Account · {{brand}}",
-      "description": "Perfil, segurança e chaves MCP — configurações do usuário logado."
+      "title": "Workspace · {{brand}}",
+      "description": "Shell autenticado — sidebar, switcher de tenant, menu do usuário, logout e Minha conta."
     },
     "productTenants": {
       "title": "Tenants · {{brand}}",
@@ -958,21 +958,15 @@
     },
     "workspace": {
       "eyebrow": "Workspace",
-      "title": "Um shell, não uma página em branco",
-      "body": "Sidebar, switcher de tenant e home — o workspace em que o usuário chega depois do auth.",
+      "title": "O app autenticado",
+      "body": "Shell, menu do usuário, logout e Minha conta — a região autenticada depois do login.",
       "cta": "Abrir workspace"
     },
     "agent": {
       "eyebrow": "Agente de IA",
-      "title": "Um chat que faz as coisas",
-      "body": "Assistente no app com tools no escopo do tenant — peça, veja as tools rodarem, entregue a mudança.",
+      "title": "No app e via MCP",
+      "body": "Assistant flutuante no produto — e chaves API pra Claude Code, Cursor ou qualquer cliente MCP chamar as mesmas tools.",
       "cta": "Abrir o agente"
-    },
-    "account": {
-      "eyebrow": "Account",
-      "title": "Perfil, segurança, chaves MCP",
-      "body": "Settings do usuário e Integrations — onde ficam as API keys do MCP no Cursor.",
-      "cta": "Abrir account"
     },
     "tenants": {
       "eyebrow": "Tenants",
@@ -1001,18 +995,13 @@
     },
     "workspace": {
       "eyebrow": "Workspace",
-      "title": "O app em que o usuário vive",
-      "body": "Depois do login, um shell de verdade: nav, contexto de tenant e um lugar para trabalhar — não um scaffold vazio."
+      "title": "A região autenticada",
+      "body": "Depois do auth: sidebar, switcher de tenant, menu com logout e Minha conta — o app em que o usuário vive."
     },
     "agent": {
       "eyebrow": "Agente de IA",
-      "title": "Tools dentro do chat",
-      "body": "Assistant flutuante em todo tenant — chips no timeline, FAB minimizado, mic / ⌘J, compacto ou expandido. Mesmas tools do MCP."
-    },
-    "account": {
-      "eyebrow": "Account",
-      "title": "Suas configurações",
-      "body": "Perfil e senha em Account; chaves MCP em Integrations — config pessoal num só lugar."
+      "title": "Tools dentro — e fora — do chat",
+      "body": "Assistant flutuante em todo tenant; depois crie uma key MCP e ligue Claude Code, Cursor ou qualquer cliente nas mesmas tools do tenant."
     },
     "tenants": {
       "eyebrow": "Tenants",
@@ -2369,7 +2358,13 @@
       "peopleAccess": "Pessoas com acesso",
       "manageMembers": "Gerenciar membros",
       "tasksCount": "5 tarefas",
-      "viewTasks": "Ver tarefas"
+      "viewTasks": "Ver tarefas",
+      "yourTenants": "Seus workspaces",
+      "theme": "Tema",
+      "menuAccount": "Minha conta",
+      "menuBilling": "Billing",
+      "menuIntegrations": "Integrações",
+      "signOut": "Sair"
     },
     "tasks": {
       "title": "Tarefas",
@@ -2423,9 +2418,17 @@
     },
     "mcp": {
       "title": "API keys (MCP)",
-      "description": "Integrações — acesse o tenant via MCP pelo Cursor",
+      "description": "Integrações — publique tools no Claude Code, Cursor ou qualquer cliente MCP",
       "create": "Criar key",
-      "copyNow": "Copie sua key agora — ela não será mostrada de novo"
+      "copyNow": "Copie sua key agora — ela não será mostrada de novo",
+      "scopedTo": "Escopo: {{tenant}}",
+      "claudeLabel": "claude — Claude Code",
+      "claudeConnected": "✔ MCP conectado · Authorization: Bearer abk_…",
+      "claudeTools": "✔ tools de {{server}}: list_tasks, create_task, …",
+      "claudePrompt": "liste as tasks abertas da Acme e adicione uma pro standup de amanhã",
+      "claudeToolCall": "→ create_task({ title: \"Preparar standup\" })",
+      "claudeToolResult": "← Task criada: Preparar standup",
+      "claudeReply": "Pronto — a task do standup está no board."
     },
     "env": {
       "optional": "opcional",
@@ -3109,6 +3112,11 @@
         "eyebrow": "FAB & voz",
         "title": "Botão no canto que continua trabalhando",
         "body": "Minimize pro FAB. A atividade vira uma pill. ⌘J grava sem abrir o painel; quando a resposta chega, o chat compacto reabre."
+      },
+      "mcp": {
+        "eyebrow": "MCP · agentes externos",
+        "title": "As mesmas tools fora do produto",
+        "body": "Crie uma API key no escopo do tenant, cole no Claude Code, Cursor ou qualquer cliente MCP — eles chamam as mesmas domain tools via HTTP, não só o FAB in-app."
       }
     },
     "chat": {
@@ -3208,6 +3216,103 @@
         "Enter — fim da gravação / send",
         "Esc — restore e depois fecha",
         "Shift+Enter — nova linha"
+      ]
+    },
+    "mcp": {
+      "eyebrow": "Criar uma key",
+      "title": "Libere acesso em Integrações",
+      "body": "Menu do usuário → Integrações: nomeie a key, escolha um tenant seu, expiry opcional. O hash fica no banco — o bearer cru só aparece uma vez.",
+      "points": [
+        "/app/:slug/integrations",
+        "Nome + tenant + expiry opcional",
+        "Liste e revogue a qualquer hora",
+        "Mesmo registry de tools do chat in-app"
+      ]
+    },
+    "mcpCreated": {
+      "eyebrow": "Key criada",
+      "title": "Copie uma vez — depois ligue o cliente",
+      "body": "A resposta de create mostra a key crua e um mcp.json pronto (URL + Authorization). Cole no Claude Code, Cursor ou qualquer agente com MCP.",
+      "points": [
+        "Só na criação",
+        "mcp.json com header Bearer",
+        "Escopo no tenant escolhido",
+        "Perdeu → revogue e crie outra"
+      ]
+    },
+    "mcpExternal": {
+      "eyebrow": "Claude Code",
+      "title": "Um agente externo nos seus dados",
+      "body": "Cole o server no Claude Code (ou Cursor, Windsurf, …). Ele lista suas tools e roda via HTTP — criar task, listar membros — sem abrir o FAB. Publique uma vez; qualquer cliente MCP consome.",
+      "points": [
+        "MCP HTTP + auth por API key",
+        "Claude Code, Cursor, …",
+        "Isolamento pelo escopo da key",
+        "Não fica preso à UI do produto"
+      ]
+    }
+  },
+  "workspaceCourse": {
+    "parts": {
+      "account": {
+        "eyebrow": "Minha conta",
+        "title": "Perfil e senha",
+        "body": "Do menu do usuário: atualize nome e e-mail, troque a senha com a atual — settings pessoais do usuário logado."
+      }
+    },
+    "shell": {
+      "eyebrow": "Shell",
+      "title": "Um app de verdade depois do login",
+      "body": "Sidebar com marca, nav e home — não um scaffold vazio. O FAB do agent fica no canto; tema e o usuário logado ficam no footer.",
+      "points": [
+        "SidebarShell + rotas do tenant em /app/:slug",
+        "Home, Tasks, Settings (e o que você adicionar)",
+        "Controles de tema no footer",
+        "FAB do agent quando OPENAI_API_KEY está setada"
+      ]
+    },
+    "switcher": {
+      "eyebrow": "Switcher de tenant",
+      "title": "Troque de workspace quando houver mais de um",
+      "body": "O switcher só aparece se você pertence a dois ou mais tenants (convites). Com um só, o ambiente fica implícito — sem chrome pra uma escolha que não existe.",
+      "points": [
+        "Oculto com uma só membership",
+        "Lista todo tenant que você pode abrir",
+        "Navega para /app/:slug",
+        "Workspace atual marcado com check"
+      ]
+    },
+    "userMenu": {
+      "eyebrow": "Menu do usuário",
+      "title": "Conta, billing, integrações, sair",
+      "body": "O botão do footer abre destinos da pessoa logada — mais Sair, que limpa o cookie de sessão opaca e volta pra landing. Integrações (chaves MCP) fica na página do AI Agent.",
+      "points": [
+        "Minha conta · Billing · Integrações",
+        "Admin da plataforma quando isPlatformAdmin",
+        "Sair → logout API → /",
+        "Nome, e-mail e iniciais no trigger"
+      ]
+    },
+    "profile": {
+      "eyebrow": "Perfil",
+      "title": "Atualize nome e e-mail",
+      "body": "Um card pra nome e e-mail — Save faz patch do usuário logado. Mesmo padrão pra qualquer form de settings pessoais.",
+      "points": [
+        "/app/:slug/account",
+        "Card ProfileSection",
+        "Campos nome + e-mail",
+        "PATCH /api/account/profile"
+      ]
+    },
+    "password": {
+      "eyebrow": "Senha",
+      "title": "Troque a senha com segurança",
+      "body": "Card separado: senha atual + nova. O server confere o hash atual antes de gravar o novo scrypt — nunca confie só no client.",
+      "points": [
+        "Card PasswordSection",
+        "Senha atual + nova",
+        "PATCH /api/account/password",
+        "Na mesma página Minha conta"
       ]
     }
   }

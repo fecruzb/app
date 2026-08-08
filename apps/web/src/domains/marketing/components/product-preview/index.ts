@@ -25,7 +25,18 @@ export {
   VerifyEmailBody,
 } from "./email-mocks";
 export { InviteMembersBody } from "./invite-mocks";
-export { McpKeysMock, ShellMock, TasksMock, AccountMock } from "./shell-mocks";
+export {
+  McpKeysMock,
+  McpCreatedKeyMock,
+  McpExternalAgentMock,
+  ShellMock,
+  TenantSwitcherMock,
+  UserMenuMock,
+  TasksMock,
+  AccountMock,
+  ProfileMock,
+  PasswordMock,
+} from "./shell-mocks";
 export type { Column } from "./schema-tables";
 export {
   TableCard,

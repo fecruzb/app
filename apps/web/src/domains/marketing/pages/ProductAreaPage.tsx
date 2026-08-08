@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -8,7 +9,6 @@ import {
   KeyRoundIcon,
   LayoutDashboardIcon,
   ShieldIcon,
-  UserCogIcon,
 } from "lucide-react";
 import {
   buildProductArea,
@@ -16,33 +16,32 @@ import {
   type ProductAreaId,
 } from "../components/product/chapter-section";
 import { AgentProductStructure } from "../components/product/agent-structure";
+import { WorkspaceProductStructure } from "../components/product/workspace-structure";
 import { useDocumentMeta } from "@/lib/document-meta";
 import { MarketingHero } from "../components/marketing-hero";
 import { MarketingShell } from "../components/marketing-shell";
 import { useReveal } from "../hooks/use-reveal";
 
-const areaIcons: Record<ProductAreaId, LucideIcon> = {
+const areaIcons: Record<Exclude<ProductAreaId, "account">, LucideIcon> = {
   auth: KeyRoundIcon,
   workspace: LayoutDashboardIcon,
   agent: BotIcon,
-  account: UserCogIcon,
   tenants: Building2Icon,
   billing: CreditCardIcon,
   admin: ShieldIcon,
 };
 
-const areaSeoKey: Record<ProductAreaId, string> = {
+const areaSeoKey: Record<Exclude<ProductAreaId, "account">, string> = {
   auth: "productAuth",
   workspace: "productWorkspace",
   agent: "productAgent",
-  account: "productAccount",
   tenants: "productTenants",
   billing: "productBilling",
   admin: "productAdmin",
 };
 
 /** One Product deep-dive — compact hero + chapter FeatureSplits for that area. */
-export function ProductAreaPage({ area }: { area: ProductAreaId }) {
+export function ProductAreaPage({ area }: { area: Exclude<ProductAreaId, "account"> }) {
   const { t, i18n } = useTranslation();
   useReveal();
   const Icon = areaIcons[area];
@@ -80,8 +79,20 @@ export function ProductAreaPage({ area }: { area: ProductAreaId }) {
 export function ProductAuthPage() {
   return <ProductAreaPage area="auth" />;
 }
+/** Authenticated shell — nav, switcher, user menu, account, MCP keys. */
 export function ProductWorkspacePage() {
-  return <ProductAreaPage area="workspace" />;
+  const { t } = useTranslation();
+  useReveal();
+  useDocumentMeta({
+    title: t("landing.seo.productWorkspace.title"),
+    description: t("landing.seo.productWorkspace.description"),
+    path: "/product/workspace",
+  });
+  return (
+    <MarketingShell>
+      <WorkspaceProductStructure />
+    </MarketingShell>
+  );
 }
 
 /** AI Agent product tour — chat, chips, FAB, voice, shortcuts. */
@@ -100,8 +111,9 @@ export function ProductAgentPage() {
   );
 }
 
+/** Account lives inside Workspace — keep old URL working. */
 export function ProductAccountPage() {
-  return <ProductAreaPage area="account" />;
+  return <Navigate to="/product/workspace" replace />;
 }
 export function ProductTenantsPage() {
   return <ProductAreaPage area="tenants" />;
