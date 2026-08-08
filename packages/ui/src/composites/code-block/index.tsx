@@ -4,12 +4,13 @@ import { ScaledContent } from "../content-scale";
 import { getHighlighter } from "./highlighter";
 import "./code-block.css";
 
-type Lang = "ts" | "json" | "sql" | "text";
+type Lang = "ts" | "json" | "sql" | "yaml" | "text";
 
 const SHIKI_LANG: Record<Exclude<Lang, "text">, string> = {
   ts: "typescript",
   json: "json",
   sql: "sql",
+  yaml: "yaml",
 };
 
 /** Tracks `html.dark` — same switch ThemeProvider toggles for the rest of the kit. */

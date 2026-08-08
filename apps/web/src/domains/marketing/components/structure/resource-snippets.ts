@@ -568,6 +568,77 @@ CREATE INDEX "articles_published_idx" ON "articles" USING btree ("published_at")
 --   ALTER TABLE "users" ADD COLUMN "is_platform_admin" boolean DEFAULT false NOT NULL;
 --   ALTER TABLE "tenants" ADD COLUMN "plan_id" text DEFAULT 'free' NOT NULL;`;
 
+/** Zod boot validation — apps/api/src/lib/env.ts (trimmed). */
+export const envSchemaFile = `// lib/env.ts — validated at boot; bad values exit(1)
+const schema = z.object({
+  PORT: z.coerce.number().default(5000),
+  DATABASE_URL: z.string().default("postgres://app:app@localhost:5442/app_base"),
+  APP_URL: z.string().optional(),
+  RESEND_API_KEY: z.string().optional(),   // missing → emails to console
+  OPENAI_API_KEY: z.string().optional(),   // missing → agent hidden
+  SELF_SIGNUP_ENABLED: z.string().default("true")
+    .transform((v) => v !== "false"),
+  PLATFORM_ADMIN_EMAILS: z.string().optional(),
+  // R2 keys optional — without them, media falls back to local disk
+});
+
+const parsed = schema.safeParse(process.env);
+if (!parsed.success) {
+  console.error("[env] invalid environment variables:…");
+  process.exit(1);
+}`;
+
+/** render.yaml — production blueprint (trimmed). */
+export const renderYamlFile = `# render.yaml — one web service (API + SPA) + Postgres
+services:
+  - type: web
+    name: app
+    runtime: node          # no custom Dockerfile — Render's Node runtime
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    preDeployCommand: npm run db:migrate
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: app-db
+          property: connectionString
+      - key: APP_URL
+        sync: false        # set in the Render dashboard
+      - key: RESEND_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+
+databases:
+  - name: app-db
+    plan: basic-256mb
+    postgresMajorVersion: "16"`;
+
+/** Secrets stay out of git — sync: false on Render. */
+export const renderSecretsFile = `# Secrets never live in the repo
+# .env          — local only (gitignored)
+# .env.example  — empty / commented placeholders only
+
+# render.yaml
+envVars:
+  - key: APP_URL
+    sync: false              # value set in the Render dashboard
+  - key: RESEND_API_KEY
+    sync: false
+  - key: OPENAI_API_KEY
+    sync: false
+  - key: DATABASE_URL
+    fromDatabase:            # wired from managed Postgres — not typed by hand
+      name: app-db
+      property: connectionString
+
+# New secret checklist:
+#   1. empty placeholder in .env.example
+#   2. Zod field in apps/api/src/lib/env.ts
+#   3. render.yaml with sync: false (or fromDatabase)`;
+
 export const agentRegistryFile = `// agent/registry.ts — all tools in one list
 export const allTools = [
   ...tenantTools,

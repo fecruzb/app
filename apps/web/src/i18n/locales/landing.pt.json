@@ -81,7 +81,7 @@
     },
     "structureEnvironment": {
       "title": "Environment · {{brand}}",
-      "description": ".env validado, run local com Docker e deploy no Render a partir de um YAML — configurar, rodar e subir."
+      "description": "Docker primeiro, depois .env e Zod no boot, run local e deploy no Render a partir de um YAML."
     },
     "structureDatabase": {
       "title": "Database · {{brand}}",
@@ -504,8 +504,156 @@
   },
   "structureEnvironment": {
     "eyebrow": "Environment",
-    "title": "Configure. Rode. Faça deploy.",
-    "body": "Um .env validado no boot, Postgres no Docker e npm run dev no local, depois render.yaml em produção — os mesmos knobs do laptop ao Render."
+    "title": "Docker. Env. Run. Ship.",
+    "body": "Postgres local no Compose, um .env validado, dois comandos para clicar no app, depois render.yaml em produção — os mesmos knobs do laptop ao Render."
+  },
+  "envCourse": {
+    "parts": {
+      "local": {
+        "eyebrow": "Na sua máquina",
+        "title": "Docker → env → run",
+        "body": "Sobe o Postgres no Docker, preenche o .env (validado no boot), depois setup + dev. Sem instalar Postgres na máquina."
+      },
+      "ship": {
+        "eyebrow": "Produção",
+        "title": "Um YAML no Render",
+        "body": "O render.yaml descreve o web service e o Postgres gerenciado. Segredos ficam no dashboard. Sem Dockerfile custom — runtime Node."
+      }
+    },
+    "repoHints": {
+      "docker": "Postgres local",
+      "envExample": "placeholders",
+      "envLocal": "gitignored",
+      "render": "blueprint",
+      "zod": "validação no boot",
+      "scripts": "setup · dev"
+    },
+    "overview": {
+      "eyebrow": "Visão geral",
+      "title": "Os arquivos que definem o ambiente",
+      "body": "Compose para Postgres local, .env.example como contrato, render.yaml para produção, env.ts para validar no boot. Fechados aqui — abertos a seguir.",
+      "points": [
+        "docker-compose.yml — Postgres 16",
+        ".env.example → .env (gitignored)",
+        "render.yaml — um serviço + DB",
+        "lib/env.ts — Zod no boot"
+      ],
+      "workspace": "APP-BASE",
+      "aria": "Arquivos de environment num explorer estilo VS Code"
+    },
+    "docker": {
+      "eyebrow": "Docker",
+      "title": "Postgres no Compose",
+      "body": "A única dependência Docker é o Postgres local. O docker-compose.yml sobe postgres:16 em :5442 com volume nomeado. Em produção o Postgres é gerenciado no Render — não este container.",
+      "points": [
+        "image postgres:16 · porta 5442",
+        "npm run db:up / db:down",
+        "volume postgres-data persiste no local",
+        "não usado no Render"
+      ]
+    },
+    "env": {
+      "eyebrow": ".env",
+      "title": "Um arquivo, defaults locais",
+      "body": "Copie .env.example para .env. DATABASE_URL e APP_URL já têm defaults locais. Chaves opcionais degradam com elegância — sem Resend? e-mails vão para o console; sem OpenAI? o agente some.",
+      "points": [
+        "DATABASE_URL · APP_URL — basta para rodar",
+        "chaves opcionais não quebram o boot",
+        ".env é gitignored — nunca faça commit",
+        "mesmos nomes das env vars do Render"
+      ]
+    },
+    "envSchema": {
+      "eyebrow": "lib/env.ts",
+      "title": "Validado no boot",
+      "body": "Zod faz parse de process.env quando a API sobe. Formato faltando ou inválido falha rápido com mensagem clara. Defaults cobrem o local; produção injeta valores pelo Render.",
+      "points": [
+        "safeParse → exit(1) se falhar",
+        "defaults para a URL do Docker local",
+        "vendors opcionais degradam",
+        "novo segredo → Zod + .env.example + render.yaml"
+      ]
+    },
+    "run": {
+      "eyebrow": "Run local",
+      "title": "setup, depois dev",
+      "body": "npm run setup sobe o Postgres, migra e seeda um workspace demo. npm run dev sobe API e SPA juntos — você clica num app de verdade em menos de um minuto.",
+      "points": [
+        "setup — db:up → migrate → seed",
+        "dev — API :5000 · web :3000",
+        "user demo vem do seed",
+        "defaults do .env já funcionam"
+      ]
+    },
+    "renderYaml": {
+      "eyebrow": "render.yaml",
+      "title": "O blueprint de produção",
+      "body": "Um web service (API serve o SPA buildado) mais Postgres 16 gerenciado. build, start, preDeploy migrate, health check, auto-deploy no push na main — descrito uma vez no YAML.",
+      "points": [
+        "runtime: node — sem Dockerfile do app",
+        "preDeployCommand — db:migrate",
+        "healthCheckPath — /api/health",
+        "DATABASE_URL do DB gerenciado"
+      ]
+    },
+    "renderConnect": {
+      "eyebrow": "Blueprint",
+      "title": "Conecte o repositório no GitHub",
+      "body": "No Render: New Blueprint → escolha o repositório que tem o render.yaml → Connect. O Render lê o arquivo, provisiona o web service e o Postgres, e liga o auto-deploy nesse repo.",
+      "points": [
+        "New Blueprint Instance",
+        "conta GitHub ligada uma vez",
+        "Connect no repo com render.yaml",
+        "Blueprint cuida de app + app-db"
+      ]
+    },
+    "renderDeploy": {
+      "eyebrow": "Deploy",
+      "title": "Push na main, vai ao ar",
+      "body": "O Render builda no push, roda migrations antes do tráfego mudar e só sobe depois do /api/health passar. O dashboard lista o web service e o Postgres do blueprint.",
+      "points": [
+        "autoDeploy na main",
+        "migrate antes do tráfego",
+        "health check libera o release",
+        "API + SPA — uma origem"
+      ]
+    },
+    "renderEnv": {
+      "eyebrow": "Render · Environment",
+      "title": "Onde os valores de produção são setados",
+      "body": "Abra o web service → Environment. As chaves batem com .env / render.yaml; os valores ficam mascarados no dashboard. Edite ali tudo que estiver com sync: false — nunca coloque segredos reais no git.",
+      "points": [
+        "serviço → aba Environment",
+        "mesmas chaves do .env.example",
+        "valores mascarados — set via Edit",
+        "DATABASE_URL linkado do app-db"
+      ]
+    },
+    "secrets": {
+      "eyebrow": "Segredos",
+      "title": "sync: false — fora do git",
+      "body": "Valores secretos nunca moram no repo. .env é gitignored; .env.example só tem placeholders. No Render, sync: false significa valor no dashboard. DATABASE_URL vem do link do banco gerenciado.",
+      "points": [
+        ".env gitignored",
+        "sync: false nas chaves secretas",
+        "fromDatabase para DATABASE_URL",
+        "checklist: example → Zod → render.yaml"
+      ]
+    },
+    "runtime": {
+      "eyebrow": "Runtime",
+      "title": "Sem Dockerfile do app",
+      "body": "Produção é o runtime Node nativo do Render — não uma imagem Docker custom. Docker neste repo é só o Postgres local via Compose. Installers desktop/mobile buildam no GitHub Actions, não no Render.",
+      "points": [
+        "runtime: node no render.yaml",
+        "Compose = só DB local",
+        "sem Dockerfile no repo",
+        "shells Tauri buildam no CI"
+      ],
+      "visualRuntime": "  runtime: node",
+      "visualNoDocker": "ls: Dockerfile: No such file or directory",
+      "visualCompose": "✔ postgres:16 em :5442 (só local)"
+    }
   },
   "structureBuild": {
     "eyebrow": "Sua vez",
@@ -842,8 +990,8 @@
     },
     "environment": {
       "eyebrow": "Environment",
-      "title": ".env, run local, Render",
-      "body": "Env validado no boot, Docker + npm run dev no local e deploy num YAML no Render.",
+      "title": "Docker → env → Render",
+      "body": "Compose para Postgres local, .env validado, setup/dev e um YAML no Render.",
       "cta": "Abrir environment"
     },
     "database": {
@@ -1951,11 +2099,32 @@
     },
     "render": {
       "webService": "Web service · Node · API + SPA",
-      "live": "No ar",
-      "postgres": "PostgreSQL 16 · basic-256mb",
-      "available": "Disponível",
+      "live": "Deployed",
+      "postgres": "PostgreSQL 16",
+      "runtimeNode": "Node",
+      "available": "Available",
       "autoDeploy": "Auto-deploy no push para main",
-      "preDeploy": "Pre-deploy roda migrations · health check em /api/health"
+      "preDeploy": "Pre-deploy roda migrations · health check em /api/health",
+      "colService": "Service",
+      "colStatus": "Status",
+      "colRuntime": "Runtime",
+      "colKey": "Key",
+      "colValue": "Value",
+      "manage": "Manage",
+      "envTab": "Environment",
+      "edit": "Edit",
+      "envSubtitle": "Defina config e segredos; o código lê esses valores.",
+      "envFootnote": "chaves sync: false se editam aqui — não no git.",
+      "blueprintTitle": "Create a new Blueprint Instance",
+      "blueprintSubtitle": "Conecte o repositório Git — o Render procura o render.yaml.",
+      "connectRepo": "Connect a repository",
+      "search": "Search",
+      "connect": "Connect",
+      "blueprintFootnote": "Depois do Connect, o Render aplica o render.yaml da branch padrão.",
+      "sampleRepoOther": "you / other-app",
+      "sampleRepoDemo": "you / demo",
+      "updatedRecent": "Updated recently",
+      "updatedOlder": "Updated earlier"
     },
     "roles": {
       "owner": "owner",

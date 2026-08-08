@@ -35,4 +35,6 @@ export {
   SeedMock,
   TerminalMock,
   RenderMock,
+  RenderBlueprintMock,
+  RenderEnvMock,
 } from "./ops-mocks";

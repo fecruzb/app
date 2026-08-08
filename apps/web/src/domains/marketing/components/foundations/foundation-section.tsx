@@ -5,6 +5,7 @@ import { points } from "@/i18n";
 import { CodeBlock } from "@app/ui/code-block";
 import { FeatureSplit } from "../feature-split";
 import { EnvMock, TerminalMock } from "../product-preview";
+import { renderYamlFile } from "../structure/resource-snippets";
 
 export type Foundation = {
   id: string;
@@ -74,39 +75,12 @@ export function buildStoragePillar(t: TFunction): Foundation {
   };
 }
 
-const renderYamlFile = `# render.yaml — one web service (API + SPA) + Postgres
-services:
-  - type: web
-    name: app
-    runtime: node
-    buildCommand: npm ci --include=dev && npm run build
-    startCommand: npm start
-    preDeployCommand: npm run db:migrate
-    healthCheckPath: /api/health
-    autoDeploy: true
-    envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: app-db
-          property: connectionString
-      - key: APP_URL
-        sync: false          # set in the Render dashboard
-      - key: RESEND_API_KEY
-        sync: false
-      - key: OPENAI_API_KEY
-        sync: false
-
-databases:
-  - name: app-db
-    plan: basic-256mb
-    postgresMajorVersion: "16"`;
-
 export function buildRenderPillar(t: TFunction): Foundation {
   return {
     id: "render",
     icon: RocketIcon,
     ...pillarCopy("render", t),
-    visual: <CodeBlock filename="render.yaml" code={renderYamlFile} lang="text" />,
+    visual: <CodeBlock filename="render.yaml" code={renderYamlFile} lang="yaml" />,
   };
 }
 

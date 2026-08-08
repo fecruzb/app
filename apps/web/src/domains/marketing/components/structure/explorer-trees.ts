@@ -930,6 +930,36 @@ export function buildWebFolderTree(
   }
 }
 
+/** Repo root files that define local + production environment. */
+export function buildEnvRepoTree(t: TFunction): ExplorerNode[] {
+  const h = (key: string) => t(`landing.envCourse.repoHints.${key}`);
+  return [
+    {
+      name: "docker-compose.yml",
+      kind: "file",
+      hint: h("docker"),
+      active: true,
+    },
+    { name: ".env.example", kind: "file", hint: h("envExample") },
+    { name: ".env", kind: "file", hint: h("envLocal"), muted: true },
+    { name: "render.yaml", kind: "file", hint: h("render") },
+    {
+      name: "apps",
+      kind: "folder",
+      muted: true,
+      children: [
+        {
+          name: "api",
+          kind: "folder",
+          muted: true,
+          children: [{ name: "src/lib/env.ts", kind: "file", hint: h("zod"), muted: true }],
+        },
+      ],
+    },
+    { name: "package.json", kind: "file", hint: h("scripts"), muted: true },
+  ];
+}
+
 /** apps/api/drizzle/ — where generated migrations live. */
 export function buildDrizzleMigrationsTree(t: TFunction): ExplorerNode[] {
   const h = (key: string) => t(`landing.dbCourse.migrateFiles.hints.${key}`);
