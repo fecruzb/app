@@ -1,0 +1,23 @@
+{
+  "tenant_slug": "felipe-s-workspace",
+  "workspace_slug": "app-base",
+  "projects": {
+    "audits": {
+      "slug": "audits",
+      "name": "Audits"
+    },
+    "features": {
+      "slug": "features",
+      "name": "Features"
+    },
+    "bugs": {
+      "slug": "bugs",
+      "name": "Bugs"
+    }
+  },
+  "docs": {
+    "overview": "3b8eac52-90a7-4aeb-a93e-20dfd1a76a6b",
+    "architecture": "330b2af1-ac4b-4403-bcd7-03b16cdcc322",
+    "decisions": "3fad7f14-031f-4063-867a-552313a7dabc"
+  }
+}

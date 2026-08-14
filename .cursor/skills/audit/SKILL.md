@@ -31,28 +31,27 @@ Copy and track:
 
 ```
 - [ ] 1. Resolve scope + list files
-- [ ] 2. Create Symulous Audits ticket (document as you go)
+- [ ] 2. Create Axiom Audits ticket (document as you go)
 - [ ] 3. Load relevant Cursor rules (and this checklist)
 - [ ] 4. Structural / naming / registration pass
 - [ ] 5. Security + tenant isolation pass
 - [ ] 6. Contracts, layers, i18n, UI package pass
 - [ ] 7. Run npm run lint && npm run typecheck
 - [ ] 8. Write the report into the ticket + chat
-- [ ] 9. stop_working then complete_task when audit (+ agreed fixes) are done
+- [ ] 9. complete_task when audit (+ agreed fixes) are on main
 ```
 
-### Symulous (required)
+### Axiom ticket (required)
 
-Findings live on the **Audits** project — never only in chat. Read `.symulous.json`, then:
+Findings live on the **Audits** project — never only in chat. Read `.axiom.json`, then:
 
-1. `create_task` on `projects.audits.short_id` with title like `Convention audit — <scope> (YYYY-MM-DD)`, `phase_name` usually `QA`, body seeded with scope. Use a **stable scope name** (`full monorepo`, `apps/api`, `apps/web`, `git diff vs main`) — not transient labels like `uncommitted changes` unless that is the intentional, documented scope.
+1. `create_task` on `projects.audits.slug` (`workspace_slug` from the binding) with title like `Convention audit — <scope> (YYYY-MM-DD)`, `status`: `doing`, body seeded with scope. Use a **stable scope name** (`full monorepo`, `apps/api`, `apps/web`, `git diff vs main`) — not transient labels like `uncommitted changes` unless that is the intentional, documented scope.
 2. Put the full report in the task (`markdown` / `append_to_task`): Summary, Findings by severity (paths), checks run, out of scope.
-3. If remediating: `start_working`, fix, note fixed vs deferred on the ticket.
-4. Always finish with phase **`Launch`** (`update_task` `phase_name: "Launch"`), then **`stop_working` then `complete_task`** (even for report-only). `complete_task` alone leaves the Working chip; leaving phase on `QA` is incorrect for closed audits.
-5. While the audit is in flight, keep phase at `QA` (create with `QA`; remediations stay `QA` until closed).
-6. In chat, link the task absolute `url`.
+3. If remediating: fix, note fixed vs deferred on the ticket.
+4. Finish with `complete_task` only when the work is on `main` (even for report-only). Unpushed work stays `doing`.
+5. In chat, link the task: `https://axiom.fecruzb.com/app/<tenant_slug>/w/<workspace_slug>/p/audits/t/<taskId>`.
 
-See `.cursor/rules/symulous.mdc` (Audits section) and `.cursor/skills/symulous/SKILL.md`.
+See `.cursor/rules/axiom.mdc` (Audits section) and `.cursor/skills/axiom/SKILL.md`.
 
 ### 1. Resolve scope
 
@@ -64,7 +63,7 @@ Read only what the scope needs:
 
 | Scope touches           | Read                                                                |
 | ----------------------- | ------------------------------------------------------------------- |
-| anything                | `project-overview.mdc`, `security.mdc`, `language.mdc`              |
+| anything                | `project-overview.mdc`, `security.mdc`, `language.mdc`, `axiom.mdc` |
 | `apps/api/**`           | `api-structure.mdc` (+ `agent-tools.mdc` if `*.tool.ts` / `agent/`) |
 | `apps/web/**`           | `web-structure.mdc`                                                 |
 | `packages/shared/**`    | `shared-contracts.mdc`                                              |
@@ -148,7 +147,7 @@ Never read or print `.env` / secret values during the audit.
 
 Omit empty severity sections. If clean: say so and keep Summary short.
 
-Mirror this report into the Symulous Audits ticket body. In chat, include the ticket `url` and whether you can apply fixes (only if the user wants).
+Mirror this report into the Axiom Audits ticket body. In chat, include the task link and whether you can apply fixes (only if the user wants).
 
 ## Triggers (examples)
 

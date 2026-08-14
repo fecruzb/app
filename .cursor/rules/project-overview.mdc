@@ -23,7 +23,7 @@ Not every domain mirrors 1:1: `marketing` is web-only; `agent` is an API surface
 
 To add a feature/resource end to end, follow the checklist in the `add-feature` skill (`.cursor/skills/add-feature/SKILL.md`).
 
-Product tasks and docs live in Symulous (one workspace per product) — see `.symulous.json` and the `symulous` skill.
+Product tasks and docs live in Axiom (one workspace per product) — see `.axiom.json` and the `axiom` skill.
 
 ## Invariants — never break these
 

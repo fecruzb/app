@@ -1,0 +1,69 @@
+---
+description: Axiom is the system of record for this product's tasks and docs; how the agent must use the binding and MCP
+alwaysApply: true
+---
+
+# Axiom (product tasks + docs)
+
+This product is bound to an Axiom workspace. **Tasks and settled product documentation live there**, not as ad-hoc TODOs in chat or duplicate markdown in the repo. If another product's ticket rule is also loaded in a multi-root workspace, ignore it — this repo writes only here.
+
+**Language**: everything written to this workspace (ticket titles, bodies, comments, docs) is English. Keep code identifiers, paths, and tool names as they are in the repo.
+
+## Binding
+
+Read `.axiom.json` at the repo root before any Axiom MCP call:
+
+- `tenant_slug` / `workspace_slug` — product boundary (one workspace per product)
+- `projects.audits` / `projects.features` / `projects.bugs` — the three ticket boards
+- `docs.*` — UUIDs for settled docs (Overview, Architecture, Decisions)
+
+If the file is missing or IDs are stale, follow the `axiom` skill to bootstrap or repair — do not invent workspace/project IDs.
+
+## Ticket buckets (pick one project)
+
+| Project      | Use for                                                                |
+| ------------ | ---------------------------------------------------------------------- |
+| **Features** | New capabilities, domains, enhancements, agreed delivery work          |
+| **Bugs**     | Defects, regressions, incorrect behavior                               |
+| **Audits**   | Convention/structure/security reviews, checklist-driven pass/fail work |
+
+Work-in-progress and delivery status live **only on tickets** (`backlog` / `todo` / `doing` / `done`, comments). Do not keep a Progress/changelog doc. Axiom has no phases — do not send `phase_name`.
+
+## Docs = settled knowledge
+
+Docs are for things that should stay true after the work lands — not a running diary.
+
+- **Overview** — what the product is, for whom
+- **Architecture** — how it is structured (update when the structure actually changes)
+- **Decisions** — ADRs for real choices that stick
+
+## When to write to Axiom
+
+- **Agreed, actionable work** → `create_task` on the matching bucket (`status`: `todo` when ready to pick up, `backlog` when not). Do not spam micro-todos.
+- **Starting / finishing work** → `doing` while implementing; `done` only once the work is on `main`. Unpushed work stays `doing`. Comment outcomes on the ticket.
+- **Design or product decision (settled)** → append a dated section to Decisions.
+- **Domain / structure change (landed)** → update Architecture.
+
+### Audits (required)
+
+Every convention / structure / security audit goes on the **Audits** board (`projects.audits.slug`). Do not leave findings only in chat.
+
+1. **Start** — `create_task` on Audits (`status`: `doing`) with scope, verdict placeholder, and checklist.
+2. **While auditing** — put the full report in the task body: Summary, Critical / Warning / Note with paths, checks run (lint/typecheck), out of scope.
+3. **While remediating** — note what was fixed vs deferred on the ticket (comment or append).
+4. **Finish** — when the audit (and any agreed fixes) are done, `complete_task` or `update_task` → `done` (only if the work is on `main`). Link the task in the chat reply.
+
+Follow `.cursor/skills/audit/SKILL.md` for the audit workflow; this rule is the documentation invariant.
+
+Code conventions stay in `.cursor/rules` and the repo. Product knowledge stays in Axiom.
+
+## MCP usage
+
+Use the Axiom MCP (`user-axiom`). Always pass `workspace_slug` from the binding. Prefer `project_slug` / doc UUIDs from `.axiom.json`. Discover tool schemas with MCP tool listing before calling.
+
+| Where             | Link                                                                                                         |
+| ----------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Cursor chat**   | `https://axiom.fecruzb.com/app/<tenant_slug>/w/<workspace_slug>/p/<project>/t/<taskId>` (docs: `/d/<docId>`) |
+| **Axiom content** | `[Title](axiom:doc/<workspace_slug>/<docId>)` / `[Title](axiom:task/<workspace_slug>/<project>/<taskId>)`    |
+
+Day-to-day workflows and bootstrap: `.cursor/skills/axiom/SKILL.md`.
